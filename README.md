@@ -43,7 +43,7 @@ reasoned about:
 ./supabase/tests/run.sh    # needs psql pointed at any Postgres 15+
 ```
 
-That rebuilds a throwaway database from the migrations and runs **119
+That rebuilds a throwaway database from the migrations and runs **118
 assertions** as real users — a rival pharmacy, an uninvolved pharmacist, another
 student, a platform admin — checking what each can and cannot see or do.
 `harness.sql` supplies the small part of Supabase the schema depends on
