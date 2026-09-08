@@ -34,6 +34,20 @@ supabase db reset
 npm run db:types   # regenerate src/lib/supabase/database.types.ts from the schema
 ```
 
+### The demo
+
+`demo/saydali-plus-demo.html` is a single self-contained file — open it in a
+browser, no server and no build. It reproduces the screens, the design system
+and the arithmetic so the product can be shown to a pharmacy or an investor
+without standing anything up. Switch language, switch layout, switch role.
+
+It is a demo, not the app: there is no database behind it, and therefore none
+of the row-level security that is the actual security model. Two things in it
+are real rather than mocked, because they are the things worth checking — the
+fee engine is a port of `src/config/fees.ts` and the shift-hours function a
+port of `src/lib/time.ts`, so the numbers it shows are the numbers the product
+charges. Screens that are not built in the real app say so there too.
+
 ### Policy tests
 
 RLS is the security boundary, so it is tested against a real database rather than

@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Saydali+ — صيدلي+</title>
+<!--
+  A single-file demo of Saydali+ as actually built.
+
+  This is NOT the application. The real thing is a Next.js + Supabase app in
+  this repository; its security model is Postgres row-level security, and none
+  of that can exist in a file you open from disk. What this is: a faithful
+  reproduction of the screens, the design system and the arithmetic, so the
+  product can be shown to a pharmacy or an investor without standing anything up.
+
+  Two things are real here rather than mocked, because they are the things worth
+  checking: the fee engine below is a line-for-line port of src/config/fees.ts,
+  and the shift-hours function is a port of src/lib/time.ts. The numbers this
+  demo shows are the numbers the product charges.
+
+  Everything behind them — accounts, listings, applicants — is fixture data.
+  Screens that are not built in the real app say so here too, rather than
+  showing a convincing mock of something that does not exist.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1826; --ink-soft:#57536E; --ink-faint:#8B87A3;
+    --indigo:#2D2A6E; --indigo-dark:#191735; --indigo-tint:#E7E6F4;
+    --amber:#B8791F; --amber-tint:#F5E6C8;
+    --palm:#4F7A47; --palm-tint:#E7EFE3;
+    --mist:#EFEEF7; --card:#FFFFFF; --border:#E1DFEC;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+    --font-ar:'Noto Kufi Arabic','IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);
+    background:linear-gradient(180deg,#F0EFF9 0%,var(--mist) 100%);
+    color:var(--ink); min-height:100vh;
+    display:flex; flex-direction:column; align-items:center;
+    padding:22px 14px 48px; -webkit-font-smoothing:antialiased;
+  }
+  html[dir="rtl"] body{ font-family:var(--font-ar); }
+  button,input,select,textarea{ font-family:inherit; font-size:inherit; color:inherit; }
+  button{ cursor:pointer; background:none; border:none; }
+  :focus-visible{ outline:2px solid var(--indigo); outline-offset:2px; border-radius:4px; }
+  .figure{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+  .hidden{ display:none !important; }
+
+  /* ---------- Demo chrome ---------- */
+  .demo-bar{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;
+    margin-bottom:8px;
+  }
+  .pill-group{
+    display:flex; gap:2px; background:var(--card); border:1px solid var(--border);
+    border-radius:100px; padding:4px; box-shadow:0 1px 2px rgba(20,30,28,.04);
+  }
+  .pill{
+    font-family:var(--font-display); font-weight:600; font-size:13.5px;
+    padding:8px 16px; border-radius:100px; color:var(--ink-soft);
+    display:flex; align-items:center; gap:6px; white-space:nowrap;
+  }
+  .pill svg{ width:15px; height:15px; }
+  .pill.active{ background:var(--indigo); color:#fff; }
+  .pill-group.dark .pill.active{ background:var(--ink); }
+  .demo-note{
+    font-size:12px; color:var(--ink-faint); text-align:center; line-height:1.6;
+    max-width:640px; margin:0 auto 20px;
+  }
+  .demo-note strong{ color:var(--indigo); font-weight:600; }
+
+  /* ---------- Phone frame ---------- */
+  .phone-frame{
+    width:min(390px,100%); height:min(800px,86vh);
+    background:var(--card); border-radius:42px; border:9px solid var(--ink);
+    box-shadow:0 24px 60px -18px rgba(13,30,28,.35);
+    display:flex; flex-direction:column; overflow:hidden; position:relative;
+  }
+  .phone-statusbar{
+    flex:none; display:flex; justify-content:space-between; align-items:center;
+    padding:14px 26px 4px; font-family:var(--font-mono); font-size:13px; font-weight:600;
+  }
+  .statusbar-icons{ display:flex; align-items:center; gap:6px; }
+  .signal-bars{ display:flex; align-items:flex-end; gap:2px; height:9px; }
+  .signal-bars span{ width:3px; background:var(--ink); border-radius:1px; display:block; }
+  .signal-bars span:nth-child(1){height:4px;} .signal-bars span:nth-child(2){height:6px;}
+  .signal-bars span:nth-child(3){height:7.5px;} .signal-bars span:nth-child(4){height:9px;}
+  .battery{ width:21px; height:10px; border:1.4px solid var(--ink); border-radius:2.5px; padding:1.5px; position:relative; }
+  .battery::after{ content:''; position:absolute; inset-inline-end:-3.5px; top:3px; width:2px; height:4px; background:var(--ink); border-radius:1px; }
+  .battery-fill{ width:78%; height:100%; background:var(--ink); border-radius:1px; }
+  .phone-viewport{ flex:1; min-height:0; display:flex; flex-direction:column; position:relative; }
+  .phone-body{ flex:1; min-height:0; overflow-y:auto; }
+  .phone-body::-webkit-scrollbar{ width:0; }
+
+  /* ---------- Web shell ---------- */
+  #web-stage{ width:100%; max-width:1180px; }
+  .web-shell{
+    display:flex; background:var(--card); border:1px solid var(--border);
+    border-radius:20px; overflow:hidden;
+    box-shadow:0 24px 60px -24px rgba(13,30,28,.25); min-height:700px;
+  }
+  .web-sidebar{
+    width:236px; flex:none; color:#fff; padding:24px 18px;
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+  }
+  /* The star tile is a regional cue, not wallpaper. Across the sidebar's tall
+     empty column it reads much heavier than it does in a short header band, so
+     it is dialled back here rather than given a second opacity value. */
+  .web-sidebar .header-pattern{ opacity:.45; }
+  .web-brand{ font-family:var(--font-display); font-weight:700; font-size:19px; margin-bottom:22px; position:relative; }
+  .web-nav{ display:flex; flex-direction:column; gap:2px; flex:1; position:relative; }
+  .web-nav-item{
+    display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:10px;
+    color:rgba(255,255,255,.72); font-size:13.5px; font-weight:500; text-align:start; width:100%;
+  }
+  .web-nav-item svg{ width:17px; height:17px; flex:none; }
+  .web-nav-item.active{ background:rgba(255,255,255,.16); color:#fff; font-weight:600; }
+  .web-nav-item:hover{ background:rgba(255,255,255,.09); }
+  .web-sidebar-foot{
+    font-size:11px; color:rgba(255,255,255,.55); line-height:1.6;
+    padding-top:16px; margin-top:12px; border-top:1px solid rgba(255,255,255,.15); position:relative;
+  }
+  .web-main{ flex:1; min-width:0; display:flex; flex-direction:column; background:var(--mist); }
+  .web-body{ flex:1; min-height:0; overflow-y:auto; }
+
+  /* ---------- Header with the star tile ---------- */
+  .app-header{
+    flex:none; position:relative; overflow:hidden; color:#fff;
+    background:linear-gradient(135deg,var(--indigo) 0%,var(--indigo-dark) 100%);
+    padding:20px 22px 18px;
+  }
+  .web-main .app-header{ padding:26px 34px; }
+  .header-pattern{ position:absolute; inset:0; width:100%; height:100%; }
+  .header-row{ position:relative; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .header-eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:rgba(255,255,255,.68); margin-bottom:5px;
+  }
+  .header-title{ font-family:var(--font-display); font-size:22px; font-weight:700; line-height:1.15; }
+  .icon-btn{
+    flex:none; width:36px; height:36px; border-radius:12px; background:rgba(255,255,255,.14);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn svg{ width:18px; height:18px; color:#fff; }
+
+  /* ---------- Content ---------- */
+  .screen-body{ padding:18px 20px 28px; }
+  .web-body .screen-body{ padding:26px 34px 40px; }
+  .constrain{ max-width:640px; }
+  .section-eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--ink-faint); margin:20px 0 10px;
+  }
+  .section-eyebrow:first-child{ margin-top:0; }
+
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; }
+  .card-pad{ padding:16px 17px; }
+  .stack > * + *{ margin-top:12px; }
+
+  .grid-cards{ display:grid; gap:12px; }
+  .web-body .grid-cards{ grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); }
+  .two-col{ display:grid; gap:22px; align-items:start; }
+  .web-body .two-col{ grid-template-columns:1.5fr 1fr; }
+
+  /* ---------- Chips ---------- */
+  .chip-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; }
+  .chip-row::-webkit-scrollbar{ height:0; }
+  .chip{
+    flex:none; font-size:13px; font-weight:500; padding:7px 14px; border-radius:100px;
+    border:1px solid var(--border); background:var(--card); color:var(--ink-soft);
+  }
+  .chip.active{ background:var(--indigo); border-color:var(--indigo); color:#fff; }
+
+  /* ---------- Listing card ---------- */
+  .listing-card{
+    width:100%; text-align:start; background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:15px 16px; display:block; transition:border-color .12s, box-shadow .12s;
+  }
+  .listing-card:hover{ border-color:rgba(45,42,110,.4); box-shadow:0 6px 16px -8px rgba(20,30,28,.18); }
+  .listing-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:9px; }
+  .pharmacy-name{ font-family:var(--font-display); font-weight:600; font-size:15.5px; }
+  html[dir="rtl"] .pharmacy-name{ font-family:var(--font-ar); font-size:14.5px; }
+  .pay-amount{ font-family:var(--font-mono); font-weight:600; font-size:14.5px; color:var(--indigo); white-space:nowrap; }
+  .pay-basis{ font-size:11.5px; color:var(--ink-faint); margin-top:1px; }
+  .meta-line{ font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .meta-line svg{ width:13px; height:13px; color:var(--ink-faint); flex:none; }
+  .tag-row{ display:flex; gap:6px; flex-wrap:wrap; }
+
+  .badge{ display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:500; padding:4px 9px; border-radius:100px; }
+  .badge svg{ width:12px; height:12px; }
+  .badge-otc{ background:var(--indigo-tint); color:var(--indigo-dark); }
+  .badge-controlled{ background:var(--amber-tint); color:var(--amber); }
+  .badge-verified{ background:var(--palm-tint); color:var(--palm); }
+  .badge-pending{ background:var(--amber-tint); color:#8A5610; }
+  .badge-stage{ background:var(--amber-tint); color:#8A5610; }
+  .badge-muted{ background:var(--mist); color:var(--ink-faint); }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary{
+    width:100%; background:var(--indigo); color:#fff; font-family:var(--font-display);
+    font-weight:600; font-size:14.5px; padding:13px; border-radius:13px; text-align:center; transition:background .12s;
+  }
+  html[dir="rtl"] .btn-primary, html[dir="rtl"] .btn-secondary{ font-family:var(--font-ar); }
+  .btn-primary:hover{ background:var(--indigo-dark); }
+  .btn-primary:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-secondary{
+    width:100%; background:var(--card); color:var(--indigo); border:1.4px solid var(--indigo);
+    font-family:var(--font-display); font-weight:600; font-size:14px; padding:11.5px;
+    border-radius:13px; text-align:center;
+  }
+  .btn-secondary:hover{ background:var(--indigo-tint); }
+  .btn-small{
+    font-size:12.5px; font-weight:600; font-family:var(--font-display); padding:7px 14px;
+    border-radius:9px; background:var(--indigo); color:#fff; flex:none;
+  }
+  .btn-small.green{ background:var(--palm); }
+  .btn-ghost{
+    font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:9px;
+    border:1px solid var(--border); color:var(--ink-soft);
+  }
+  .link-btn{ font-size:12.5px; font-weight:500; color:var(--indigo); text-decoration:underline; text-underline-offset:2px; }
+
+  /* ---------- Forms ---------- */
+  .field{ margin-bottom:15px; }
+  .field label, .field-label{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  .field input, .field select, .field textarea{
+    width:100%; border:1.4px solid var(--border); border-radius:11px;
+    padding:11px 13px; font-size:14px; background:var(--card); outline:none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--indigo); }
+  .field textarea{ resize:none; min-height:74px; }
+  .field-hint{ font-size:11.5px; color:var(--ink-faint); margin-top:5px; line-height:1.5; }
+  .field-row{ display:flex; gap:10px; }
+  .field-row .field{ flex:1; }
+  .checkbox-row{
+    display:flex; align-items:center; gap:10px; padding:12px 13px;
+    border:1.4px solid var(--border); border-radius:11px; margin-bottom:15px;
+  }
+  .checkbox-row input{ width:18px; height:18px; accent-color:var(--amber); }
+  .checkbox-row label{ font-size:13.5px; margin:0; font-weight:400; color:var(--ink); }
+
+  .segmented{ display:flex; background:var(--indigo-tint); border-radius:11px; padding:3px; margin-bottom:15px; }
+  .segmented button{ flex:1; padding:8px; border-radius:8px; font-size:13px; font-weight:600; color:var(--indigo-dark); }
+  .segmented button.active{ background:#fff; box-shadow:0 1px 3px rgba(20,30,28,.12); }
+
+  /* ---------- Banners ---------- */
+  .banner{ display:flex; align-items:flex-start; gap:10px; border-radius:14px; padding:12px 14px; }
+  .banner svg{ width:18px; height:18px; flex:none; margin-top:1px; }
+  .banner p{ font-size:12.5px; line-height:1.55; }
+  .banner-amber{ background:var(--amber-tint); border:1px solid #E3CE9E; color:#8A5610; }
+  .banner-amber svg{ color:var(--amber); }
+  .banner-green{ background:var(--palm-tint); border:1px solid #CFE0C9; color:var(--ink-soft); }
+  .banner-green svg{ color:var(--palm); }
+  .banner-indigo{ background:var(--indigo-tint); border:1px solid #D6D4EC; color:var(--indigo-dark); }
+  .banner-indigo svg{ color:var(--indigo); }
+
+  /* ---------- Stats ---------- */
+  .stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+  .stat-card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 8px; text-align:center; }
+  .stat-num{ font-family:var(--font-mono); font-weight:600; font-size:17px; color:var(--indigo); display:block; }
+  .stat-label{ font-size:10.5px; color:var(--ink-faint); margin-top:3px; line-height:1.35; display:block; }
+
+  /* ---------- Rows ---------- */
+  .row{ display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--border); }
+  .row:last-child{ border-bottom:none; }
+  .row-body{ flex:1; min-width:0; }
+  .row-title{ font-size:13.5px; font-weight:500; }
+  .row-sub{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
+  .row-value{ font-family:var(--font-mono); font-size:13px; font-weight:600; flex:none; }
+
+  .kv{ display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .kv:last-child{ border-bottom:none; }
+  .kv svg{ width:16px; height:16px; color:var(--indigo); margin-top:2px; flex:none; }
+  .kv-label{ font-size:11.5px; color:var(--ink-faint); }
+  .kv-value{ font-size:13.5px; font-weight:500; margin-top:2px; }
+
+  .rating{ display:inline-flex; align-items:center; gap:3px; font-size:12.5px; font-weight:500; color:var(--ink-soft); }
+  .rating svg{ width:13px; height:13px; color:var(--amber); }
+
+  /* ---------- Fee breakdown ---------- */
+  .fee-line{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:6px 0; font-size:13px; }
+  .fee-line dt{ color:var(--ink-soft); }
+  .fee-line dd{ font-family:var(--font-mono); font-weight:600; }
+  .fee-total{ border-top:1px solid var(--border); margin-top:4px; padding-top:10px; }
+  .fee-total dt{ color:var(--ink); font-weight:600; }
+  .fee-total dd{ font-size:15px; color:var(--indigo); }
+  .fee-foot{ font-size:11.5px; color:var(--ink-faint); line-height:1.6; margin-top:12px; border-top:1px solid var(--border); padding-top:10px; }
+  .fee-trial{ color:var(--palm); font-weight:600; }
+
+  /* ---------- Handoff ---------- */
+  .check-item{ display:flex; align-items:flex-start; gap:12px; padding:14px 16px; width:100%; text-align:start; border-bottom:1px solid var(--border); }
+  .check-item:last-child{ border-bottom:none; }
+  .check-item:hover{ background:var(--mist); }
+  .check-item:disabled{ cursor:default; }
+  .check-item:disabled:hover{ background:transparent; }
+  .check-box{
+    margin-top:1px; width:20px; height:20px; border-radius:6px; border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center; flex:none; transition:.12s;
+  }
+  .check-box svg{ width:13px; height:13px; color:#fff; opacity:0; }
+  .check-item.done .check-box{ background:var(--palm); border-color:var(--palm); }
+  .check-item.done .check-box svg{ opacity:1; }
+  .check-text{ font-size:13.5px; line-height:1.55; color:var(--ink-soft); }
+  .check-item.done .check-text{ color:var(--ink); }
+
+  /* ---------- Applicant ---------- */
+  .applicant-top{ display:flex; gap:11px; align-items:flex-start; margin-bottom:10px; }
+  .avatar{
+    width:40px; height:40px; border-radius:12px; background:var(--indigo-tint); color:var(--indigo-dark);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-ar);
+    font-weight:700; font-size:14px; flex:none;
+  }
+  .avatar.amber{ background:var(--amber-tint); color:#8A5610; }
+  .no-record{ font-size:12.5px; color:var(--ink-faint); font-style:normal; }
+
+  /* ---------- Not built ---------- */
+  .not-built{ text-align:center; padding:44px 20px; max-width:460px; margin:0 auto; }
+  .not-built-icon{
+    width:48px; height:48px; border-radius:16px; background:var(--indigo-tint);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 14px;
+  }
+  .not-built-icon svg{ width:20px; height:20px; color:var(--indigo); }
+  .not-built h3{ font-family:var(--font-display); font-size:16px; }
+  html[dir="rtl"] .not-built h3{ font-family:var(--font-ar); }
+  .not-built p{ font-size:13px; line-height:1.65; color:var(--ink-soft); margin-top:8px; }
+  .not-built .phase{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-faint); margin-top:14px;
+  }
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav{ flex:none; display:flex; border-top:1px solid var(--border); background:#fff; padding:8px 8px; }
+  .nav-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 0; color:var(--ink-faint); }
+  .nav-item svg{ width:21px; height:21px; }
+  .nav-item span{ font-size:10px; font-weight:500; }
+  .nav-item.active{ color:var(--indigo); }
+
+  /* ---------- Auth ---------- */
+  #auth-stage{ width:100%; max-width:520px; }
+  .auth-card{
+    background:var(--card); border:1px solid var(--border); border-radius:22px;
+    padding:30px 30px 32px; box-shadow:0 20px 50px -24px rgba(25,23,53,.28);
+  }
+  .auth-brand{ font-family:var(--font-display); font-weight:700; font-size:27px; color:var(--indigo); text-align:center; }
+  .auth-brand-ar{ font-family:var(--font-ar); font-size:15px; color:var(--ink-faint); text-align:center; margin-top:2px; }
+  .auth-tagline{ font-size:13.5px; color:var(--ink-soft); text-align:center; margin-top:12px; line-height:1.6; }
+  .auth-divider{ height:1px; background:var(--border); margin:22px 0; }
+  .auth-heading{ font-family:var(--font-display); font-weight:700; font-size:19px; margin-bottom:5px; }
+  html[dir="rtl"] .auth-heading{ font-family:var(--font-ar); }
+  .auth-sub{ font-size:13px; color:var(--ink-faint); margin-bottom:20px; line-height:1.6; }
+  .auth-foot{ font-size:13px; color:var(--ink-soft); text-align:center; margin-top:16px; }
+  .auth-back{ font-size:12.5px; color:var(--ink-soft); display:flex; align-items:center; gap:5px; margin-bottom:16px; }
+  .auth-back svg{ width:14px; height:14px; transform:scaleX(-1); }
+  html[dir="rtl"] .auth-back svg{ transform:none; }
+
+  .role-option{
+    display:flex; align-items:center; gap:13px; width:100%; text-align:start;
+    border:1.6px solid var(--border); border-radius:14px; padding:15px 16px;
+    background:var(--card); transition:.12s; margin-bottom:10px;
+  }
+  .role-option:hover{ border-color:var(--indigo); background:rgba(231,230,244,.4); }
+  .role-icon{ width:40px; height:40px; border-radius:12px; background:var(--indigo-tint); display:flex; align-items:center; justify-content:center; flex:none; }
+  .role-icon svg{ width:19px; height:19px; color:var(--indigo-dark); }
+  .role-title{ font-size:14px; font-weight:600; }
+  .role-sub{ font-size:12.5px; color:var(--ink-faint); margin-top:2px; line-height:1.5; }
+
+  .timeline{ margin:22px 0; }
+  .timeline-step{ display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .timeline-dot{ width:10px; height:10px; border-radius:50%; background:var(--border); flex:none; margin-top:5px; }
+  .timeline-step.done .timeline-dot{ background:var(--palm); }
+  .timeline-step.current .timeline-dot{ background:var(--amber); }
+  .timeline-title{ font-size:13.5px; font-weight:600; }
+  .timeline-sub{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(8px);
+    background:var(--ink); color:#fff; font-size:13px; font-weight:500; text-align:center;
+    padding:12px 20px; border-radius:12px; opacity:0; pointer-events:none; z-index:90;
+    transition:opacity .18s, transform .18s; max-width:90vw;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:820px){
+    .web-shell{ flex-direction:column; }
+    .web-sidebar{ width:100%; }
+    .web-nav{ flex-direction:row; flex-wrap:wrap; }
+    .web-body .two-col{ grid-template-columns:1fr; }
+    .web-sidebar-foot{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="starTile" width="34" height="34" patternUnits="userSpaceOnUse">
+    <g stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" fill="none">
+      <rect x="7" y="7" width="20" height="20"/>
+      <rect x="7" y="7" width="20" height="20" transform="rotate(45 17 17)"/>
+    </g>
+  </pattern>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.4"/><line x1="3.5" y1="10" x2="20.5" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></g></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="13" rx="2.2"/><path d="M3 10.5h18"/><circle cx="16.8" cy="14.5" r="1.3" fill="currentColor" stroke="none"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.3 20c0-4.3 3.5-6.9 7.7-6.9s7.7 2.6 7.7 6.9"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.3" r="3.1"/><path d="M3 19.5c0-3.6 2.6-5.7 5.5-5.7s5.5 2.1 5.5 5.7"/><circle cx="17" cy="9.2" r="2.4"/><path d="M15.3 13.9c2.3.3 3.9 2.1 4.2 4.6"/></g></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.2a6 6 0 0 1 12 0v4.6l1.6 2.4H4.4L6 14.8Z"/><path d="M10.2 20a1.9 1.9 0 0 0 3.6 0"/></g></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12,2.5 15,9.2 22,9.8 16.6,14.3 18.2,21.3 12,17.6 5.8,21.3 7.4,14.3 2,9.8 9,9.2" fill="currentColor"/></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.6 2.6L16.2 9"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></g></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.4 7-12.4a7 7 0 0 0-14 0C5 13.6 12 21 12 21Z"/><circle cx="12" cy="8.6" r="2.3"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></g></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M2 9.5 12 5l10 4.5-10 4.5-10-4.5Z"/><path d="M6.5 11.7v3.8c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-3.8"/><path d="M21 9.5v5.2"/></g></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.8A1.8 1.8 0 0 1 5.8 3H19v18H5.8A1.8 1.8 0 0 1 4 19.2V4.8Z"/><path d="M4 17.2h15"/><path d="M8 7.5h7"/><path d="M8 11h7"/></g></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5H7.2A1.7 1.7 0 0 0 5.5 6.2v13.1A1.7 1.7 0 0 0 7.2 21h9.6a1.7 1.7 0 0 0 1.7-1.7V6.2A1.7 1.7 0 0 0 16.8 4.5H15"/><rect x="9" y="2.8" width="6" height="3.4" rx="1.1"/><path d="M9.2 13.2l1.9 1.9 3.7-3.7"/></g></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></g></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3h11"/><path d="M6.5 21h11"/><path d="M7.5 3v3.6c0 1.9 4.5 3.6 4.5 5.4 0 1.8-4.5 3.5-4.5 5.4V21"/><path d="M16.5 3v3.6c0 1.9-4.5 3.6-4.5 5.4 0 1.8 4.5 3.5 4.5 5.4V21"/></g></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><line x1="10.5" y1="18.2" x2="13.5" y2="18.2"/></g></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></g></symbol>
+</defs></svg>
+
+<div class="demo-bar">
+  <div class="pill-group">
+    <button class="pill" id="lang-ar" onclick="setLang('ar')">العربية</button>
+    <button class="pill" id="lang-en" onclick="setLang('en')">English</button>
+  </div>
+  <div class="pill-group dark">
+    <button class="pill" id="view-phone" onclick="setView('phone')"><svg><use href="#i-phone"/></svg><span data-t="demo.phone"></span></button>
+    <button class="pill" id="view-web" onclick="setView('web')"><svg><use href="#i-monitor"/></svg><span data-t="demo.web"></span></button>
+  </div>
+</div>
+
+<div id="role-bar" class="demo-bar hidden">
+  <div class="pill-group">
+    <button class="pill" id="role-pharmacist" onclick="setRole('pharmacist')"><svg><use href="#i-user"/></svg><span data-t="demo.rolePharmacist"></span></button>
+    <button class="pill" id="role-pharmacy" onclick="setRole('pharmacy')"><svg><use href="#i-home"/></svg><span data-t="demo.rolePharmacy"></span></button>
+    <button class="pill" id="role-student" onclick="setRole('student')"><svg><use href="#i-cap"/></svg><span data-t="demo.roleStudent"></span></button>
+    <button class="pill" id="role-admin" onclick="setRole('admin')"><svg><use href="#i-badge"/></svg><span data-t="demo.roleAdmin"></span></button>
+  </div>
+</div>
+
+<p class="demo-note" id="demo-note"></p>
+
+<div id="auth-stage"></div>
+
+<div id="app-stage" class="hidden">
+  <div id="phone-stage">
+    <div class="phone-frame">
+      <div class="phone-statusbar">
+        <span>9:41</span>
+        <div class="statusbar-icons">
+          <div class="signal-bars"><span></span><span></span><span></span><span></span></div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+      <div class="phone-viewport">
+        <div id="phone-header"></div>
+        <div class="phone-body" id="phone-body"></div>
+      </div>
+      <nav class="bottom-nav" id="phone-nav"></nav>
+    </div>
+  </div>
+
+  <div id="web-stage" class="hidden">
+    <div class="web-shell">
+      <aside class="web-sidebar" style="background:linear-gradient(180deg,var(--indigo-dark) 0%,var(--indigo) 100%);">
+        <svg class="header-pattern"><rect width="100%" height="100%" fill="url(#starTile)"/></svg>
+        <div class="web-brand" dir="ltr" id="web-brand">Saydali+</div>
+        <nav class="web-nav" id="web-nav"></nav>
+        <div class="web-sidebar-foot" data-t="brand.positioning"></div>
+      </aside>
+      <main class="web-main">
+        <div id="web-header"></div>
+        <div class="web-body" id="web-body"></div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   1. THE FEE ENGINE
+   A port of src/config/fees.ts. Kept identical on purpose: the whole point of
+   showing a pharmacy a fee breakdown is that the number is the real number.
+   ========================================================================== */
+
+const FEES = {
+  TOTAL_COMMISSION_RATE: 0.10,
+  PHARMACY_SHARE: 0.70,      // 7% of shift value, added ON TOP
+  PHARMACIST_SHARE: 0.30,    // 3% of shift value, deducted FROM payout
+  MINIMUM_COMMISSION_IQD: 2500,
+  TRIAL_DAYS: 30,
+  PROCESSOR_FEE_RATE: 0.02
+};
+
+function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial }) {
+  if (!isFinite(grossAmount) || grossAmount < 0) throw new Error('Invalid gross amount');
+
+  const percentage = grossAmount * FEES.TOTAL_COMMISSION_RATE;
+  const floorApplied = grossAmount > 0 && percentage < FEES.MINIMUM_COMMISSION_IQD;
+  const chargeable = grossAmount === 0 ? 0 : Math.max(percentage, FEES.MINIMUM_COMMISSION_IQD);
+
+  const fullPharmacyFee = Math.round(chargeable * FEES.PHARMACY_SHARE);
+  // Derived by subtraction so the two sides always reconcile to the commission
+  // exactly — rounding each independently can lose or invent a dinar.
+  const fullPharmacistFee = Math.round(chargeable) - fullPharmacyFee;
+
+  const pharmacyFee = pharmacyInTrial ? 0 : fullPharmacyFee;
+  const pharmacistFee = pharmacistInTrial ? 0 : fullPharmacistFee;
+
+  const platformGross = pharmacyFee + pharmacistFee;
+  const pharmacistNet = grossAmount - pharmacistFee;
+  const processorFee = Math.round(pharmacistNet * FEES.PROCESSOR_FEE_RATE);
+
+  return {
+    grossAmount, pharmacyFee, pharmacistFee,
+    pharmacyCharge: grossAmount + pharmacyFee,
+    pharmacistNet, platformGross, processorFee,
+    platformNet: platformGross - processorFee,
+    floorApplied: floorApplied && !(pharmacyInTrial && pharmacistInTrial)
+  };
+}
+
+/* A port of src/lib/time.ts. 22:00–06:00 is eight hours, not minus sixteen. */
+function shiftHours(startTime, endTime) {
+  const m = t => { const [h, mi] = t.split(':').map(Number); return h * 60 + mi; };
+  let mins = m(endTime) - m(startTime);
+  if (mins <= 0) mins += 24 * 60;
+  return Math.round(mins / 60 * 100) / 100;
+}
+
+/* Western numerals in both languages — 40,000, never ٤٠٬٠٠٠. */
+const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const fmt = n => nf.format(Math.round(n));
+const iqd = n => fmt(n) + ' ' + t('common.iqd');
+
+/* ==========================================================================
+   2. LANGUAGE
+   ========================================================================== */
+
+const STRINGS = {
+  ar: {
+    'brand.name':'صيدلي+',
+    'brand.tagline':'شبكة الإسناد للصيدليات والصيادلة وطلبة الصيدلة في العراق',
+    'brand.positioning':'شبكة إسناد مهنية — لا عمل مؤقت.',
+    'demo.phone':'هاتف','demo.web':'حاسوب',
+    'demo.rolePharmacist':'صيدلي','demo.rolePharmacy':'صاحب صيدلية','demo.roleStudent':'طالب','demo.roleAdmin':'مراجع',
+    'demo.noteAuth':'عرض توضيحي — <strong>أي</strong> بريد وكلمة مرور يفتحان التطبيق. بدّل اللغة أعلاه لرؤية الواجهة بالعربية والإنجليزية.',
+    'demo.noteApp':'عرض توضيحي بواجهة التطبيق كما بُني. بدّل الدور أعلاه لرؤية الجوانب الثلاثة وقائمة التوثيق.',
+    'common.iqd':'د.ع','common.hours':'ساعة','common.loading':'…',
+    'common.search':'ابحث عن صيدلية أو منطقة','common.back':'رجوع','common.cancel':'إلغاء',
+    'auth.signIn':'تسجيل الدخول','auth.signOut':'تسجيل الخروج','auth.signUp':'إنشاء حساب',
+    'auth.email':'البريد الإلكتروني','auth.password':'كلمة المرور','auth.confirmPassword':'تأكيد كلمة المرور',
+    'auth.welcomeBack':'أهلاً بعودتك — أدخل بيانات حسابك.',
+    'auth.newHere':'جديد هنا؟','auth.createAccount':'أنشئ حساباً',
+    'auth.alreadyRegistered':'مسجّل مسبقاً؟','auth.chooseRole':'ما الذي يقودك إلى صيدلي+؟',
+    'auth.changeType':'تغيير نوع الحساب',
+    'roles.pharmacist':'أنا صيدلي','roles.pharmacistSub':'اعثر على مناوبات إسناد قريبة منك واحصل على أجرك عن كل مناوبة.',
+    'roles.pharmacy':'أملك صيدلية','roles.pharmacySub':'انشر المناوبات والتدريب، وجد من يغطيها بسرعة.',
+    'roles.student':'أنا طالب صيدلة','roles.studentSub':'اعثر على صيدلية لتدريبك الصيفي.',
+    'f.fullName':'الاسم الكامل','f.fullNameHint':'كما هو مكتوب في هوية النقابة',
+    'f.phone':'رقم الهاتف','f.syndicateNo':'رقم التسجيل في النقابة','f.graduationYear':'سنة التخرج',
+    'f.district':'المنطقة','f.primaryDistrict':'المنطقة الأساسية','f.pharmacyName':'اسم الصيدلية',
+    'f.responsible':'الصيدلي المسؤول','f.licenceNo':'رقم إجازة الصيدلية','f.address':'العنوان',
+    'f.university':'الجامعة','f.universityEmail':'البريد الجامعي',
+    'f.universityEmailHint':'يجب أن يكون بريدك الجامعي الرسمي (‎.edu.iq أو نطاق جامعتك). بريد Gmail أو Yahoo الشخصي غير مقبول.',
+    'f.upload':'ارفع هوية النقابة','f.uploadSub':'صورة أو مسح ضوئي للوجهين',
+    'ver.pendingTitle':'التوثيق قيد التنفيذ',
+    'ver.pendingBody':'أُرسلت بياناتك إلى نقابة الصيادلة العراقيين للتأكيد. تستغرق العملية عادةً حتى أسبوع، وسنراسلك فور انتهائها.',
+    'ver.manualNote':'لا يوجد سجل رقمي للصيادلة في العراق، ولا واجهة برمجية للتحقق من رقم النقابة. لذلك يراجع موظف لدينا وثيقتك يدوياً.',
+    'ver.banner':'حسابك قيد التوثيق. يمكنك التصفح والتقديم الآن — ولن تظهر طلباتك للصيدلية إلا بعد اكتمال التوثيق.',
+    'ver.bannerPharmacy':'حسابك قيد التوثيق. يمكنك التصفح، ولا يمكنك نشر مناوبة حتى تُوثَّق إجازتك.',
+    'ver.continueLimited':'المتابعة بصلاحية محدودة',
+    'ver.s1':'تم إنشاء الحساب','ver.s1sub':'استُلمت بياناتك ووثائقك.',
+    'ver.s2':'توثيق النقابة','ver.s2sub':'قيد المراجعة — حتى سبعة أيام.',
+    'ver.s3':'تفعيل الحساب','ver.s3sub':'تصفّح، وانشر، واستلم أجرك.',
+    'ver.verified':'موثّق من النقابة','ver.pending':'قيد المراجعة',
+    'ver.queued':'سيظهر طلبك للصيدلية بعد اكتمال توثيق حسابك.',
+    'nav.browse':'تصفح','nav.shifts':'مناوباتي','nav.earnings':'الأرباح','nav.cv':'سيرتي','nav.profile':'الحساب',
+    'nav.dashboard':'لوحة التحكم','nav.post':'نشر','nav.applicants':'المتقدمون','nav.trainees':'المتدربون',
+    'nav.placement':'التدريب','nav.logbook':'السجل','nav.queue':'قائمة التوثيق',
+    'l.openShifts':'مناوبة مفتوحة قريبة منك','l.openPlacements':'مكان تدريب مفتوح',
+    'l.allDistricts':'كل المناطق','l.otcOnly':'أدوية بدون وصفة فقط','l.controlled':'يشمل مواد خاضعة للرقابة',
+    'l.certificate':'تُمنح شهادة','l.apply':'تقدّم لهذه المناوبة','l.applyPlacement':'تقدّم لهذا التدريب',
+    'l.applied':'تم التقديم','l.location':'الموقع','l.when':'الموعد','l.rateBasis':'أساس الاحتساب',
+    'l.scope':'النطاق','l.notes':'ملاحظات','l.none':'لا توجد مناوبات مفتوحة في هذه المنطقة الآن.',
+    'l.filled':'مكتملة','l.flat':'مقطوع','l.perHour':'/ساعة',
+    'fee.yourRate':'الأجر المتفق عليه','fee.platformFee':'عمولة المنصة','fee.youReceive':'تستلم',
+    'fee.pharmacyCharged':'تُحاسَب الصيدلية','fee.trialActive':'فترة تجريبية — بلا عمولة',
+    'fee.afterTrial':'بعد انتهاء التجربة:','fee.explainer':'تُضاف 7% على الصيدلية فوق الأجر، وتُخصم 3% من مبلغ الصيدلي. العمولة الكلية 10%.',
+    'fee.floorNote':'الحد الأدنى للعمولة 2,500 د.ع على المناوبات القصيرة، ولهذا تتجاوز النسبة 10% هنا.',
+    'fee.trialDays':'بقي {n} يوماً من فترتك التجريبية المجانية',
+    'post.title':'نشر مناوبة','post.paidShift':'مناوبة مدفوعة','post.internship':'تدريب',
+    'post.date':'التاريخ','post.start':'وقت البدء','post.end':'وقت الانتهاء',
+    'post.howPaid':'كيف تُحتسب أجرة هذه المناوبة؟','post.hourly':'بالساعة','post.flatLabel':'مبلغ مقطوع',
+    'post.ratePerHour':'الأجر بالساعة (د.ع)','post.totalForShift':'إجمالي أجر المناوبة (د.ع)',
+    'post.includesControlled':'تشمل مواد خاضعة للرقابة','post.notes':'ملاحظات للصيدلي',
+    'post.notesPlaceholder':'أي شيء ينبغي معرفته قبل القبول','post.submit':'انشر المناوبة',
+    'post.overnight':'تمتد هذه المناوبة إلى ما بعد منتصف الليل — تُحتسب {h} ساعة.',
+    'post.startDate':'تاريخ البدء','post.endDate':'تاريخ الانتهاء',
+    'post.internshipNote':'تدريب غير مدفوع — تُمنح شهادة إتمام للطالب في النهاية، كما هو معمول به اليوم.',
+    'post.posted':'نُشرت المناوبة.',
+    'app.title':'المتقدمون','app.accept':'قبول','app.accepted':'مقبول',
+    'app.shifts':'{n} مناوبة منجزة','app.reliability':'الالتزام {n}%',
+    'app.noRecord':'لا سجل بعد','app.noRecordHint':'حساب جديد — لم يُنجز مناوبات عبر المنصة بعد.',
+    'app.syndicateId':'رقم النقابة','app.none':'لا يوجد متقدمون بعد.',
+    'app.closes':'قبول متقدّم يغلق الإعلان ويعتذر لبقية المتقدمين.',
+    'app.acceptedToast':'قُبل المتقدم وأُغلق الإعلان.',
+    'h.title':'قائمة التسليم',
+    'h.intro':'تُنجَز هذه القائمة معاً في بداية المناوبة. إقرار الطرفين هو ما يُكمل الحجز ويزيد إحصاءات الصيدلي الموثّقة، وهو المرجع في أي خلاف لاحق.',
+    'h.i1':'عُدّ سجل المواد الخاضعة للرقابة ووقّع عليه الطرفان',
+    'h.i2':'عُدّ رصيد الصندوق واتُّفق عليه',
+    'h.i3':'روجع سجل حرارة الثلاجة',
+    'h.i4':'سُلّمت المفاتيح ورمز الإنذار ومفتاح الخزنة',
+    'h.i5':'تأكّد رقم الطوارئ لصاحب الصيدلية',
+    'h.confirm':'أقرّ بالتسليم','h.allRequired':'أكمل البنود الخمسة قبل الإقرار.',
+    'h.cannotUndo':'لا يمكن التراجع عن الإقرار بعد تسجيله.',
+    'h.waiting':'أقررتَ — بانتظار إقرار الطرف الآخر','h.both':'أقرّ الطرفان — اكتملت المناوبة',
+    'h.otherConfirmed':'أقرّ الطرف الآخر بالفعل.',
+    'b.upcoming':'القادمة','b.completed':'المنجزة','b.none':'لا توجد مناوبات هنا بعد.',
+    'b.viewHandoff':'عرض قائمة التسليم','b.startsIn':'تبدأ خلال {n} يوم',
+    'p.dashboard':'لوحة التحكم','p.openPosts':'إعلان مفتوح','p.filledMonth':'مكتملة هذا الشهر','p.applicants':'متقدم',
+    'pr.verifiedSection':'من السجل الموثّق',
+    'pr.verifiedNote':'تُحتسب هذه الأرقام من مناوباتك وتقييماتك على المنصة ولا يمكن تعديلها — وهذا تحديداً ما يجعلها ذات قيمة لدى صاحب العمل.',
+    'pr.shifts':'مناوبة منجزة','pr.reliability':'الالتزام','pr.rating':'متوسط التقييم',
+    'pr.hours':'ساعة عمل','pr.pharmacies':'صيدلية','pr.memberSince':'عضو منذ',
+    'q.title':'قائمة التوثيق','q.pending':'بانتظار المراجعة',
+    'q.note':'قارن الوثيقة ببيانات النقابة قبل التوثيق. لا يوجد فحص آلي — هذه هي كامل عملية التوثيق.',
+    'q.approve':'توثيق','q.reject':'رفض','q.document':'عرض الوثيقة المرفوعة',
+    'q.empty':'لا توجد طلبات بانتظار المراجعة.','q.verifiedToast':'تم توثيق الحساب.',
+    'q.regFull':'يُعرض رقم التسجيل كاملاً هنا فقط — بلا حجب — لأن المراجع يقارنه بالوثيقة.',
+    'nb.title':'غير مبنية بعد',
+    'nb.earnings':'محرك العمولة والفترة التجريبية وطلب التحويل مبنية ومختبرة في الشيفرة. الناقص هو هذه الشاشة وربط ZainCash و Qi Card الفعلي.',
+    'nb.earningsPhase':'ترتيب البناء — الخطوة ٥: المال',
+    'nb.cv':'قاعدة البيانات تخزّن السيرة بلغتين منفصلتين، والنصف الموثّق يُقرأ من سجل المناوبات ولا يمكن تعديله. المحرِّر وقوائم المهارات وتصدير PDF والمساعد الذكي غير مبنية.',
+    'nb.cvPhase':'ترتيب البناء — الخطوة ٧: السيرة الذاتية',
+    'nb.student':'الجانب البرمجي مكتمل ومختبر: التدريب، وسجل الاثني عشر أسبوعاً الذي يُملأ أولاً بأول، واعتماد الأشهر وإعادتها، وفتح الشهادة. شاشات الكتابة والاعتماد غير مبنية.',
+    'nb.studentPhase':'ترتيب البناء — الخطوة ٦: وحدة الطلبة'
+  },
+  en: {
+    'brand.name':'Saydali+',
+    'brand.tagline':"Iraq's relief network for pharmacies, pharmacists, and pharmacy students.",
+    'brand.positioning':'A professional relief network — not gig work.',
+    'demo.phone':'Phone','demo.web':'Desktop',
+    'demo.rolePharmacist':'Pharmacist','demo.rolePharmacy':'Pharmacy owner','demo.roleStudent':'Student','demo.roleAdmin':'Reviewer',
+    'demo.noteAuth':'Concept demo — <strong>any</strong> email and password will sign you in. Switch language above to see the app in Arabic and English.',
+    'demo.noteApp':'A demo of the app as built. Switch role above to see all three sides and the verification queue.',
+    'common.iqd':'IQD','common.hours':'hours','common.loading':'…',
+    'common.search':'Search pharmacies or districts','common.back':'Back','common.cancel':'Cancel',
+    'auth.signIn':'Sign in','auth.signOut':'Sign out','auth.signUp':'Create account',
+    'auth.email':'Email','auth.password':'Password','auth.confirmPassword':'Confirm password',
+    'auth.welcomeBack':'Welcome back — enter your account details.',
+    'auth.newHere':'New here?','auth.createAccount':'Create an account',
+    'auth.alreadyRegistered':'Already registered?','auth.chooseRole':'What brings you to Saydali+?',
+    'auth.changeType':'Change account type',
+    'roles.pharmacist':"I'm a pharmacist",'roles.pharmacistSub':'Find relief shifts near you and get paid per shift.',
+    'roles.pharmacy':'I own a pharmacy','roles.pharmacySub':'Post shifts and internships, and find cover fast.',
+    'roles.student':"I'm a pharmacy student",'roles.studentSub':'Find a pharmacy for your summer training.',
+    'f.fullName':'Full name','f.fullNameHint':'As written on your Syndicate card',
+    'f.phone':'Phone number','f.syndicateNo':'Syndicate registration number','f.graduationYear':'Graduation year',
+    'f.district':'District','f.primaryDistrict':'Primary district','f.pharmacyName':'Pharmacy name',
+    'f.responsible':'Responsible pharmacist','f.licenceNo':'Pharmacy licence number','f.address':'Address',
+    'f.university':'University','f.universityEmail':'University email',
+    'f.universityEmailHint':"Must be your official university address (.edu.iq or your university's domain). Personal Gmail or Yahoo addresses aren't accepted.",
+    'f.upload':'Upload Syndicate card','f.uploadSub':'Photo or scan, both sides',
+    'ver.pendingTitle':'Verification in progress',
+    'ver.pendingBody':'Your details have been sent to the Syndicate of Iraqi Pharmacists for confirmation. This normally takes up to one week, and we will email you as soon as it is done.',
+    'ver.manualNote':'Iraq has no digital pharmacist registry and no API to check a Syndicate number against, so a person on our side reviews your document by hand.',
+    'ver.banner':'Your account is being verified. You can browse and apply now — your applications stay hidden from pharmacies until verification clears.',
+    'ver.bannerPharmacy':'Your account is being verified. You can browse, but you cannot post a shift until your licence is confirmed.',
+    'ver.continueLimited':'Continue with limited access',
+    'ver.s1':'Account created','ver.s1sub':'Your details and documents were received.',
+    'ver.s2':'Syndicate verification','ver.s2sub':'Under review — up to 7 days.',
+    'ver.s3':'Account activated','ver.s3sub':'Browse, post, and get paid.',
+    'ver.verified':'Syndicate Verified','ver.pending':'Under review',
+    'ver.queued':'Your application will reach the pharmacy once your account is verified.',
+    'nav.browse':'Browse','nav.shifts':'My Shifts','nav.earnings':'Earnings','nav.cv':'My CV','nav.profile':'Profile',
+    'nav.dashboard':'Dashboard','nav.post':'Post','nav.applicants':'Applicants','nav.trainees':'Trainees',
+    'nav.placement':'Placement','nav.logbook':'Logbook','nav.queue':'Review queue',
+    'l.openShifts':'open shifts near you','l.openPlacements':'placements open',
+    'l.allDistricts':'All districts','l.otcOnly':'OTC only','l.controlled':'Includes controlled substances',
+    'l.certificate':'Certificate provided','l.apply':'Apply for this shift','l.applyPlacement':'Apply for this placement',
+    'l.applied':'Applied','l.location':'Location','l.when':'When','l.rateBasis':'Rate basis',
+    'l.scope':'Scope','l.notes':'Notes','l.none':'No open shifts in this district right now.',
+    'l.filled':'Filled','l.flat':'flat','l.perHour':'/hr',
+    'fee.yourRate':'Agreed rate','fee.platformFee':'Platform fee','fee.youReceive':'You receive',
+    'fee.pharmacyCharged':'Pharmacy is charged','fee.trialActive':'Free trial — no commission',
+    'fee.afterTrial':'After the trial ends:','fee.explainer':'7% is added on top for the pharmacy, and 3% is deducted from the pharmacist’s payout. Total commission 10%.',
+    'fee.floorNote':'A minimum commission of 2,500 IQD applies on short shifts, which is why this one exceeds 10%.',
+    'fee.trialDays':'{n} days left in your fee-free trial',
+    'post.title':'Post a shift','post.paidShift':'Paid shift','post.internship':'Internship',
+    'post.date':'Date','post.start':'Start time','post.end':'End time',
+    'post.howPaid':'How is this shift paid?','post.hourly':'By the hour','post.flatLabel':'Full shift',
+    'post.ratePerHour':'Rate per hour (IQD)','post.totalForShift':'Total pay for the shift (IQD)',
+    'post.includesControlled':'Includes controlled substances','post.notes':'Notes for the pharmacist',
+    'post.notesPlaceholder':'Anything they should know before accepting','post.submit':'Post shift',
+    'post.overnight':'This shift runs past midnight — counted as {h} hours.',
+    'post.startDate':'Start date','post.endDate':'End date',
+    'post.internshipNote':'Unpaid placement — a certificate of completion is provided to the student at the end, same as an in-person arrangement today.',
+    'post.posted':'Shift posted.',
+    'app.title':'Applicants','app.accept':'Accept','app.accepted':'Accepted',
+    'app.shifts':'{n} shifts completed','app.reliability':'{n}% reliability',
+    'app.noRecord':'No record yet','app.noRecordHint':'A new account — no shifts completed through the platform yet.',
+    'app.syndicateId':'Syndicate ID','app.none':'No applicants yet.',
+    'app.closes':'Accepting an applicant closes the listing and turns down the others.',
+    'app.acceptedToast':'Applicant accepted and the listing closed.',
+    'h.title':'Handoff checklist',
+    'h.intro':'Worked through together at the start of the shift. Both parties confirming is what completes the booking, what increments the pharmacist’s verified statistics, and what any later dispute is judged against.',
+    'h.i1':'Controlled-substances register counted and signed by both parties',
+    'h.i2':'Till float counted and agreed',
+    'h.i3':'Fridge temperature log checked',
+    'h.i4':'Keys, alarm code and safe access handed over',
+    'h.i5':'Emergency contact for the owner confirmed',
+    'h.confirm':'Confirm handoff','h.allRequired':'Agree all five items before confirming.',
+    'h.cannotUndo':'A confirmation cannot be withdrawn once given.',
+    'h.waiting':'You confirmed — waiting for the other party','h.both':'Both parties confirmed — shift complete',
+    'h.otherConfirmed':'The other party has already confirmed.',
+    'b.upcoming':'Upcoming','b.completed':'Completed','b.none':'Nothing here yet.',
+    'b.viewHandoff':'View handoff checklist','b.startsIn':'Starts in {n} days',
+    'p.dashboard':'Dashboard','p.openPosts':'open posts','p.filledMonth':'filled this month','p.applicants':'applicants',
+    'pr.verifiedSection':'From the verified record',
+    'pr.verifiedNote':'These figures are computed from your shifts and ratings on the platform and cannot be edited — which is precisely what makes them worth something to an employer.',
+    'pr.shifts':'shifts completed','pr.reliability':'reliability','pr.rating':'average rating',
+    'pr.hours':'hours worked','pr.pharmacies':'pharmacies','pr.memberSince':'member since',
+    'q.title':'Verification queue','q.pending':'Awaiting review',
+    'q.note':'Check the document against Syndicate records before verifying. There is no automated check — this is the whole of verification.',
+    'q.approve':'Verify','q.reject':'Reject','q.document':'View uploaded document',
+    'q.empty':'Nothing awaiting review.','q.verifiedToast':'Account verified.',
+    'q.regFull':'The registration number is shown in full here, and only here — the reviewer is comparing it against the document.',
+    'nb.title':'Not built yet',
+    'nb.earnings':'The fee engine, the trial and the payout request are all built and tested in the codebase. What is missing is this screen and the real ZainCash and Qi Card integrations.',
+    'nb.earningsPhase':'Build order — step 5: money',
+    'nb.cv':'The database stores the CV twice, once per language, and the verified half is read from the booking record and cannot be edited. The builder, the preset pickers, PDF export and the AI assist are not built.',
+    'nb.cvPhase':'Build order — step 7: CV',
+    'nb.student':'The database side is complete and tested: placements, the twelve-week forward-fill logbook, month approval and return, and the certificate gate. The writing and approval screens are not built.',
+    'nb.studentPhase':'Build order — step 6: student module'
+  }
+};
+
+let lang = 'ar';
+const t = (key, vars) => {
+  let s = (STRINGS[lang] && STRINGS[lang][key]) || STRINGS.en[key] || key;
+  if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
+  return s;
+};
+
+/* ==========================================================================
+   3. FIXTURE DATA
+   ========================================================================== */
+
+const DATA = {
+  listings: [
+    { id:'l1', pharmacy:{en:'Al-Rahma Pharmacy', ar:'صيدلية الرحمة'}, district:{en:'Karrada', ar:'الكرادة'}, key:'karrada',
+      when:{en:'Tomorrow, 8:00 AM – 4:00 PM', ar:'غداً، 8:00 ص – 4:00 م'}, short:{en:'Tomorrow, 8–4', ar:'غداً، 8–4'},
+      rateType:'hourly', rate:5000, hours:8, controlled:false,
+      notes:{en:'Straightforward counter coverage — no narcotics log involved. I will brief you on the till at handover.',
+             ar:'تغطية كاونتر اعتيادية — بلا سجل مخدرات. سأشرح لك أمر الصندوق عند التسليم.'} },
+    { id:'l2', pharmacy:{en:'Al-Furat Pharmacy', ar:'صيدلية الفرات'}, district:{en:'Jadriya', ar:'الجادرية'}, key:'jadriya',
+      when:{en:'Friday, 4:00 PM – 11:00 PM', ar:'الجمعة، 4:00 م – 11:00 م'}, short:{en:'Fri, 4–11 PM', ar:'الجمعة، 4–11 م'},
+      rateType:'flat', rate:45000, hours:7, controlled:true,
+      notes:{en:'Evening shift — includes a short narcotics-log briefing at handover. Please bring your Syndicate card.',
+             ar:'مناوبة مسائية — تشمل شرحاً مختصراً لسجل المخدرات عند التسليم. يرجى إحضار هوية النقابة.'} },
+    { id:'l3', pharmacy:{en:'Al-Noor Pharmacy', ar:'صيدلية النور'}, district:{en:'Karrada', ar:'الكرادة'}, key:'karrada',
+      when:{en:'Saturday, 8:00 AM – 1:00 PM', ar:'السبت، 8:00 ص – 1:00 م'}, short:{en:'Sat, 8–1', ar:'السبت، 8–1'},
+      rateType:'hourly', rate:4000, hours:5, controlled:false,
+      notes:{en:'Quiet Saturday morning slot. Regular customers, mostly refills.',
+             ar:'فترة صباحية هادئة يوم السبت. مراجعون معتادون، غالباً إعادة صرف.'} },
+    { id:'l4', pharmacy:{en:'Al-Amal Pharmacy', ar:'صيدلية الأمل'}, district:{en:'Zayouna', ar:'زيونة'}, key:'zayouna',
+      when:{en:'Sunday, 10:00 PM – 6:00 AM', ar:'الأحد، 10:00 م – 6:00 ص'}, short:{en:'Sun, 10 PM–6 AM', ar:'الأحد، 10 م–6 ص'},
+      rateType:'hourly', rate:6000, hours:8, controlled:true, overnight:true,
+      notes:{en:'Overnight cover while I travel. Detailed handoff checklist in-app; the safe code is handed over in person.',
+             ar:'تغطية ليلية أثناء سفري. قائمة تسليم مفصّلة في التطبيق، ورمز الخزنة يُسلَّم شخصياً.'} }
+  ],
+  applicants: [
+    { id:'a1', name:{en:'Noor Al-Sultani', ar:'نور السلطاني'}, initials:'نس', district:{en:'Karrada', ar:'الكرادة'},
+      reg:'••••31', shifts:22, reliability:96, rating:4.8 },
+    { id:'a2', name:{en:'Mustafa Hussein', ar:'مصطفى حسين'}, initials:'مح', district:{en:'Jadriya', ar:'الجادرية'},
+      reg:'••••07', shifts:0, reliability:null, rating:null }
+  ],
+  reviewQueue: [
+    { id:'r1', name:{en:'Zahraa Al-Khafaji', ar:'زهراء الخفاجي'}, role:{en:'Pharmacist', ar:'صيدلي'},
+      reg:'IQ-PH-014772', district:{en:'Mansour', ar:'المنصور'}, doc:true },
+    { id:'r2', name:{en:'Al-Hikma Pharmacy', ar:'صيدلية الحكمة'}, role:{en:'Pharmacy', ar:'صيدلية'},
+      reg:'IQ-PHM-000418', district:{en:'Adhamiya', ar:'الأعظمية'}, doc:true }
+  ],
+  districts:[
+    {key:'all', en:'All districts', ar:'كل المناطق'},
+    {key:'karrada', en:'Karrada', ar:'الكرادة'},
+    {key:'jadriya', en:'Jadriya', ar:'الجادرية'},
+    {key:'zayouna', en:'Zayouna', ar:'زيونة'}
+  ]
+};
+
+/* Mutable demo state. */
+const S = {
+  role: 'pharmacist',
+  screen: 'browse',
+  view: 'phone',
+  verified: true,       // flipped by the "limited access" path in signup
+  trial: true,
+  trialDays: 18,
+  district: 'all',
+  openListing: null,
+  applied: {},
+  accepted: {},
+  reviewed: {},
+  handoff: { i1:false, i2:false, i3:false, i4:false, i5:false },
+  handoffConfirmedByMe: false,
+  handoffConfirmedByOther: true,   // the pharmacy has already signed off
+  postType: 'shift',
+  rateType: 'hourly',
+  rate: 5000,
+  start: '08:00',
+  end: '16:00'
+};
+
+const L = o => (o && (o[lang] !== undefined ? o[lang] : o.en)) || '';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const icon = (n, cls) => '<svg class="' + (cls||'') + '"><use href="#i-' + n + '"/></svg>';
+
+/* ==========================================================================
+   4. SCREEN TEMPLATES
+   Rendered into either shell, so the phone and desktop layouts cannot drift.
+   ========================================================================== */
+
+function headerHtml(eyebrow, title) {
+  return '<div class="app-header">' +
+    '<svg class="header-pattern"><rect width="100%" height="100%" fill="url(#starTile)"/></svg>' +
+    '<div class="header-row"><div>' +
+      '<p class="header-eyebrow">' + esc(eyebrow) + '</p>' +
+      '<h1 class="header-title">' + esc(title) + '</h1>' +
+    '</div><button class="icon-btn" aria-label="Notifications">' + icon('bell') + '</button></div></div>';
+}
+
+function verificationBanner() {
+  if (S.verified) return '';
+  const msg = S.role === 'pharmacy' ? t('ver.bannerPharmacy') : t('ver.banner');
+  return '<div class="banner banner-amber" style="border-radius:0;border-inline:none;border-top:none;">' +
+    icon('hourglass') + '<p>' + esc(msg) + '</p></div>';
+}
+
+function notBuilt(bodyKey, phaseKey) {
+  return '<div class="not-built"><div class="not-built-icon">' + icon('lock') + '</div>' +
+    '<h3>' + esc(t('nb.title')) + '</h3><p>' + esc(t(bodyKey)) + '</p>' +
+    '<p class="phase">' + esc(t(phaseKey)) + '</p></div>';
+}
+
+/* ---------- Browse ---------- */
+
+function listingCard(l) {
+  const total = l.rateType === 'hourly' ? l.rate * l.hours : l.rate;
+  const basis = l.rateType === 'hourly'
+    ? fmt(l.rate) + t('l.perHour') + ' × ' + l.hours + 'h'
+    : t('l.flat') + ' · ' + l.hours + 'h';
+
+  return '<button class="listing-card" onclick="openListing(\'' + l.id + '\')">' +
+    '<div class="listing-top">' +
+      '<div class="pharmacy-name">' + esc(L(l.pharmacy)) + '</div>' +
+      '<div style="text-align:end;"><div class="pay-amount">' + fmt(total) + '</div>' +
+      '<div class="pay-basis figure">' + esc(basis) + '</div></div>' +
+    '</div>' +
+    '<div class="meta-line">' + icon('pin') + esc(L(l.district)) +
+      '<span style="color:var(--ink-faint)">·</span>' + icon('clock') + esc(L(l.short)) + '</div>' +
+    '<div class="tag-row">' +
+      (l.controlled ? '<span class="badge badge-controlled">' + esc(t('l.controlled')) + '</span>'
+                    : '<span class="badge badge-otc">' + esc(t('l.otcOnly')) + '</span>') +
+      (S.applied[l.id] ? '<span class="badge badge-verified">' + esc(t('l.applied')) + '</span>' : '') +
+    '</div></button>';
+}
+
+function screenBrowse() {
+  const list = DATA.listings.filter(l => S.district === 'all' || l.key === S.district);
+  const chips = DATA.districts.map(d =>
+    '<button class="chip' + (S.district === d.key ? ' active' : '') + '" onclick="setDistrict(\'' + d.key + '\')">' +
+    esc(L(d)) + '</button>').join('');
+
+  return '<div class="screen-body">' +
+    '<div class="chip-row">' + chips + '</div>' +
+    '<p class="section-eyebrow">' + list.length + ' ' + esc(t('l.openShifts')) + '</p>' +
+    (list.length
+      ? '<div class="grid-cards">' + list.map(listingCard).join('') + '</div>'
+      : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+        esc(t('l.none')) + '</div>') +
+    '</div>';
+}
+
+/* ---------- Listing detail, with the fee breakdown ---------- */
+
+function feeBreakdown(gross) {
+  const now   = calculateFees({ grossAmount: gross, pharmacyInTrial:false, pharmacistInTrial: S.trial });
+  const later = calculateFees({ grossAmount: gross, pharmacyInTrial:false, pharmacistInTrial:false });
+
+  let html = '<div class="card card-pad">' +
+    '<dl>' +
+      '<div class="fee-line"><dt>' + esc(t('fee.yourRate')) + '</dt><dd>' + iqd(gross) + '</dd></div>' +
+      '<div class="fee-line"><dt>' + esc(t('fee.platformFee')) + '</dt><dd' +
+        (S.trial ? ' class="fee-trial"' : '') + '>' +
+        (S.trial ? esc(t('fee.trialActive')) : '− ' + iqd(now.pharmacistFee)) + '</dd></div>' +
+      '<div class="fee-line fee-total"><dt>' + esc(t('fee.youReceive')) + '</dt>' +
+        '<dd>' + iqd(now.pharmacistNet) + '</dd></div>' +
+    '</dl>';
+
+  // Both numbers, always. Showing only the trial figure would make the first
+  // month feel cheaper than the product is.
+  if (S.trial) {
+    html += '<p class="fee-foot">' + esc(t('fee.afterTrial')) + ' <strong class="figure">' +
+      iqd(later.pharmacistNet) + '</strong> (− ' + iqd(later.pharmacistFee) + ')</p>';
+  }
+  html += '<p class="fee-foot" style="border-top:none;padding-top:6px;">' + esc(t('fee.explainer')) +
+    (later.floorApplied ? ' ' + esc(t('fee.floorNote')) : '') + '</p>';
+
+  return html + '</div>';
+}
+
+function screenListing() {
+  const l = DATA.listings.find(x => x.id === S.openListing);
+  if (!l) return screenBrowse();
+  const total = l.rateType === 'hourly' ? l.rate * l.hours : l.rate;
+  const basis = l.rateType === 'hourly'
+    ? fmt(l.rate) + ' ' + t('common.iqd') + t('l.perHour') + ' × ' + l.hours + ' ' + t('common.hours')
+    : t('l.flat') + ' — ' + l.hours + ' ' + t('common.hours');
+
+  const kv = (ic, label, value) =>
+    '<div class="kv">' + icon(ic) + '<div><div class="kv-label">' + esc(label) + '</div>' +
+    '<div class="kv-value">' + esc(value) + '</div></div></div>';
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<button class="btn-ghost" onclick="goto(\'browse\')">' + esc(t('common.back')) + '</button>' +
+    '<div class="card card-pad">' +
+      kv('pin', t('l.location'), L(l.district)) +
+      kv('clock', t('l.when'), L(l.when)) +
+      kv('clock', t('l.rateBasis'), basis) +
+      kv('badge', t('l.scope'), l.controlled ? t('l.controlled') : t('l.otcOnly')) +
+    '</div>' +
+    '<div class="card card-pad" style="background:var(--mist);font-size:13px;line-height:1.65;color:var(--ink-soft);">' +
+      esc(L(l.notes)) + '</div>' +
+    feeBreakdown(total) +
+    (S.applied[l.id]
+      ? '<div class="banner banner-green">' + icon('badge') + '<p>' + esc(t('l.applied')) +
+        (S.verified ? '' : ' — ' + esc(t('ver.queued'))) + '</p></div>'
+      : '<button class="btn-primary" onclick="applyTo(\'' + l.id + '\')">' + esc(t('l.apply')) + '</button>' +
+        (S.verified ? '' : '<p style="font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.6;">' +
+          esc(t('ver.queued')) + '</p>')) +
+    '</div></div>';
+}
+
+/* ---------- My shifts ---------- */
+
+function screenShifts() {
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<p class="section-eyebrow">' + esc(t('b.upcoming')) + '</p>' +
+    '<div class="card card-pad">' +
+      '<div class="listing-top" style="margin-bottom:6px;">' +
+        '<div class="pharmacy-name">' + esc(L(DATA.listings[1].pharmacy)) + '</div>' +
+        '<span class="badge badge-pending">' + esc(t('b.startsIn', {n:2})) + '</span></div>' +
+      '<div class="meta-line" style="margin-bottom:12px;">' + icon('clock') +
+        esc(L(DATA.listings[1].when)) + '<span style="color:var(--ink-faint)">·</span>' +
+        '<span class="figure">' + iqd(45000) + '</span></div>' +
+      '<button class="btn-secondary" onclick="goto(\'handoff\')">' + esc(t('b.viewHandoff')) + '</button>' +
+    '</div>' +
+    '<p class="section-eyebrow">' + esc(t('b.completed')) + '</p>' +
+    '<div class="card">' +
+      '<div class="row"><div class="row-body"><div class="row-title">' + esc(L(DATA.listings[0].pharmacy)) +
+        '</div><div class="row-sub">' + (lang==='ar'?'الأسبوع الماضي':'Last week') + '</div></div>' +
+        '<span class="rating">' + icon('star') + '5.0</span></div>' +
+      '<div class="row"><div class="row-body"><div class="row-title">' + esc(L(DATA.listings[2].pharmacy)) +
+        '</div><div class="row-sub">' + (lang==='ar'?'قبل أسبوعين':'2 weeks ago') + '</div></div>' +
+        '<span class="rating">' + icon('star') + '4.0</span></div>' +
+    '</div></div></div>';
+}
+
+/* ---------- Handoff ---------- */
+
+function screenHandoff() {
+  const keys = ['i1','i2','i3','i4','i5'];
+  const all = keys.every(k => S.handoff[k]);
+  const locked = S.handoffConfirmedByMe;
+
+  const items = keys.map(k =>
+    '<button class="check-item' + (S.handoff[k] ? ' done' : '') + '"' +
+      (locked ? ' disabled' : '') + ' onclick="toggleHandoff(\'' + k + '\')" aria-pressed="' + !!S.handoff[k] + '">' +
+      '<span class="check-box">' + icon('check') + '</span>' +
+      '<span class="check-text">' + esc(t('h.' + k)) + '</span></button>').join('');
+
+  let footer;
+  if (S.handoffConfirmedByMe && S.handoffConfirmedByOther) {
+    footer = '<div class="banner banner-green" style="justify-content:center;">' + icon('badge') +
+      '<p style="font-weight:600;color:var(--palm);">' + esc(t('h.both')) + '</p></div>';
+  } else if (S.handoffConfirmedByMe) {
+    footer = '<div class="banner banner-amber" style="justify-content:center;"><p>' + esc(t('h.waiting')) + '</p></div>';
+  } else {
+    footer = '<button class="btn-primary" onclick="confirmHandoff()"' + (all ? '' : ' disabled') + '>' +
+      esc(t('h.confirm')) + '</button>' +
+      '<p style="font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.6;">' +
+      esc(all ? t('h.cannotUndo') : t('h.allRequired')) + '</p>';
+  }
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<button class="btn-ghost" onclick="goto(\'shifts\')">' + esc(t('common.back')) + '</button>' +
+    '<div class="banner banner-indigo">' + icon('clipboard') + '<p>' + esc(t('h.intro')) + '</p></div>' +
+    '<div class="card">' + items + '</div>' +
+    (S.handoffConfirmedByOther && !S.handoffConfirmedByMe
+      ? '<p style="font-size:12px;color:var(--ink-faint);text-align:center;">' + esc(t('h.otherConfirmed')) + '</p>'
+      : '') +
+    footer +
+    '</div></div>';
+}
+
+/* ---------- Pharmacist profile ---------- */
+
+function screenProfile() {
+  const stat = (v, label) => '<div class="stat-card"><span class="stat-num">' + v +
+    '</span><span class="stat-label">' + esc(label) + '</span></div>';
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="tag-row">' +
+      (S.verified
+        ? '<span class="badge badge-verified">' + icon('badge') + esc(t('ver.verified')) + '</span>'
+        : '<span class="badge badge-pending">' + icon('hourglass') + esc(t('ver.pending')) + '</span>') +
+      '<span class="badge badge-muted">' + esc(lang==='ar'?'الكرادة':'Karrada') + '</span>' +
+    '</div>' +
+    '<p class="section-eyebrow">' + esc(t('pr.verifiedSection')) + '</p>' +
+    '<div class="stat-grid">' + stat(38, t('pr.shifts')) + stat('96%', t('pr.reliability')) + stat('4.9', t('pr.rating')) + '</div>' +
+    '<div class="stat-grid">' + stat(304, t('pr.hours')) + stat(11, t('pr.pharmacies')) + stat('2024', t('pr.memberSince')) + '</div>' +
+    '<p style="font-size:11.5px;color:var(--ink-faint);line-height:1.7;">' + esc(t('pr.verifiedNote')) + '</p>' +
+    '<button class="btn-secondary" onclick="signOut()">' + esc(t('auth.signOut')) + '</button>' +
+    '</div></div>';
+}
+
+/* ---------- Pharmacy dashboard ---------- */
+
+function screenDashboard() {
+  const stat = (v, label) => '<div class="stat-card"><span class="stat-num">' + v +
+    '</span><span class="stat-label">' + esc(label) + '</span></div>';
+
+  const post = (title, meta, badge, badgeClass) =>
+    '<div class="card card-pad"><div class="listing-top" style="margin-bottom:0;"><div>' +
+      '<div class="pharmacy-name" style="font-size:14px;">' + esc(title) + '</div>' +
+      '<div class="meta-line" style="margin:4px 0 0;">' + esc(meta) + '</div></div>' +
+      '<span class="badge ' + badgeClass + '">' + esc(badge) + '</span></div></div>';
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
+      esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
+    '<div class="stat-grid">' + stat(2, t('p.openPosts')) + stat(6, t('p.filledMonth')) + stat(2, t('p.applicants')) + '</div>' +
+    '<p class="section-eyebrow">' + esc(t('p.dashboard')) + '</p>' +
+    post(lang==='ar'?'تغطية السبت':'Saturday coverage',
+         (lang==='ar'?'8:00 ص – 2:00 م · ':'8:00 AM – 2:00 PM · ') + fmt(30000) + ' ' + t('common.iqd'),
+         '2 ' + t('p.applicants'), 'badge-pending') +
+    post(lang==='ar'?'تدريب صيفي':'Summer training',
+         lang==='ar'?'15 حزيران – 7 أيلول':'15 June – 7 September',
+         t('l.certificate'), 'badge-stage') +
+    post(lang==='ar'?'مساء الخميس':'Thursday evening',
+         (lang==='ar'?'6:00 م – 11:00 م · ':'6:00 PM – 11:00 PM · ') + fmt(42000) + ' ' + t('common.iqd'),
+         t('l.filled'), 'badge-verified') +
+    '</div></div>';
+}
+
+/* ---------- Post a shift ---------- */
+
+function screenPost() {
+  const hours = shiftHours(S.start, S.end);
+  const total = S.rateType === 'hourly' ? S.rate * hours : S.rate;
+  const now   = calculateFees({ grossAmount: total, pharmacyInTrial: S.trial, pharmacistInTrial:false });
+  const later = calculateFees({ grossAmount: total, pharmacyInTrial:false, pharmacistInTrial:false });
+  const crossesMidnight = S.end <= S.start;
+
+  if (S.postType === 'internship') {
+    return '<div class="screen-body"><div class="constrain">' +
+      '<div class="segmented">' +
+        '<button onclick="setPostType(\'shift\')">' + esc(t('post.paidShift')) + '</button>' +
+        '<button class="active" onclick="setPostType(\'internship\')">' + esc(t('post.internship')) + '</button>' +
+      '</div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label>' + esc(t('post.startDate')) + '</label><input type="date"></div>' +
+        '<div class="field"><label>' + esc(t('post.endDate')) + '</label><input type="date"></div>' +
+      '</div>' +
+      '<div class="banner banner-amber" style="margin-bottom:15px;">' + icon('cap') +
+        '<p>' + esc(t('post.internshipNote')) + '</p></div>' +
+      '<div class="field"><label>' + esc(t('post.notes')) + '</label><textarea placeholder="' +
+        esc(t('post.notesPlaceholder')) + '"></textarea></div>' +
+      '<button class="btn-primary" onclick="toast(t(\'post.posted\'))"' + (S.verified?'':' disabled') + '>' +
+        esc(t('post.submit')) + '</button>' +
+      (S.verified ? '' : '<p style="font-size:12px;color:var(--ink-faint);text-align:center;margin-top:8px;line-height:1.6;">' +
+        esc(t('ver.bannerPharmacy')) + '</p>') +
+      '</div></div>';
+  }
+
+  return '<div class="screen-body"><div class="constrain">' +
+    '<div class="segmented">' +
+      '<button class="active" onclick="setPostType(\'shift\')">' + esc(t('post.paidShift')) + '</button>' +
+      '<button onclick="setPostType(\'internship\')">' + esc(t('post.internship')) + '</button>' +
+    '</div>' +
+
+    '<div class="field"><label>' + esc(t('post.date')) + '</label><input type="date"></div>' +
+
+    '<div class="field-row">' +
+      '<div class="field"><label>' + esc(t('post.start')) + '</label>' +
+        '<input type="time" value="' + S.start + '" oninput="setTime(\'start\', this.value)"></div>' +
+      '<div class="field"><label>' + esc(t('post.end')) + '</label>' +
+        '<input type="time" value="' + S.end + '" oninput="setTime(\'end\', this.value)"></div>' +
+    '</div>' +
+
+    (crossesMidnight
+      ? '<p class="field-hint" style="color:var(--amber);margin:-8px 0 14px;">' +
+        esc(t('post.overnight', {h: hours})) + '</p>' : '') +
+
+    '<div class="field"><span class="field-label">' + esc(t('post.howPaid')) + '</span>' +
+      '<div class="segmented" style="margin-bottom:0;">' +
+        '<button class="' + (S.rateType==='hourly'?'active':'') + '" onclick="setRateType(\'hourly\')">' +
+          esc(t('post.hourly')) + '</button>' +
+        '<button class="' + (S.rateType==='flat'?'active':'') + '" onclick="setRateType(\'flat\')">' +
+          esc(t('post.flatLabel')) + '</button>' +
+      '</div></div>' +
+
+    '<div class="field"><label>' +
+      esc(S.rateType==='hourly' ? t('post.ratePerHour') : t('post.totalForShift')) + '</label>' +
+      '<input type="number" class="figure" value="' + S.rate + '" oninput="setRate(this.value)">' +
+      '<p class="field-hint">' + esc(
+        S.rateType === 'hourly'
+          ? hours + ' × ' + fmt(S.rate) + ' = ' + fmt(total) + ' ' + t('common.iqd')
+          : (lang==='ar'
+              ? 'مبلغ مقطوع (' + hours + ' ساعة) — أي ' + fmt(hours ? total/hours : 0) + ' د.ع للساعة'
+              : 'Flat for the shift (' + hours + ' hours) — works out at ' + fmt(hours ? total/hours : 0) + ' IQD/hour')
+      ) + '</p>' +
+
+      /* Both numbers, always — never just the trial one. */
+      '<p class="field-hint" style="' + (S.trial ? 'color:var(--palm);font-weight:600;' : '') + '">' +
+        (S.trial
+          ? esc(t('fee.trialActive')) + ' · ' + esc(lang==='ar'?'تدفع':'You pay') + ' <span class="figure">' + iqd(total) +
+            '</span> — ' + esc(t('fee.afterTrial')) + ' <span class="figure">' + iqd(later.pharmacyCharge) + '</span>'
+          : esc(lang==='ar'?'تدفع':'You pay') + ' <span class="figure">' + iqd(now.pharmacyCharge) + '</span> · ' +
+            esc(lang==='ar'?'يستلم الصيدلي':'Pharmacist receives') + ' <span class="figure">' + iqd(later.pharmacistNet) + '</span>') +
+      '</p>' +
+      (later.floorApplied
+        ? '<p class="field-hint" style="color:var(--amber);">' + esc(t('fee.floorNote')) + '</p>' : '') +
+    '</div>' +
+
+    '<div class="checkbox-row"><input type="checkbox" id="ctrl"><label for="ctrl">' +
+      esc(t('post.includesControlled')) + '</label></div>' +
+
+    '<div class="field"><label>' + esc(t('post.notes')) + '</label>' +
+      '<textarea placeholder="' + esc(t('post.notesPlaceholder')) + '"></textarea></div>' +
+
+    '<button class="btn-primary" onclick="toast(t(\'post.posted\'))"' + (S.verified?'':' disabled') + '>' +
+      esc(t('post.submit')) + '</button>' +
+    (S.verified ? '' : '<p style="font-size:12px;color:var(--ink-faint);text-align:center;margin-top:8px;line-height:1.6;">' +
+      esc(t('ver.bannerPharmacy')) + '</p>') +
+    '</div></div>';
+}
+
+/* ---------- Applicants ---------- */
+
+function applicantCard(a) {
+  const done = S.accepted[a.id];
+
+  // A pharmacist with no history reads as "no record yet", never as 100%. A
+  // pharmacy weighing a stranger against a proven pharmacist has to be able to
+  // tell those two apart.
+  const record = (a.shifts > 0 || a.reliability !== null)
+    ? '<span>' + esc(t('app.shifts', {n:a.shifts})) + '</span>' +
+      (a.reliability !== null ? '<span>' + esc(t('app.reliability', {n:a.reliability})) + '</span>' : '')
+    : '<span class="no-record" title="' + esc(t('app.noRecordHint')) + '">' + esc(t('app.noRecord')) + '</span>';
+
+  return '<div class="card card-pad">' +
+    '<div class="applicant-top">' +
+      '<div class="avatar">' + esc(a.initials) + '</div>' +
+      '<div style="flex:1;"><div style="font-weight:600;font-size:14px;">' + esc(L(a.name)) + '</div>' +
+        '<div style="font-size:12px;color:var(--ink-faint);margin-top:2px;">' + esc(L(a.district)) + '</div></div>' +
+      (a.rating !== null ? '<span class="rating">' + icon('star') + a.rating + '</span>' : '') +
+    '</div>' +
+    '<div class="meta-line" style="gap:12px;">' + record + '</div>' +
+    '<div style="font-size:12px;color:var(--ink-faint);margin-bottom:12px;">' + esc(t('app.syndicateId')) +
+      ': <span class="figure" dir="ltr">' + esc(a.reg) + '</span></div>' +
+    '<div style="display:flex;justify-content:flex-end;">' +
+      (done
+        ? '<span class="badge badge-verified">' + esc(t('app.accepted')) + '</span>'
+        : '<button class="btn-small" onclick="accept(\'' + a.id + '\')">' + esc(t('app.accept')) + '</button>') +
+    '</div></div>';
+}
+
+function screenApplicants() {
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<p style="font-size:12px;color:var(--ink-faint);line-height:1.6;">' + esc(t('app.closes')) + '</p>' +
+    DATA.applicants.map(applicantCard).join('') +
+    '</div></div>';
+}
+
+/* ---------- Verification queue ---------- */
+
+function screenQueue() {
+  const rows = DATA.reviewQueue.filter(r => !S.reviewed[r.id]);
+
+  const card = r => '<div class="card card-pad">' +
+    '<div class="listing-top" style="margin-bottom:10px;">' +
+      '<div><div class="pharmacy-name" style="font-size:14px;">' + esc(L(r.name)) + '</div>' +
+      '<div style="font-size:12px;color:var(--ink-faint);margin-top:2px;">' + esc(L(r.role)) + ' · ' +
+        esc(L(r.district)) + '</div></div>' +
+      /* Shown in full here, and only here: the reviewer is comparing it
+         against the document. Everywhere else it is masked. */
+      '<span class="figure" dir="ltr" style="font-size:12.5px;color:var(--ink-soft);">' + esc(r.reg) + '</span>' +
+    '</div>' +
+    '<a href="#" onclick="return false" class="link-btn" style="display:inline-block;margin-bottom:12px;">' +
+      esc(t('q.document')) + '</a>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+      '<button class="btn-ghost" onclick="review(\'' + r.id + '\')">' + esc(t('q.reject')) + '</button>' +
+      '<button class="btn-small green" onclick="review(\'' + r.id + '\')">' + esc(t('q.approve')) + '</button>' +
+    '</div></div>';
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="banner banner-amber">' + icon('hourglass') + '<p>' + esc(t('q.note')) + '</p></div>' +
+    (rows.length
+      ? rows.map(card).join('') +
+        '<p style="font-size:11.5px;color:var(--ink-faint);line-height:1.7;">' + esc(t('q.regFull')) + '</p>'
+      : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+        esc(t('q.empty')) + '</div>') +
+    '</div></div>';
+}
+
+/* ---------- Screen registry ---------- */
+
+const SCREENS = {
+  browse:     { eyebrow:()=>lang==='ar'?'صباح الخير':'Good morning', title:()=>lang==='ar'?'أحمد':'Ahmed', body:screenBrowse },
+  listing:    { eyebrow:()=>{const l=DATA.listings.find(x=>x.id===S.openListing);return l?L(l.district):'';},
+                title:()=>{const l=DATA.listings.find(x=>x.id===S.openListing);return l?L(l.pharmacy):'';}, body:screenListing },
+  shifts:     { eyebrow:()=>t('nav.shifts'), title:()=>t('nav.shifts'), body:screenShifts },
+  handoff:    { eyebrow:()=>t('h.title'), title:()=>t('h.title'), body:screenHandoff },
+  earnings:   { eyebrow:()=>t('nav.earnings'), title:()=>t('nav.earnings'),
+                body:()=>notBuilt('nb.earnings','nb.earningsPhase') },
+  cv:         { eyebrow:()=>t('nav.cv'), title:()=>t('nav.cv'), body:()=>notBuilt('nb.cv','nb.cvPhase') },
+  profile:    { eyebrow:()=>t('nav.profile'), title:()=>lang==='ar'?'أحمد الكبيسي':'Ahmed Al-Kubaisi', body:screenProfile },
+
+  dashboard:  { eyebrow:()=>lang==='ar'?'صيدلية الرحمة':'Al-Rahma Pharmacy', title:()=>t('nav.dashboard'), body:screenDashboard },
+  post:       { eyebrow:()=>t('post.title'), title:()=>t('post.title'), body:screenPost },
+  applicants: { eyebrow:()=>t('app.title'), title:()=>t('app.title'), body:screenApplicants },
+  trainees:   { eyebrow:()=>t('nav.trainees'), title:()=>t('nav.trainees'),
+                body:()=>notBuilt('nb.student','nb.studentPhase') },
+
+  placement:  { eyebrow:()=>t('nav.placement'), title:()=>t('nav.placement'),
+                body:()=>notBuilt('nb.student','nb.studentPhase') },
+  logbook:    { eyebrow:()=>t('nav.logbook'), title:()=>t('nav.logbook'),
+                body:()=>notBuilt('nb.student','nb.studentPhase') },
+
+  queue:      { eyebrow:()=>t('q.pending'), title:()=>t('q.title'), body:screenQueue }
+};
+
+const NAV = {
+  pharmacist: [['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],['earnings','wallet','nav.earnings'],
+               ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
+  pharmacy:   [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
+               ['trainees','clipboard','nav.trainees'],['profile','user','nav.profile']],
+  student:    [['browse','home','nav.browse'],['placement','calendar','nav.placement'],
+               ['logbook','book','nav.logbook'],['profile','user','nav.profile']],
+  admin:      [['queue','badge','nav.queue'],['profile','user','nav.profile']]
+};
+
+/* ==========================================================================
+   5. RENDER
+   ========================================================================== */
+
+function render() {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+  document.getElementById('lang-ar').classList.toggle('active', lang === 'ar');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('view-phone').classList.toggle('active', S.view === 'phone');
+  document.getElementById('view-web').classList.toggle('active', S.view === 'web');
+  ['pharmacist','pharmacy','student','admin'].forEach(r =>
+    document.getElementById('role-' + r).classList.toggle('active', S.role === r));
+
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  document.getElementById('web-brand').textContent = lang === 'ar' ? 'صيدلي+' : 'Saydali+';
+
+  const signedIn = !document.getElementById('app-stage').classList.contains('hidden');
+  document.getElementById('demo-note').innerHTML = signedIn ? t('demo.noteApp') : t('demo.noteAuth');
+
+  if (!signedIn) { renderAuth(); return; }
+
+  const screen = SCREENS[S.screen] || SCREENS.browse;
+  const header = headerHtml(screen.eyebrow(), screen.title());
+  const body = verificationBanner() + screen.body();
+
+  const nav = (NAV[S.role] || NAV.pharmacist);
+  const bottomNav = nav.map(([id, ic, key]) =>
+    '<button class="nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
+    icon(ic) + '<span>' + esc(t(key)) + '</span></button>').join('');
+  const sideNav = nav.map(([id, ic, key]) =>
+    '<button class="web-nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
+    icon(ic) + esc(t(key)) + '</button>').join('');
+
+  document.getElementById('phone-header').innerHTML = header;
+  document.getElementById('phone-body').innerHTML = body;
+  document.getElementById('phone-nav').innerHTML = bottomNav;
+  document.getElementById('web-header').innerHTML = header;
+  document.getElementById('web-body').innerHTML = body;
+  document.getElementById('web-nav').innerHTML = sideNav;
+}
+
+/* ---------- Auth screens ---------- */
+
+let authScreen = 'signin';
+let signupRole = 'pharmacist';
+
+function renderAuth() {
+  const stage = document.getElementById('auth-stage');
+  const field = (label, type, hint, mono) =>
+    '<div class="field"><label>' + esc(label) + '</label>' +
+    '<input type="' + (type||'text') + '"' + (mono ? ' class="figure" dir="ltr"' : '') + '>' +
+    (hint ? '<p class="field-hint">' + esc(hint) + '</p>' : '') + '</div>';
+
+  if (authScreen === 'signin') {
+    stage.innerHTML = '<div class="auth-card">' +
+      /* dir="ltr" on the Latin wordmark: inside an RTL page the bidi algorithm
+         treats the trailing "+" as neutral and renders "+Saydali". */
+      '<div class="auth-brand" dir="ltr">Saydali+</div>' +
+      '<div class="auth-brand-ar" dir="rtl">صيدلي+</div>' +
+      '<p class="auth-tagline">' + esc(t('brand.tagline')) + '</p>' +
+      '<div class="auth-divider"></div>' +
+      '<h2 class="auth-heading">' + esc(t('auth.signIn')) + '</h2>' +
+      '<p class="auth-sub">' + esc(t('auth.welcomeBack')) + '</p>' +
+      field(t('auth.email'), 'email') + field(t('auth.password'), 'password') +
+      '<button class="btn-primary" onclick="enterApp(\'pharmacist\', true)">' + esc(t('auth.signIn')) + '</button>' +
+      '<p class="auth-foot">' + esc(t('auth.newHere')) + ' ' +
+        '<button class="link-btn" onclick="setAuth(\'roles\')">' + esc(t('auth.createAccount')) + '</button></p>' +
+      '</div>';
+
+  } else if (authScreen === 'roles') {
+    const opt = (role, ic) => '<button class="role-option" onclick="chooseRole(\'' + role + '\')">' +
+      '<span class="role-icon">' + icon(ic) + '</span><span>' +
+      '<span class="role-title">' + esc(t('roles.' + role)) + '</span>' +
+      '<span class="role-sub">' + esc(t('roles.' + role + 'Sub')) + '</span></span></button>';
+
+    stage.innerHTML = '<div class="auth-card">' +
+      '<button class="auth-back" onclick="setAuth(\'signin\')">' + icon('chevron') + esc(t('common.back')) + '</button>' +
+      '<h2 class="auth-heading">' + esc(t('auth.signUp')) + '</h2>' +
+      '<p class="auth-sub">' + esc(t('auth.chooseRole')) + '</p>' +
+      opt('pharmacist','user') + opt('pharmacy','home') + opt('student','cap') + '</div>';
+
+  } else if (authScreen === 'signup') {
+    let fields = '';
+    if (signupRole === 'pharmacist') {
+      fields = field(t('f.fullName'), 'text', t('f.fullNameHint')) +
+        field(t('auth.email'), 'email') + field(t('f.phone'), 'tel') +
+        field(t('f.syndicateNo'), 'text', null, true) +
+        '<div class="field-row">' +
+          '<div class="field"><label>' + esc(t('f.graduationYear')) + '</label><input type="number" class="figure" dir="ltr"></div>' +
+          '<div class="field"><label>' + esc(t('f.primaryDistrict')) + '</label><select><option></option>' +
+            '<option>' + esc(lang==='ar'?'الكرادة':'Karrada') + '</option></select></div>' +
+        '</div>' +
+        '<button class="role-option" style="margin-bottom:15px;" onclick="toast(\'—\')">' +
+          '<span class="role-icon">' + icon('clipboard') + '</span><span>' +
+          '<span class="role-title">' + esc(t('f.upload')) + '</span>' +
+          '<span class="role-sub">' + esc(t('f.uploadSub')) + '</span></span></button>';
+    } else if (signupRole === 'pharmacy') {
+      fields = field(t('f.pharmacyName')) + field(t('f.responsible')) +
+        field(t('auth.email'), 'email') + field(t('f.phone'), 'tel') +
+        field(t('f.licenceNo'), 'text', null, true) + field(t('f.address'));
+    } else {
+      fields = field(t('f.fullName')) +
+        '<div class="field"><label>' + esc(t('f.university')) + '</label><select><option></option>' +
+          '<option>' + esc(lang==='ar'?'جامعة بغداد':'University of Baghdad') + '</option></select></div>' +
+        field(t('f.universityEmail'), 'email', t('f.universityEmailHint')) +
+        field(t('f.phone'), 'tel');
+    }
+
+    const note = signupRole === 'student'
+      ? (lang==='ar'
+          ? 'التحقق فوري: نتأكد من نطاق بريدك الجامعي ثم ترسل رابط تأكيد.'
+          : 'Verification is instant: we check your university email domain, then send a confirmation link.')
+      : t('ver.manualNote');
+
+    stage.innerHTML = '<div class="auth-card">' +
+      '<button class="auth-back" onclick="setAuth(\'roles\')">' + icon('chevron') + esc(t('auth.changeType')) + '</button>' +
+      '<h2 class="auth-heading">' + esc(t('roles.' + signupRole)) + '</h2>' +
+      '<p class="auth-sub">' + esc(note) + '</p>' +
+      fields + field(t('auth.password'), 'password') + field(t('auth.confirmPassword'), 'password') +
+      '<button class="btn-primary" onclick="' +
+        (signupRole === 'student' ? 'enterApp(\'student\', true)' : 'setAuth(\'pending\')') + '">' +
+        esc(t('auth.signUp')) + '</button>' +
+      '<p class="auth-foot">' + esc(t('auth.alreadyRegistered')) + ' ' +
+        '<button class="link-btn" onclick="setAuth(\'signin\')">' + esc(t('auth.signIn')) + '</button></p>' +
+      '</div>';
+
+  } else if (authScreen === 'pending') {
+    const step = (cls, title, sub) => '<div class="timeline-step ' + cls + '">' +
+      '<span class="timeline-dot"></span><div><div class="timeline-title">' + esc(title) + '</div>' +
+      '<div class="timeline-sub">' + esc(sub) + '</div></div></div>';
+
+    stage.innerHTML = '<div class="auth-card" style="text-align:center;">' +
+      '<div class="not-built-icon" style="background:var(--amber-tint);">' +
+        '<svg style="color:var(--amber);width:22px;height:22px;"><use href="#i-hourglass"/></svg></div>' +
+      '<h2 class="auth-heading">' + esc(t('ver.pendingTitle')) + '</h2>' +
+      '<p class="auth-sub">' + esc(t('ver.pendingBody')) + '</p>' +
+      '<div class="timeline" style="text-align:start;">' +
+        step('done', t('ver.s1'), t('ver.s1sub')) +
+        step('current', t('ver.s2'), t('ver.s2sub')) +
+        step('', t('ver.s3'), t('ver.s3sub')) +
+      '</div>' +
+      '<div class="banner banner-indigo" style="text-align:start;margin-bottom:16px;">' + icon('badge') +
+        '<p>' + esc(t('ver.manualNote')) + '</p></div>' +
+      /* Limited access is the point: browsing and applying keep the account
+         alive through a week of waiting. */
+      '<button class="btn-primary" onclick="enterApp(\'' + signupRole + '\', false)">' +
+        esc(t('ver.continueLimited')) + '</button>' +
+      '</div>';
+  }
+}
+
+/* ==========================================================================
+   6. ACTIONS
+   ========================================================================== */
+
+function setLang(l){ lang = l; render(); }
+function setView(v){
+  S.view = v;
+  document.getElementById('phone-stage').classList.toggle('hidden', v !== 'phone');
+  document.getElementById('web-stage').classList.toggle('hidden', v !== 'web');
+  render();
+}
+function setRole(r){
+  S.role = r;
+  S.screen = (NAV[r] || NAV.pharmacist)[0][0];
+  S.verified = true;
+  render();
+}
+function setAuth(s){ authScreen = s; render(); }
+function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
+
+function enterApp(role, verified){
+  S.role = role === 'pharmacy' ? 'pharmacy' : role;
+  S.verified = verified;
+  S.screen = (NAV[S.role] || NAV.pharmacist)[0][0];
+  document.getElementById('auth-stage').classList.add('hidden');
+  document.getElementById('app-stage').classList.remove('hidden');
+  document.getElementById('role-bar').classList.remove('hidden');
+  render();
+}
+function signOut(){
+  authScreen = 'signin';
+  document.getElementById('auth-stage').classList.remove('hidden');
+  document.getElementById('app-stage').classList.add('hidden');
+  document.getElementById('role-bar').classList.add('hidden');
+  render();
+}
+
+function goto(s){ S.screen = s; render(); scrollTop(); }
+function scrollTop(){
+  const b = S.view === 'phone' ? document.getElementById('phone-body') : document.getElementById('web-body');
+  if (b) b.scrollTop = 0;
+}
+function setDistrict(d){ S.district = d; render(); }
+function openListing(id){ S.openListing = id; S.screen = 'listing'; render(); scrollTop(); }
+function applyTo(id){
+  S.applied[id] = true;
+  toast(S.verified ? t('l.applied') : t('ver.queued'));
+  render();
+}
+function accept(id){ S.accepted[id] = true; toast(t('app.acceptedToast')); render(); }
+function review(id){ S.reviewed[id] = true; toast(t('q.verifiedToast')); render(); }
+
+function toggleHandoff(k){
+  if (S.handoffConfirmedByMe) return;
+  S.handoff[k] = !S.handoff[k];
+  render();
+}
+function confirmHandoff(){
+  if (!['i1','i2','i3','i4','i5'].every(k => S.handoff[k])) return;
+  S.handoffConfirmedByMe = true;
+  toast(t('h.both'));
+  render();
+}
+
+function setPostType(v){ S.postType = v; render(); }
+function setRateType(v){ S.rateType = v; S.rate = v === 'hourly' ? 5000 : 40000; render(); }
+function setRate(v){ S.rate = Number(v) || 0; render(); }
+function setTime(which, v){ if (!v) return; S[which] = v; render(); }
+
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+render();
+</script>
+</body>
+</html>
