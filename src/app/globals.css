@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * "Night Pharmacy".
+ *
+ * Indigo carries primary actions and navigation; amber is for accents, ratings
+ * and anything to do with education; green is reserved for verified and success
+ * states and used nowhere else, so a green badge always means one thing.
+ *
+ * Money, Syndicate IDs and licence numbers are set in mono on purpose — it marks
+ * the data that is verifiable, and separates it from prose at a glance.
+ */
+:root {
+  --ink: #1a1826;
+  --ink-soft: #57536e;
+  --ink-faint: #8b87a3;
+
+  --indigo: #2d2a6e;
+  --indigo-dark: #191735;
+  --indigo-tint: #e7e6f4;
+
+  --amber: #b8791f;
+  --amber-tint: #f5e6c8;
+
+  --palm: #4f7a47;
+  --palm-tint: #e7efe3;
+
+  --mist: #efeef7;
+  --card: #ffffff;
+  --border: #e1dfec;
+
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-ibm-plex-sans), sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
+  --font-arabic: var(--font-noto-kufi), var(--font-ibm-plex-sans), sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background: linear-gradient(180deg, #f0eff9 0%, var(--mist) 100%);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* Arabic gets its own face; it is the default language, not an afterthought. */
+  [dir='rtl'] body,
+  [dir='rtl'] {
+    font-family: var(--font-arabic);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Money and IDs, wherever they appear. */
+  .figure {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /**
+   * The signature header pattern — a geometric star tile, drawn rather than
+   * imported, as a regional cue instead of the generic teal-and-rounded look
+   * every health app defaults to.
+   */
+  .header-pattern {
+    background-image:
+      linear-gradient(135deg, var(--indigo) 0%, var(--indigo-dark) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cg stroke='%23fff' stroke-opacity='.16' fill='none'%3E%3Crect x='7' y='7' width='20' height='20'/%3E%3Crect x='7' y='7' width='20' height='20' transform='rotate(45 17 17)'/%3E%3C/g%3E%3C/svg%3E");
+    background-blend-mode: normal;
+  }
+
+  .header-pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cg stroke='%23fff' stroke-opacity='.16' fill='none'%3E%3Crect x='7' y='7' width='20' height='20'/%3E%3Crect x='7' y='7' width='20' height='20' transform='rotate(45 17 17)'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .card {
+    @apply rounded-card border border-line bg-card;
+  }
+
+  .btn-primary {
+    @apply w-full rounded-[13px] bg-indigo px-4 py-3 text-center font-display
+           text-[14.5px] font-semibold text-white transition
+           hover:bg-indigo-dark disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply w-full rounded-[13px] border-[1.4px] border-indigo bg-card px-4 py-[11.5px]
+           text-center font-display text-sm font-semibold text-indigo transition
+           hover:bg-indigo-tint disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-small {
+    @apply rounded-[9px] bg-indigo px-3 py-[7px] font-display text-[12.5px]
+           font-semibold text-white disabled:bg-palm;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-[9px] py-1 text-[11.5px] font-medium;
+  }
+
+  .badge-verified {
+    @apply badge bg-palm-tint text-palm;
+  }
+
+  .badge-pending {
+    @apply badge bg-amber-tint text-[#8a5610];
+  }
+
+  .badge-otc {
+    @apply badge bg-indigo-tint text-indigo-dark;
+  }
+
+  .badge-controlled {
+    @apply badge bg-amber-tint text-amber;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-[12.5px] font-semibold text-ink-soft;
+  }
+
+  .field-input {
+    @apply w-full rounded-[11px] border-[1.4px] border-line bg-card px-[13px] py-[11px]
+           text-sm outline-none transition focus:border-indigo;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11.5px] uppercase tracking-[0.05em] text-ink-faint;
+  }
+}
+
+/**
+ * Print stylesheet — the no-network fallback for PDF export.
+ *
+ * The CDN route for html2canvas/jsPDF gets blocked in sandboxed contexts, and a
+ * download can be refused outright, so browser print-to-PDF has to work on its
+ * own. Everything but the document being exported is removed from the page.
+ */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .no-print,
+  nav,
+  aside,
+  header button {
+    display: none !important;
+  }
+
+  .print-document {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    width: 100%;
+  }
+
+  .print-document * {
+    /* Keep the colour: a certificate that prints as grey text reads as a draft. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
