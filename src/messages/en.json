@@ -264,7 +264,13 @@
     "returnNote": "Why are you returning it?",
     "returnedNote": "Returned for rewriting: {note}",
     "approveGate": "A month can be approved once all four of its weeks are submitted.",
-    "progress": "{done} of {total} weeks"
+    "progress": "{done} of {total} weeks",
+    "noPlacement": "No active placement yet. Browse the open placements and apply to one.",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "cancelReturn": "Cancel",
+    "returnNeedsNote": "Say why you are returning it (at least ten characters) so the student knows what to fix.",
+    "forwardFillNote": "Each week opens once the previous one is submitted, and a month is approved once all four of its weeks are in."
   },
   "certificate": {
     "title": "Certificate of completion",
@@ -374,7 +380,10 @@
     "hours": "hours",
     "somethingWentWrong": "Something went wrong. Nothing was saved.",
     "whatsapp": "Message on WhatsApp",
-    "markAllRead": "Mark all as read"
+    "markAllRead": "Mark all as read",
+    "exportPdf": "Export PDF",
+    "print": "Print",
+    "exportFellBack": "Direct download was unavailable — the print dialog was used instead."
   },
   "upload": {
     "uploaded": "Document uploaded",
@@ -392,5 +401,8 @@
     "monthApproved": "The pharmacy approved a month of your logbook",
     "placementConfirmed": "You were accepted for the placement",
     "incidentFiled": "A report naming you was filed — you have a right of reply"
+  },
+  "trainees": {
+    "none": "You have no trainees yet."
   }
 }

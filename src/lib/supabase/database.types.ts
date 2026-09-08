@@ -328,6 +328,16 @@ type DetailRelationships<Name extends string> = [
   },
 ];
 
+type PlacementRelationships = [
+  {
+    foreignKeyName: 'placements_pharmacy_id_fkey_details';
+    columns: ['pharmacy_id'];
+    isOneToOne: true;
+    referencedRelation: 'pharmacy_details';
+    referencedColumns: ['profile_id'];
+  },
+];
+
 type HandoffRelationships = [
   {
     foreignKeyName: 'handoffs_booking_id_fkey';
@@ -351,7 +361,7 @@ export type Database = {
       bookings: Table<Booking, BookingRelationships>;
       handoffs: Table<Handoff, HandoffRelationships>;
       ratings: Table<Rating>;
-      placements: Table<Placement>;
+      placements: Table<Placement, PlacementRelationships>;
       log_weeks: Table<LogWeekRow>;
       month_approvals: Table<MonthApproval>;
       cv: Table<CvRow>;
@@ -364,6 +374,7 @@ export type Database = {
       applicant_cards: View<ApplicantCard>;
       placement_certificates: View<PlacementCertificate>;
       payable_bookings: View<PayableBooking>;
+      placement_people: View<PlacementPerson>;
     };
     Functions: {
       accept_application: { Args: { application_id: string }; Returns: Booking | null };
@@ -405,6 +416,16 @@ export type Incident = {
   resolution_note: string | null;
   created_at: string;
 }
+
+/** The narrow projection a host pharmacy sees about its trainee. */
+export type PlacementPerson = {
+  placement_id: string;
+  student_id: string;
+  pharmacy_id: string;
+  student_name_en: string | null;
+  student_name_ar: string | null;
+  university: string | null;
+};
 
 export type PayableBooking = {
   booking_id: string;

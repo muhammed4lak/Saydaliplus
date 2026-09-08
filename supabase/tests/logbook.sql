@@ -186,16 +186,29 @@ select public.assert_rejected(
   'nor approve a month on it'
 );
 
+select public.assert(
+  (select count(*) from public.placement_people) = 0,
+  'nor read the trainee''s name through placement_people'
+);
+
 select public.test_login('88888888-8888-8888-8888-888888888888');
 select public.assert(
   (select count(*) from public.log_weeks) = 0,
   'another student cannot read this student''s log'
+);
+select public.assert(
+  (select count(*) from public.placement_people) = 0,
+  'nor the other student''s placement record'
 );
 
 select public.test_login('33333333-3333-3333-3333-333333333333');
 select public.assert(
   (select count(*) from public.log_weeks) = 12,
   'the host pharmacy can read the whole logbook'
+);
+select public.assert(
+  (select student_name_en from public.placement_people) = 'Zainab Al-Tamimi',
+  'and its trainee''s name, which profiles itself would not give it'
 );
 select public.approve_month((select id from public.placements limit 1), 1);
 select public.assert(
