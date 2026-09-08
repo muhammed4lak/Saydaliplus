@@ -3,6 +3,7 @@ import { Link } from '@/i18n/routing';
 import type { UserRole } from '@/lib/supabase/database.types';
 import { NavIcon, type IconName } from '@/components/icons';
 import { LocaleSwitch } from '@/components/locale-switch';
+import { createClient } from '@/lib/supabase/server';
 
 /**
  * Two genuinely different layouts, as in the prototype: a phone shell with
@@ -112,8 +113,13 @@ export async function AppShell({
   );
 }
 
-/** The page header, carrying the star-tile pattern in both layouts. */
-export function PageHeader({
+/**
+ * The page header, carrying the star-tile pattern in both layouts.
+ *
+ * The bell is a real link with a real count, not decoration — an unread badge
+ * that never changes teaches people to stop looking at it.
+ */
+export async function PageHeader({
   eyebrow,
   title,
   action,
@@ -122,6 +128,16 @@ export function PageHeader({
   title: string;
   action?: React.ReactNode;
 }) {
+  const t = await getTranslations('common');
+  const supabase = await createClient();
+
+  const { count } = await supabase
+    .from('notifications')
+    .select('id', { count: 'exact', head: true })
+    .is('read_at', null);
+
+  const unread = count ?? 0;
+
   return (
     <header className="header-pattern relative overflow-hidden px-5 py-5 text-white md:px-8 md:py-7">
       <div className="relative z-10 flex items-start justify-between gap-3">
@@ -133,7 +149,22 @@ export function PageHeader({
             {title}
           </h1>
         </div>
-        {action}
+
+        <div className="flex shrink-0 items-center gap-2">
+          {action}
+          <Link
+            href="/notifications"
+            aria-label={t('notifications')}
+            className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 transition hover:bg-white/25"
+          >
+            <NavIcon name="bell" className="h-[18px] w-[18px]" />
+            {unread > 0 && (
+              <span className="absolute -end-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-amber px-1 font-mono text-[10px] font-semibold text-white">
+                {unread > 9 ? '9+' : unread}
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
     </header>
   );

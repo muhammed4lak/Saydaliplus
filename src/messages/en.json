@@ -88,7 +88,9 @@
       "rejected": "Not verified"
     },
     "queuedApplication": "Your application will reach the pharmacy once your account is verified.",
-    "manualNote": "Iraq has no digital pharmacist registry, so a person on our side checks your document by hand."
+    "manualNote": "Iraq has no digital pharmacist registry, so a person on our side checks your document by hand.",
+    "documentTitle": "Your document",
+    "documentRequired": "A reviewer cannot verify your account until you upload a photo of your document."
   },
   "listings": {
     "openShifts": "{count, plural, =0 {No open shifts} one {1 open shift} other {# open shifts}} near you",
@@ -189,7 +191,16 @@
     "cancelLate": "Cancelling now is late and counts against your reliability — there isn't time left for the pharmacy to find cover.",
     "cancelConfirm": "Confirm cancellation",
     "rate": "Rate",
-    "rated": "You rated {stars}"
+    "rated": "You rated {stars}",
+    "statuses": {
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "no_show": "No-show",
+      "cancelled": "Cancelled"
+    },
+    "ratePlaceholder": "An optional note for the other party",
+    "cancelRating": "Cancel",
+    "keepShift": "Keep the shift"
   },
   "earnings": {
     "title": "Earnings",
@@ -203,7 +214,18 @@
     "via": "via",
     "transactions": "Transactions",
     "nothingPayable": "Nothing to pay out yet.",
-    "payoutNote": "Funds reach your wallet within a few working days."
+    "payoutNote": "Funds reach your wallet within a few working days.",
+    "methods": {
+      "zaincash": "ZainCash",
+      "qicard": "Qi Card"
+    },
+    "statuses": {
+      "requested": "Requested",
+      "processing": "Processing",
+      "settled": "Settled",
+      "failed": "Failed"
+    },
+    "payoutFailed": "The transfer did not complete. The request is saved and will be retried."
   },
   "logbook": {
     "title": "Training logbook",
@@ -329,7 +351,9 @@
     "rejectReason": "Reason for rejection",
     "document": "Uploaded document",
     "empty": "Nothing awaiting review.",
-    "reviewNote": "Check the document against Syndicate records before verifying. There is no automated check."
+    "reviewNote": "Check the document against Syndicate records before verifying. There is no automated check.",
+    "documentReopen": "Reopen document",
+    "noDocument": "No document uploaded yet — there is nothing to verify against."
   },
   "common": {
     "save": "Save",
@@ -349,6 +373,24 @@
     "perHour": "per hour",
     "hours": "hours",
     "somethingWentWrong": "Something went wrong. Nothing was saved.",
-    "whatsapp": "Message on WhatsApp"
+    "whatsapp": "Message on WhatsApp",
+    "markAllRead": "Mark all as read"
+  },
+  "upload": {
+    "uploaded": "Document uploaded",
+    "uploading": "Uploading…",
+    "replace": "Replace",
+    "tooLarge": "That file is over 10 MB. Try a smaller photo.",
+    "failed": "The upload did not complete. Try again.",
+    "afterSignup": "You can upload the document once your account is created."
+  },
+  "notifications": {
+    "newApplicant": "A pharmacist applied to your listing",
+    "shiftConfirmed": "Your shift is confirmed",
+    "shiftCancelled": "A shift was cancelled",
+    "monthReady": "A month of logs is waiting for your approval",
+    "monthApproved": "The pharmacy approved a month of your logbook",
+    "placementConfirmed": "You were accepted for the placement",
+    "incidentFiled": "A report naming you was filed — you have a right of reply"
   }
 }
