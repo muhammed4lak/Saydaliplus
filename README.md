@@ -43,7 +43,7 @@ reasoned about:
 ./supabase/tests/run.sh    # needs psql pointed at any Postgres 15+
 ```
 
-That rebuilds a throwaway database from the migrations and runs **116
+That rebuilds a throwaway database from the migrations and runs **119
 assertions** as real users — a rival pharmacy, an uninvolved pharmacist, another
 student, a platform admin — checking what each can and cannot see or do.
 `harness.sql` supplies the small part of Supabase the schema depends on
@@ -211,3 +211,9 @@ policy tests, but the screens show a placeholder saying so:
 - **Whether a `pharmacy_details.pharmacy_name_ar` should be mandatory.** Right now
   a pharmacy can register with an English name only, and Arabic-browsing
   pharmacists then see it in Latin script.
+- **How the minimum fee floor should split.** It currently splits 70/30 like any
+  other commission, so on a 20,000 IQD shift the pharmacist pays 750 rather than
+  600 — a 25% increase in their fee, on the shortest and lowest-paid shifts. That
+  sits awkwardly against the principle of not depressing earnings further; the
+  alternative is to put the floor's excess entirely on the pharmacy. A pricing
+  call, not a technical one. Noted in `src/config/fees.ts`.

@@ -80,6 +80,17 @@ export interface FeeBreakdown {
  * The floor is computed on the full commission and then the trial side is zeroed,
  * rather than loading one side with the other's waived share — a pharmacist should
  * never pay more because the pharmacy happens to be new.
+ *
+ * OPEN QUESTION for the founder. When the floor bites, it is split 70/30 like any
+ * other commission, so on a 20,000 IQD shift the pharmacist pays 750 rather than
+ * the 600 the percentage alone would give — a 25% increase in their fee, on the
+ * shortest and lowest-paid shifts. That sits awkwardly against the stated
+ * principle of not depressing earnings further, and the alternative is to let the
+ * floor's excess fall entirely on the pharmacy (pharmacist pays 600, pharmacy
+ * pays 1,900). That protects earnings but makes short shifts disproportionately
+ * expensive for the side of the market that is actually scarce. It is a pricing
+ * judgement, not a technical one; changing it is a few lines here plus the
+ * matching branch in calculate_fees().
  */
 export function calculateFees({
   grossAmount,

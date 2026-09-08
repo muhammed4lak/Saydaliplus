@@ -500,6 +500,31 @@ select public.assert(
 );
 
 \echo ''
+\echo '== a cancelled shift can be covered by someone else =='
+
+-- The whole point of the free-cancellation window is that withdrawing early is
+-- the good outcome. It only is if the pharmacy can then fill the day.
+select public.test_logout();
+insert into public.applications (id, listing_id, applicant_id)
+values ('bbbbbbbb-0000-0000-0000-000000000005',
+        'aaaaaaaa-0000-0000-0000-000000000002',
+        '22222222-2222-2222-2222-222222222222');
+
+select public.test_login('33333333-3333-3333-3333-333333333333');
+select public.accept_application('bbbbbbbb-0000-0000-0000-000000000005');
+
+select public.assert(
+  (select count(*) from public.bookings
+   where listing_id = 'aaaaaaaa-0000-0000-0000-000000000002' and status = 'upcoming') = 1,
+  'a second pharmacist can be booked onto the cancelled shift'
+);
+select public.assert(
+  (select count(*) from public.bookings
+   where listing_id = 'aaaaaaaa-0000-0000-0000-000000000002') = 2,
+  'and the cancelled booking survives as the record reliability is computed from'
+);
+
+\echo ''
 \echo '== a late cancellation does count against the pharmacist =='
 
 select public.test_logout();
