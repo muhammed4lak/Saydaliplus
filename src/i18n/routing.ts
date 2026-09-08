@@ -12,6 +12,19 @@ export const routing = defineRouting({
   locales: ['ar', 'en'],
   defaultLocale: 'ar',
   localePrefix: 'as-needed',
+
+  // Browser negotiation is off deliberately.
+  //
+  // With next-intl's default (`localeDetection: true`), an Accept-Language
+  // header of en-US serves English from the unprefixed path — so "Arabic is the
+  // default" quietly becomes "whatever the handset is set to". In Iraq a great
+  // many phones are set to an English UI by people who read and work in Arabic,
+  // and Android's default out of the box is English. Negotiating on that header
+  // would show most of our users an English product.
+  //
+  // Arabic is what everyone gets. English is a choice, made with the switch and
+  // carried in the URL.
+  localeDetection: false,
 });
 
 export type Locale = (typeof routing.locales)[number];

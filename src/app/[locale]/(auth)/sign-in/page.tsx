@@ -25,7 +25,13 @@ export default async function SignInPage({
       </div>
 
       <div className="w-full max-w-[520px] rounded-[22px] border border-line bg-card p-8 shadow-[0_20px_50px_-24px_rgba(25,23,53,0.28)]">
-        <p className="text-center font-display text-[27px] font-bold text-indigo">Saydali+</p>
+        {/* dir="ltr" on the Latin wordmark: inside an RTL page the bidi
+            algorithm treats the trailing "+" as neutral and moves it to the
+            left, so the brand renders as "+Saydali". The Arabic wordmark below
+            has the same problem in reverse on an English page. */}
+        <p className="text-center font-display text-[27px] font-bold text-indigo" dir="ltr">
+          Saydali+
+        </p>
         <p className="mt-0.5 text-center text-[15px] text-ink-faint" dir="rtl" lang="ar">
           صيدلي+
         </p>

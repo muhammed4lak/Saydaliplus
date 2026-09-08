@@ -16,3 +16,4 @@ next-env.d.ts
 .vercel
 supabase/.branches
 supabase/.temp
+.screens/

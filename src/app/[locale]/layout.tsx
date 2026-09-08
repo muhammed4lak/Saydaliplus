@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { IBM_Plex_Mono, IBM_Plex_Sans, Noto_Kufi_Arabic, Space_Grotesk } from 'next/font/google';
 import { type Locale, localeDirection, routing } from '@/i18n/routing';
@@ -73,6 +73,13 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
 
+  // next-intl 3.x does not pass messages to client components implicitly, so
+  // without this every `useTranslations` in a Client Component throws
+  // MISSING_MESSAGE — the language switch, the apply button, the handoff
+  // checklist. The pages still render server-side, which is exactly what makes
+  // the omission easy to miss.
+  const messages = await getMessages();
+
   return (
     <html
       lang={locale}
@@ -80,7 +87,7 @@ export default async function LocaleLayout({
       className={`${spaceGrotesk.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} ${notoKufi.variable}`}
     >
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
