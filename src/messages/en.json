@@ -325,8 +325,26 @@
       "discard": "Discard",
       "noInvention": "The assistant only reworks what you wrote. It never adds employers, dates, duties or qualifications — your CV is backed by Syndicate verification, and anything invented works against you.",
       "failed": "That didn't complete. Your CV is unchanged.",
-      "rateLimited": "Too many requests. Try again shortly."
-    }
+      "rateLimited": "Too many requests. Try again shortly.",
+      "title": "Writing assistant",
+      "working": "Working…",
+      "nothingToWorkOn": "Write a summary or an experience entry first, so there is something to rework.",
+      "applyStillNeedsSave": "Apply only updates the form — save to keep the change."
+    },
+    "saved": "Saved",
+    "remove": "Remove",
+    "addSkill": "Add another skill",
+    "role": "Role",
+    "organisation": "Organisation",
+    "from": "From",
+    "to": "To",
+    "details": "What you did",
+    "qualification": "Qualification",
+    "institution": "Institution",
+    "year": "Year",
+    "certificateName": "Certificate",
+    "issuer": "Issued by",
+    "otherLangExists": "You also have a version of your CV in the other language."
   },
   "incidents": {
     "report": "Report a problem",
