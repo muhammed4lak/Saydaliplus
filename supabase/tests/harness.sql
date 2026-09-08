@@ -49,6 +49,36 @@ alter default privileges in schema public
 alter default privileges in schema public
   grant execute on functions to authenticated, anon;
 
+-- Assertion helpers shared by the test files.
+create or replace function public.assert(condition boolean, description text)
+returns void
+language plpgsql
+as $$
+begin
+  if condition is not true then
+    raise exception 'FAILED: %', description;
+  end if;
+  raise notice '  ok  %', description;
+end;
+$$;
+
+-- Assert that a statement is rejected, whatever the specific message. Wrapped in
+-- its own block so the failure does not poison the surrounding transaction.
+create or replace function public.assert_rejected(statement text, description text)
+returns void
+language plpgsql
+as $$
+begin
+  begin
+    execute statement;
+  exception when others then
+    raise notice '  ok  % (%)', description, substr(sqlerrm, 1, 60);
+    return;
+  end;
+  raise exception 'FAILED: % — the statement was allowed', description;
+end;
+$$;
+
 -- Become a given user for the statements that follow, with RLS in force.
 create or replace function public.test_login(user_id uuid)
 returns void

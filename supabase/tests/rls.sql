@@ -14,34 +14,6 @@
 
 begin;
 
-create or replace function public.assert(condition boolean, description text)
-returns void
-language plpgsql
-as $$
-begin
-  if condition is not true then
-    raise exception 'FAILED: %', description;
-  end if;
-  raise notice '  ok  %', description;
-end;
-$$;
-
--- Assert that a statement is rejected, whatever the specific message.
-create or replace function public.assert_rejected(statement text, description text)
-returns void
-language plpgsql
-as $$
-begin
-  begin
-    execute statement;
-  exception when others then
-    raise notice '  ok  % (%s)', description, substr(sqlerrm, 1, 60);
-    return;
-  end;
-  raise exception 'FAILED: % — the statement was allowed', description;
-end;
-$$;
-
 -- ---------------------------------------------------------------------------
 -- Fixtures
 -- ---------------------------------------------------------------------------

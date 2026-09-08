@@ -16,4 +16,6 @@ for migration in "${ROOT}"/supabase/migrations/*.sql; do
   psql -q -d "${DB}" -v ON_ERROR_STOP=1 -f "${migration}"
 done
 
-psql -d "${DB}" -v ON_ERROR_STOP=1 -f "${ROOT}/supabase/tests/rls.sql"
+for suite in rls logbook; do
+  psql -d "${DB}" -v ON_ERROR_STOP=1 -f "${ROOT}/supabase/tests/${suite}.sql"
+done
