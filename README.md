@@ -160,58 +160,69 @@ something to ship on an assumption.
 
 ---
 
-## What is not built yet
+## What is built
 
-The brief asks for an honest list rather than a demo that looks finished. Build
-order is steps 1–4 before 5, and that is where this stops.
+Every screen in the navigation is a working screen. There are no placeholder
+panels left.
 
-**Complete, with tests:**
-
-| | |
+| Area | State |
 |---|---|
-| Foundations | design tokens, i18n with Arabic default and RTL, auth, profiles |
-| Verification | three sign-up flows, admin review queue, pending state in RLS |
-| Marketplace | listings (hourly and flat), browse and filter, applications, acceptance, bookings |
-| Handoff | checklist, dual confirmation, derived stats, ratings, reliability, cancellation windows |
+| Auth and verification | Three sign-up flows, document upload to private Storage, admin review queue with signed-URL document viewing |
+| Marketplace | Listings (hourly, flat, overnight), browse and filter, applications, applicant cards, acceptance, bookings |
+| Handoff and completion | Five-item checklist, dual confirmation, derived stats, ratings, cancellation with notice classification |
+| Money | Fee engine with trial and floor, payout requests through the provider interface, per-booking transaction history |
+| Student module | 12-week forward-fill logbook, monthly approval and return, certificate with PDF export |
+| CV | Bilingual builder, preset pickers, verified half read from the record, PDF export, AI assistant |
+| Notifications | Raised by database triggers, rendered in the reader's current language |
+| Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
 
-**Database complete, UI not built** — the rules are implemented and covered by
-policy tests, but the screens show a placeholder saying so:
+### Running it against a real database
 
-- **Student module** (`/logbook`, `/placement`, `/trainees`). `submit_log_week`,
-  `approve_month`, `return_month`, the forward-fill rule, the certificate gate and
-  attendance totals all work and are covered by 30 assertions. The weekly writing
-  surface and the pharmacy's approval view are not built.
-- **Earnings and payouts** (`/earnings`). `request_payout()` works and claims its
-  bookings in the same transaction so a shift cannot be paid twice. The screen is
-  not built.
-- **CV** (`/cv`). The schema stores it twice, once per language, and
-  `pharmacist_stats` supplies the verified half. The builder, preset pickers, PDF
-  export and AI assist are not built.
+```bash
+supabase start
+supabase db reset      # applies migrations, then supabase/seed.sql
+npm run dev
+```
 
-**Not started:**
+The seed gives you five accounts, all with password `password123`:
 
-- **PDF export.** `globals.css` carries the print stylesheet that is the
-  no-network fallback; the `html2canvas` + `jsPDF` path is not wired up. Note the
-  constraint when it is: jsPDF's built-in fonts cannot shape Arabic, so the DOM has
-  to be rasterised to canvas, and the cost is that text in the PDF is not
-  selectable.
-- **AI assist for the CV.** Nothing is implemented. When it is: server-side only,
-  the prompt must forbid invention outright, nothing is applied without a
-  before/after diff the user accepts, JSON parsed defensively, and rate-limited per
-  user. On a CV backed by Syndicate verification, an embellishing model is actively
-  harmful.
-- **Notifications.** The table and RLS exist; nothing is sent. SMS/WhatsApp will
-  outperform push in this market.
-- **Incident UI.** Tiers 1–2 work in the database; there is no reporting screen.
-- **Real payment integration.** The provider interface and a failing-capable mock
-  exist; ZainCash and Qi Card need signed merchant agreements first.
-- **Document uploads.** Sign-up accepts a document URL, but there is no Supabase
-  Storage bucket or upload widget, so the review queue currently has nothing to
-  look at.
-- **Playwright end-to-end tests.** Vitest covers the rules; the browser tests are
-  not written.
-- **Distance on listing cards.** The prototype shows "2.1 km"; no geocoding exists.
-  Cards show the district only.
+| Account | Why it is there |
+|---|---|
+| `ahmed@example.com` | Verified pharmacist with a completed shift, so stats and the CV have something behind them |
+| `noor@example.com` | **Pending** pharmacist who applied while unverified — the queued-application rule, visible |
+| `rahma@example.com` | Verified pharmacy with open shifts, an overnight one, and one that hits the fee floor |
+| `zainab@uobaghdad.edu.iq` | Student |
+| `admin@saydali.example` | Platform reviewer, for the verification queue |
+
+```bash
+npm run test:e2e       # Playwright, against the seeded database
+```
+
+---
+
+## What is still not built
+
+- **Real payment integration.** The provider interface and a failing-capable
+  mock exist and the payout flow runs through them end to end; ZainCash and Qi
+  Card need signed merchant agreements before there is anything to integrate.
+- **SMS/WhatsApp notifications.** In-app notifications work. Push will
+  underperform SMS in this market, and SMS needs a gateway contract.
+- **Incident tier 3.** Deliberately behind a feature flag — see above.
+- **Distance on listing cards.** The prototype showed "2.1 km"; there is no
+  geocoding, so cards show the district.
+- **Public CV pages.** Out of scope for v1 by the brief; sharing is by PDF.
+
+### Verified how
+
+- 75 unit tests over the business rules (fees, overnight hours, university
+  email, logbook transitions, reliability, AI response parsing).
+- 121 policy assertions run against a real Postgres as real users.
+- `npm run typecheck` and `npm run build` clean.
+- Playwright specs covering the Arabic default, the queued application, the
+  document gate on verification, the handoff gate, and the overnight fee
+  preview. **These need a running Supabase** — they were written against the
+  schema and seed, not executed in the environment this was built in, where
+  Docker Hub is blocked by egress policy. Run them before trusting them.
 
 ### Still open
 

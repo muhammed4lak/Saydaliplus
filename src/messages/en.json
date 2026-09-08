@@ -365,6 +365,31 @@
       "unsafe_conditions": "Unsafe working conditions",
       "pressure_to_dispense_improperly": "Pressure to dispense improperly",
       "other": "Other"
+    },
+    "title": "Reports",
+    "aboutYou": "Reports about you",
+    "filedByYou": "Reports you filed",
+    "none": "No reports.",
+    "filed": "Your report was received.",
+    "filedNote": "The other party will be asked for their account. Nothing leaves the platform at this stage.",
+    "noEvidenceYet": "This shift cannot be reported: the handoff checklist was never completed by both parties.",
+    "charactersToGo": "{count} characters to go",
+    "replyPlaceholder": "Give your account of what is alleged.",
+    "sendReply": "Send reply",
+    "replySaved": "Your reply was recorded.",
+    "replyTooShort": "Write a proper account (at least twenty characters).",
+    "tiers": {
+      "tier_1": "Internal flag",
+      "tier_2": "Suspension",
+      "tier_3": "Syndicate escalation"
+    },
+    "statuses": {
+      "submitted": "Submitted",
+      "awaiting_reply": "Awaiting reply",
+      "under_review": "Under review",
+      "upheld": "Upheld",
+      "dismissed": "Dismissed",
+      "withdrawn": "Withdrawn"
     }
   },
   "admin": {

@@ -146,11 +146,20 @@ export default async function MyShiftsPage({
                     {/* Rating is offered only on a completed booking, because
                         that is the only thing the database will accept. */}
                     {booking.status === 'completed' && (
-                      <div className="w-full sm:w-auto">
+                      <div className="flex w-full items-center justify-between gap-3 sm:w-auto">
                         <RateBooking
                           bookingId={booking.id}
                           existingStars={ratedStars.get(booking.id) ?? null}
                         />
+                        {/* Reporting is reachable from the shift it concerns,
+                            not a general complaints box — the report is always
+                            about one booking with one handoff record. */}
+                        <Link
+                          href={`/shifts/${booking.id}/report`}
+                          className="text-[12px] text-ink-faint underline underline-offset-2"
+                        >
+                          {t('incidents.report')}
+                        </Link>
                       </div>
                     )}
                   </li>

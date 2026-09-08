@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { PageBody, PageHeader } from '@/components/app-shell';
 import { NavIcon } from '@/components/icons';
 import { LocaleSwitch } from '@/components/locale-switch';
+import { Link } from '@/i18n/routing';
 import { SignOutButton } from '@/components/sign-out-button';
 import { requireSession, displayName } from '@/lib/session';
 import { createClient } from '@/lib/supabase/server';
@@ -90,6 +91,10 @@ export default async function ProfilePage({
             <span className="text-[13.5px] font-medium">{t('common.language')}</span>
             <LocaleSwitch className="text-ink-soft" />
           </div>
+
+          <Link href="/incidents" className="btn-secondary block text-center">
+            {t('incidents.title')}
+          </Link>
 
           <SignOutButton />
         </div>
