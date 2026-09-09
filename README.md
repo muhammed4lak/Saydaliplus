@@ -19,7 +19,7 @@ npm run dev
 ```
 
 ```bash
-npm test          # 67 unit tests — the business rules
+npm test          # 75 unit tests — the business rules
 npm run typecheck
 npm run build
 ```
@@ -57,7 +57,7 @@ reasoned about:
 ./supabase/tests/run.sh    # needs psql pointed at any Postgres 15+
 ```
 
-That rebuilds a throwaway database from the migrations and runs **118
+That rebuilds a throwaway database from the migrations and runs **125
 assertions** as real users — a rival pharmacy, an uninvolved pharmacist, another
 student, a platform admin — checking what each can and cannot see or do.
 `harness.sql` supplies the small part of Supabase the schema depends on
@@ -225,7 +225,7 @@ npm run test:e2e       # Playwright, against the seeded database
 
 - 75 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing).
-- 121 policy assertions run against a real Postgres as real users.
+- 125 policy assertions run against a real Postgres as real users.
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee
