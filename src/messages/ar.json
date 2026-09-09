@@ -47,7 +47,9 @@
       "graduationYear": "سنة التخرج",
       "district": "المنطقة",
       "primaryDistrict": "المنطقة الأساسية",
-      "pharmacyName": "اسم الصيدلية",
+      "pharmacyNameAr": "اسم الصيدلية بالعربية",
+      "pharmacyNameArHint": "كما هو مكتوب على اللافتة. معظم الصيادلة يتصفحون بالعربية.",
+      "pharmacyNameEn": "اسم الصيدلية بالإنجليزية",
       "responsiblePharmacist": "الصيدلي المسؤول",
       "licenceNo": "رقم إجازة الصيدلية",
       "address": "العنوان",
@@ -66,7 +68,8 @@
       "passwordMatch": "كلمتا المرور غير متطابقتين.",
       "required": "هذا الحقل مطلوب.",
       "universityEmail": "أدخل بريدك الجامعي الرسمي — العناوين الشخصية غير مقبولة.",
-      "signInFailed": "تعذّر تسجيل الدخول. تحقق من بريدك وكلمة المرور."
+      "signInFailed": "تعذّر تسجيل الدخول. تحقق من بريدك وكلمة المرور.",
+      "arabicRequired": "اكتب اسم الصيدلية بالحروف العربية."
     }
   },
   "verification": {

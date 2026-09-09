@@ -24,9 +24,10 @@ insert into public.student_details (profile_id, university, university_email) va
   ('66666666-6666-6666-6666-666666666666', 'University of Baghdad', 'zainab@uobaghdad.edu.iq'),
   ('88888888-8888-8888-8888-888888888888', 'University of Basrah', 'mustafa@uobasrah.edu.iq');
 
-insert into public.pharmacy_details (profile_id, pharmacy_name_en, licence_no) values
-  ('33333333-3333-3333-3333-333333333333', 'Al-Rahma Pharmacy', 'IQ-PHM-000117'),
-  ('44444444-4444-4444-4444-444444444444', 'Al-Furat Pharmacy', 'IQ-PHM-000232');
+insert into public.pharmacy_details
+  (profile_id, pharmacy_name_en, pharmacy_name_ar, licence_no) values
+  ('33333333-3333-3333-3333-333333333333', 'Al-Rahma Pharmacy', 'صيدلية الرحمة', 'IQ-PHM-000117'),
+  ('44444444-4444-4444-4444-444444444444', 'Al-Furat Pharmacy', 'صيدلية الفرات', 'IQ-PHM-000232');
 
 insert into public.listings (id, pharmacy_id, type, district, starts_at, ends_at)
 values ('aaaaaaaa-0000-0000-0000-00000000000a', '33333333-3333-3333-3333-333333333333',

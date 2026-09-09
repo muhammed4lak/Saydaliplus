@@ -23,8 +23,9 @@ insert into public.pharmacist_details (profile_id, syndicate_reg_no, graduation_
   ('11111111-1111-1111-1111-111111111111', 'IQ-PH-004982', 2016),
   ('22222222-2222-2222-2222-222222222222', 'IQ-PH-007731', 2021);
 
-insert into public.pharmacy_details (profile_id, pharmacy_name_en, licence_no) values
-  ('33333333-3333-3333-3333-333333333333', 'Al-Rahma Pharmacy', 'IQ-PHM-000117');
+insert into public.pharmacy_details
+  (profile_id, pharmacy_name_en, pharmacy_name_ar, licence_no) values
+  ('33333333-3333-3333-3333-333333333333', 'Al-Rahma Pharmacy', 'صيدلية الرحمة', 'IQ-PHM-000117');
 
 \echo ''
 \echo '== the CV is per-language and private to its author =='

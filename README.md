@@ -19,7 +19,7 @@ npm run dev
 ```
 
 ```bash
-npm test          # 75 unit tests — the business rules
+npm test          # 82 unit tests — the business rules
 npm run typecheck
 npm run build
 ```
@@ -57,7 +57,7 @@ reasoned about:
 ./supabase/tests/run.sh    # needs psql pointed at any Postgres 15+
 ```
 
-That rebuilds a throwaway database from the migrations and runs **125
+That rebuilds a throwaway database from the migrations and runs **128
 assertions** as real users — a rival pharmacy, an uninvolved pharmacist, another
 student, a platform admin — checking what each can and cannot see or do.
 `harness.sql` supplies the small part of Supabase the schema depends on
@@ -114,6 +114,16 @@ projection with the Syndicate number masked to its last two characters — shown
 all because it is the one real accountability anchor in Iraqi pharmacy, and masked
 because a full registry number held by every pharmacy that ever received an
 application is a gift to an impersonator.
+
+**A pharmacy's Arabic name is mandatory, and must be in Arabic.** Arabic is the
+default and most pharmacists browse in it, so a Latin-only pharmacy name appeared
+in Latin on every listing card, shift row and certificate — the one line that says
+who you would be working for, in a script the reader may not read. Two rules,
+because NOT NULL alone achieves nothing: the column is required, and a check
+constraint requires it to contain Arabic characters, or a pharmacy pastes its
+Latin name into both boxes and the reader is where they started. "Contains
+Arabic", not "is entirely Arabic" — real names carry branch numbers and Latin
+brands. The English name stays optional.
 
 **Reliability has a definition, and cancelling early is not a failure.**
 `reliability_percent` is completed ÷ accepted with adequately-notified
@@ -223,9 +233,9 @@ npm run test:e2e       # Playwright, against the seeded database
 
 ### Verified how
 
-- 75 unit tests over the business rules (fees, overnight hours, university
-  email, logbook transitions, reliability, AI response parsing).
-- 125 policy assertions run against a real Postgres as real users.
+- 82 unit tests over the business rules (fees, overnight hours, university
+  email, logbook transitions, reliability, AI response parsing, Arabic script).
+- 128 policy assertions run against a real Postgres as real users.
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee
@@ -242,9 +252,6 @@ npm run test:e2e       # Playwright, against the seeded database
   test it.
 - **The Syndicate escalation channel** has to be confirmed before tier 3 can be
   enabled.
-- **Whether a `pharmacy_details.pharmacy_name_ar` should be mandatory.** Right now
-  a pharmacy can register with an English name only, and Arabic-browsing
-  pharmacists then see it in Latin script.
 - **How the minimum fee floor should split.** It currently splits 70/30 like any
   other commission, so on a 20,000 IQD shift the pharmacist pays 750 rather than
   600 — a 25% increase in their fee, on the shortest and lowest-paid shifts. That

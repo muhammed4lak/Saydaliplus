@@ -51,7 +51,8 @@ export type PharmacistDetails = {
 export type PharmacyDetails = {
   profile_id: string;
   pharmacy_name_en: string | null;
-  pharmacy_name_ar: string | null;
+  /** Required, and must contain Arabic script — see migration 0013. */
+  pharmacy_name_ar: string;
   licence_no: string;
   address: string | null;
   licence_document_url: string | null;

@@ -42,10 +42,11 @@ insert into public.pharmacist_details (profile_id, syndicate_reg_no, graduation_
   ('11111111-1111-1111-1111-111111111111', 'IQ-PH-004982', 2016),
   ('22222222-2222-2222-2222-222222222222', 'IQ-PH-007731', 2021);
 
-insert into public.pharmacy_details (profile_id, pharmacy_name_en, licence_no) values
-  ('33333333-3333-3333-3333-333333333333', 'Al-Rahma Pharmacy', 'IQ-PHM-000117'),
-  ('44444444-4444-4444-4444-444444444444', 'Al-Furat Pharmacy', 'IQ-PHM-000232'),
-  ('55555555-5555-5555-5555-555555555555', 'Al-Amal Pharmacy', 'IQ-PHM-000345');
+insert into public.pharmacy_details
+  (profile_id, pharmacy_name_en, pharmacy_name_ar, licence_no) values
+  ('33333333-3333-3333-3333-333333333333', 'Al-Rahma Pharmacy', 'صيدلية الرحمة', 'IQ-PHM-000117'),
+  ('44444444-4444-4444-4444-444444444444', 'Al-Furat Pharmacy', 'صيدلية الفرات', 'IQ-PHM-000232'),
+  ('55555555-5555-5555-5555-555555555555', 'Al-Amal Pharmacy', 'صيدلية الأمل', 'IQ-PHM-000345');
 
 insert into public.student_details (profile_id, university, university_email) values
   ('66666666-6666-6666-6666-666666666666', 'University of Baghdad', 'zainab@uobaghdad.edu.iq');
@@ -599,6 +600,44 @@ select public.assert(
 );
 
 select public.test_logout();
+
+\echo ''
+\echo '== a pharmacy must have a name in Arabic =='
+
+-- A pharmacy account with no details row yet, to write into.
+insert into auth.users (id, email)
+  values ('99999999-9999-9999-9999-999999999999', 'nahrain@example.com');
+insert into public.profiles (id, role, full_name_en, district)
+  values ('99999999-9999-9999-9999-999999999999', 'pharmacy', 'Al-Nahrain Pharmacy', 'Mansour');
+
+-- Arabic is the default language. The rule is enforced in the schema, not only
+-- in the sign-up form, because the form is not the only way a row gets written.
+select public.assert_rejected($$
+  insert into public.pharmacy_details (profile_id, pharmacy_name_en, licence_no)
+  values ('99999999-9999-9999-9999-999999999999', 'Al-Nahrain Pharmacy', 'IQ-PHM-000999')
+$$, 'a pharmacy cannot be created without an Arabic name');
+
+-- The half that actually matters. A NOT NULL alone is satisfied by pasting the
+-- Latin name into both boxes, which leaves the Arabic-browsing pharmacist
+-- exactly where they started.
+select public.assert_rejected($$
+  insert into public.pharmacy_details
+    (profile_id, pharmacy_name_en, pharmacy_name_ar, licence_no)
+  values ('99999999-9999-9999-9999-999999999999',
+          'Al-Nahrain Pharmacy', 'Al-Nahrain Pharmacy', 'IQ-PHM-000999')
+$$, 'and a Latin name in the Arabic column is not an Arabic name');
+
+-- Mixed scripts are fine: real names carry branch numbers and Latin brands, and
+-- rejecting those would be a worse failure than the one the rule fixes.
+insert into public.pharmacy_details
+  (profile_id, pharmacy_name_en, pharmacy_name_ar, licence_no)
+values ('99999999-9999-9999-9999-999999999999',
+        'Al-Nahrain Pharmacy', 'صيدلية النهرين Al-Nahrain', 'IQ-PHM-000999');
+select public.assert(
+  (select pharmacy_name_ar from public.pharmacy_details
+   where profile_id = '99999999-9999-9999-9999-999999999999') is not null,
+  'a mixed Arabic and Latin name is accepted'
+);
 
 \echo ''
 \echo 'All RLS policy tests passed.'

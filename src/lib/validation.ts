@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { containsArabic } from '@/lib/arabic-script';
 import { isUniversityEmail } from '@/lib/university-email';
 import { MIN_LOG_CHARACTERS } from '@/lib/logbook';
 
@@ -51,7 +52,17 @@ export const pharmacistSignUpSchema = withPasswordConfirmation({
 });
 
 export const pharmacySignUpSchema = withPasswordConfirmation({
-  pharmacyName: z.string().trim().min(2, 'auth.errors.required'),
+  // Both scripts, because Arabic is the default language and a Latin-only name
+  // is unreadable to most of the pharmacists this pharmacy will be shown to.
+  // The Arabic field has to contain Arabic or the requirement is cosmetic —
+  // see containsArabic. Mirrored by a check constraint, so a request that
+  // bypasses this schema is still refused.
+  pharmacyNameAr: z
+    .string()
+    .trim()
+    .min(2, 'auth.errors.required')
+    .refine(containsArabic, 'auth.errors.arabicRequired'),
+  pharmacyNameEn: z.string().trim().min(2, 'auth.errors.required'),
   responsiblePharmacist: z.string().trim().min(2, 'auth.errors.required'),
   email: z.string().trim().email('auth.errors.email'),
   phone,

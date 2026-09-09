@@ -32,7 +32,13 @@ export function SignUpForm({ role }: { role: 'pharmacist' | 'pharmacy' | 'studen
 
       {role === 'pharmacy' ? (
         <>
-          <Field name="pharmacyName" label={t('auth.fields.pharmacyName')} />
+          <Field
+            name="pharmacyNameAr"
+            label={t('auth.fields.pharmacyNameAr')}
+            hint={t('auth.fields.pharmacyNameArHint')}
+            dir="rtl"
+          />
+          <Field name="pharmacyNameEn" label={t('auth.fields.pharmacyNameEn')} dir="ltr" />
           <Field name="responsiblePharmacist" label={t('auth.fields.responsiblePharmacist')} />
           <Field name="email" label={t('auth.email')} type="email" dir="ltr" />
           <Field name="phone" label={t('auth.fields.phone')} type="tel" dir="ltr" />
@@ -113,7 +119,7 @@ function Field({
   type?: string;
   hint?: string;
   mono?: boolean;
-  dir?: 'ltr';
+  dir?: 'ltr' | 'rtl';
 }) {
   return (
     <div>

@@ -103,7 +103,8 @@ export async function signUpPharmacy(
 
   const { error: detailsError } = await supabase.from('pharmacy_details').insert({
     profile_id: data.user.id,
-    pharmacy_name_en: parsed.data.pharmacyName,
+    pharmacy_name_en: parsed.data.pharmacyNameEn,
+    pharmacy_name_ar: parsed.data.pharmacyNameAr,
     licence_no: parsed.data.licenceNo,
     address: parsed.data.address,
     licence_document_url: parsed.data.licenceDocumentUrl ?? null,

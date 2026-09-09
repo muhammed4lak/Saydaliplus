@@ -47,7 +47,9 @@
       "graduationYear": "Graduation year",
       "district": "District",
       "primaryDistrict": "Primary district",
-      "pharmacyName": "Pharmacy name",
+      "pharmacyNameAr": "Pharmacy name in Arabic",
+      "pharmacyNameArHint": "As written on your sign. Most pharmacists browse in Arabic.",
+      "pharmacyNameEn": "Pharmacy name in English",
       "responsiblePharmacist": "Responsible pharmacist",
       "licenceNo": "Pharmacy licence number",
       "address": "Address",
@@ -66,7 +68,8 @@
       "passwordMatch": "Passwords do not match.",
       "required": "This field is required.",
       "universityEmail": "Enter your official university email — personal addresses aren't accepted.",
-      "signInFailed": "Could not sign in. Check your email and password."
+      "signInFailed": "Could not sign in. Check your email and password.",
+      "arabicRequired": "Write the pharmacy name in Arabic script."
     }
   },
   "verification": {
