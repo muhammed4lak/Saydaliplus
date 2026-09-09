@@ -453,5 +453,9 @@
   },
   "trainees": {
     "none": "You have no trainees yet."
+  },
+  "offline": {
+    "title": "No connection",
+    "body": "You are offline. We don't show you saved shifts, because they may already have been filled — try again when you are back on the network."
   }
 }

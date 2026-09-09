@@ -175,6 +175,15 @@ panels left.
 | CV | Bilingual builder, preset pickers, verified half read from the record, PDF export, AI assistant |
 | Notifications | Raised by database triggers, rendered in the reader's current language |
 | Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
+| PWA | Manifest, generated icons, and a deliberately conservative service worker |
+
+**On the service worker.** It exists for installability and a civil offline
+notice, not offline browsing. The obvious "cache pages for speed" worker would
+be actively harmful here: a pharmacist shown a cached listing filled an hour ago
+travels across Baghdad for a shift that no longer exists. So navigations are
+network-first with an offline notice as the only fallback, and cache-first
+applies solely to content-hashed build output. Authenticated responses are never
+cached — a shared cache is how one person's data reaches another's screen.
 
 ### Running it against a real database
 

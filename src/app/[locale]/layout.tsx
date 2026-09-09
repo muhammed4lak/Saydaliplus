@@ -4,6 +4,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation';
 import { IBM_Plex_Mono, IBM_Plex_Sans, Noto_Kufi_Arabic, Space_Grotesk } from 'next/font/google';
 import { type Locale, localeDirection, routing } from '@/i18n/routing';
+import { ServiceWorker } from '@/components/service-worker';
 import '../globals.css';
 
 const spaceGrotesk = Space_Grotesk({
@@ -58,6 +59,10 @@ export async function generateMetadata(props: {
     description: t('tagline'),
     manifest: '/manifest.webmanifest',
     appleWebApp: { capable: true, title: t('name'), statusBarStyle: 'default' },
+    icons: {
+      icon: [{ url: '/favicon-32.png', sizes: '32x32', type: 'image/png' }],
+      apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
+    },
   };
 }
 
@@ -88,6 +93,7 @@ export default async function LocaleLayout({
     >
       <body>
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <ServiceWorker />
       </body>
     </html>
   );
