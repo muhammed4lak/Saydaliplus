@@ -513,10 +513,13 @@ function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial }) {
   const floorApplied = grossAmount > 0 && percentage < FEES.MINIMUM_COMMISSION_IQD;
   const chargeable = grossAmount === 0 ? 0 : Math.max(percentage, FEES.MINIMUM_COMMISSION_IQD);
 
-  const fullPharmacyFee = Math.round(chargeable * FEES.PHARMACY_SHARE);
+  // Off the percentage, never off the floored commission: the pharmacist pays
+  // exactly 3% of the shift value whether the floor bites or not.
+  const fullPharmacistFee = Math.round(percentage * FEES.PHARMACIST_SHARE);
   // Derived by subtraction so the two sides always reconcile to the commission
-  // exactly — rounding each independently can lose or invent a dinar.
-  const fullPharmacistFee = Math.round(chargeable) - fullPharmacyFee;
+  // exactly — rounding each independently can lose or invent a dinar. The
+  // floor's whole excess lands here, on the pharmacy.
+  const fullPharmacyFee = Math.round(chargeable) - fullPharmacistFee;
 
   const pharmacyFee = pharmacyInTrial ? 0 : fullPharmacyFee;
   const pharmacistFee = pharmacistInTrial ? 0 : fullPharmacistFee;
@@ -601,7 +604,7 @@ const STRINGS = {
     'fee.yourRate':'الأجر المتفق عليه','fee.platformFee':'عمولة المنصة','fee.youReceive':'تستلم',
     'fee.pharmacyCharged':'تُحاسَب الصيدلية','fee.trialActive':'فترة تجريبية — بلا عمولة',
     'fee.afterTrial':'بعد انتهاء التجربة:','fee.explainer':'تُضاف 7% على الصيدلية فوق الأجر، وتُخصم 3% من مبلغ الصيدلي. العمولة الكلية 10%.',
-    'fee.floorNote':'الحد الأدنى للعمولة 2,500 د.ع على المناوبات القصيرة، ولهذا تتجاوز النسبة 10% هنا.',
+    'fee.floorNote':'الحد الأدنى للعمولة 2,500 د.ع على المناوبات القصيرة، وتتحمّله الصيدلية. نسبة الصيدلي 3% لا تتغيّر.',
     'fee.trialDays':'بقي {n} يوماً من فترتك التجريبية المجانية',
     'post.title':'نشر مناوبة','post.paidShift':'مناوبة مدفوعة','post.internship':'تدريب',
     'post.date':'التاريخ','post.start':'وقت البدء','post.end':'وقت الانتهاء',
@@ -699,7 +702,7 @@ const STRINGS = {
     'fee.yourRate':'Agreed rate','fee.platformFee':'Platform fee','fee.youReceive':'You receive',
     'fee.pharmacyCharged':'Pharmacy is charged','fee.trialActive':'Free trial — no commission',
     'fee.afterTrial':'After the trial ends:','fee.explainer':'7% is added on top for the pharmacy, and 3% is deducted from the pharmacist’s payout. Total commission 10%.',
-    'fee.floorNote':'A minimum commission of 2,500 IQD applies on short shifts, which is why this one exceeds 10%.',
+    'fee.floorNote':'A minimum commission of 2,500 IQD applies on short shifts, charged to the pharmacy. The pharmacist\u2019s 3% is unchanged.',
     'fee.trialDays':'{n} days left in your fee-free trial',
     'post.title':'Post a shift','post.paidShift':'Paid shift','post.internship':'Internship',
     'post.date':'Date','post.start':'Start time','post.end':'End time',

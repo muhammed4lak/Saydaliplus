@@ -81,16 +81,17 @@ export interface FeeBreakdown {
  * rather than loading one side with the other's waived share — a pharmacist should
  * never pay more because the pharmacy happens to be new.
  *
- * OPEN QUESTION for the founder. When the floor bites, it is split 70/30 like any
- * other commission, so on a 20,000 IQD shift the pharmacist pays 750 rather than
- * the 600 the percentage alone would give — a 25% increase in their fee, on the
- * shortest and lowest-paid shifts. That sits awkwardly against the stated
- * principle of not depressing earnings further, and the alternative is to let the
- * floor's excess fall entirely on the pharmacy (pharmacist pays 600, pharmacy
- * pays 1,900). That protects earnings but makes short shifts disproportionately
- * expensive for the side of the market that is actually scarce. It is a pricing
- * judgement, not a technical one; changing it is a few lines here plus the
- * matching branch in calculate_fees().
+ * The floor's excess falls entirely on the pharmacy. The pharmacist's fee is
+ * always exactly 3% of the shift value — the floor never touches it. Splitting
+ * the floor 70/30 like an ordinary commission would have cost the pharmacist 750
+ * on a 20,000 IQD shift instead of 600: the same 150 dinars is 0.7% of what the
+ * pharmacy is charged and 25% of what the pharmacist is deducted, so the side
+ * that barely notices it should carry it. It is also the pharmacy that creates
+ * the cost the floor exists to cover, by posting a shift too small to pay for
+ * its own processing.
+ *
+ * The rule this buys is one sentence — the pharmacist pays 3%, always — which is
+ * worth more to a market we are asking to trust us than the 150 dinars is.
  */
 export function calculateFees({
   grossAmount,
@@ -107,10 +108,17 @@ export function calculateFees({
     ? 0
     : Math.max(percentageCommission, MINIMUM_COMMISSION_IQD);
 
-  const fullPharmacyFee = roundIQD(chargeableCommission * PHARMACY_SHARE_OF_COMMISSION);
+  // The pharmacist's share is taken off the *percentage*, never off the floored
+  // commission, so a floored shift costs them exactly what an unfloored one
+  // would. On a shift above the floor the two are identical and this is an
+  // ordinary 70/30 split.
+  const fullPharmacistFee = roundIQD(
+    grossAmount * TOTAL_COMMISSION_RATE * PHARMACIST_SHARE_OF_COMMISSION,
+  );
   // Derived by subtraction so the two sides always reconcile to the commission
-  // exactly — rounding each independently can lose or invent a dinar.
-  const fullPharmacistFee = roundIQD(chargeableCommission) - fullPharmacyFee;
+  // exactly — rounding each independently can lose or invent a dinar. The floor's
+  // whole excess lands here, on the pharmacy.
+  const fullPharmacyFee = roundIQD(chargeableCommission) - fullPharmacistFee;
 
   const pharmacyFee = pharmacyInTrial ? 0 : fullPharmacyFee;
   const pharmacistFee = pharmacistInTrial ? 0 : fullPharmacistFee;

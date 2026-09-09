@@ -94,7 +94,13 @@ export function FeeBreakdown({
           pharmacistPercent: asPercent(PHARMACIST_SHARE_OF_COMMISSION),
         })}
         {afterTrial.floorApplied && (
-          <> {t('floorNote', { amount: MINIMUM_COMMISSION_IQD })}</>
+          <>
+            {' '}
+            {t('floorNote', {
+              amount: MINIMUM_COMMISSION_IQD,
+              pharmacistPercent: asPercent(PHARMACIST_SHARE_OF_COMMISSION),
+            })}
+          </>
         )}
       </p>
     </div>

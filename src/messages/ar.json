@@ -150,7 +150,7 @@
     "youReceive": "تستلم",
     "pharmacyCharged": "تُحاسَب الصيدلية",
     "feeExplainer": "تُضاف {pharmacyPercent}% على الصيدلية فوق الأجر، وتُخصم {pharmacistPercent}% من مبلغ الصيدلي.",
-    "floorNote": "الحد الأدنى للعمولة {amount} د.ع على المناوبات القصيرة.",
+    "floorNote": "الحد الأدنى للعمولة {amount} د.ع على المناوبات القصيرة، وتتحمّله الصيدلية. نسبة الصيدلي {pharmacistPercent}% لا تتغيّر.",
     "trialBothFree": "أنت وصاحب الحساب الآخر ضمن الفترة التجريبية — بلا عمولة على الطرفين."
   },
   "applicants": {

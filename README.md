@@ -19,7 +19,7 @@ npm run dev
 ```
 
 ```bash
-npm test          # 82 unit tests — the business rules
+npm test          # 85 unit tests — the business rules
 npm run typecheck
 npm run build
 ```
@@ -57,7 +57,7 @@ reasoned about:
 ./supabase/tests/run.sh    # needs psql pointed at any Postgres 15+
 ```
 
-That rebuilds a throwaway database from the migrations and runs **128
+That rebuilds a throwaway database from the migrations and runs **130
 assertions** as real users — a rival pharmacy, an uninvolved pharmacist, another
 student, a platform admin — checking what each can and cannot see or do.
 `harness.sql` supplies the small part of Supabase the schema depends on
@@ -97,6 +97,15 @@ share, and the pharmacist still pays their 3%.
 There is a second implementation in SQL (`calculate_fees()`), because a trigger
 cannot call TypeScript. Both are tested on the same cases, so drift shows up as a
 failing test rather than a silent discrepancy. If you change one, change the other.
+
+**The minimum fee floor falls entirely on the pharmacy.** The pharmacist pays 3%
+of the shift value, always — the floor never touches their side. Splitting it
+70/30 like an ordinary commission would cost them 750 on a 20,000 IQD shift
+rather than 600, and that same 150 dinars is 0.7% of what the pharmacy is charged
+against 25% of what the pharmacist is deducted. It is also the pharmacy that
+creates the cost the floor covers, by posting a shift too small to pay for its
+own processing. What this buys is a rule that fits in one sentence, in a market
+we are asking to trust us.
 
 **Derived stats are a view, never columns.** `shifts_completed`, `hours_worked`,
 `average_rating`, `reliability_percent` and `pharmacies_worked_with` are computed
@@ -233,9 +242,9 @@ npm run test:e2e       # Playwright, against the seeded database
 
 ### Verified how
 
-- 82 unit tests over the business rules (fees, overnight hours, university
+- 85 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
-- 128 policy assertions run against a real Postgres as real users.
+- 130 policy assertions run against a real Postgres as real users.
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee
@@ -252,9 +261,3 @@ npm run test:e2e       # Playwright, against the seeded database
   test it.
 - **The Syndicate escalation channel** has to be confirmed before tier 3 can be
   enabled.
-- **How the minimum fee floor should split.** It currently splits 70/30 like any
-  other commission, so on a 20,000 IQD shift the pharmacist pays 750 rather than
-  600 — a 25% increase in their fee, on the shortest and lowest-paid shifts. That
-  sits awkwardly against the principle of not depressing earnings further; the
-  alternative is to put the floor's excess entirely on the pharmacy. A pricing
-  call, not a technical one. Noted in `src/config/fees.ts`.

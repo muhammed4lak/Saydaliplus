@@ -45,8 +45,41 @@ describe('calculateFees', () => {
 
       expect(fees.floorApplied).toBe(true);
       expect(fees.platformGross).toBe(MINIMUM_COMMISSION_IQD);
-      expect(fees.pharmacyFee).toBe(1_750); // floor still splits 70/30
-      expect(fees.pharmacistFee).toBe(750);
+      // The whole 500 IQD top-up lands on the pharmacy: 1,400 + 500.
+      expect(fees.pharmacyFee).toBe(1_900);
+      expect(fees.pharmacistFee).toBe(600);
+    });
+
+    it('never charges the pharmacist more than 3%, floored or not', () => {
+      // The rule the floor must not break, at every shift value either side of
+      // it. Stated as one sentence to a pharmacist: you pay 3%, always.
+      for (const gross of [5_000, 12_500, 20_000, 24_999, 25_000, 40_000, 90_000]) {
+        const fees = calculateFees({ grossAmount: gross, ...noTrial });
+        expect(fees.pharmacistFee).toBe(Math.round(gross * 0.03));
+      }
+    });
+
+    it('leaves the pharmacist untouched when only the pharmacy is in trial', () => {
+      // A floored shift where the pharmacy pays nothing collects only the
+      // pharmacist's 3% — the floor is a pharmacy-side charge, so a pharmacy
+      // inside its trial does not pay it and it is not moved across.
+      const fees = calculateFees({
+        grossAmount: 20_000,
+        pharmacyInTrial: true,
+        pharmacistInTrial: false,
+      });
+      expect(fees.pharmacyFee).toBe(0);
+      expect(fees.pharmacistFee).toBe(600);
+    });
+
+    it('still reaches the floor when only the pharmacist is in trial', () => {
+      const fees = calculateFees({
+        grossAmount: 20_000,
+        pharmacyInTrial: false,
+        pharmacistInTrial: true,
+      });
+      expect(fees.pharmacistFee).toBe(0);
+      expect(fees.pharmacyFee).toBe(1_900);
     });
 
     it('does not apply once the percentage clears the floor', () => {

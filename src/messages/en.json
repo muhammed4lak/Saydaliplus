@@ -150,7 +150,7 @@
     "youReceive": "You receive",
     "pharmacyCharged": "Pharmacy is charged",
     "feeExplainer": "{pharmacyPercent}% is added on top for the pharmacy, and {pharmacistPercent}% is deducted from the pharmacist's payout.",
-    "floorNote": "Minimum commission of {amount} IQD applies on short shifts.",
+    "floorNote": "Minimum commission of {amount} IQD applies on short shifts, charged to the pharmacy. The pharmacist's {pharmacistPercent}% is unchanged.",
     "trialBothFree": "You and the other account are both inside the free trial — no commission on either side."
   },
   "applicants": {

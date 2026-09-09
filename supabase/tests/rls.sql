@@ -313,6 +313,19 @@ select public.assert(
   (public.calculate_fees(20000, false, false)).platform_gross = 2500,
   'the SQL fee engine applies the 2,500 IQD floor'
 );
+-- The floor falls entirely on the pharmacy: 1,400 + the 500 top-up. Same case,
+-- same numbers, as the TypeScript test.
+select public.assert(
+  (public.calculate_fees(20000, false, false)).pharmacy_fee = 1900
+  and (public.calculate_fees(20000, false, false)).pharmacist_fee = 600,
+  'and charges the whole top-up to the pharmacy, not 70/30'
+);
+select public.assert(
+  bool_and((public.calculate_fees(amount, false, false)).pharmacist_fee
+           = round(amount * 0.03)),
+  'the pharmacist is never charged more than 3%, floored or not'
+)
+from unnest(array[5000, 12500, 20000, 24999, 25000, 40000, 90000]::numeric[]) as amount;
 select public.assert(
   (public.calculate_fees(40000, true, false)).pharmacist_fee = 1200
   and (public.calculate_fees(40000, true, false)).pharmacy_fee = 0,
