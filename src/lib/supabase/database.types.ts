@@ -44,6 +44,8 @@ export type PharmacistDetails = {
   scope_tags: string[];
   districts: string[];
   available: boolean;
+  /** Wallet or card identifier with the payment provider. */
+  payout_destination: string | null;
 }
 
 export type PharmacyDetails = {

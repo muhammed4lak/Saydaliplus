@@ -60,13 +60,13 @@ values ('99999999-9999-9999-9999-999999999999')
 on conflict do nothing;
 
 insert into public.pharmacist_details
-  (profile_id, syndicate_reg_no, graduation_year, scope_tags, districts)
+  (profile_id, syndicate_reg_no, graduation_year, scope_tags, districts, payout_destination)
 values
   ('11111111-1111-1111-1111-111111111111', 'IQ-PH-004982', 2016,
-   array['controlled', 'night_shifts'], array['Karrada', 'Jadriya', 'Zayouna']),
+   array['controlled', 'night_shifts'], array['Karrada', 'Jadriya', 'Zayouna'], '07701234567'),
   ('22222222-2222-2222-2222-222222222222', 'IQ-PH-007731', 2021,
-   array['otc'], array['Jadriya']),
-  ('99999999-9999-9999-9999-999999999999', 'IQ-PH-000001', 2010, '{}', '{}')
+   array['otc'], array['Jadriya'], null),
+  ('99999999-9999-9999-9999-999999999999', 'IQ-PH-000001', 2010, '{}', '{}', null)
 on conflict do nothing;
 
 insert into public.pharmacy_details

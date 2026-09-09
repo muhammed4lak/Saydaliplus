@@ -85,7 +85,17 @@ select public.accept_application('bbbbbbbb-0000-0000-0000-0000000000c2');
 select public.test_login('11111111-1111-1111-1111-111111111111');
 select public.assert_rejected(
   $$select public.request_payout('zaincash')$$,
-  'there is nothing to pay out before any shift is completed'
+  'a payout is refused with no wallet number on file'
+);
+
+select public.test_logout();
+update public.pharmacist_details set payout_destination = '07701234567'
+  where profile_id = '11111111-1111-1111-1111-111111111111';
+
+select public.test_login('11111111-1111-1111-1111-111111111111');
+select public.assert_rejected(
+  $$select public.request_payout('zaincash')$$,
+  'and still refused before any shift is completed'
 );
 
 -- Work both shifts through to completion.

@@ -99,6 +99,14 @@ const recentCalls = new Map<string, number[]>();
 
 function withinRateLimit(userId: string): boolean {
   const now = Date.now();
+
+  // Drop everyone whose window has passed, not just this caller's. Pruning only
+  // the current user would leave an entry per user who never comes back, which
+  // on a long-running server is a slow leak.
+  for (const [key, times] of recentCalls) {
+    if (times.every((at) => now - at >= RATE_LIMIT.windowMs)) recentCalls.delete(key);
+  }
+
   const calls = (recentCalls.get(userId) ?? []).filter(
     (at) => now - at < RATE_LIMIT.windowMs,
   );

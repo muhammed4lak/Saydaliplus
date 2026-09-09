@@ -225,7 +225,13 @@
       "settled": "Settled",
       "failed": "Failed"
     },
-    "payoutFailed": "The transfer did not complete. The request is saved and will be retried."
+    "payoutFailed": "The transfer did not complete. The request is saved and will be retried.",
+    "destination": "Wallet to be paid into",
+    "destinationHint": "Your ZainCash or Qi Card number. It may differ from your account phone — a transfer to the wrong number cannot be recovered.",
+    "destinationInvalid": "Enter a valid wallet number.",
+    "destinationSaved": "Wallet number saved.",
+    "needsDestination": "Add the wallet number to be paid into before requesting a payout.",
+    "save": "Save"
   },
   "logbook": {
     "title": "Training logbook",

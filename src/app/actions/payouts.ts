@@ -24,7 +24,7 @@ export async function requestPayout(
   _prev: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
-  const session = await requireSession();
+  await requireSession();
 
   const parsed = payoutSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { ok: false, error: 'common.somethingWentWrong' };
@@ -36,18 +36,30 @@ export async function requestPayout(
   });
 
   if (error || !payout) {
-    return { ok: false, error: 'earnings.nothingPayable' };
+    // request_payout() refuses for two reasons worth telling apart: nothing is
+    // owed, or there is no wallet number to pay into.
+    return {
+      ok: false,
+      error: error?.message?.includes('wallet')
+        ? 'earnings.needsDestination'
+        : 'earnings.nothingPayable',
+    };
   }
+
+  const { data: details } = await supabase
+    .from('pharmacist_details')
+    .select('payout_destination')
+    .maybeSingle();
 
   const provider = getPaymentsProvider();
   const result = await provider.disburse({
     payoutId: payout.id,
     amountIQD: payout.amount,
     method: parsed.data.method,
-    // The pharmacist's wallet identifier with the provider. Their phone number
-    // is the ZainCash handle; a real integration will collect and verify this
-    // separately rather than assuming the account phone.
-    destination: session.profile.phone ?? '',
+    // The wallet the pharmacist gave us, not their account phone: a ZainCash
+    // wallet is often registered to a different number, and paying the wrong
+    // one is unrecoverable. request_payout() has already refused if it is unset.
+    destination: details?.payout_destination ?? '',
     reference: `saydali-${payout.id}`,
   });
 
@@ -68,4 +80,34 @@ export async function requestPayout(
   return result.status === 'failed'
     ? { ok: false, error: 'earnings.payoutFailed' }
     : { ok: true };
+}
+
+/**
+ * Save the wallet the pharmacist wants to be paid into.
+ *
+ * Kept separate from the account phone on purpose: a ZainCash wallet is often
+ * registered to a different number, and a payout sent to the wrong one is not
+ * recoverable. Asking once, explicitly, is cheaper than assuming.
+ */
+export async function savePayoutDestination(
+  _prev: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const session = await requireSession();
+
+  const destination = String(formData.get('destination') ?? '').trim();
+  if (destination.length < 6 || destination.length > 40) {
+    return { ok: false, error: 'earnings.destinationInvalid' };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('pharmacist_details')
+    .update({ payout_destination: destination })
+    .eq('profile_id', session.userId);
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath('/earnings');
+  return { ok: true };
 }

@@ -14,11 +14,13 @@ export function PayoutRequest({
   locale,
   canRequest,
   isVerified,
+  hasDestination,
 }: {
   owed: number;
   locale: Locale;
   canRequest: boolean;
   isVerified: boolean;
+  hasDestination: boolean;
 }) {
   const t = useTranslations();
   const [method, setMethod] = useState<PayoutMethod>('zaincash');
@@ -57,6 +59,12 @@ export function PayoutRequest({
       {owed <= 0 && (
         <p className="mt-2 text-center text-[12px] text-ink-faint">
           {t('earnings.nothingPayable')}
+        </p>
+      )}
+
+      {owed > 0 && !hasDestination && (
+        <p className="mt-2 text-center text-[12px] leading-relaxed text-amber">
+          {t('earnings.needsDestination')}
         </p>
       )}
 

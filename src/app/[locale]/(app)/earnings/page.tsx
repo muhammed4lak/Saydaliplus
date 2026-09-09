@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { PageBody, PageHeader } from '@/components/app-shell';
 import { PayoutRequest } from '@/components/payout-request';
+import { PayoutDestination } from '@/components/payout-destination';
 import { NavIcon } from '@/components/icons';
 import { requireRole } from '@/lib/session';
 import { createClient } from '@/lib/supabase/server';
@@ -29,6 +30,11 @@ export default async function EarningsPage({
     .from('pharmacist_stats')
     .select('*')
     .eq('pharmacist_id', session.userId)
+    .maybeSingle();
+
+  const { data: details } = await supabase
+    .from('pharmacist_details')
+    .select('payout_destination')
     .maybeSingle();
 
   const { data: payouts } = await supabase
@@ -71,12 +77,18 @@ export default async function EarningsPage({
 
           <div>
             <h2 className="eyebrow mb-3">{t('earnings.payout')}</h2>
-            <PayoutRequest
-              owed={owed}
-              locale={locale as Locale}
-              canRequest={session.isVerified && owed > 0}
-              isVerified={session.isVerified}
-            />
+            <div className="space-y-3">
+              <PayoutDestination current={details?.payout_destination ?? null} />
+              <PayoutRequest
+                owed={owed}
+                locale={locale as Locale}
+                canRequest={
+                  session.isVerified && owed > 0 && !!details?.payout_destination
+                }
+                isVerified={session.isVerified}
+                hasDestination={!!details?.payout_destination}
+              />
+            </div>
           </div>
 
           {(payouts ?? []).length > 0 && (

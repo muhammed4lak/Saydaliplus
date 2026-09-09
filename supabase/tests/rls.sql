@@ -414,6 +414,31 @@ select public.assert(
 );
 
 \echo ''
+\echo '== the handoff record cannot be rewritten once confirmed =='
+
+-- This is what makes the handoff evidence rather than a checklist. A party who
+-- could quietly untick "controlled-substances register counted" after a dispute
+-- started would be editing the record it is judged against.
+select public.test_login('33333333-3333-3333-3333-333333333333');
+select public.assert_rejected(
+  $$update public.handoffs
+    set items = jsonb_set(items, '{controlled_register_counted}', 'false')
+    where booking_id = (select id from public.bookings)$$,
+  'a confirmed handoff item cannot be un-ticked'
+);
+select public.assert_rejected(
+  $$update public.handoffs
+    set items = items || '{"invented_item": true}'::jsonb
+    where booking_id = (select id from public.bookings)$$,
+  'nor can an item be added to a confirmed record'
+);
+select public.assert(
+  (select items->>'controlled_register_counted' from public.handoffs
+   where booking_id = (select id from public.bookings)) = 'true',
+  'the record still says what both parties signed'
+);
+
+\echo ''
 \echo '== ratings =='
 
 select public.test_login('44444444-4444-4444-4444-444444444444');
