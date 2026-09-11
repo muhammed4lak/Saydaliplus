@@ -71,25 +71,48 @@ horizontal scroll at 320px.
 `crm/saydali-crm.html` is the other half of the same product, also one openable
 file: what the team in Baghdad sees, rather than what a pharmacy or a pharmacist
 sees. Modelled on Zoho CRM — module tabs, saved views, a filter rail, record
-pages with a timeline, a kanban pipeline, reports — in Saydali+'s palette, so
-the two read as one company's software.
+pages with a timeline, bulk actions, CSV import — in Saydali+'s palette, so the
+two read as one company's software.
 
-It exists because of the brief's own premise. Pharmacist supply is abundant and
-pharmacy demand is scarce, so the work that decides whether this business exists
-is pharmacy acquisition and activation. The pipeline stages are therefore not
-generic sales stages but the four things that have to happen to a pharmacy, and
-the module earns its keep on the two places that go wrong quietly:
+Eight tabs: a home dashboard and seven modules.
 
-- **Verified, never posted.** A pharmacy that cleared Syndicate review, sat
-  through most of its free trial, and has still not posted a single shift. It
-  earns nothing and churns without ever complaining. It is a saved view, a home
-  KPI, and a red chip on the record.
-- **Trial ending.** The 30-day clock runs from each account's own signup date,
-  so it expires quietly, one pharmacy at a time.
+| Module | What it holds |
+|---|---|
+| **Orders** | The main one. Every shift and every placement, segmented by order type — pharmacist shift, student training — with the status lifecycle from posted to completed. Still marked in-progress on the screen itself. |
+| **Users** | Every account, segmented by the platform's three types: pharmacist, pharmacy, student. |
+| **Pharmacies** | The business behind a pharmacy account — licence, district, trial clock, fill rate. |
+| **Companies** | Manufacturers, marketing companies, importers and distributors. |
+| **Universities** | Colleges of pharmacy, and the email domain that makes student verification automatic. |
+| **Syndicate roster** | Pharmacist names and numbers as the Syndicate supplies them, with the match against platform accounts. |
+| **Drugs** | Scientific name as the identifier; brands under it, each owned by a company and able to override the doses. |
 
-A pharmacy record reads its platform state — verification, trial day, shifts
-posted, fill rate, commission — and links straight through to that account in
-the app. The admin account in the app links back.
+Three things in it are worth reading the code for.
+
+**The Syndicate module is honest about what it is.** Iraq has no digital
+pharmacist registry and the Syndicate's processes are paper-based, so this is a
+roster somebody loaded from a spreadsheet, with the batch date on every row. The
+module says that on screen. What it is *for* is the match: a pharmacist's number
+is either absent from the roster, or present with a name that agrees, or present
+with a name that does not — three outcomes a reviewer acts on differently. The
+name comparison strips Arabic diacritics, normalises alif and ya and ta-marbuta,
+and tolerates a roster's full tribal name against a three-part sign-up. It
+produces a suggestion; a person still decides. **All of this is provisional
+until the Syndicate confirms how they will actually supply the list.**
+
+**The drug model keys on the molecule, not the brand.** Brands come and go and
+one drug ships under a dozen, so keying on a brand scatters one drug across a
+dozen rows. Doses live on the drug; a brand may override them, because two
+companies genuinely do not always supply the same strengths — and a pharmacist
+reading "500 mg" for a brand that only comes in 250 is being told something
+false. Interactions carry a severity and contraindications are a list.
+
+**CSV import parses properly and previews before it writes.** Both the drug list
+and the Syndicate roster arrive as somebody else's spreadsheet, so the importer
+uses a real CSV parser rather than `split(',')` — a drug note containing a comma
+is the normal case, and splitting on commas silently corrupts those rows. It
+validates each row, flags duplicates *within the file*, shows what it would do
+as new / update / error, and writes nothing until that preview has been read.
+Rows with an error are skipped; the rest apply.
 
 ```bash
 npm run check:crm     # drives it in a real browser
@@ -243,7 +266,7 @@ panels left.
 | Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
 | PWA | Manifest, generated icons, and a deliberately conservative service worker |
 | Single-file build | `demo/saydali-plus.html` — the same screens with stubbed data, in one openable file |
-| CRM | `crm/saydali-crm.html` — the operator's side: leads, pharmacies, contacts, pipeline, tasks, reports |
+| CRM | `crm/saydali-crm.html` — the operator's side: orders, users, pharmacies, companies, universities, the Syndicate roster, drugs |
 
 **On the service worker.** It exists for installability and a civil offline
 notice, not offline browsing. The obvious "cache pages for speed" worker would

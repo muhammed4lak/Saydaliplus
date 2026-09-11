@@ -475,6 +475,41 @@
   html[dir="rtl"] .toast{ transform:translateX(50%) translateY(8px); }
   .toast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
   html[dir="rtl"] .toast.on{ transform:translateX(50%) translateY(0); }
+
+  /* ---------- Module notes & the importer ---------- */
+  .mod-note{
+    display:flex; gap:9px; align-items:flex-start; padding:10px 18px; font-size:12px; line-height:1.65;
+    background:var(--indigo-tint-2); border-bottom:1px solid var(--border); color:var(--ink-soft);
+  }
+  .mod-note .ico{ color:var(--indigo); margin-top:1px; }
+  .mod-note.stage{ background:var(--amber-tint); border-bottom-color:#E3CE9E; color:#8A5610; }
+  .mod-note.stage .ico{ color:var(--amber); }
+
+  .kpi.as-link{ text-align:start; width:100%; transition:border-color .12s, box-shadow .12s; }
+  .kpi.as-link:hover{ border-color:var(--indigo); box-shadow:0 4px 14px -8px rgba(20,18,40,.25); }
+  .go-chevron{ color:var(--ink-faint); align-self:center; }
+  html[dir="rtl"] .go-chevron{ transform:scaleX(-1); }
+
+  .modal.wide{ max-width:680px; }
+  .imp-head{ display:flex; gap:9px; flex-wrap:wrap; }
+  .imp-summary{ display:flex; gap:7px; align-items:center; flex-wrap:wrap; margin-top:16px; }
+  .imp-fatal{
+    display:flex; gap:9px; align-items:flex-start; margin-top:16px; padding:11px 13px; border-radius:9px;
+    background:#FBE9E9; border:1px solid #E8C3C3; color:#9E2B2B; font-size:12.5px; line-height:1.6;
+  }
+  .imp-rows{
+    margin-top:10px; border:1px solid var(--border); border-radius:9px; overflow:hidden;
+    max-height:230px; overflow-y:auto;
+  }
+  .imp-row{
+    display:flex; align-items:center; gap:9px; padding:7px 11px; font-size:12px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .imp-row:last-child{ border-bottom:none; }
+  .imp-row.error{ background:#FDF4F4; }
+  .imp-line{ width:26px; flex:none; color:var(--ink-faint); font-size:11px; text-align:end; }
+  .imp-key{ flex:1; min-width:0; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .imp-msg{ color:#9E2B2B; font-size:11.5px; }
 </style>
 </head>
 <body>
@@ -552,6 +587,11 @@
   <symbol id="i-filter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6.5h16M7 12h10M10 17.5h4"/></g></symbol>
   <symbol id="i-table" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9.5 9.5v10"/></g></symbol>
   <symbol id="i-board" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4.5" width="5" height="15" rx="1.6"/><rect x="10" y="4.5" width="5" height="10" rx="1.6"/><rect x="16.5" y="4.5" width="4" height="13" rx="1.6"/></g></symbol>
+  <symbol id="i-factory" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M3 21V10l5 3.2V10l5 3.2V10l5 3.2V21z"/><path d="M18 10V4.5h3V21"/><path d="M2 21h20"/><path d="M7 17.5h2M13 17.5h2"/></g></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.6" y="8.4" width="18.8" height="7.2" rx="3.6" transform="rotate(-45 12 12)"/><path d="M8.6 8.6 15.4 15.4"/></g></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4.5"/><path d="M7.5 9 12 4.5 16.5 9"/><path d="M4.5 19.5h15"/></g></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5H7.2A1.7 1.7 0 0 0 5.5 6.2v13.1A1.7 1.7 0 0 0 7.2 21h9.6a1.7 1.7 0 0 0 1.7-1.7V6.2A1.7 1.7 0 0 0 16.8 4.5H15"/><rect x="9" y="2.8" width="6" height="3.4" rx="1.1"/><path d="M9.2 13.2l1.9 1.9 3.7-3.7"/></g></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.6 2.6L16.2 9"/></g></symbol>
 </defs></svg>
 <script>
 "use strict";
@@ -745,12 +785,145 @@ function relDays(iso) {
   return lang === 'ar' ? ('خلال ' + (-n) + ' يوماً') : ('in ' + (-n) + ' days');
 }
 
+/* Strings for the operational modules. */
+Object.assign(STRINGS.ar, {
+  'mod.users':'المستخدمون','mod.orders':'الطلبات','mod.pharmacies':'الصيدليات',
+  'mod.companies':'الشركات','mod.universities':'الجامعات','mod.syndicate':'كشف النقابة','mod.drugs':'الأدوية',
+  'ut.pharmacist':'صيادلة','ut.pharmacy':'صيدليات','ut.student':'طلبة',
+  'ut1.pharmacist':'صيدلي','ut1.pharmacy':'صيدلية','ut1.student':'طالب',
+  'v.allUsers':'كل المستخدمين','v.pendingUsers':'بانتظار التوثيق','v.noMatch':'بلا مطابقة في الكشف',
+  'ot.shift':'مناوبة صيدلي','ot.training':'تدريب طلابي',
+  'os.open':'مفتوح','os.assigned':'مُسند','os.in_progress':'جارٍ','os.completed':'مكتمل','os.cancelled':'ملغى',
+  'v.allOrders':'كل الطلبات','v.openOrders':'مفتوحة','v.todayOrders':'اليوم','v.unclaimed':'مفتوحة بلا متقدمين',
+  'v.shifts':'مناوبات الصيادلة','v.training':'التدريب الطلابي',
+  'c.orderNo':'رقم الطلب','c.orderType':'نوع الطلب','c.when':'الموعد','c.hours':'الساعات',
+  'c.rate':'الأجر','c.total':'الإجمالي','c.assignee':'المُسنَد إليه','c.applicants':'المتقدمون',
+  'c.pharmacy':'الصيدلية','c.controlled':'مواد خاضعة للرقابة','c.weeks':'الأسابيع',
+  'c.userType':'النوع','c.joined':'تاريخ الانضمام','c.syndicateNo':'رقم النقابة','c.gradYear':'سنة التخرج',
+  'c.orders':'الطلبات','c.match':'المطابقة','c.university':'الجامعة','c.reliability':'الالتزام','c.ratingV':'التقييم',
+  'c.companyType':'نوع الشركة','c.country':'البلد','c.city':'المدينة','c.reg':'رقم التسجيل',
+  'c.contactName':'جهة الاتصال','c.brands':'الأصناف','c.agreement':'الاتفاقية','c.domain':'النطاق',
+  'c.students':'الطلبة','c.sci':'الاسم العلمي','c.sciAr':'الاسم بالعربية','c.atc':'رمز ATC',
+  'c.form':'الشكل الصيدلاني','c.doses':'العيارات','c.brandCount':'عدد الأصناف التجارية',
+  'c.interactions':'التداخلات','c.contra':'موانع الاستعمال','c.notesF':'ملاحظات',
+  'c.brand':'الاسم التجاري','c.company':'الشركة','c.override':'عيارات مختلفة',
+  'c.batch':'دفعة الكشف','c.syndStatus':'الحالة النقابية',
+  'ct.manufacturer':'مصنع','ct.marketing':'شركة مسوِّقة','ct.importer':'مستورد/وكيل','ct.distributor':'موزّع',
+  'cs.active':'فعّالة','cs.review':'قيد المراجعة','cs.inactive':'متوقفة',
+  'ag.signed':'موقّعة','ag.talks':'قيد التفاوض','ag.none':'لا توجد',
+  'ss.active':'مزاول','ss.suspended':'موقوف',
+  'mt.matched':'مطابق','mt.unmatched':'غير موجود في الكشف','mt.nameDiff':'الرقم مطابق والاسم مختلف','mt.notLinked':'لم يسجّل بعد',
+  'sev.warning':'تداخل بسيط','sev.serious':'تداخل مهم','sev.critical':'تداخل خطر',
+  'df.tablet':'أقراص','df.capsule':'كبسولات','df.syrup':'شراب','df.injection':'حقن','df.cream':'كريم',
+  'v.allDrugs':'كل الأدوية','v.noBrands':'بلا أصناف تجارية','v.hasCritical':'فيها تداخل خطر',
+  'v.allCompanies':'كل الشركات','v.manufacturers':'المصانع','v.needsDocs':'بانتظار وثائق',
+  'v.allUnis':'كل الجامعات','v.signed':'اتفاقيات موقّعة','v.prospect':'قيد التفاوض',
+  'v.allSynd':'كل الكشف','v.unlinked':'لم يسجّلوا في المنصة','v.suspendedS':'موقوفون',
+  'imp.title':'استيراد من ملف CSV','imp.pick':'اختر ملفاً','imp.or':'أو الصق المحتوى هنا',
+  'imp.template':'نزّل نموذج CSV','imp.parse':'تحقّق','imp.apply':'تطبيق {n} صفاً',
+  'imp.new':'جديد','imp.update':'تحديث','imp.error':'خطأ','imp.rowsFound':'{n} صفاً في الملف',
+  'imp.summary':'{n} جديد · {u} تحديث · {e} خطأ','imp.noFile':'لا يوجد محتوى لتحليله.',
+  'imp.badHeader':'الأعمدة المطلوبة مفقودة: {cols}','imp.done':'استُوردت {n} صفاً.',
+  'imp.errRow':'السطر {n}: {msg}','imp.missingKey':'العمود المفتاح فارغ.',
+  'imp.unknownCompany':'شركة غير معروفة: {v}','imp.unknownDrug':'دواء غير معروف: {v}',
+  'imp.previewNote':'لا يُكتب شيء قبل مراجعتك للمعاينة.','imp.errorsBlock':'الصفوف التي فيها خطأ تُتجاهل، والباقي يُطبّق.',
+  'dr.addBrand':'أضف صنفاً تجارياً','dr.brandsOf':'الأصناف التجارية','dr.usesDefault':'يعتمد عيارات الدواء',
+  'dr.overrideOn':'عيارات خاصة بالشركة','dr.noInteractions':'لا تداخلات مسجّلة.','dr.noContra':'لا موانع مسجّلة.',
+  'sy.note':'هذا كشف يدوي حمّلناه من النقابة، وليس واجهة برمجية — لا يوجد سجل رقمي للصيادلة في العراق. المطابقة أدناه اقتراح، والقرار لموظف.',
+  'sy.import':'حمّل كشفاً جديداً','sy.linked':'مرتبط بـ','sy.batchOf':'دفعة {d}',
+  'or.placeholder':'وحدة الطلبات قيد التصميم — الحقول والمراحل أدناه مبنية على ما يفعله التطبيق اليوم، وتتغيّر عند اكتمال التصميم.',
+  'k.ordersToday':'طلبات اليوم','k.openNow':'مفتوحة الآن','k.fillRateK':'نسبة التغطية','k.unclaimed':'بلا متقدمين',
+  'k.pendingVerif':'بانتظار التوثيق','k.activePh':'صيدليات نشطة',
+  'ch.orders':'الطلبات المنشأة يومياً','ch.ordersSub':'آخر أسبوعين','ch.byStatus':'الطلبات حسب الحالة',
+  'ch.byStatusSub':'كل الطلبات المسجّلة','ch.byType':'حسب النوع','ch.day':'اليوم','ch.orderCount':'طلب',
+  'ch.attention':'يحتاج انتباهاً','ch.nothingUp':'لا شيء عالق.',
+  'at.unclaimed':'{n} طلباً مفتوحاً بلا متقدمين','at.pendingUsers':'{n} مستخدماً بانتظار التوثيق',
+  'at.dormantPh':'{n} صيدلية موثّقة ولم تنشر','at.noMatch':'{n} صيدلياً بلا مطابقة في كشف النقابة',
+  'at.noBrands':'{n} دواءً بلا أصناف تجارية',
+  'n.newUser':'مستخدم جديد','n.newOrder':'طلب جديد','n.newPharmacy':'صيدلية جديدة',
+  'n.newCompany':'شركة جديدة','n.newUniversity':'جامعة جديدة','n.newDrug':'دواء جديد',
+  'n.duplicate':'«{v}» مسجّل مسبقاً.',
+  'a.verify':'توثيق الحساب','pr.address':'العنوان','app.noRecord':'لا سجل بعد',
+  'post.start':'من','post.end':'إلى',
+  'sy.hintNo':'يُطابَق مع كشف النقابة تلقائياً، والقرار لموظف.',
+  'uni.hintDomain':'نطاق البريد الجامعي — هو ما يجعل توثيق الطلبة تلقائياً.',
+  'dr.hintSci':'الاسم العلمي هو المعرّف، ولا يتكرر.',
+  'dr.hintDoses':'افصل العيارات بـ | أو ؛',
+  'dr.hintOverride':'اتركه فارغاً ليعتمد الصنف عيارات الدواء نفسها.'
+});
+
+Object.assign(STRINGS.en, {
+  'mod.users':'Users','mod.orders':'Orders','mod.pharmacies':'Pharmacies',
+  'mod.companies':'Companies','mod.universities':'Universities','mod.syndicate':'Syndicate roster','mod.drugs':'Drugs',
+  'ut.pharmacist':'Pharmacists','ut.pharmacy':'Pharmacies','ut.student':'Students',
+  'ut1.pharmacist':'Pharmacist','ut1.pharmacy':'Pharmacy','ut1.student':'Student',
+  'v.allUsers':'All users','v.pendingUsers':'Awaiting verification','v.noMatch':'No roster match',
+  'ot.shift':'Pharmacist shift','ot.training':'Student training',
+  'os.open':'Open','os.assigned':'Assigned','os.in_progress':'In progress','os.completed':'Completed','os.cancelled':'Cancelled',
+  'v.allOrders':'All orders','v.openOrders':'Open','v.todayOrders':'Today','v.unclaimed':'Open, no applicants',
+  'v.shifts':'Pharmacist shifts','v.training':'Student training',
+  'c.orderNo':'Order','c.orderType':'Type','c.when':'When','c.hours':'Hours',
+  'c.rate':'Rate','c.total':'Total','c.assignee':'Assigned to','c.applicants':'Applicants',
+  'c.pharmacy':'Pharmacy','c.controlled':'Controlled substances','c.weeks':'Weeks',
+  'c.userType':'Type','c.joined':'Joined','c.syndicateNo':'Syndicate no.','c.gradYear':'Graduated',
+  'c.orders':'Orders','c.match':'Roster match','c.university':'University','c.reliability':'Reliability','c.ratingV':'Rating',
+  'c.companyType':'Company type','c.country':'Country','c.city':'City','c.reg':'Registration no.',
+  'c.contactName':'Contact','c.brands':'Brands','c.agreement':'Agreement','c.domain':'Email domain',
+  'c.students':'Students','c.sci':'Scientific name','c.sciAr':'Arabic name','c.atc':'ATC code',
+  'c.form':'Form','c.doses':'Doses','c.brandCount':'Brands',
+  'c.interactions':'Interactions','c.contra':'Contraindications','c.notesF':'Notes',
+  'c.brand':'Brand name','c.company':'Company','c.override':'Overrides doses',
+  'c.batch':'Roster batch','c.syndStatus':'Syndicate status',
+  'ct.manufacturer':'Manufacturer','ct.marketing':'Marketing company','ct.importer':'Importer / agent','ct.distributor':'Distributor',
+  'cs.active':'Active','cs.review':'Under review','cs.inactive':'Inactive',
+  'ag.signed':'Signed','ag.talks':'In talks','ag.none':'None',
+  'ss.active':'Practising','ss.suspended':'Suspended',
+  'mt.matched':'Matched','mt.unmatched':'Not in the roster','mt.nameDiff':'Number matches, name differs','mt.notLinked':'Not signed up',
+  'sev.warning':'Minor','sev.serious':'Significant','sev.critical':'Severe',
+  'df.tablet':'Tablet','df.capsule':'Capsule','df.syrup':'Syrup','df.injection':'Injection','df.cream':'Cream',
+  'v.allDrugs':'All drugs','v.noBrands':'No brands listed','v.hasCritical':'Has a severe interaction',
+  'v.allCompanies':'All companies','v.manufacturers':'Manufacturers','v.needsDocs':'Awaiting documents',
+  'v.allUnis':'All universities','v.signed':'Agreement signed','v.prospect':'In talks',
+  'v.allSynd':'Whole roster','v.unlinked':'Not on the platform','v.suspendedS':'Suspended',
+  'imp.title':'Import from CSV','imp.pick':'Choose a file','imp.or':'or paste the contents here',
+  'imp.template':'Download a CSV template','imp.parse':'Check','imp.apply':'Apply {n} rows',
+  'imp.new':'New','imp.update':'Update','imp.error':'Error','imp.rowsFound':'{n} rows in the file',
+  'imp.summary':'{n} new · {u} updated · {e} errors','imp.noFile':'Nothing to parse.',
+  'imp.badHeader':'Required columns missing: {cols}','imp.done':'Imported {n} rows.',
+  'imp.errRow':'Row {n}: {msg}','imp.missingKey':'The key column is empty.',
+  'imp.unknownCompany':'Unknown company: {v}','imp.unknownDrug':'Unknown drug: {v}',
+  'imp.previewNote':'Nothing is written until you have read the preview.','imp.errorsBlock':'Rows with an error are skipped; the rest apply.',
+  'dr.addBrand':'Add a brand','dr.brandsOf':'Brand names','dr.usesDefault':'Uses the drug’s doses',
+  'dr.overrideOn':'Company-specific doses','dr.noInteractions':'No interactions recorded.','dr.noContra':'No contraindications recorded.',
+  'sy.note':'A roster we loaded by hand from the Syndicate, not an API — Iraq has no digital pharmacist registry. The match below is a suggestion; a person still decides.',
+  'sy.import':'Load a new roster','sy.linked':'Linked to','sy.batchOf':'Batch of {d}',
+  'or.placeholder':'Orders is still being designed. The fields and stages below follow what the app does today and will change when the design settles.',
+  'k.ordersToday':'Orders today','k.openNow':'Open right now','k.fillRateK':'Fill rate','k.unclaimed':'No applicants',
+  'k.pendingVerif':'Awaiting verification','k.activePh':'Active pharmacies',
+  'ch.orders':'Orders created per day','ch.ordersSub':'Last fortnight','ch.byStatus':'Orders by status',
+  'ch.byStatusSub':'Every order on record','ch.byType':'By type','ch.day':'Day','ch.orderCount':'orders',
+  'ch.attention':'Needs attention','ch.nothingUp':'Nothing stuck.',
+  'at.unclaimed':'{n} open orders with no applicants','at.pendingUsers':'{n} users awaiting verification',
+  'at.dormantPh':'{n} verified pharmacies have never posted','at.noMatch':'{n} pharmacists with no roster match',
+  'at.noBrands':'{n} drugs with no brand listed',
+  'n.newUser':'New user','n.newOrder':'New order','n.newPharmacy':'New pharmacy',
+  'n.newCompany':'New company','n.newUniversity':'New university','n.newDrug':'New drug',
+  'n.duplicate':'“{v}” is already on record.',
+  'a.verify':'Verify account','pr.address':'Address','app.noRecord':'No record yet',
+  'post.start':'From','post.end':'To',
+  'sy.hintNo':'Matched against the Syndicate roster automatically; a person still decides.',
+  'uni.hintDomain':'The university email domain — it is what makes student verification automatic.',
+  'dr.hintSci':'The scientific name is the identifier and cannot repeat.',
+  'dr.hintDoses':'Separate doses with | or ;',
+  'dr.hintOverride':'Leave empty and the brand uses the drug’s own doses.'
+});
+
 /* ==========================================================================
    2. DATA
-   Fixture records, shaped by what actually decides this business. Pharmacist
-   supply is abundant; pharmacy demand is scarce — so the objects that matter
-   are the pharmacy's progress from "never heard of us" to "posts every week",
-   and the two places it stalls: never verified, and verified but never posted.
+   The operational model. Every record here is something the team in Baghdad
+   has to keep true: who is on the platform, what work is going out today,
+   who supplies the medicines, and what the Syndicate says about a licence.
+   Fixture rows, held in memory, gone on refresh.
    ========================================================================== */
 
 const USERS = {
@@ -772,179 +945,351 @@ const DISTRICTS = [
 ];
 const districtName = key => { const d = DISTRICTS.find(x => x.key === key); return d ? L(d) : key; };
 
-/* The pipeline. These are not generic sales stages — they are the four things
-   that have to happen to a pharmacy, in order, and the one that matters most
-   is the last: a pharmacy that signed up and never posted earns nothing and
-   churns silently. */
-const STAGES = [
-  { key:'new',       ord:1 },
-  { key:'contacted', ord:2 },
-  { key:'visited',   ord:3 },
-  { key:'trial',     ord:4 },
-  { key:'activated', ord:5 }
-];
-const STAGE_COLOR = {
-  new:'var(--ord-1)', contacted:'var(--ord-2)', visited:'var(--ord-3)',
-  trial:'var(--ord-4)', activated:'var(--ord-5)'
+/* The three account types the platform has, and nothing else. They are the
+   segmentation the Users module is built on. */
+const USER_TYPES = ['pharmacist', 'pharmacy', 'student'];
+
+/* Order types. Two for now — the shift that pays and the placement that does
+   not — but the module is segmented by this field rather than hard-wired to
+   two, so a third type is a row here and nothing else. */
+const ORDER_TYPES = ['shift', 'training'];
+
+/* An order's life. `open` means posted and nobody has taken it; `assigned`
+   means a named person is going; `completed` means both parties confirmed the
+   handoff, which is the only thing that makes it billable. */
+const ORDER_STATUS = ['open', 'assigned', 'in_progress', 'completed', 'cancelled'];
+const ORDER_STATUS_COLOR = {
+  open:'var(--ord-1)', assigned:'var(--ord-2)', in_progress:'var(--ord-3)',
+  completed:'var(--ord-5)', cancelled:'var(--grid)'
 };
-const SOURCES = ['visit','referral','syndicate','inbound','social'];
+
+/* Company types. "Externals" covers two different things that the Iraqi
+   regulator treats differently, so the record carries which one it is rather
+   than flattening them: a manufacturer holds a factory licence, a marketing
+   company holds the registration for a product it does not make, and an
+   importer/agent holds neither but is who you actually phone. */
+const COMPANY_TYPES = ['manufacturer', 'marketing', 'importer', 'distributor'];
 
 const DATA = {
-  leads: [
-    { id:'L1', name:{ar:'صيدلية النهرين', en:'Al-Nahrain Pharmacy'}, contact:{ar:'د. سيف الجميلي', en:'Dr Saif Al-Jumaili'},
-      phone:'07701234567', email:'nahrain.ph@example.com', district:'mansour', source:'visit',
-      owner:'u1', rating:'hot', created:'2026-08-28', lastTouch:'2026-09-09' },
-    { id:'L2', name:{ar:'صيدلية دجلة', en:'Dijla Pharmacy'}, contact:{ar:'د. هند العاني', en:'Dr Hind Al-Ani'},
-      phone:'07712345678', email:'dijla@example.com', district:'karrada', source:'referral',
-      owner:'u1', rating:'hot', created:'2026-09-01', lastTouch:'2026-09-10' },
-    { id:'L3', name:{ar:'صيدلية بابل', en:'Babil Pharmacy'}, contact:{ar:'د. علي الشمري', en:'Dr Ali Al-Shammari'},
-      phone:'07723456789', email:'babil.pharm@example.com', district:'zayouna', source:'syndicate',
-      owner:'u2', rating:'warm', created:'2026-08-14', lastTouch:'2026-08-25' },
-    { id:'L4', name:{ar:'صيدلية الرشيد', en:'Al-Rasheed Pharmacy'}, contact:{ar:'د. زينة الكاظمي', en:'Dr Zeina Al-Kadhimi'},
-      phone:'07734567890', email:'rasheed@example.com', district:'kadhimiya', source:'inbound',
-      owner:'u2', rating:'warm', created:'2026-08-30', lastTouch:'2026-09-06' },
-    { id:'L5', name:{ar:'صيدلية الأنوار', en:'Al-Anwar Pharmacy'}, contact:{ar:'د. مصطفى الدليمي', en:'Dr Mustafa Al-Dulaimi'},
-      phone:'07745678901', email:'anwar.ph@example.com', district:'adhamiya', source:'visit',
-      owner:'u3', rating:'cold', created:'2026-07-20', lastTouch:'2026-08-18' },
-    { id:'L6', name:{ar:'صيدلية السلام', en:'Al-Salam Pharmacy'}, contact:{ar:'د. رغد العزاوي', en:'Dr Raghad Al-Azzawi'},
-      phone:'07756789012', email:'salam.pharmacy@example.com', district:'dora', source:'social',
-      owner:'u1', rating:'warm', created:'2026-09-03', lastTouch:'2026-09-08' },
-    { id:'L7', name:{ar:'صيدلية الفيحاء', en:'Al-Fayhaa Pharmacy'}, contact:{ar:'د. عمر التكريتي', en:'Dr Omar Al-Tikriti'},
-      phone:'07767890123', email:'fayhaa@example.com', district:'sadr', source:'referral',
-      owner:'u3', rating:'cold', created:'2026-07-11', lastTouch:'2026-08-12' },
-    { id:'L8', name:{ar:'صيدلية الزهراء', en:'Al-Zahraa Pharmacy'}, contact:{ar:'د. نور الساعدي', en:'Dr Noor Al-Saedi'},
-      phone:'07778901234', email:'zahraa.ph@example.com', district:'jadriya', source:'visit',
-      owner:'u1', rating:'hot', created:'2026-09-05', lastTouch:'2026-09-11' }
+  /* ---------- Users: the three account types ---------- */
+  users: [
+    { id:'U1', type:'pharmacist', name:{ar:'أحمد الكبيسي', en:'Ahmed Al-Kubaisi'},
+      phone:'07701112233', email:'ahmed@example.com', district:'karrada', verification:'verified',
+      joined:'2024-03-11', syndicateNo:'IQ-PH-004982', gradYear:2016, pharmacy:null,
+      university:null, orders:38, rating:4.9, reliability:96, owner:'u1' },
+    { id:'U2', type:'pharmacist', name:{ar:'نور السلطاني', en:'Noor Al-Sultani'},
+      phone:'07702223344', email:'noor@example.com', district:'jadriya', verification:'pending',
+      joined:'2026-09-02', syndicateNo:'IQ-PH-007731', gradYear:2021, pharmacy:null,
+      university:null, orders:0, rating:null, reliability:null, owner:'u1' },
+    { id:'U3', type:'pharmacist', name:{ar:'مصطفى حسين', en:'Mustafa Hussein'},
+      phone:'07703334455', email:'mustafa.h@example.com', district:'mansour', verification:'verified',
+      joined:'2025-11-20', syndicateNo:'IQ-PH-006120', gradYear:2019, pharmacy:null,
+      university:null, orders:22, rating:4.7, reliability:91, owner:'u2' },
+    { id:'U4', type:'pharmacist', name:{ar:'زهراء الخفاجي', en:'Zahraa Al-Khafaji'},
+      phone:'07704445566', email:'zahraa.k@example.com', district:'mansour', verification:'pending',
+      joined:'2026-09-09', syndicateNo:'IQ-PH-014772', gradYear:2023, pharmacy:null,
+      university:null, orders:0, rating:null, reliability:null, owner:'u3' },
+    { id:'U5', type:'pharmacy', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'},
+      phone:'07801112233', email:'rahma@example.com', district:'karrada', verification:'verified',
+      joined:'2026-08-14', syndicateNo:null, gradYear:null, pharmacy:'P1',
+      university:null, orders:11, rating:4.8, reliability:null, owner:'u1' },
+    { id:'U6', type:'pharmacy', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'},
+      phone:'07802223344', email:'furat@example.com', district:'jadriya', verification:'verified',
+      joined:'2026-07-02', syndicateNo:null, gradYear:null, pharmacy:'P2',
+      university:null, orders:24, rating:4.6, reliability:null, owner:'u1' },
+    { id:'U7', type:'pharmacy', name:{ar:'صيدلية النور', en:'Al-Noor Pharmacy'},
+      phone:'07805556677', email:'noor.ph@example.com', district:'karrada', verification:'verified',
+      joined:'2026-08-18', syndicateNo:null, gradYear:null, pharmacy:'P4',
+      university:null, orders:0, rating:null, reliability:null, owner:'u2' },
+    { id:'U8', type:'pharmacy', name:{ar:'صيدلية الأمل', en:'Al-Amal Pharmacy'},
+      phone:'07806667788', email:'amal@example.com', district:'zayouna', verification:'pending',
+      joined:'2026-08-25', syndicateNo:null, gradYear:null, pharmacy:'P3',
+      university:null, orders:0, rating:null, reliability:null, owner:'u2' },
+    { id:'U9', type:'student', name:{ar:'زينب التميمي', en:'Zainab Al-Tamimi'},
+      phone:'07709998877', email:'zainab@uobaghdad.edu.iq', district:'karrada', verification:'verified',
+      joined:'2026-06-10', syndicateNo:null, gradYear:2028, pharmacy:null,
+      university:'V1', orders:1, rating:null, reliability:null, owner:'u1' },
+    { id:'U10', type:'student', name:{ar:'علي الساعدي', en:'Ali Al-Saedi'},
+      phone:'07708887766', email:'ali.s@uomustansiriyah.edu.iq', district:'zayouna', verification:'verified',
+      joined:'2026-06-18', syndicateNo:null, gradYear:2027, pharmacy:null,
+      university:'V2', orders:1, rating:null, reliability:null, owner:'u3' },
+    { id:'U11', type:'student', name:{ar:'رقية الجنابي', en:'Ruqaya Al-Janabi'},
+      phone:'07707776655', email:'ruqaya@uobasrah.edu.iq', district:'dora', verification:'pending',
+      joined:'2026-09-07', syndicateNo:null, gradYear:2028, pharmacy:null,
+      university:'V3', orders:0, rating:null, reliability:null, owner:'u3' }
   ],
 
-  /* Pharmacies on the platform. The platform block is what the CRM reads back
-     out of Saydali+ — it is why a row can say "verified three weeks ago and
-     has still never posted", which is the single most actionable fact here. */
-  accounts: [
-    { id:'A1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, licence:'IQ-PHM-000117',
-      district:'karrada', owner:'u1', signedUp:'2026-08-14', appEmail:'rahma@example.com',
-      verification:'verified', trialDays:30, trialUsed:28, shifts:11, filled:10,
-      lastShift:'2026-09-10', commission:31500, pharmacists:6 },
-    { id:'A2', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'}, licence:'IQ-PHM-000232',
-      district:'jadriya', owner:'u1', signedUp:'2026-07-02', appEmail:'furat@example.com',
-      verification:'verified', trialDays:30, trialUsed:30, shifts:24, filled:23,
-      lastShift:'2026-09-09', commission:68200, pharmacists:9 },
-    { id:'A3', name:{ar:'صيدلية الأمل', en:'Al-Amal Pharmacy'}, licence:'IQ-PHM-000345',
-      district:'zayouna', owner:'u2', signedUp:'2026-08-25', appEmail:'amal@example.com',
-      verification:'pending', trialDays:30, trialUsed:17, shifts:0, filled:0,
-      lastShift:null, commission:0, pharmacists:0 },
-    { id:'A4', name:{ar:'صيدلية النور', en:'Al-Noor Pharmacy'}, licence:'IQ-PHM-000401',
-      district:'karrada', owner:'u2', signedUp:'2026-08-18', appEmail:'noor.ph@example.com',
-      verification:'verified', trialDays:30, trialUsed:24, shifts:0, filled:0,
-      lastShift:null, commission:0, pharmacists:0 },
-    { id:'A5', name:{ar:'صيدلية الحكمة', en:'Al-Hikma Pharmacy'}, licence:'IQ-PHM-000418',
-      district:'adhamiya', owner:'u3', signedUp:'2026-06-11', appEmail:'hikma@example.com',
-      verification:'verified', trialDays:30, trialUsed:30, shifts:7, filled:5,
-      lastShift:'2026-08-02', commission:0, pharmacists:3 },
-    { id:'A6', name:{ar:'صيدلية المنصور', en:'Mansour Pharmacy'}, licence:'IQ-PHM-000512',
-      district:'mansour', owner:'u1', signedUp:'2026-09-04', appEmail:'mansourph@example.com',
-      verification:'verified', trialDays:30, trialUsed:7, shifts:3, filled:3,
-      lastShift:'2026-09-11', commission:9800, pharmacists:2 },
-    { id:'A7', name:{ar:'صيدلية الكاظمية', en:'Kadhimiya Pharmacy'}, licence:'IQ-PHM-000590',
-      district:'kadhimiya', owner:'u3', signedUp:'2026-09-08', appEmail:'kadh@example.com',
-      verification:'pending', trialDays:30, trialUsed:3, shifts:0, filled:0,
-      lastShift:null, commission:0, pharmacists:0 }
+  /* ---------- Pharmacies: the business, separate from its account ---------- */
+  pharmacies: [
+    { id:'P1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, licence:'IQ-PHM-000117',
+      district:'karrada', address:{ar:'كرادة داخل، قرب ساحة الفردوس', en:'Karrada Dakhil, near Al-Firdaws roundabout'},
+      user:'U5', verification:'verified', signedUp:'2026-08-14', trialDays:30, trialUsed:28,
+      orders:11, filled:10, lastOrder:'2026-09-10', commission:31500, owner:'u1' },
+    { id:'P2', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'}, licence:'IQ-PHM-000232',
+      district:'jadriya', address:{ar:'الجادرية، شارع الجامعة', en:'Jadriya, University Street'},
+      user:'U6', verification:'verified', signedUp:'2026-07-02', trialDays:30, trialUsed:30,
+      orders:24, filled:23, lastOrder:'2026-09-09', commission:68200, owner:'u1' },
+    { id:'P3', name:{ar:'صيدلية الأمل', en:'Al-Amal Pharmacy'}, licence:'IQ-PHM-000345',
+      district:'zayouna', address:{ar:'زيونة، شارع الربيعي', en:'Zayouna, Rabie Street'},
+      user:'U8', verification:'pending', signedUp:'2026-08-25', trialDays:30, trialUsed:17,
+      orders:0, filled:0, lastOrder:null, commission:0, owner:'u2' },
+    { id:'P4', name:{ar:'صيدلية النور', en:'Al-Noor Pharmacy'}, licence:'IQ-PHM-000401',
+      district:'karrada', address:{ar:'الكرادة، قرب مستشفى الكرامة', en:'Karrada, near Al-Karama Hospital'},
+      user:'U7', verification:'verified', signedUp:'2026-08-18', trialDays:30, trialUsed:24,
+      orders:0, filled:0, lastOrder:null, commission:0, owner:'u2' },
+    { id:'P5', name:{ar:'صيدلية الحكمة', en:'Al-Hikma Pharmacy'}, licence:'IQ-PHM-000418',
+      district:'adhamiya', address:{ar:'الأعظمية، شارع عمر بن عبد العزيز', en:'Adhamiya, Omar bin Abdulaziz Street'},
+      user:null, verification:'verified', signedUp:'2026-06-11', trialDays:30, trialUsed:30,
+      orders:7, filled:5, lastOrder:'2026-08-02', commission:0, owner:'u3' },
+    { id:'P6', name:{ar:'صيدلية المنصور', en:'Mansour Pharmacy'}, licence:'IQ-PHM-000512',
+      district:'mansour', address:{ar:'المنصور، شارع الأميرات', en:'Mansour, Princesses Street'},
+      user:null, verification:'verified', signedUp:'2026-09-04', trialDays:30, trialUsed:7,
+      orders:3, filled:3, lastOrder:'2026-09-11', commission:9800, owner:'u1' }
   ],
 
-  contacts: [
-    { id:'C1', name:{ar:'د. رحمة الجبوري', en:'Dr Rahma Al-Jubouri'}, role:{ar:'مالكة وصيدلانية مسؤولة', en:'Owner & responsible pharmacist'},
-      account:'A1', phone:'07801112233', email:'rahma@example.com', district:'karrada', owner:'u1' },
-    { id:'C2', name:{ar:'د. كرار الموسوي', en:'Dr Karrar Al-Mousawi'}, role:{ar:'مالك', en:'Owner'},
-      account:'A2', phone:'07802223344', email:'furat@example.com', district:'jadriya', owner:'u1' },
-    { id:'C3', name:{ar:'د. سجى العبودي', en:'Dr Saja Al-Aboudi'}, role:{ar:'صيدلانية مسؤولة', en:'Responsible pharmacist'},
-      account:'A2', phone:'07803334455', email:'saja@example.com', district:'jadriya', owner:'u1' },
-    { id:'C4', name:{ar:'د. ليث الخفاجي', en:'Dr Laith Al-Khafaji'}, role:{ar:'مالك', en:'Owner'},
-      account:'A3', phone:'07804445566', email:'amal@example.com', district:'zayouna', owner:'u2' },
-    { id:'C5', name:{ar:'د. إيمان الربيعي', en:'Dr Iman Al-Rubaie'}, role:{ar:'مالكة', en:'Owner'},
-      account:'A4', phone:'07805556677', email:'noor.ph@example.com', district:'karrada', owner:'u2' },
-    { id:'C6', name:{ar:'د. باسم الحلفي', en:'Dr Basim Al-Halfi'}, role:{ar:'مالك', en:'Owner'},
-      account:'A5', phone:'07806667788', email:'hikma@example.com', district:'adhamiya', owner:'u3' },
-    { id:'C7', name:{ar:'د. تبارك الجنابي', en:'Dr Tabarak Al-Janabi'}, role:{ar:'مالكة', en:'Owner'},
-      account:'A6', phone:'07807778899', email:'mansourph@example.com', district:'mansour', owner:'u1' }
+  /* ---------- Orders: the main module ----------
+     A shift a pharmacy posts, or a training placement it offers. The status is
+     what the whole business runs on: an order nobody takes is a pharmacy we
+     are about to lose. */
+  orders: [
+    { id:'O-1042', type:'shift', pharmacy:'P1', district:'karrada',
+      date:'2026-09-12', start:'08:00', end:'16:00', hours:8, rateType:'hourly', rate:5000,
+      total:40000, status:'open', assignee:null, applicants:2, controlled:false, owner:'u1' },
+    { id:'O-1041', type:'shift', pharmacy:'P2', district:'jadriya',
+      date:'2026-09-12', start:'16:00', end:'23:00', hours:7, rateType:'flat', rate:45000,
+      total:45000, status:'assigned', assignee:'U1', applicants:3, controlled:true, owner:'u1' },
+    { id:'O-1040', type:'shift', pharmacy:'P6', district:'mansour',
+      date:'2026-09-11', start:'22:00', end:'06:00', hours:8, rateType:'hourly', rate:6000,
+      total:48000, status:'in_progress', assignee:'U3', applicants:1, controlled:true, owner:'u1' },
+    { id:'O-1039', type:'shift', pharmacy:'P1', district:'karrada',
+      date:'2026-09-10', start:'08:00', end:'13:00', hours:5, rateType:'hourly', rate:4000,
+      total:20000, status:'completed', assignee:'U1', applicants:4, controlled:false, owner:'u1' },
+    { id:'O-1038', type:'shift', pharmacy:'P2', district:'jadriya',
+      date:'2026-09-09', start:'09:00', end:'17:00', hours:8, rateType:'hourly', rate:5000,
+      total:40000, status:'completed', assignee:'U3', applicants:2, controlled:false, owner:'u1' },
+    { id:'O-1037', type:'shift', pharmacy:'P5', district:'adhamiya',
+      date:'2026-09-11', start:'17:00', end:'23:00', hours:6, rateType:'hourly', rate:4500,
+      total:27000, status:'open', assignee:null, applicants:0, controlled:false, owner:'u3' },
+    { id:'O-1036', type:'shift', pharmacy:'P6', district:'mansour',
+      date:'2026-09-08', start:'08:00', end:'14:00', hours:6, rateType:'hourly', rate:5000,
+      total:30000, status:'completed', assignee:'U1', applicants:2, controlled:false, owner:'u1' },
+    { id:'O-1035', type:'shift', pharmacy:'P1', district:'karrada',
+      date:'2026-09-07', start:'16:00', end:'22:00', hours:6, rateType:'flat', rate:32000,
+      total:32000, status:'cancelled', assignee:null, applicants:1, controlled:false, owner:'u1' },
+    { id:'O-1034', type:'training', pharmacy:'P1', district:'karrada',
+      date:'2026-06-15', start:null, end:null, hours:0, rateType:null, rate:0,
+      total:0, status:'in_progress', assignee:'U9', applicants:3, controlled:false, owner:'u1',
+      weeks:12, weeksApproved:4 },
+    { id:'O-1033', type:'training', pharmacy:'P2', district:'jadriya',
+      date:'2026-06-18', start:null, end:null, hours:0, rateType:null, rate:0,
+      total:0, status:'in_progress', assignee:'U10', applicants:2, controlled:false, owner:'u3',
+      weeks:12, weeksApproved:6 },
+    { id:'O-1032', type:'training', pharmacy:'P6', district:'mansour',
+      date:'2026-09-20', start:null, end:null, hours:0, rateType:null, rate:0,
+      total:0, status:'open', assignee:null, applicants:1, controlled:false, owner:'u1',
+      weeks:12, weeksApproved:0 }
   ],
 
-  /* Value is the monthly commission we would earn if the pharmacy posts at its
-     expected rate — not an invented deal size. It is derived from the shift
-     volume the owner says they need, at the platform's 10%. */
-  deals: [
-    { id:'D1', name:{ar:'صيدلية النهرين — تفعيل', en:'Al-Nahrain — onboarding'}, lead:'L1', account:null,
-      stage:'visited', value:34000, close:'2026-09-25', owner:'u1', district:'mansour' },
-    { id:'D2', name:{ar:'صيدلية دجلة — تفعيل', en:'Dijla — onboarding'}, lead:'L2', account:null,
-      stage:'contacted', value:28000, close:'2026-09-30', owner:'u1', district:'karrada' },
-    { id:'D3', name:{ar:'صيدلية بابل — تفعيل', en:'Babil — onboarding'}, lead:'L3', account:null,
-      stage:'new', value:22000, close:'2026-10-12', owner:'u2', district:'zayouna' },
-    { id:'D4', name:{ar:'صيدلية الرشيد — تفعيل', en:'Al-Rasheed — onboarding'}, lead:'L4', account:null,
-      stage:'contacted', value:26000, close:'2026-10-05', owner:'u2', district:'kadhimiya' },
-    { id:'D5', name:{ar:'صيدلية الأمل — تفعيل', en:'Al-Amal — onboarding'}, lead:null, account:'A3',
-      stage:'trial', value:30000, close:'2026-09-24', owner:'u2', district:'zayouna' },
-    { id:'D6', name:{ar:'صيدلية النور — تفعيل', en:'Al-Noor — onboarding'}, lead:null, account:'A4',
-      stage:'trial', value:33000, close:'2026-09-17', owner:'u2', district:'karrada' },
-    { id:'D7', name:{ar:'صيدلية المنصور — تفعيل', en:'Mansour — onboarding'}, lead:null, account:'A6',
-      stage:'activated', value:29000, close:'2026-09-11', owner:'u1', district:'mansour' },
-    { id:'D8', name:{ar:'صيدلية السلام — تفعيل', en:'Al-Salam — onboarding'}, lead:'L6', account:null,
-      stage:'new', value:19000, close:'2026-10-18', owner:'u1', district:'dora' },
-    { id:'D9', name:{ar:'صيدلية الزهراء — تفعيل', en:'Al-Zahraa — onboarding'}, lead:'L8', account:null,
-      stage:'new', value:25000, close:'2026-10-09', owner:'u1', district:'jadriya' },
-    { id:'D10', name:{ar:'صيدلية الكاظمية — تفعيل', en:'Kadhimiya — onboarding'}, lead:null, account:'A7',
-      stage:'trial', value:21000, close:'2026-10-08', owner:'u3', district:'kadhimiya' },
-    { id:'D11', name:{ar:'صيدلية الفيحاء — تفعيل', en:'Al-Fayhaa — onboarding'}, lead:'L7', account:null,
-      stage:'visited', value:17000, close:'2026-10-02', owner:'u3', district:'sadr' }
+  /* ---------- Companies (the "externals") ---------- */
+  companies: [
+    { id:'CO1', name:{ar:'سامراء لصناعة الأدوية', en:'Samarra Drug Industries'}, type:'manufacturer',
+      country:{ar:'العراق', en:'Iraq'}, city:{ar:'سامراء', en:'Samarra'}, reg:'IQ-MFR-0012',
+      contact:{ar:'م. عادل الحديثي', en:'Eng. Adel Al-Haditi'}, phone:'07711110001',
+      email:'info@sdi.example', status:'active', owner:'u1' },
+    { id:'CO2', name:{ar:'شركة نينوى للأدوية', en:'Ninawa Pharmaceutical'}, type:'manufacturer',
+      country:{ar:'العراق', en:'Iraq'}, city:{ar:'الموصل', en:'Mosul'}, reg:'IQ-MFR-0027',
+      contact:{ar:'د. سلام الطائي', en:'Dr Salam Al-Taie'}, phone:'07711110002',
+      email:'contact@ninawapharma.example', status:'active', owner:'u2' },
+    { id:'CO3', name:{ar:'جوليفارم', en:'Julphar'}, type:'marketing',
+      country:{ar:'الإمارات', en:'UAE'}, city:{ar:'رأس الخيمة', en:'Ras Al Khaimah'}, reg:'AE-MKT-3391',
+      contact:{ar:'أ. ريم العتيبي', en:'Reem Al-Otaibi'}, phone:'07711110003',
+      email:'iraq@julphar.example', status:'active', owner:'u1' },
+    { id:'CO4', name:{ar:'الوكيل العراقي للأدوية', en:'Iraqi Drug Agency Co.'}, type:'importer',
+      country:{ar:'العراق', en:'Iraq'}, city:{ar:'بغداد', en:'Baghdad'}, reg:'IQ-IMP-0450',
+      contact:{ar:'أ. حسن الربيعي', en:'Hassan Al-Rubaie'}, phone:'07711110004',
+      email:'sales@ida.example', status:'active', owner:'u3' },
+    { id:'CO5', name:{ar:'الرافدين للتوزيع الدوائي', en:'Rafidain Pharma Distribution'}, type:'distributor',
+      country:{ar:'العراق', en:'Iraq'}, city:{ar:'بغداد', en:'Baghdad'}, reg:'IQ-DST-0118',
+      contact:{ar:'أ. مؤيد الدوري', en:'Muayad Al-Douri'}, phone:'07711110005',
+      email:'orders@rafidainpharma.example', status:'review', owner:'u2' },
+    { id:'CO6', name:{ar:'هيكما للصناعات الدوائية', en:'Hikma Pharmaceuticals'}, type:'marketing',
+      country:{ar:'الأردن', en:'Jordan'}, city:{ar:'عمّان', en:'Amman'}, reg:'JO-MKT-1180',
+      contact:{ar:'أ. لينا خوري', en:'Lina Khoury'}, phone:'07711110006',
+      email:'iraq@hikma.example', status:'active', owner:'u1' }
   ],
 
-  tasks: [
-    { id:'T1', subject:{ar:'اتصل بصيدلية النور — موثّقة منذ 24 يوماً ولم تنشر', en:'Call Al-Noor — verified 24 days, still no shift'},
-      type:'call', due:'2026-09-11', owner:'u1', related:{kind:'accounts', id:'A4'}, priority:'high', done:false },
-    { id:'T2', subject:{ar:'زيارة صيدلية النهرين مع نموذج الإجازة', en:'Visit Al-Nahrain with the licence form'},
-      type:'visit', due:'2026-09-11', owner:'u1', related:{kind:'leads', id:'L1'}, priority:'high', done:false },
-    { id:'T3', subject:{ar:'تجربة صيدلية الرحمة تنتهي بعد يومين', en:'Al-Rahma trial ends in 2 days'},
-      type:'followup', due:'2026-09-11', owner:'u1', related:{kind:'accounts', id:'A1'}, priority:'high', done:false },
-    { id:'T4', subject:{ar:'أرسل عرضاً تجريبياً لصيدلية دجلة', en:'Send Dijla a demo walkthrough'},
-      type:'demo', due:'2026-09-12', owner:'u1', related:{kind:'leads', id:'L2'}, priority:'normal', done:false },
-    { id:'T5', subject:{ar:'متابعة صيدلية الحكمة — لم تنشر منذ 40 يوماً', en:'Follow up Al-Hikma — nothing posted in 40 days'},
-      type:'followup', due:'2026-09-09', owner:'u3', related:{kind:'accounts', id:'A5'}, priority:'high', done:false },
-    { id:'T6', subject:{ar:'اتصل بصيدلية بابل بعد فعالية النقابة', en:'Call Babil after the Syndicate event'},
-      type:'call', due:'2026-09-08', owner:'u2', related:{kind:'leads', id:'L3'}, priority:'normal', done:false },
-    { id:'T7', subject:{ar:'أرسل وثائق التوثيق لصيدلية الكاظمية', en:'Chase Kadhimiya for verification documents'},
-      type:'followup', due:'2026-09-13', owner:'u3', related:{kind:'accounts', id:'A7'}, priority:'normal', done:false },
-    { id:'T8', subject:{ar:'تدريب فريق صيدلية الفرات على نشر المناوبات الليلية', en:'Train Al-Furat on posting overnight shifts'},
-      type:'visit', due:'2026-09-05', owner:'u1', related:{kind:'accounts', id:'A2'}, priority:'low', done:true }
+  /* ---------- Universities ---------- */
+  universities: [
+    { id:'V1', name:{ar:'جامعة بغداد — كلية الصيدلة', en:'University of Baghdad — College of Pharmacy'},
+      city:{ar:'بغداد', en:'Baghdad'}, domain:'uobaghdad.edu.iq', students:1,
+      contact:{ar:'د. سعاد الحلي', en:'Dr Suaad Al-Helli'}, phone:'07721110001',
+      email:'pharmacy@uobaghdad.edu.iq', agreement:'signed', owner:'u1' },
+    { id:'V2', name:{ar:'الجامعة المستنصرية — كلية الصيدلة', en:'Al-Mustansiriyah University — College of Pharmacy'},
+      city:{ar:'بغداد', en:'Baghdad'}, domain:'uomustansiriyah.edu.iq', students:1,
+      contact:{ar:'د. عمار الزبيدي', en:'Dr Ammar Al-Zubaidi'}, phone:'07721110002',
+      email:'pharm@uomustansiriyah.edu.iq', agreement:'signed', owner:'u3' },
+    { id:'V3', name:{ar:'جامعة البصرة — كلية الصيدلة', en:'University of Basrah — College of Pharmacy'},
+      city:{ar:'البصرة', en:'Basrah'}, domain:'uobasrah.edu.iq', students:1,
+      contact:{ar:'د. هدى المالكي', en:'Dr Huda Al-Maliki'}, phone:'07721110003',
+      email:'pharmacy@uobasrah.edu.iq', agreement:'talks', owner:'u3' },
+    { id:'V4', name:{ar:'جامعة الموصل — كلية الصيدلة', en:'University of Mosul — College of Pharmacy'},
+      city:{ar:'الموصل', en:'Mosul'}, domain:'uomosul.edu.iq', students:0,
+      contact:{ar:'د. فراس النعيمي', en:'Dr Firas Al-Nuaimi'}, phone:'07721110004',
+      email:'pharmacy@uomosul.edu.iq', agreement:'none', owner:'u2' },
+    { id:'V5', name:{ar:'جامعة الكوفة — كلية الصيدلة', en:'University of Kufa — College of Pharmacy'},
+      city:{ar:'النجف', en:'Najaf'}, domain:'uokufa.edu.iq', students:0,
+      contact:{ar:'د. رائد الفتلاوي', en:'Dr Raed Al-Fatlawi'}, phone:'07721110005',
+      email:'pharmacy@uokufa.edu.iq', agreement:'talks', owner:'u1' }
+  ],
+
+  /* ---------- Syndicate roster ----------
+     Rows as the Syndicate supplies them. There is no registry API in Iraq and
+     the Syndicate's processes are paper-based, so this is a list somebody
+     loaded from a spreadsheet, with the date it was loaded on every row. What
+     it is FOR is the match column: does a pharmacist who signed up appear in
+     the roster, and does the name agree? A human still decides. */
+  syndicate: [
+    { no:'IQ-PH-004982', name:{ar:'أحمد صباح الكبيسي', en:'Ahmed Sabah Al-Kubaisi'}, gradYear:2016,
+      status:'active', batch:'2026-08-01' },
+    { no:'IQ-PH-006120', name:{ar:'مصطفى حسين علي', en:'Mustafa Hussein Ali'}, gradYear:2019,
+      status:'active', batch:'2026-08-01' },
+    { no:'IQ-PH-007731', name:{ar:'نور عباس السلطاني', en:'Noor Abbas Al-Sultani'}, gradYear:2021,
+      status:'active', batch:'2026-08-01' },
+    { no:'IQ-PH-014772', name:{ar:'زهراء كريم الخفاجي', en:'Zahraa Karim Al-Khafaji'}, gradYear:2023,
+      status:'active', batch:'2026-09-01' },
+    { no:'IQ-PH-009004', name:{ar:'سيف الدين الجميلي', en:'Saif Al-Deen Al-Jumaili'}, gradYear:2020,
+      status:'active', batch:'2026-08-01' },
+    { no:'IQ-PH-003310', name:{ar:'إيمان قاسم الربيعي', en:'Iman Qasim Al-Rubaie'}, gradYear:2012,
+      status:'suspended', batch:'2026-08-01' },
+    { no:'IQ-PH-011245', name:{ar:'حسن مهدي الساعدي', en:'Hassan Mahdi Al-Saedi'}, gradYear:2022,
+      status:'active', batch:'2026-09-01' }
+  ],
+
+  /* ---------- Drugs ----------
+     The scientific (INN) name is the identifier — brands come and go and the
+     same molecule ships under a dozen of them, so keying on a brand would
+     scatter one drug across a dozen rows. Doses on the drug are what the
+     molecule is normally given at; a brand may override them, because two
+     companies genuinely do not always supply the same strengths. */
+  drugs: [
+    { sci:'Amoxicillin', ar:'أموكسيسيلين', atc:'J01CA04', form:'capsule',
+      doses:['250 mg','500 mg','1 g'],
+      notes:{ar:'يُفضّل تناوله مع الطعام لتقليل الاضطراب المعوي.', en:'Take with food to reduce GI upset.'},
+      interactions:[
+        { with:'Methotrexate', severity:'serious', note:{ar:'يقلّل طرح الميثوتريكسيت ويزيد سميّته.', en:'Reduces methotrexate clearance, raising toxicity.'} },
+        { with:'Warfarin', severity:'warning', note:{ar:'قد يرفع INR — راقب التخثر.', en:'May raise INR — monitor coagulation.'} }
+      ],
+      contraindications:[
+        {ar:'فرط الحساسية للبنسلينات', en:'Penicillin hypersensitivity'},
+        {ar:'كثرة الوحيدات العدائية', en:'Infectious mononucleosis'}
+      ] },
+    { sci:'Metformin', ar:'ميتفورمين', atc:'A10BA02', form:'tablet',
+      doses:['500 mg','850 mg','1000 mg'],
+      notes:{ar:'يُوقف مؤقتاً قبل التصوير بصبغة اليود.', en:'Hold before iodinated contrast imaging.'},
+      interactions:[
+        { with:'Contrast media', severity:'critical', note:{ar:'خطر الحماض اللبني — يُوقف قبل الإجراء.', en:'Lactic acidosis risk — withhold before the procedure.'} }
+      ],
+      contraindications:[
+        {ar:'قصور كلوي شديد (eGFR < 30)', en:'Severe renal impairment (eGFR < 30)'},
+        {ar:'الحماض الكيتوني السكري', en:'Diabetic ketoacidosis'}
+      ] },
+    { sci:'Paracetamol', ar:'باراسيتامول', atc:'N02BE01', form:'tablet',
+      doses:['500 mg','1 g','120 mg/5 mL'],
+      notes:{ar:'الحد الأقصى 4 غم يومياً للبالغين، وأقل مع أمراض الكبد.', en:'Max 4 g/day in adults; lower with hepatic disease.'},
+      interactions:[
+        { with:'Warfarin', severity:'warning', note:{ar:'الاستخدام المنتظم قد يرفع INR.', en:'Regular use may raise INR.'} }
+      ],
+      contraindications:[{ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}] },
+    { sci:'Amlodipine', ar:'أملوديبين', atc:'C08CA01', form:'tablet',
+      doses:['5 mg','10 mg'],
+      notes:{ar:'الوذمة المحيطية أشيع أعراضه الجانبية.', en:'Peripheral oedema is the commonest side effect.'},
+      interactions:[
+        { with:'Simvastatin', severity:'warning', note:{ar:'يُحدّ سيمفاستاتين بـ 20 ملغ يومياً.', en:'Limit simvastatin to 20 mg daily.'} }
+      ],
+      contraindications:[{ar:'صدمة قلبية المنشأ', en:'Cardiogenic shock'}] },
+    { sci:'Omeprazole', ar:'أوميبرازول', atc:'A02BC01', form:'capsule',
+      doses:['20 mg','40 mg'],
+      notes:{ar:'يؤخذ قبل الطعام بثلاثين دقيقة.', en:'Take 30 minutes before food.'},
+      interactions:[
+        { with:'Clopidogrel', severity:'serious', note:{ar:'يقلّل فعالية كلوبيدوغريل.', en:'Reduces clopidogrel activation.'} }
+      ],
+      contraindications:[] },
+    { sci:'Azithromycin', ar:'أزيثرومايسين', atc:'J01FA10', form:'tablet',
+      doses:['250 mg','500 mg','200 mg/5 mL'],
+      notes:{ar:'يُعطى عادةً ثلاثة أيام أو خمسة حسب الاستطباب.', en:'Usually a three- or five-day course.'},
+      interactions:[
+        { with:'Amiodarone', severity:'critical', note:{ar:'إطالة QT — تجنّب الجمع.', en:'QT prolongation — avoid the combination.'} }
+      ],
+      contraindications:[{ar:'تاريخ يرقان ركودي مع المادة', en:'Prior cholestatic jaundice with the drug'}] }
+  ],
+
+  /* Brand names, each owned by a company. dosesOverride is null when the brand
+     ships the molecule's usual strengths; a value here means this company's
+     pack genuinely differs, which is the whole reason the field exists. */
+  brands: [
+    { id:'B1', brand:'Amoxil', sci:'Amoxicillin', company:'CO3', dosesOverride:null,
+      notes:{ar:'', en:''} },
+    { id:'B2', brand:'Samamox', sci:'Amoxicillin', company:'CO1', dosesOverride:['250 mg','500 mg'],
+      notes:{ar:'لا يتوفر عيار 1 غم من هذه الشركة.', en:'This company does not supply the 1 g strength.'} },
+    { id:'B3', brand:'Glucophage', sci:'Metformin', company:'CO6', dosesOverride:null, notes:{ar:'', en:''} },
+    { id:'B4', brand:'Nina-Met', sci:'Metformin', company:'CO2', dosesOverride:['500 mg','1000 mg'],
+      notes:{ar:'عيار 850 ملغ غير مسجّل محلياً.', en:'The 850 mg strength is not locally registered.'} },
+    { id:'B5', brand:'Panadol', sci:'Paracetamol', company:'CO3', dosesOverride:null, notes:{ar:'', en:''} },
+    { id:'B6', brand:'Samadol', sci:'Paracetamol', company:'CO1', dosesOverride:['500 mg'],
+      notes:{ar:'أقراص فقط — لا يتوفر شراب.', en:'Tablets only — no suspension.'} },
+    { id:'B7', brand:'Norvasc', sci:'Amlodipine', company:'CO6', dosesOverride:null, notes:{ar:'', en:''} },
+    { id:'B8', brand:'Omez', sci:'Omeprazole', company:'CO4', dosesOverride:null, notes:{ar:'', en:''} },
+    { id:'B9', brand:'Zithromax', sci:'Azithromycin', company:'CO3', dosesOverride:null, notes:{ar:'', en:''} },
+    { id:'B10', brand:'Ninazith', sci:'Azithromycin', company:'CO2', dosesOverride:['500 mg'],
+      notes:{ar:'', en:''} }
   ],
 
   /* Timeline entries, newest first when rendered. */
   activity: [
-    { id:'E1', kind:'accounts', id2:'A1', type:'note', when:'2026-09-10', owner:'u1',
+    { id:'E1', kind:'pharmacies', id2:'P1', type:'note', when:'2026-09-10', owner:'u1',
       text:{ar:'د. رحمة تريد تغطية ليلية ثابتة كل خميس. وافقت على 6,000 د.ع للساعة.', en:'Dr Rahma wants standing Thursday overnight cover. Agreed 6,000 IQD/hour.'} },
-    { id:'E2', kind:'accounts', id2:'A1', type:'call', when:'2026-09-03', owner:'u1',
-      text:{ar:'مكالمة متابعة — نسبة التغطية 10 من 11، راضية.', en:'Check-in call — 10 of 11 shifts filled, happy.'} },
-    { id:'E3', kind:'accounts', id2:'A4', type:'call', when:'2026-08-30', owner:'u2',
+    { id:'E2', kind:'pharmacies', id2:'P4', type:'call', when:'2026-08-30', owner:'u2',
       text:{ar:'وُثّقت ولم تنشر. قالت إنها تنتظر أن ترى صيادلة في منطقتها أولاً.', en:'Verified but not posting. Says she wants to see pharmacists in her district first.'} },
-    { id:'E4', kind:'leads', id2:'L1', type:'visit', when:'2026-09-09', owner:'u1',
-      text:{ar:'زيارة ميدانية. مهتم، يحتاج نموذج الإجازة ورقياً — ليس لديه ماسح ضوئي.', en:'Field visit. Interested; needs the licence form on paper — has no scanner.'} },
-    { id:'E5', kind:'leads', id2:'L2', type:'call', when:'2026-09-10', owner:'u1',
-      text:{ar:'ترشيح من د. أحمد الكبيسي. طلبت عرضاً تجريبياً هذا الأسبوع.', en:'Referred by Dr Ahmed Al-Kubaisi. Asked for a demo this week.'} },
-    { id:'E6', kind:'accounts', id2:'A5', type:'note', when:'2026-08-02', owner:'u3',
-      text:{ar:'آخر مناوبة منشورة. توقف بعدها بلا سبب معلن — يحتاج مكالمة.', en:'Last shift posted. Went quiet afterwards with no stated reason — needs a call.'} },
-    { id:'E7', kind:'accounts', id2:'A2', type:'note', when:'2026-09-09', owner:'u1',
-      text:{ar:'24 مناوبة منذ تموز، 23 غُطّيت. أفضل حساب لدينا.', en:'24 shifts since July, 23 filled. Our best account.'} },
-    { id:'E8', kind:'leads', id2:'L8', type:'visit', when:'2026-09-11', owner:'u1',
-      text:{ar:'زيارة أولى. جاهزة للتسجيل، تريد معرفة العمولة بالضبط.', en:'First visit. Ready to sign up, wants the exact commission spelled out.'} }
+    { id:'E3', kind:'users', id2:'U4', type:'note', when:'2026-09-09', owner:'u3',
+      text:{ar:'رفعت هوية النقابة. الرقم مطابق لكشف النقابة — بانتظار مراجعة الاسم.', en:'Syndicate card uploaded. Number matches the roster — name check outstanding.'} },
+    { id:'E4', kind:'companies', id2:'CO5', type:'call', when:'2026-09-08', owner:'u2',
+      text:{ar:'طلبنا نسخة من إجازة التوزيع قبل إدراج أصنافهم.', en:'Asked for a copy of the distribution licence before listing their lines.'} },
+    { id:'E5', kind:'universities', id2:'V3', type:'visit', when:'2026-09-04', owner:'u3',
+      text:{ar:'اجتماع مع عمادة الصيدلة. مهتمون بتدريب صيفي لدفعة 2027.', en:'Met the pharmacy dean. Interested in summer placements for the 2027 cohort.'} },
+    { id:'E6', kind:'pharmacies', id2:'P5', type:'note', when:'2026-08-02', owner:'u3',
+      text:{ar:'آخر طلب منشور. توقفت بعده بلا سبب معلن — تحتاج مكالمة.', en:'Last order posted. Went quiet afterwards with no stated reason — needs a call.'} },
+    { id:'E7', kind:'orders', id2:'O-1037', type:'note', when:'2026-09-11', owner:'u3',
+      text:{ar:'لا متقدمين بعد يومين. الأجر أقل من سوق الأعظمية.', en:'No applicants after two days. The rate is below the Adhamiya market.'} },
+    { id:'E8', kind:'users', id2:'U7', type:'call', when:'2026-09-11', owner:'u2',
+      text:{ar:'موثّقة منذ 24 يوماً ولم تنشر أي طلب.', en:'Verified 24 days ago and has posted nothing.'} }
+  ],
+
+  tasks: [
+    { id:'T1', subject:{ar:'اتصل بصيدلية النور — موثّقة منذ 24 يوماً ولم تنشر', en:'Call Al-Noor — verified 24 days, still no order'},
+      type:'call', due:'2026-09-11', owner:'u1', related:{kind:'pharmacies', id:'P4'}, priority:'high', done:false },
+    { id:'T2', subject:{ar:'طلب O-1037 بلا متقدمين — راجع الأجر مع الصيدلية', en:'O-1037 has no applicants — review the rate with the pharmacy'},
+      type:'followup', due:'2026-09-11', owner:'u1', related:{kind:'orders', id:'O-1037'}, priority:'high', done:false },
+    { id:'T3', subject:{ar:'طابق زهراء الخفاجي مع كشف النقابة', en:'Match Zahraa Al-Khafaji against the Syndicate roster'},
+      type:'followup', due:'2026-09-11', owner:'u1', related:{kind:'users', id:'U4'}, priority:'high', done:false },
+    { id:'T4', subject:{ar:'احصل على إجازة التوزيع من الرافدين', en:'Get the distribution licence from Rafidain'},
+      type:'followup', due:'2026-09-12', owner:'u2', related:{kind:'companies', id:'CO5'}, priority:'normal', done:false },
+    { id:'T5', subject:{ar:'متابعة اتفاقية جامعة البصرة', en:'Follow up the Basrah agreement'},
+      type:'call', due:'2026-09-09', owner:'u3', related:{kind:'universities', id:'V3'}, priority:'normal', done:false },
+    { id:'T6', subject:{ar:'تحديث أصناف سامراء من ملف CSV', en:'Load the Samarra product list from CSV'},
+      type:'followup', due:'2026-09-14', owner:'u1', related:{kind:'companies', id:'CO1'}, priority:'low', done:false },
+    { id:'T7', subject:{ar:'تدريب صيدلية الفرات على نشر المناوبات الليلية', en:'Train Al-Furat on posting overnight shifts'},
+      type:'visit', due:'2026-09-05', owner:'u1', related:{kind:'pharmacies', id:'P2'}, priority:'low', done:true }
   ]
 };
 
-/* Monthly activations — the number that says whether onboarding works. */
-const ACTIVATIONS = [
-  { m:3, n:1 }, { m:4, n:2 }, { m:5, n:2 }, { m:6, n:4 },
-  { m:7, n:5 }, { m:8, n:8 }, { m:9, n:3 }
-];
-
-const LEAD_SOURCES_90D = [
-  { key:'visit', n:14 }, { key:'referral', n:11 }, { key:'syndicate', n:7 },
-  { key:'inbound', n:5 }, { key:'social', n:3 }
+/* Orders created per day over the last fortnight — the number that says
+   whether the marketplace has a heartbeat. */
+const ORDERS_PER_DAY = [
+  { d:'2026-08-29', n:3 }, { d:'2026-08-30', n:5 }, { d:'2026-08-31', n:4 },
+  { d:'2026-09-01', n:6 }, { d:'2026-09-02', n:5 }, { d:'2026-09-03', n:7 },
+  { d:'2026-09-04', n:6 }, { d:'2026-09-05', n:4 }, { d:'2026-09-06', n:3 },
+  { d:'2026-09-07', n:6 }, { d:'2026-09-08', n:8 }, { d:'2026-09-09', n:7 },
+  { d:'2026-09-10', n:9 }, { d:'2026-09-11', n:6 }
 ];
 
 /* ==========================================================================
@@ -1153,199 +1498,350 @@ function sparkline(values, tone) {
 
 /* ==========================================================================
    4. DERIVED FACTS
-   The things the team actually acts on are not columns — they are conclusions
-   drawn from columns, so they are computed here rather than stored and left to
-   rot. "Dormant" is the one that matters: verified, past the point where a
-   real pharmacy would have tried it, and still nothing posted.
+   Conclusions, not columns — computed so they cannot go stale. The ones that
+   matter are the silent failures: an order nobody applied for, a pharmacy
+   verified weeks ago that has never posted, and a pharmacist whose Syndicate
+   number does not appear in the roster we were given.
    ========================================================================== */
 
 const ISO_TODAY = TODAY.toISOString().slice(0, 10);
-const DORMANT_AFTER_DAYS = 10;   // verified this long ago and still no shift
-const AT_RISK_QUIET_DAYS  = 30;  // posted before, but not lately
-const TRIAL_ENDING_WITHIN  = 7;
+const DORMANT_AFTER_DAYS = 10;
+const AT_RISK_QUIET_DAYS = 30;
+const TRIAL_ENDING_WITHIN = 7;
 
-const trialLeft = a => Math.max(0, a.trialDays - a.trialUsed);
-const daysSinceSignup = a => daysBetween(a.signedUp, ISO_TODAY);
-const fillRate = a => a.shifts ? Math.round(a.filled / a.shifts * 100) : null;
+const trialLeft = p => Math.max(0, p.trialDays - p.trialUsed);
+const daysSinceSignup = p => daysBetween(p.signedUp, ISO_TODAY);
+const fillRate = p => p.orders ? Math.round(p.filled / p.orders * 100) : null;
 
-const isDormant = a =>
-  a.verification === 'verified' && a.shifts === 0 && daysSinceSignup(a) >= DORMANT_AFTER_DAYS;
+const isDormant = p => p.verification === 'verified' && p.orders === 0 && daysSinceSignup(p) >= DORMANT_AFTER_DAYS;
+const isAtRisk = p => p.orders > 0 && p.lastOrder && daysBetween(p.lastOrder, ISO_TODAY) >= AT_RISK_QUIET_DAYS;
+const isTrialEnding = p => p.verification !== 'rejected' && trialLeft(p) > 0 && trialLeft(p) <= TRIAL_ENDING_WITHIN;
+const isActivePharmacy = p => p.orders > 0 && !isAtRisk(p);
 
-const isAtRisk = a =>
-  a.shifts > 0 && a.lastShift && daysBetween(a.lastShift, ISO_TODAY) >= AT_RISK_QUIET_DAYS;
+/* An order that is open and nobody has applied for is the one the team has to
+   act on today: the rate is wrong, the district is thin, or the notice is too
+   short. All three are fixable, and only while the order is still open. */
+const isUnclaimed = o => o.status === 'open' && o.applicants === 0;
+const isToday = o => o.date === ISO_TODAY;
 
-const isTrialEnding = a =>
-  a.verification !== 'rejected' && trialLeft(a) > 0 && trialLeft(a) <= TRIAL_ENDING_WITHIN;
-
-const isActive = a => a.shifts > 0 && !isAtRisk(a);
-
-const leadStale = l => daysBetween(l.lastTouch, ISO_TODAY) >= 14;
-
-/* A pharmacy's health, as one status token. Status colours are reserved for
-   this — they mean good/bad, never "series 4" — and each ships with an icon
-   and a word, so the colour never carries the meaning alone. */
-function accountHealth(a) {
-  if (a.verification === 'pending')  return { key:'pending',  chip:'chip-warn', ico:'clock',        label:t('vs.pending') };
-  if (a.verification === 'rejected') return { key:'rejected', chip:'chip-bad',  ico:'x',            label:t('vs.rejected') };
-  if (isDormant(a))                  return { key:'dormant',  chip:'chip-bad',  ico:'alert',        label:t('v.dormant') };
-  if (isAtRisk(a))                   return { key:'atrisk',   chip:'chip-warn', ico:'alert',        label:t('v.atRisk') };
+function pharmacyHealth(p) {
+  if (p.verification === 'pending')  return { key:'pending',  chip:'chip-warn', ico:'clock',        label:t('vs.pending') };
+  if (p.verification === 'rejected') return { key:'rejected', chip:'chip-bad',  ico:'x',            label:t('vs.rejected') };
+  if (isDormant(p))                  return { key:'dormant',  chip:'chip-bad',  ico:'alert',        label:t('v.dormant') };
+  if (isAtRisk(p))                   return { key:'atrisk',   chip:'chip-warn', ico:'alert',        label:t('v.atRisk') };
   return { key:'ok', chip:'chip-good', ico:'check-circle', label:t('vs.verified') };
 }
 
-const dealsFor = (kind, id) => DATA.deals.filter(d => (kind === 'leads' ? d.lead : d.account) === id);
-const contactsFor = accId => DATA.contacts.filter(c => c.account === accId);
+/* ---------- The Syndicate match ----------
+   The roster is a spreadsheet somebody sent us, so a match is a suggestion,
+   never a decision. Three outcomes worth telling apart: the number is absent
+   (we cannot verify this person at all), the number is there and the name
+   agrees (a reviewer can approve in seconds), and the number is there but the
+   name does not (which is either a transliteration or a problem, and only a
+   person can say which). */
+function normaliseName(s) {
+  return String(s || '')
+    .replace(/[ً-ْٰ]/g, '')   // Arabic diacritics
+    .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
+    .replace(/[^\p{L}\s]/gu, ' ')
+    .toLowerCase().split(/\s+/).filter(Boolean);
+}
+function namesAgree(a, b) {
+  const x = normaliseName(a), y = normaliseName(b);
+  if (!x.length || !y.length) return false;
+  // A roster carries the full tribal name; a sign-up often carries three parts
+  // of it. Agreement means the shorter name's words all appear in the longer.
+  const [short, long] = x.length <= y.length ? [x, y] : [y, x];
+  const hits = short.filter(w => long.includes(w)).length;
+  return hits >= Math.min(2, short.length) && hits / short.length >= 0.6;
+}
+function syndicateMatch(user) {
+  if (user.type !== 'pharmacist' || !user.syndicateNo) return { key:'notLinked', chip:'chip-mute', row:null };
+  const row = DATA.syndicate.find(r => r.no.toLowerCase() === String(user.syndicateNo).toLowerCase());
+  if (!row) return { key:'unmatched', chip:'chip-bad', ico:'alert', row:null };
+  if (!namesAgree(L(user.name), L(row.name))) return { key:'nameDiff', chip:'chip-warn', ico:'alert', row };
+  return { key:'matched', chip:'chip-good', ico:'check-circle', row };
+}
+/* The mirror: for a roster row, which platform user claims it. */
+function rosterUser(row) {
+  return DATA.users.find(u => u.syndicateNo && u.syndicateNo.toLowerCase() === row.no.toLowerCase()) || null;
+}
+
+/* ---------- Drugs ---------- */
+const brandsOf = sci => DATA.brands.filter(b => b.sci === sci);
+const brandsOfCompany = co => DATA.brands.filter(b => b.company === co);
+const drugOf = sci => DATA.drugs.find(d => d.sci === sci) || null;
+/* A brand's real doses: its own if it overrides, otherwise the molecule's. */
+const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOverride : (drugOf(b.sci) || {doses:[]}).doses;
+const SEV_RANK = { critical:3, serious:2, warning:1 };
+/* The seed is '', whose rank is undefined — and every comparison with undefined
+   is false, so `rank[sev] > rank[seed]` never fired and every drug reported no
+   interaction at all. Coerce both sides. */
+const worstInteraction = d => (d.interactions || [])
+  .reduce((w, i) => ((SEV_RANK[i.severity] || 0) > (SEV_RANK[w] || 0) ? i.severity : w), '');
+
+/* ---------- Cross-module lookups ---------- */
+const ordersOfPharmacy = pid => DATA.orders.filter(o => o.pharmacy === pid);
+const ordersOfUser = uid => DATA.orders.filter(o => o.assignee === uid);
+const usersOfUniversity = vid => DATA.users.filter(u => u.university === vid);
+const pharmacyOf = pid => DATA.pharmacies.find(p => p.id === pid) || null;
+const userOf = uid => DATA.users.find(u => u.id === uid) || null;
+const companyOf = cid => DATA.companies.find(c => c.id === cid) || null;
+
 const tasksFor = (kind, id) => DATA.tasks.filter(x => x.related && x.related.kind === kind && x.related.id === id);
 const activityFor = (kind, id) => DATA.activity
   .filter(e => e.kind === kind && e.id2 === id)
   .slice().sort((a, b) => b.when.localeCompare(a.when));
 
-const recordName = (kind, id) => {
-  const set = DATA[kind] || [];
-  const r = set.find(x => x.id === id);
-  return r ? L(r.name || r.subject) : id;
-};
+/* Records are keyed differently per module — drugs by scientific name, syndicate
+   rows by number — so one lookup knows where each module's identity lives. */
+const ID_FIELD = { drugs:'sci', syndicate:'no' };
+const idOf = (mod, r) => r[ID_FIELD[mod] || 'id'];
+function findRecord(mod, id) {
+  const set = DATA[mod] || [];
+  return set.find(r => String(idOf(mod, r)) === String(id)) || null;
+}
+function recordName(kind, id) {
+  const r = findRecord(kind, id);
+  if (!r) return String(id);
+  if (kind === 'drugs') return r.sci;
+  if (kind === 'syndicate') return L(r.name);
+  if (kind === 'orders') return r.id;
+  return L(r.name || r.subject);
+}
 
-function funnelRows() {
-  return STAGES.map(s => {
-    const ds = DATA.deals.filter(d => d.stage === s.key);
+function orderStatusRows() {
+  return ORDER_STATUS.map(s => {
+    const os = DATA.orders.filter(o => o.status === s);
     return {
-      key: s.key,
-      label: t('st.' + s.key),
-      n: ds.length,
-      value: ds.reduce((n, d) => n + d.value, 0),
-      color: STAGE_COLOR[s.key]
+      key:s, label:t('os.' + s), n:os.length,
+      value:os.reduce((n, o) => n + o.total, 0),
+      color:ORDER_STATUS_COLOR[s]
     };
   });
 }
 
 /* ==========================================================================
-   5. LIST VIEWS
-   One table engine, four modules. Each module supplies its saved views, its
-   filter facets and its columns; sorting, selection, filtering and the bulk
-   bar are shared, because four copies of a table is how four tables drift.
+   5. MODULES
+   One table engine, seven modules. Each supplies its saved views, its filter
+   facets and its columns; sorting, selection, filtering and the bulk bar are
+   shared, because seven copies of a table is how seven tables drift apart.
    ========================================================================== */
 
+const chip = (cls, ico, label) =>
+  '<span class="chip ' + cls + '">' + (ico ? icon(ico) : '') + esc(label) + '</span>';
+const priorityChip = p => chip(p === 'high' ? 'chip-bad' : 'chip-mute', null, t('pr.' + p));
+const healthChip = p => { const h = pharmacyHealth(p); return chip(h.chip, h.ico, h.label); };
+const verifChip = v => chip(
+  v === 'verified' ? 'chip-good' : v === 'rejected' ? 'chip-bad' : 'chip-warn',
+  v === 'verified' ? 'check-circle' : v === 'rejected' ? 'x' : 'clock', t('vs.' + v));
+const typeChip = ty => chip('chip-info', null, t('ut1.' + ty));
+const orderTypeChip = ty => chip(ty === 'training' ? 'chip-mute' : 'chip-info',
+  ty === 'training' ? 'cap' : 'clock', t('ot.' + ty));
+const orderStatusChip = s => chip(
+  s === 'completed' ? 'chip-good' : s === 'cancelled' ? 'chip-mute' :
+  s === 'open' ? 'chip-warn' : 'chip-info', null, t('os.' + s));
+const matchChip = u => { const m = syndicateMatch(u); return chip(m.chip, m.ico, t('mt.' + m.key)); };
+const sevChip = s => chip(
+  s === 'critical' ? 'chip-bad' : s === 'serious' ? 'chip-warn' : 'chip-mute',
+  s === 'critical' ? 'alert' : null, t('sev.' + s));
+
 const MODULES = {
-  leads: {
-    icon:'funnel', data:() => DATA.leads,
+  /* ---------- Users: segmented by the three account types ---------- */
+  users: {
+    icon:'users', data:() => DATA.users,
     views:{
-      all:   { label:'v.allLeads', fn:() => true },
-      mine:  { label:'v.myLeads',  fn:r => r.owner === ME },
-      hot:   { label:'v.hot',      fn:r => r.rating === 'hot' },
-      stale: { label:'v.stale',    fn:leadStale }
+      all:        { label:'v.allUsers',      fn:() => true },
+      pharmacist: { label:'ut.pharmacist',   fn:u => u.type === 'pharmacist' },
+      pharmacy:   { label:'ut.pharmacy',     fn:u => u.type === 'pharmacy' },
+      student:    { label:'ut.student',      fn:u => u.type === 'student' },
+      pending:    { label:'v.pendingUsers',  fn:u => u.verification === 'pending' },
+      noMatch:    { label:'v.noMatch',       fn:u => u.type === 'pharmacist' && syndicateMatch(u).key !== 'matched' }
     },
-    facets:['owner','district','source','rating'],
+    facets:['userType','verification','district','owner'],
     columns:[
-      { key:'name',      label:'c.name',      main:true },
-      { key:'contact',   label:'c.company',   get:r => L(r.contact) },
-      { key:'phone',     label:'c.phone',     mono:true },
-      { key:'district',  label:'c.district',  get:r => districtName(r.district) },
-      { key:'source',    label:'c.source',    get:r => t('src.' + r.source) },
-      { key:'rating',    label:'c.rating',    chip:r => ratingChip(r.rating) },
-      { key:'owner',     label:'c.owner',     get:r => L(USERS[r.owner].name) },
-      { key:'lastTouch', label:'c.lastTouch', get:r => relDays(r.lastTouch), sortAs:r => r.lastTouch }
+      { key:'name',         label:'c.name',        main:true },
+      { key:'type',         label:'c.userType',    chip:u => typeChip(u.type), sortAs:u => u.type },
+      { key:'verification', label:'c.verification',chip:u => verifChip(u.verification), sortAs:u => u.verification },
+      { key:'match',        label:'c.match',       chip:u => u.type === 'pharmacist' ? matchChip(u) : '—',
+                            sortAs:u => syndicateMatch(u).key },
+      { key:'phone',        label:'c.phone',       mono:true },
+      { key:'district',     label:'c.district',    get:u => districtName(u.district) },
+      { key:'orders',       label:'c.orders',      num:true, get:u => fmt(u.orders), sortAs:u => u.orders },
+      { key:'joined',       label:'c.joined',      get:u => fmtDate(u.joined), sortAs:u => u.joined }
     ]
   },
-  accounts: {
-    icon:'building', data:() => DATA.accounts,
+
+  /* ---------- Orders: the main module, segmented by order type ---------- */
+  orders: {
+    icon:'clipboard', data:() => DATA.orders, placeholder:'or.placeholder',
+    views:{
+      all:      { label:'v.allOrders',  fn:() => true },
+      shift:    { label:'v.shifts',     fn:o => o.type === 'shift' },
+      training: { label:'v.training',   fn:o => o.type === 'training' },
+      open:     { label:'v.openOrders', fn:o => o.status === 'open' },
+      unclaimed:{ label:'v.unclaimed',  fn:isUnclaimed },
+      today:    { label:'v.todayOrders',fn:isToday }
+    },
+    facets:['orderType','orderStatus','district','owner'],
+    columns:[
+      { key:'id',         label:'c.orderNo',   main:true, mono:true, get:o => o.id },
+      { key:'type',       label:'c.orderType', chip:o => orderTypeChip(o.type), sortAs:o => o.type },
+      { key:'pharmacy',   label:'c.pharmacy',  get:o => recordName('pharmacies', o.pharmacy) },
+      { key:'district',   label:'c.district',  get:o => districtName(o.district) },
+      { key:'date',       label:'c.when',      get:o => orderWhen(o), sortAs:o => o.date },
+      { key:'status',     label:'c.status',    chip:o => orderStatusChip(o.status), sortAs:o => ORDER_STATUS.indexOf(o.status) },
+      { key:'assignee',   label:'c.assignee',  get:o => o.assignee ? recordName('users', o.assignee) : '—' },
+      { key:'applicants', label:'c.applicants',num:true, get:o => fmt(o.applicants), sortAs:o => o.applicants,
+                          tone:o => isUnclaimed(o) ? 'var(--critical)' : null },
+      { key:'total',      label:'c.total',     num:true, get:o => o.type === 'training' ? '—' : fmt(o.total),
+                          sortAs:o => o.total }
+    ]
+  },
+
+  /* ---------- Pharmacies ---------- */
+  pharmacies: {
+    icon:'building', data:() => DATA.pharmacies,
     views:{
       all:        { label:'v.allAccounts', fn:() => true },
       trialEnding:{ label:'v.trialEnding', fn:isTrialEnding },
       dormant:    { label:'v.dormant',     fn:isDormant },
       atRisk:     { label:'v.atRisk',      fn:isAtRisk }
     },
-    facets:['owner','district','verification'],
+    facets:['owner','district','pharmacyHealth'],
     columns:[
-      { key:'name',        label:'c.name',       main:true },
-      { key:'licence',     label:'c.licence',    mono:true },
-      { key:'district',    label:'c.district',   get:r => districtName(r.district) },
-      { key:'health',      label:'c.status',     chip:r => healthChip(r), sortAs:r => accountHealth(r).key },
-      { key:'trial',       label:'c.trial',      get:r => trialLeft(r) > 0 ? t('rec.daysLeft', {n:trialLeft(r)}) : '—',
-                                                 sortAs:r => trialLeft(r) },
-      { key:'shifts',      label:'c.shifts',     num:true, get:r => fmt(r.shifts), sortAs:r => r.shifts },
-      { key:'fillRate',    label:'c.fillRate',   num:true, get:r => fillRate(r) === null ? '—' : pct(fillRate(r)),
-                                                 sortAs:r => fillRate(r) === null ? -1 : fillRate(r) },
-      { key:'commission',  label:'c.commission', num:true, get:r => fmt(r.commission), sortAs:r => r.commission },
-      { key:'owner',       label:'c.owner',      get:r => L(USERS[r.owner].name) }
+      { key:'name',      label:'c.name',       main:true },
+      { key:'licence',   label:'c.licence',    mono:true },
+      { key:'district',  label:'c.district',   get:p => districtName(p.district) },
+      { key:'health',    label:'c.status',     chip:p => healthChip(p), sortAs:p => pharmacyHealth(p).key },
+      { key:'trial',     label:'c.trial',      get:p => trialLeft(p) > 0 ? t('rec.daysLeft', {n:trialLeft(p)}) : '—',
+                                               sortAs:p => trialLeft(p) },
+      { key:'orders',    label:'c.orders',     num:true, get:p => fmt(p.orders), sortAs:p => p.orders },
+      { key:'fillRate',  label:'c.fillRate',   num:true, get:p => fillRate(p) === null ? '—' : pct(fillRate(p)),
+                                               sortAs:p => fillRate(p) === null ? -1 : fillRate(p) },
+      { key:'commission',label:'c.commission', num:true, get:p => fmt(p.commission), sortAs:p => p.commission },
+      { key:'owner',     label:'c.owner',      get:p => L(USERS[p.owner].name) }
     ]
   },
-  contacts: {
-    icon:'users', data:() => DATA.contacts,
-    views:{ all:{ label:'v.allContacts', fn:() => true }, mine:{ label:'v.myLeads', fn:r => r.owner === ME } },
-    facets:['owner','district'],
-    columns:[
-      { key:'name',     label:'c.name',     main:true },
-      { key:'role',     label:'c.role',     get:r => L(r.role) },
-      { key:'account',  label:'c.account',  get:r => recordName('accounts', r.account) },
-      { key:'phone',    label:'c.phone',    mono:true },
-      { key:'email',    label:'c.email',    mono:true },
-      { key:'district', label:'c.district', get:r => districtName(r.district) },
-      { key:'owner',    label:'c.owner',    get:r => L(USERS[r.owner].name) }
-    ]
-  },
-  deals: {
-    icon:'chart', data:() => DATA.deals,
+
+  /* ---------- Companies: the "externals" ---------- */
+  companies: {
+    icon:'factory', data:() => DATA.companies,
     views:{
-      all:  { label:'v.allDeals',  fn:() => true },
-      open: { label:'v.openDeals', fn:d => d.stage !== 'activated' },
-      mine: { label:'v.myDeals',   fn:d => d.owner === ME }
+      all:          { label:'v.allCompanies',  fn:() => true },
+      manufacturers:{ label:'v.manufacturers', fn:c => c.type === 'manufacturer' },
+      needsDocs:    { label:'v.needsDocs',     fn:c => c.status === 'review' }
     },
-    facets:['owner','district','stage'],
+    facets:['companyType','companyStatus','owner'],
     columns:[
-      { key:'name',   label:'c.deal',      main:true },
-      { key:'stage',  label:'c.stage',     chip:d => stageChip(d.stage), sortAs:d => stageOrd(d.stage) },
-      { key:'value',  label:'c.value',     num:true, get:d => fmt(d.value), sortAs:d => d.value },
-      { key:'close',  label:'c.closeDate', get:d => fmtDate(d.close), sortAs:d => d.close },
-      { key:'district', label:'c.district', get:d => districtName(d.district) },
-      { key:'owner',  label:'c.owner',     get:d => L(USERS[d.owner].name) }
+      { key:'name',    label:'c.name',        main:true },
+      { key:'type',    label:'c.companyType', chip:c => chip('chip-info', null, t('ct.' + c.type)), sortAs:c => c.type },
+      { key:'country', label:'c.country',     get:c => L(c.country) },
+      { key:'city',    label:'c.city',        get:c => L(c.city) },
+      { key:'reg',     label:'c.reg',         mono:true },
+      { key:'brands',  label:'c.brands',      num:true, get:c => fmt(brandsOfCompany(c.id).length),
+                       sortAs:c => brandsOfCompany(c.id).length },
+      { key:'status',  label:'c.status',      chip:c => chip(c.status === 'active' ? 'chip-good' : 'chip-warn',
+                                                             c.status === 'active' ? 'check-circle' : 'clock',
+                                                             t('cs.' + c.status)), sortAs:c => c.status },
+      { key:'owner',   label:'c.owner',       get:c => L(USERS[c.owner].name) }
     ]
   },
-  activities: {
-    icon:'check-circle', data:() => DATA.tasks,
+
+  /* ---------- Universities ---------- */
+  universities: {
+    icon:'cap', data:() => DATA.universities,
     views:{
-      all:    { label:'v.allTasks', fn:() => true },
-      mine:   { label:'v.mine',     fn:x => x.owner === ME && !x.done },
-      today:  { label:'v.today',    fn:x => !x.done && x.due === ISO_TODAY },
-      overdue:{ label:'v.overdue',  fn:x => !x.done && x.due < ISO_TODAY }
+      all:     { label:'v.allUnis',   fn:() => true },
+      signed:  { label:'v.signed',    fn:v => v.agreement === 'signed' },
+      prospect:{ label:'v.prospect',  fn:v => v.agreement !== 'signed' }
     },
-    facets:['owner','type','priority'],
+    facets:['agreement','owner'],
     columns:[
-      { key:'subject',  label:'c.subject',  main:true, get:r => L(r.subject) },
-      { key:'type',     label:'c.type',     get:r => t('ty.' + r.type) },
-      { key:'due',      label:'c.due',      get:r => relDays(r.due), sortAs:r => r.due,
-                        tone:r => (!r.done && r.due < ISO_TODAY) ? 'var(--critical)' : null },
-      { key:'priority', label:'c.priority', chip:r => priorityChip(r.priority), sortAs:r => ({high:0,normal:1,low:2})[r.priority] },
-      { key:'related',  label:'c.related',  get:r => r.related ? recordName(r.related.kind, r.related.id) : '—' },
-      { key:'owner',    label:'c.owner',    get:r => L(USERS[r.owner].name) }
+      { key:'name',      label:'c.name',      main:true },
+      { key:'city',      label:'c.city',      get:v => L(v.city) },
+      { key:'domain',    label:'c.domain',    mono:true },
+      { key:'students',  label:'c.students',  num:true, get:v => fmt(usersOfUniversity(v.id).length),
+                         sortAs:v => usersOfUniversity(v.id).length },
+      { key:'agreement', label:'c.agreement', chip:v => chip(
+                           v.agreement === 'signed' ? 'chip-good' : v.agreement === 'talks' ? 'chip-warn' : 'chip-mute',
+                           v.agreement === 'signed' ? 'check-circle' : null, t('ag.' + v.agreement)),
+                         sortAs:v => v.agreement },
+      { key:'contact',   label:'c.contactName', get:v => L(v.contact) },
+      { key:'owner',     label:'c.owner',     get:v => L(USERS[v.owner].name) }
+    ]
+  },
+
+  /* ---------- Syndicate roster ---------- */
+  syndicate: {
+    icon:'badge', data:() => DATA.syndicate, note:'sy.note', importer:'syndicate',
+    views:{
+      all:      { label:'v.allSynd',    fn:() => true },
+      unlinked: { label:'v.unlinked',   fn:r => !rosterUser(r) },
+      suspended:{ label:'v.suspendedS', fn:r => r.status === 'suspended' }
+    },
+    facets:['syndStatus','batch'],
+    columns:[
+      { key:'no',       label:'c.syndicateNo', main:true, mono:true, get:r => r.no },
+      { key:'name',     label:'c.name',        get:r => L(r.name) },
+      { key:'gradYear', label:'c.gradYear',    num:true, get:r => String(r.gradYear), sortAs:r => r.gradYear },
+      { key:'status',   label:'c.syndStatus',  chip:r => chip(r.status === 'active' ? 'chip-good' : 'chip-bad',
+                                                              r.status === 'active' ? 'check-circle' : 'x',
+                                                              t('ss.' + r.status)), sortAs:r => r.status },
+      { key:'linked',   label:'c.match',       chip:r => { const u = rosterUser(r);
+                          return u ? chip('chip-info', 'user', L(u.name)) : chip('chip-mute', null, t('mt.notLinked')); },
+                        sortAs:r => rosterUser(r) ? 0 : 1 },
+      { key:'batch',    label:'c.batch',       get:r => fmtDate(r.batch), sortAs:r => r.batch }
+    ]
+  },
+
+  /* ---------- Drugs ---------- */
+  drugs: {
+    icon:'pill', data:() => DATA.drugs, importer:'drugs',
+    views:{
+      all:        { label:'v.allDrugs',    fn:() => true },
+      noBrands:   { label:'v.noBrands',    fn:d => brandsOf(d.sci).length === 0 },
+      hasCritical:{ label:'v.hasCritical', fn:d => worstInteraction(d) === 'critical' }
+    },
+    facets:['drugForm'],
+    columns:[
+      { key:'sci',    label:'c.sci',        main:true, get:d => d.sci },
+      { key:'ar',     label:'c.sciAr',      get:d => d.ar },
+      { key:'atc',    label:'c.atc',        mono:true },
+      { key:'form',   label:'c.form',       get:d => t('df.' + d.form) },
+      { key:'doses',  label:'c.doses',      get:d => d.doses.join(' · ') },
+      { key:'brands', label:'c.brandCount', num:true, get:d => fmt(brandsOf(d.sci).length),
+                      sortAs:d => brandsOf(d.sci).length },
+      { key:'inter',  label:'c.interactions', chip:d => { const w = worstInteraction(d);
+                        return w ? sevChip(w) : chip('chip-mute', null, '—'); },
+                      sortAs:d => ({critical:0, serious:1, warning:2, '':3})[worstInteraction(d)] }
     ]
   }
 };
 
-const stageOrd = k => (STAGES.find(s => s.key === k) || {ord:9}).ord;
+function orderWhen(o) {
+  if (o.type === 'training') return fmtDate(o.date) + ' · ' + (o.weeks || 12) + ' ' + (lang === 'ar' ? 'أسبوعاً' : 'wks');
+  return fmtDate(o.date) + ' · ' + o.start + '–' + o.end;
+}
 
-const chip = (cls, ico, label) =>
-  '<span class="chip ' + cls + '">' + (ico ? icon(ico) : '') + esc(label) + '</span>';
-const ratingChip = r => chip(
-  r === 'hot' ? 'chip-bad' : r === 'warm' ? 'chip-warn' : 'chip-mute',
-  r === 'hot' ? 'flag' : null, t('rt.' + r));
-const healthChip = a => { const h = accountHealth(a); return chip(h.chip, h.ico, h.label); };
-const stageChip = k => chip('chip-info', null, t('st.' + k));
-const priorityChip = p => chip(
-  p === 'high' ? 'chip-bad' : p === 'normal' ? 'chip-mute' : 'chip-mute', null, t('pr.' + p));
-
-/* ---------- The facets a filter rail offers, and what each row answers ---------- */
+/* ---------- Facets ---------- */
 
 const FACETS = {
-  owner:        { label:'f.owner',        of:r => r.owner,        name:v => L(USERS[v].name) },
-  district:     { label:'f.district',     of:r => r.district,     name:v => districtName(v) },
-  source:       { label:'f.source',       of:r => r.source,       name:v => t('src.' + v) },
-  rating:       { label:'f.rating',       of:r => r.rating,       name:v => t('rt.' + v) },
-  stage:        { label:'f.stage',        of:r => r.stage,        name:v => t('st.' + v) },
-  verification: { label:'f.status',       of:r => accountHealth(r).key,
-                  name:v => ({ ok:t('vs.verified'), pending:t('vs.pending'), rejected:t('vs.rejected'),
-                               dormant:t('v.dormant'), atrisk:t('v.atRisk') })[v] || v },
-  type:         { label:'c.type',         of:r => r.type,         name:v => t('ty.' + v) },
-  priority:     { label:'c.priority',     of:r => r.priority,     name:v => t('pr.' + v) }
+  owner:          { label:'f.owner',        of:r => r.owner,        name:v => L(USERS[v].name) },
+  district:       { label:'f.district',     of:r => r.district,     name:v => districtName(v) },
+  userType:       { label:'c.userType',     of:r => r.type,         name:v => t('ut1.' + v) },
+  verification:   { label:'c.verification', of:r => r.verification, name:v => t('vs.' + v) },
+  orderType:      { label:'c.orderType',    of:r => r.type,         name:v => t('ot.' + v) },
+  orderStatus:    { label:'c.status',       of:r => r.status,       name:v => t('os.' + v) },
+  pharmacyHealth: { label:'c.status',       of:r => pharmacyHealth(r).key,
+                    name:v => ({ ok:t('vs.verified'), pending:t('vs.pending'), rejected:t('vs.rejected'),
+                                 dormant:t('v.dormant'), atrisk:t('v.atRisk') })[v] || v },
+  companyType:    { label:'c.companyType',  of:r => r.type,         name:v => t('ct.' + v) },
+  companyStatus:  { label:'c.status',       of:r => r.status,       name:v => t('cs.' + v) },
+  agreement:      { label:'c.agreement',    of:r => r.agreement,    name:v => t('ag.' + v) },
+  syndStatus:     { label:'c.syndStatus',   of:r => r.status,       name:v => t('ss.' + v) },
+  batch:          { label:'c.batch',        of:r => r.batch,        name:v => fmtDate(v) },
+  drugForm:       { label:'c.form',         of:r => r.form,         name:v => t('df.' + v) }
 };
 
 function visibleRows(mod) {
@@ -1354,11 +1850,7 @@ function visibleRows(mod) {
   let rows = M.data().filter(view.fn);
 
   const f = S.filters[mod] || {};
-  Object.keys(f).forEach(facet => {
-    const want = f[facet];
-    if (!want) return;
-    rows = rows.filter(r => FACETS[facet].of(r) === want);
-  });
+  Object.keys(f).forEach(facet => { if (f[facet]) rows = rows.filter(r => FACETS[facet].of(r) === f[facet]); });
 
   const sort = S.sort[mod];
   if (sort) {
@@ -1377,16 +1869,14 @@ function visibleRows(mod) {
 
 function listHead(mod) {
   const M = MODULES[mod];
-  const viewKeys = Object.keys(M.views);
   const cur = S.view[mod];
   const menu = S.viewMenu === mod
-    ? '<div class="view-menu">' + viewKeys.map(k => {
+    ? '<div class="view-menu">' + Object.keys(M.views).map(k => {
         const n = M.data().filter(M.views[k].fn).length;
         return '<button class="view-opt' + (k === cur ? ' on' : '') + '" onclick="pickView(' + attr(mod) + ',' + attr(k) + ')">' +
           esc(t(M.views[k].label)) + '<span class="count">' + fmt(n) + '</span></button>';
       }).join('') + '</div>'
     : '';
-
   const picked = (S.picked[mod] || []).length;
 
   return '<div class="work-head">' +
@@ -1396,13 +1886,18 @@ function listHead(mod) {
       '</div>' +
       '<span class="chip chip-mute figure">' + fmt(visibleRows(mod).length) + '</span>' +
       '<span class="spacer"></span>' +
+      (M.importer
+        ? '<button class="btn" onclick="openImport(' + attr(M.importer) + ')">' + icon('upload') +
+          esc(t('imp.title')) + '</button>'
+        : '') +
       '<button class="btn" onclick="resetFilters(' + attr(mod) + ')">' + icon('refresh') + esc(t('a.refresh')) + '</button>' +
-      '<button class="btn primary" onclick="openNew(' + attr(mod) + ')">' + icon('plus') + esc(t('a.new')) + '</button>' +
+      (FORMS[mod] ? '<button class="btn primary" onclick="openNew(' + attr(mod) + ')">' + icon('plus') + esc(t('a.new')) + '</button>' : '') +
     '</div>' +
+    (M.note ? '<div class="mod-note">' + icon('alert') + '<span>' + esc(t(M.note)) + '</span></div>' : '') +
+    (M.placeholder ? '<div class="mod-note stage">' + icon('flag') + '<span>' + esc(t(M.placeholder)) + '</span></div>' : '') +
     (picked
       ? '<div class="bulkbar">' + esc(t('a.selected', {n:picked})) +
           '<span class="spacer" style="flex:1"></span>' +
-          '<button class="btn" onclick="bulkAssign(' + attr(mod) + ')">' + esc(t('a.assign')) + '</button>' +
           '<button class="btn danger" onclick="bulkDelete(' + attr(mod) + ')">' + icon('trash') + esc(t('a.delete')) + '</button>' +
           '<button class="btn" onclick="clearPicked(' + attr(mod) + ')">' + esc(t('a.clear')) + '</button>' +
         '</div>'
@@ -1443,26 +1938,27 @@ function listBody(mod) {
       '<div style="font-size:12px;">' + esc(t('e.tryClearing')) + '</div></div>';
   }
 
-  const allPicked = rows.every(r => picked.includes(r.id));
+  const allPicked = rows.every(r => picked.includes(idOf(mod, r)));
   const head = '<tr><th class="col-check"><input type="checkbox"' + (allPicked ? ' checked' : '') +
       ' onchange="pickAll(' + attr(mod) + ', this.checked)"></th>' +
     M.columns.map(c =>
       '<th class="sortable"' + (c.num ? ' style="text-align:end"' : '') + ' onclick="sortBy(' + attr(mod) + ',' + attr(c.key) + ')">' +
         esc(t(c.label)) +
-        (sort && sort.key === c.key ? icon(sort.dir === 'asc' ? 'up' : 'down') : icon('sort', 'sort-idle')) +
+        (sort && sort.key === c.key ? icon(sort.dir === 'asc' ? 'up' : 'down') : icon('sort')) +
       '</th>').join('') + '</tr>';
 
   const body = rows.map(r => {
-    const on = picked.includes(r.id);
+    const rid = idOf(mod, r);
+    const on = picked.includes(rid);
     return '<tr class="' + (on ? 'picked' : '') + '">' +
       '<td class="col-check"><input type="checkbox"' + (on ? ' checked' : '') +
-        ' onchange="pickOne(' + attr(mod) + ',' + attr(r.id) + ', this.checked)"></td>' +
+        ' onchange="pickOne(' + attr(mod) + ',' + attr(rid) + ', this.checked)"></td>' +
       M.columns.map(c => {
-        if (c.chip) return '<td>' + c.chip(r) + '</td>';
+        if (c.chip) { const v = c.chip(r); return '<td>' + (typeof v === 'string' ? v : '') + '</td>'; }
         const raw = c.get ? c.get(r) : (L(r[c.key]) || r[c.key] || '—');
         const tone = c.tone && c.tone(r);
-        if (c.main) return '<td><button class="cell-link" onclick="openRecord(' + attr(mod) + ',' + attr(r.id) + ')">' +
-          esc(raw) + '</button></td>';
+        if (c.main) return '<td><button class="cell-link' + (c.mono ? ' figure' : '') + '" onclick="openRecord(' +
+          attr(mod) + ',' + attr(rid) + ')">' + esc(raw) + '</button></td>';
         return '<td' + (c.num ? ' class="figure" style="text-align:end"' : c.mono ? ' class="figure" dir="ltr"' : '') +
           (tone ? ' style="color:' + tone + ';font-weight:600"' : '') + '>' + esc(raw) + '</td>';
       }).join('') + '</tr>';
@@ -1473,9 +1969,6 @@ function listBody(mod) {
 
 /* ==========================================================================
    6. RECORD PAGES
-   Summary panel, inline-editable fields, a timeline you can post to, and the
-   related lists. A pharmacy record also carries its platform state — the
-   reason the CRM and the app are one product rather than two.
    ========================================================================== */
 
 function fieldRow(label, value, edit) {
@@ -1488,8 +1981,6 @@ function fieldRow(label, value, edit) {
 function timelinePanel(kind, id) {
   const items = activityFor(kind, id);
   const icons = { call:'phone', visit:'pin', note:'note', followup:'clock', demo:'cap' };
-  const tones = { call:'', visit:'', note:'', followup:'warn', demo:'good' };
-
   return '<section class="panel">' +
     '<div class="panel-h">' + icon('clock') + esc(t('rec.timeline')) + '</div>' +
     '<div class="note-box">' +
@@ -1498,18 +1989,18 @@ function timelinePanel(kind, id) {
     '</div>' +
     (items.length
       ? '<div class="timeline">' + items.map(e =>
-          '<div class="tl-item"><span class="tl-dot ' + (tones[e.type] || '') + '">' +
-            icon(icons[e.type] || 'note') + '</span><div style="flex:1;min-width:0;">' +
-            '<div class="tl-title">' + esc(L(e.text)) + '</div>' +
-            '<div class="tl-meta">' + esc(t('ty.' + e.type)) + ' · ' + esc(L(USERS[e.owner].name)) +
-              ' · ' + esc(relDays(e.when)) + '</div></div></div>').join('') + '</div>'
+          '<div class="tl-item"><span class="tl-dot">' + icon(icons[e.type] || 'note') + '</span>' +
+          '<div style="flex:1;min-width:0;"><div class="tl-title">' + esc(L(e.text)) + '</div>' +
+          '<div class="tl-meta">' + esc(t('ty.' + e.type)) + ' · ' + esc(L(USERS[e.owner].name)) +
+            ' · ' + esc(relDays(e.when)) + '</div></div></div>').join('') + '</div>'
       : '<div class="empty" style="padding:26px;">' + esc(t('rec.noTimeline')) + '</div>') +
   '</section>';
 }
 
-function relatedPanel(title, rows, onOpen) {
+function relatedPanel(title, rows, onOpen, extraHead) {
   return '<section class="panel">' +
     '<div class="panel-h">' + esc(title) + '<span class="spacer"></span>' +
+      (extraHead || '') +
       '<span class="chip chip-mute figure">' + fmt(rows.length) + '</span></div>' +
     (rows.length
       ? '<div class="panel-b flush">' + rows.map(r =>
@@ -1521,221 +2012,393 @@ function relatedPanel(title, rows, onOpen) {
 }
 
 function recordPage(mod, id) {
-  const rec = (DATA[mod] || []).find(r => r.id === id);
+  const rec = findRecord(mod, id);
   if (!rec) return '<div class="empty">' + esc(t('e.noRecords')) + '</div>';
 
-  const title = L(rec.name || rec.subject);
-  const initials = initialsOf(title);
+  const kv = (ic, label, value) =>
+    '<div class="kv">' + icon(ic) + '<div><div class="kv-label">' + esc(label) + '</div>' +
+    '<div class="kv-value">' + value + '</div></div></div>';
+  const P = mod + '.' + id + '.';
 
-  let sub = '', actions = '', details = '', platform = '', related = '';
+  let title = recordName(mod, id), sub = '', actions = '', details = '', side = '', main = '';
 
-  if (mod === 'leads') {
-    sub = ratingChip(rec.rating) + '<span>' + esc(districtName(rec.district)) + '</span>' +
-      '<span>·</span><span>' + esc(t('src.' + rec.source)) + '</span>';
+  /* ---------- User ---------- */
+  if (mod === 'users') {
+    const m = syndicateMatch(rec);
+    sub = typeChip(rec.type) + verifChip(rec.verification) +
+      '<span>' + esc(districtName(rec.district)) + '</span>';
     actions =
       '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>' +
-      '<button class="btn" onclick="openNewTask(' + attr(mod) + ',' + attr(id) + ')">' + icon('check-circle') + esc(t('a.task')) + '</button>' +
-      '<button class="btn primary" onclick="convertLead(' + attr(id) + ')">' + icon('building') + esc(t('a.convert')) + '</button>';
+      (rec.verification === 'pending'
+        ? '<button class="btn primary" onclick="verifyUser(' + attr(id) + ')">' + icon('check-circle') + esc(t('a.verify')) + '</button>'
+        : '');
     details =
-      fieldRow(t('c.company'), esc(L(rec.contact)), { path:mod + '.' + id + '.contact' }) +
-      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:mod + '.' + id + '.phone' }) +
-      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:mod + '.' + id + '.email' }) +
-      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:mod + '.' + id + '.district', type:'district' }) +
-      fieldRow(t('c.source'), esc(t('src.' + rec.source))) +
-      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' }) +
-      fieldRow(t('c.created'), esc(fmtDate(rec.created))) +
-      fieldRow(t('c.lastTouch'), esc(relDays(rec.lastTouch)) +
-        (leadStale(rec) ? ' ' + chip('chip-warn', 'alert', t('v.stale')) : ''));
-    platform = '<section class="panel"><div class="panel-h">' + icon('grid') + esc(t('rec.platform')) + '</div>' +
-      '<div class="panel-b"><p style="font-size:12.5px;color:var(--ink-faint);line-height:1.7;">' +
-      esc(t('rec.notOnPlatform')) + '</p></div></section>';
+      fieldRow(t('c.userType'), typeChip(rec.type)) +
+      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:P + 'phone' }) +
+      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:P + 'email' }) +
+      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:P + 'district', type:'district' }) +
+      fieldRow(t('c.joined'), esc(fmtDate(rec.joined))) +
+      (rec.type === 'pharmacist'
+        ? fieldRow(t('c.syndicateNo'), '<span class="figure" dir="ltr">' + esc(rec.syndicateNo || '') + '</span>', { path:P + 'syndicateNo' }) +
+          fieldRow(t('c.gradYear'), esc(String(rec.gradYear || ''))) +
+          fieldRow(t('c.reliability'), rec.reliability === null
+            ? '<span class="no-record">' + esc(t('app.noRecord')) + '</span>'
+            : '<span class="figure">' + pct(rec.reliability) + '</span>') +
+          fieldRow(t('c.ratingV'), rec.rating === null
+            ? '<span class="no-record">' + esc(t('app.noRecord')) + '</span>'
+            : '<span class="figure">' + rec.rating + '</span>')
+        : '') +
+      (rec.type === 'pharmacy' && rec.pharmacy
+        ? fieldRow(t('c.pharmacy'), '<button class="cell-link" onclick="openRecord(' + attr('pharmacies') + ',' + attr(rec.pharmacy) + ')">' +
+            esc(recordName('pharmacies', rec.pharmacy)) + '</button>') : '') +
+      (rec.type === 'student' && rec.university
+        ? fieldRow(t('c.university'), '<button class="cell-link" onclick="openRecord(' + attr('universities') + ',' + attr(rec.university) + ')">' +
+            esc(recordName('universities', rec.university)) + '</button>') : '');
 
-  } else if (mod === 'accounts') {
-    const h = accountHealth(rec);
+    /* The verification panel. It says out loud what the check actually is —
+       a person comparing a card against a list someone emailed us. */
+    if (rec.type === 'pharmacist') {
+      side += '<section class="panel">' +
+        '<div class="panel-h">' + icon('badge') + esc(t('mod.syndicate')) + '<span class="spacer"></span>' +
+          chip(m.chip, m.ico, t('mt.' + m.key)) + '</div>' +
+        '<div class="panel-b">' +
+          fieldRow(t('c.syndicateNo'), '<span class="figure" dir="ltr">' + esc(rec.syndicateNo || '—') + '</span>') +
+          (m.row
+            ? fieldRow(lang === 'ar' ? 'الاسم في الكشف' : 'Name on the roster',
+                '<button class="cell-link" onclick="openRecord(' + attr('syndicate') + ',' + attr(m.row.no) + ')">' +
+                esc(L(m.row.name)) + '</button>') +
+              fieldRow(t('c.syndStatus'), chip(m.row.status === 'active' ? 'chip-good' : 'chip-bad',
+                m.row.status === 'active' ? 'check-circle' : 'x', t('ss.' + m.row.status))) +
+              fieldRow(t('c.batch'), esc(fmtDate(m.row.batch)))
+            : '') +
+          '<p class="inline-note" style="margin-top:10px;">' + esc(t('sy.note')) + '</p>' +
+        '</div></section>';
+    }
+
+    const mine = ordersOfUser(id);
+    side += relatedPanel(t('c.orders'), mine.map(o => ({
+      _t:o.id + ' · ' + recordName('pharmacies', o.pharmacy),
+      _m:orderStatusChip(o.status) + ' ' + esc(orderWhen(o)), id:o.id
+    })), r => 'openRecord(' + attr('orders') + ',' + attr(r.id) + ')');
+
+  /* ---------- Order ---------- */
+  } else if (mod === 'orders') {
+    const ph = pharmacyOf(rec.pharmacy);
+    sub = orderTypeChip(rec.type) + orderStatusChip(rec.status) +
+      '<span>' + esc(districtName(rec.district)) + '</span>';
+    actions = ORDER_STATUS.filter(s => s !== rec.status).slice(0, 3).map(s =>
+      '<button class="btn" onclick="setOrderStatus(' + attr(id) + ',' + attr(s) + ')">' + esc(t('os.' + s)) + '</button>').join('') +
+      (ph ? '<button class="btn primary" onclick="openRecord(' + attr('pharmacies') + ',' + attr(ph.id) + ')">' +
+        icon('building') + esc(L(ph.name)) + '</button>' : '');
+    details =
+      fieldRow(t('c.orderType'), orderTypeChip(rec.type)) +
+      fieldRow(t('c.pharmacy'), ph ? '<button class="cell-link" onclick="openRecord(' + attr('pharmacies') + ',' + attr(ph.id) + ')">' +
+        esc(L(ph.name)) + '</button>' : '—') +
+      fieldRow(t('c.when'), esc(orderWhen(rec))) +
+      (rec.type === 'shift'
+        ? fieldRow(t('c.hours'), '<span class="figure">' + rec.hours + '</span>') +
+          fieldRow(t('c.rate'), '<span class="figure">' + esc(iqd(rec.rate)) + '</span>' +
+            (rec.rateType === 'hourly' ? esc(lang === 'ar' ? '/ساعة' : '/hour') : '')) +
+          fieldRow(t('c.total'), '<span class="figure">' + esc(iqd(rec.total)) + '</span>') +
+          fieldRow(t('c.controlled'), rec.controlled
+            ? chip('chip-warn', 'alert', lang === 'ar' ? 'نعم' : 'Yes')
+            : chip('chip-mute', null, lang === 'ar' ? 'لا' : 'No'))
+        : fieldRow(t('c.weeks'), '<span class="figure">' + (rec.weeksApproved || 0) + ' / ' + (rec.weeks || 12) + '</span>')) +
+      fieldRow(t('c.status'), orderStatusChip(rec.status), { path:P + 'status', type:'orderStatus' }) +
+      fieldRow(t('c.assignee'), rec.assignee
+        ? '<button class="cell-link" onclick="openRecord(' + attr('users') + ',' + attr(rec.assignee) + ')">' +
+          esc(recordName('users', rec.assignee)) + '</button>' : '—') +
+      fieldRow(t('c.applicants'), isUnclaimed(rec)
+        ? chip('chip-bad', 'alert', t('v.unclaimed'))
+        : '<span class="figure">' + fmt(rec.applicants) + '</span>');
+
+  /* ---------- Pharmacy ---------- */
+  } else if (mod === 'pharmacies') {
+    const acct = rec.user ? userOf(rec.user) : null;
     const left = trialLeft(rec);
     sub = healthChip(rec) + '<span>' + esc(districtName(rec.district)) + '</span>' +
-      '<span>·</span><span class="figure" dir="ltr">' + esc(rec.licence) + '</span>';
+      '<span class="figure" dir="ltr">' + esc(rec.licence) + '</span>';
     actions =
       '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>' +
-      '<button class="btn" onclick="openNewTask(' + attr(mod) + ',' + attr(id) + ')">' + icon('check-circle') + esc(t('a.task')) + '</button>' +
-      '<button class="btn primary" onclick="openApp(' + attr(rec.appEmail) + ')">' + icon('external') + esc(t('a.openInApp')) + '</button>';
+      (acct ? '<button class="btn primary" onclick="openApp(' + attr(acct.email) + ')">' + icon('external') +
+        esc(t('a.openInApp')) + '</button>' : '');
     details =
       fieldRow(t('c.licence'), '<span class="figure" dir="ltr">' + esc(rec.licence) + '</span>') +
-      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:mod + '.' + id + '.district', type:'district' }) +
-      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' }) +
+      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:P + 'district', type:'district' }) +
+      fieldRow(t('pr.address'), esc(L(rec.address))) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:P + 'owner', type:'owner' }) +
       fieldRow(t('c.created'), esc(fmtDate(rec.signedUp))) +
-      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.appEmail) + '</span>');
-
-    /* Read out of Saydali+: the trial clock, whether anything has been posted,
-       and how much of it got covered. The dormant case is called out in words
-       because it is the one a reader must not skim past. */
-    platform = '<section class="panel">' +
-      '<div class="panel-h">' + icon('grid') + esc(t('rec.platform')) +
-        '<span class="spacer"></span><span class="chip chip-info">' + esc(t('rec.linked')) + '</span></div>' +
+      (acct ? fieldRow(t('c.account'), '<button class="cell-link" onclick="openRecord(' + attr('users') + ',' + attr(acct.id) + ')">' +
+        esc(L(acct.name)) + '</button>') : '');
+    side = '<section class="panel">' +
+      '<div class="panel-h">' + icon('grid') + esc(t('rec.platform')) + '</div>' +
       '<div class="panel-b">' +
         fieldRow(t('c.verification'), healthChip(rec)) +
         fieldRow(t('c.trial'), left > 0
           ? esc(t('rec.trialDay', {a:rec.trialUsed, b:rec.trialDays})) +
             (isTrialEnding(rec) ? ' ' + chip('chip-warn', 'clock', t('rec.daysLeft', {n:left})) : '')
           : '—') +
-        fieldRow(t('c.shifts'), rec.shifts
-          ? '<span class="figure">' + fmt(rec.shifts) + '</span>'
+        fieldRow(t('c.orders'), rec.orders ? '<span class="figure">' + fmt(rec.orders) + '</span>'
           : chip('chip-bad', 'alert', t('rec.noShifts'))) +
         fieldRow(t('c.fillRate'), fillRate(rec) === null ? '—' : '<span class="figure">' + pct(fillRate(rec)) + '</span>') +
-        fieldRow(t('c.lastShift'), rec.lastShift ? esc(relDays(rec.lastShift)) : '—') +
-        fieldRow(t('c.pharmacists'), '<span class="figure">' + fmt(rec.pharmacists) + '</span>') +
+        fieldRow(t('c.lastShift'), rec.lastOrder ? esc(relDays(rec.lastOrder)) : '—') +
         fieldRow(t('c.commission'), '<span class="figure">' + esc(iqd(rec.commission)) + '</span>') +
-      '</div></section>';
+      '</div></section>' +
+      relatedPanel(t('c.orders'), ordersOfPharmacy(id).map(o => ({
+        _t:o.id + ' · ' + t('ot.' + o.type),
+        _m:orderStatusChip(o.status) + ' ' + esc(orderWhen(o)), id:o.id
+      })), r => 'openRecord(' + attr('orders') + ',' + attr(r.id) + ')');
 
-    related =
-      relatedPanel(t('rec.contacts'), contactsFor(id).map(c => ({
-        _t:L(c.name), _m:esc(L(c.role)) + ' · <span class="figure" dir="ltr">' + esc(c.phone) + '</span>', id:c.id
-      })), r => 'openRecord(' + attr('contacts') + ',' + attr(r.id) + ')') +
-      relatedPanel(t('rec.openDeals'), dealsFor('accounts', id).map(d => ({
-        _t:L(d.name), _m:stageChip(d.stage) + ' <span class="figure">' + esc(iqd(d.value)) + '</span>', id:d.id
-      })), r => 'openRecord(' + attr('deals') + ',' + attr(r.id) + ')');
-
-  } else if (mod === 'contacts') {
-    sub = '<span>' + esc(L(rec.role)) + '</span><span>·</span><span>' + esc(recordName('accounts', rec.account)) + '</span>';
+  /* ---------- Company ---------- */
+  } else if (mod === 'companies') {
+    sub = chip('chip-info', null, t('ct.' + rec.type)) +
+      '<span>' + esc(L(rec.city)) + ', ' + esc(L(rec.country)) + '</span>';
     actions = '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>';
     details =
-      fieldRow(t('c.role'), esc(L(rec.role)), { path:mod + '.' + id + '.role' }) +
-      fieldRow(t('c.account'), '<button class="cell-link" onclick="openRecord(' + attr('accounts') + ',' + attr(rec.account) + ')">' +
-        esc(recordName('accounts', rec.account)) + '</button>') +
-      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:mod + '.' + id + '.phone' }) +
-      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:mod + '.' + id + '.email' }) +
-      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:mod + '.' + id + '.district', type:'district' }) +
-      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' });
+      fieldRow(t('c.companyType'), chip('chip-info', null, t('ct.' + rec.type)), { path:P + 'type', type:'companyType' }) +
+      fieldRow(t('c.reg'), '<span class="figure" dir="ltr">' + esc(rec.reg) + '</span>', { path:P + 'reg' }) +
+      fieldRow(t('c.country'), esc(L(rec.country))) +
+      fieldRow(t('c.city'), esc(L(rec.city))) +
+      fieldRow(t('c.contactName'), esc(L(rec.contact)), { path:P + 'contact' }) +
+      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:P + 'phone' }) +
+      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:P + 'email' }) +
+      fieldRow(t('c.status'), chip(rec.status === 'active' ? 'chip-good' : 'chip-warn',
+        rec.status === 'active' ? 'check-circle' : 'clock', t('cs.' + rec.status)), { path:P + 'status', type:'companyStatus' }) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:P + 'owner', type:'owner' });
+    side = relatedPanel(t('c.brands'), brandsOfCompany(id).map(b => ({
+      _t:b.brand, _m:esc(b.sci) + ' · <span class="figure">' + esc(brandDoses(b).join(' · ')) + '</span>', sci:b.sci
+    })), r => 'openRecord(' + attr('drugs') + ',' + attr(r.sci) + ')');
 
-  } else if (mod === 'deals') {
-    const linkKind = rec.account ? 'accounts' : 'leads';
-    const linkId = rec.account || rec.lead;
-    sub = stageChip(rec.stage) + '<span class="figure">' + esc(iqd(rec.value)) + esc(t('mo')) + '</span>' +
-      '<span>·</span><span>' + esc(districtName(rec.district)) + '</span>';
-    actions = STAGES.filter(s => s.key !== rec.stage).slice(0, 2).map(s =>
-      '<button class="btn" onclick="moveDeal(' + attr(rec.id) + ',' + attr(s.key) + ')">' + esc(t('st.' + s.key)) + '</button>'
-    ).join('') +
-      '<button class="btn primary" onclick="openRecord(' + attr(linkKind) + ',' + attr(linkId) + ')">' +
-        icon(linkKind === 'accounts' ? 'building' : 'funnel') + esc(recordName(linkKind, linkId)) + '</button>';
+  /* ---------- University ---------- */
+  } else if (mod === 'universities') {
+    sub = chip(rec.agreement === 'signed' ? 'chip-good' : rec.agreement === 'talks' ? 'chip-warn' : 'chip-mute',
+      rec.agreement === 'signed' ? 'check-circle' : null, t('ag.' + rec.agreement)) +
+      '<span>' + esc(L(rec.city)) + '</span>';
+    actions = '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>';
     details =
-      fieldRow(t('c.stage'), stageChip(rec.stage), { path:mod + '.' + id + '.stage', type:'stage' }) +
-      fieldRow(t('c.value'), '<span class="figure">' + esc(iqd(rec.value)) + '</span>', { path:mod + '.' + id + '.value', type:'number' }) +
-      fieldRow(t('c.closeDate'), esc(fmtDate(rec.close)), { path:mod + '.' + id + '.close', type:'date' }) +
-      fieldRow(t('c.district'), esc(districtName(rec.district))) +
-      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' });
+      fieldRow(t('c.city'), esc(L(rec.city))) +
+      /* The email domain is not decoration: it is the rule that makes student
+         verification automatic, so getting it wrong locks a whole college out. */
+      fieldRow(t('c.domain'), '<span class="figure" dir="ltr">' + esc(rec.domain) + '</span>', { path:P + 'domain' }) +
+      fieldRow(t('c.agreement'), chip(rec.agreement === 'signed' ? 'chip-good' : 'chip-warn', null, t('ag.' + rec.agreement)),
+        { path:P + 'agreement', type:'agreement' }) +
+      fieldRow(t('c.contactName'), esc(L(rec.contact)), { path:P + 'contact' }) +
+      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:P + 'phone' }) +
+      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:P + 'email' }) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:P + 'owner', type:'owner' });
+    side = relatedPanel(t('c.students'), usersOfUniversity(id).map(u => ({
+      _t:L(u.name), _m:verifChip(u.verification) + ' <span class="figure" dir="ltr">' + esc(u.email) + '</span>', id:u.id
+    })), r => 'openRecord(' + attr('users') + ',' + attr(r.id) + ')');
 
-  } else if (mod === 'activities') {
-    sub = priorityChip(rec.priority) + '<span>' + esc(t('ty.' + rec.type)) + '</span>' +
-      '<span>·</span><span>' + esc(relDays(rec.due)) + '</span>';
-    actions = '<button class="btn' + (rec.done ? '' : ' primary') + '" onclick="toggleTask(' + attr(id) + ')">' +
-      icon('check-circle') + esc(rec.done ? t('a.undone') : t('a.done')) + '</button>';
+  /* ---------- Syndicate roster row ---------- */
+  } else if (mod === 'syndicate') {
+    const u = rosterUser(rec);
+    sub = chip(rec.status === 'active' ? 'chip-good' : 'chip-bad',
+      rec.status === 'active' ? 'check-circle' : 'x', t('ss.' + rec.status)) +
+      '<span class="figure" dir="ltr">' + esc(rec.no) + '</span>' +
+      '<span>' + esc(t('sy.batchOf', {d:fmtDate(rec.batch)})) + '</span>';
     details =
-      fieldRow(t('c.type'), esc(t('ty.' + rec.type))) +
-      fieldRow(t('c.due'), esc(fmtDate(rec.due)), { path:mod + '.' + id + '.due', type:'date' }) +
-      fieldRow(t('c.priority'), priorityChip(rec.priority), { path:mod + '.' + id + '.priority', type:'priority' }) +
-      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' }) +
-      fieldRow(t('c.related'), rec.related
-        ? '<button class="cell-link" onclick="openRecord(' + attr(rec.related.kind) + ',' + attr(rec.related.id) + ')">' +
-          esc(recordName(rec.related.kind, rec.related.id)) + '</button>' : '—');
+      fieldRow(t('c.syndicateNo'), '<span class="figure" dir="ltr">' + esc(rec.no) + '</span>') +
+      fieldRow(t('c.name'), esc(L(rec.name))) +
+      fieldRow(t('c.gradYear'), esc(String(rec.gradYear))) +
+      fieldRow(t('c.syndStatus'), chip(rec.status === 'active' ? 'chip-good' : 'chip-bad', null, t('ss.' + rec.status))) +
+      fieldRow(t('c.batch'), esc(fmtDate(rec.batch))) +
+      fieldRow(t('sy.linked'), u
+        ? '<button class="cell-link" onclick="openRecord(' + attr('users') + ',' + attr(u.id) + ')">' + esc(L(u.name)) + '</button>'
+        : chip('chip-mute', null, t('mt.notLinked')));
+    main = '<div class="mod-note">' + icon('alert') + '<span>' + esc(t('sy.note')) + '</span></div>';
+
+  /* ---------- Drug ---------- */
+  } else if (mod === 'drugs') {
+    const bs = brandsOf(rec.sci);
+    const worst = worstInteraction(rec);
+    title = rec.sci;
+    sub = '<span>' + esc(rec.ar) + '</span><span class="figure" dir="ltr">' + esc(rec.atc) + '</span>' +
+      chip('chip-mute', null, t('df.' + rec.form)) + (worst ? sevChip(worst) : '');
+    actions = '<button class="btn primary" onclick="openNewBrand(' + attr(rec.sci) + ')">' + icon('plus') +
+      esc(t('dr.addBrand')) + '</button>';
+    details =
+      fieldRow(t('c.sci'), '<span dir="ltr">' + esc(rec.sci) + '</span>') +
+      fieldRow(t('c.sciAr'), esc(rec.ar), { path:P + 'ar' }) +
+      fieldRow(t('c.atc'), '<span class="figure" dir="ltr">' + esc(rec.atc) + '</span>', { path:P + 'atc' }) +
+      fieldRow(t('c.form'), esc(t('df.' + rec.form)), { path:P + 'form', type:'drugForm' }) +
+      fieldRow(t('c.doses'), '<span class="figure" dir="ltr">' + esc(rec.doses.join(' · ')) + '</span>',
+        { path:P + 'doses', type:'list' }) +
+      fieldRow(t('c.notesF'), esc(L(rec.notes)), { path:P + 'notes' });
+
+    main =
+      '<section class="panel"><div class="panel-h">' + icon('alert') + esc(t('c.interactions')) +
+        '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt((rec.interactions || []).length) + '</span></div>' +
+      ((rec.interactions || []).length
+        ? '<div class="panel-b flush">' + rec.interactions.map(i =>
+            '<div class="task-row"><div style="flex:1;min-width:0;">' +
+              '<div class="task-t" dir="ltr" style="text-align:start;">' + esc(i.with) + '</div>' +
+              '<div class="task-m">' + sevChip(i.severity) + '<span>' + esc(L(i.note)) + '</span></div>' +
+            '</div></div>').join('') + '</div>'
+        : '<div class="empty" style="padding:22px;font-size:12px;">' + esc(t('dr.noInteractions')) + '</div>') +
+      '</section>' +
+      '<section class="panel"><div class="panel-h">' + icon('x') + esc(t('c.contra')) +
+        '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt((rec.contraindications || []).length) + '</span></div>' +
+      ((rec.contraindications || []).length
+        ? '<div class="panel-b"><ul style="padding-inline-start:18px;font-size:12.5px;line-height:1.9;">' +
+          rec.contraindications.map(c => '<li>' + esc(L(c)) + '</li>').join('') + '</ul></div>'
+        : '<div class="empty" style="padding:22px;font-size:12px;">' + esc(t('dr.noContra')) + '</div>') +
+      '</section>';
+
+    /* Brands, each with whether it ships the molecule's doses or its own. The
+       override is the point of this panel: two companies genuinely do not
+       always supply the same strengths, and a pharmacist reading "500 mg" for
+       a brand that only comes in 250 is being told something false. */
+    side = '<section class="panel">' +
+      '<div class="panel-h">' + icon('factory') + esc(t('dr.brandsOf')) +
+        '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt(bs.length) + '</span></div>' +
+      (bs.length
+        ? '<div class="panel-b flush">' + bs.map(b => {
+            const co = companyOf(b.company);
+            return '<div class="task-row" style="display:block;">' +
+              '<div style="display:flex;align-items:baseline;gap:8px;">' +
+                '<span class="task-t" dir="ltr">' + esc(b.brand) + '</span>' +
+                '<span class="spacer" style="flex:1"></span>' +
+                (b.dosesOverride && b.dosesOverride.length
+                  ? chip('chip-warn', 'alert', t('dr.overrideOn'))
+                  : chip('chip-mute', null, t('dr.usesDefault'))) + '</div>' +
+              '<div class="task-m">' +
+                (co ? '<button class="cell-link" style="font-size:11px;" onclick="openRecord(' + attr('companies') + ',' +
+                  attr(co.id) + ')">' + esc(L(co.name)) + '</button>' : '') +
+                '<span class="figure" dir="ltr">' + esc(brandDoses(b).join(' · ')) + '</span></div>' +
+              (L(b.notes) ? '<div class="inline-note" style="margin-top:4px;">' + esc(L(b.notes)) + '</div>' : '') +
+              '<div style="margin-top:7px;display:flex;gap:7px;">' +
+                '<button class="btn" style="height:26px;font-size:11.5px;" onclick="editBrand(' + attr(b.id) + ')">' +
+                  esc(t('a.edit')) + '</button>' +
+                '<button class="btn danger" style="height:26px;font-size:11.5px;" onclick="deleteBrand(' + attr(b.id) + ')">' +
+                  esc(t('a.delete')) + '</button>' +
+              '</div></div>';
+          }).join('') + '</div>'
+        : '<div class="empty" style="padding:22px;font-size:12px;">' + esc(t('rec.noneYet')) + '</div>') +
+    '</section>';
   }
 
   const tasks = tasksFor(mod, id);
-  const taskPanel = (mod === 'leads' || mod === 'accounts')
+  const taskPanel = tasks.length
     ? relatedPanel(t('rec.tasks'), tasks.map(x => ({
-        _t:L(x.subject),
-        _m:priorityChip(x.priority) + ' ' + esc(relDays(x.due)),
-        id:x.id
-      })), r => 'openRecord(' + attr('activities') + ',' + attr(r.id) + ')')
+        _t:L(x.subject), _m:priorityChip(x.priority) + ' ' + esc(relDays(x.due)), id:x.id })),
+        r => 'toggleTaskFromRecord(' + attr(r.id) + ')')
     : '';
 
   return '<div class="rec-head">' +
       '<button class="btn-icon" onclick="closeRecord()" aria-label="' + esc(t('a.close')) + '">' + icon('x') + '</button>' +
-      '<div class="avatar lg">' + esc(initials) + '</div>' +
+      '<div class="avatar lg">' + esc(initialsOf(title)) + '</div>' +
       '<div style="flex:1;min-width:220px;">' +
-        '<div class="rec-title">' + esc(title) + '</div>' +
+        '<div class="rec-title"' + (mod === 'drugs' ? ' dir="ltr"' : '') + '>' + esc(title) + '</div>' +
         '<div class="rec-sub">' + sub + '</div>' +
       '</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + actions + '</div>' +
     '</div>' +
     '<div class="rec-body">' +
       '<div style="display:flex;flex-direction:column;gap:16px;min-width:0;">' +
+        main +
         '<section class="panel"><div class="panel-h">' + icon('note') + esc(t('rec.details')) + '</div>' +
           '<div class="panel-b">' + details + '</div></section>' +
         timelinePanel(mod, id) +
       '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:16px;min-width:0;">' +
-        platform + related + taskPanel +
-      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:16px;min-width:0;">' + side + taskPanel + '</div>' +
     '</div>';
 }
 
 /* ==========================================================================
-   7. HOME, PIPELINE BOARD, REPORTS
+   7. HOME
+   Re-pointed at operations. The old dashboard measured a sales pipeline; the
+   module list is now users, orders and master data, so the numbers are the
+   ones an operator acts on before lunch.
    ========================================================================== */
 
-function kpi(label, value, delta, spark, tone) {
-  const d = delta
-    ? '<div class="kpi-d ' + delta.cls + '">' + (delta.ico ? icon(delta.ico) : '') +
-      esc(delta.text) + '</div>' : '';
-  return '<div class="kpi"><div class="kpi-k">' + esc(label) + '</div>' +
+function kpi(label, value, delta, spark, onClick) {
+  const d = delta ? '<div class="kpi-d ' + delta.cls + '">' + (delta.ico ? icon(delta.ico) : '') +
+    esc(delta.text) + '</div>' : '';
+  const inner = '<div class="kpi-k">' + esc(label) + '</div>' +
     '<div class="kpi-v">' + esc(value) + '</div>' + d +
-    (spark ? sparkline(spark, tone) : '') + '</div>';
+    (spark ? sparkline(spark) : '');
+  return onClick
+    ? '<button class="kpi as-link" onclick="' + onClick + '">' + inner + '</button>'
+    : '<div class="kpi">' + inner + '</div>';
 }
 
 function homeView() {
-  const open = DATA.deals.filter(d => d.stage !== 'activated');
-  const pipelineValue = open.reduce((n, d) => n + d.value, 0);
-  const active = DATA.accounts.filter(isActive);
-  const dormant = DATA.accounts.filter(isDormant);
-  const ending = DATA.accounts.filter(isTrialEnding);
-  const commission = DATA.accounts.reduce((n, a) => n + a.commission, 0);
+  const orders = DATA.orders;
+  const today = orders.filter(isToday);
+  const open = orders.filter(o => o.status === 'open');
+  const unclaimed = orders.filter(isUnclaimed);
+  const shifts = orders.filter(o => o.type === 'shift');
+  const completed = shifts.filter(o => o.status === 'completed').length;
+  const decided = shifts.filter(o => ['completed','cancelled'].includes(o.status)).length;
+  const fill = decided ? Math.round(completed / decided * 100) : null;
+  const pendingUsers = DATA.users.filter(u => u.verification === 'pending');
+  const activePh = DATA.pharmacies.filter(isActivePharmacy);
+  const noMatch = DATA.users.filter(u => u.type === 'pharmacist' && syndicateMatch(u).key !== 'matched');
+  const dormant = DATA.pharmacies.filter(isDormant);
+  const noBrands = DATA.drugs.filter(d => brandsOf(d.sci).length === 0);
+
+  const daily = ORDERS_PER_DAY.map(x => x.n);
 
   const kpis = '<div class="kpis">' +
-    kpi(t('k.openDeals'), fmt(open.length), null, [4,5,7,8,9,10,open.length]) +
-    kpi(t('k.pipelineValue'), iqd(pipelineValue), null, [120,145,160,178,190,205,pipelineValue/1000]) +
-    kpi(t('k.activePharmacies'), fmt(active.length),
-        { cls:'kpi-up', ico:'up', text:'+2 ' + t('k.vsLast') }, [1,2,2,3,3,4,active.length]) +
-    kpi(t('k.monthCommission'), iqd(commission),
-        { cls:'kpi-up', ico:'up', text:'+18% ' + t('k.vsLast') }, [22,28,31,44,62,88,commission/1000]) +
-    /* Two tiles that are calls to action, not scores. Status colour plus an
-       icon plus a word — never colour alone. */
-    kpi(t('k.trialEnding'), fmt(ending.length),
-        ending.length ? { cls:'kpi-down', ico:'alert', text:t('k.needsCall') } : null) +
-    kpi(t('k.dormant'), fmt(dormant.length),
-        dormant.length ? { cls:'kpi-down', ico:'alert', text:t('k.needsCall') } : null) +
+    kpi(t('k.ordersToday'), fmt(today.length), null, daily, "goView('orders','today')") +
+    kpi(t('k.openNow'), fmt(open.length), null, null, "goView('orders','open')") +
+    kpi(t('k.fillRateK'), fill === null ? '—' : pct(fill),
+        { cls:'kpi-up', ico:'up', text:'+4% ' + t('k.vsLast') }) +
+    kpi(t('k.activePh'), fmt(activePh.length), null, null, "goView('pharmacies','all')") +
+    /* Two tiles that are calls to action rather than scores. Status colour plus
+       an icon plus a word — never colour alone. */
+    kpi(t('k.unclaimed'), fmt(unclaimed.length),
+        unclaimed.length ? { cls:'kpi-down', ico:'alert', text:t('k.needsCall') } : null,
+        null, "goView('orders','unclaimed')") +
+    kpi(t('k.pendingVerif'), fmt(pendingUsers.length),
+        pendingUsers.length ? { cls:'kpi-down', ico:'alert', text:t('k.needsCall') } : null,
+        null, "goView('users','pending')") +
   '</div>';
 
-  const rows = funnelRows();
-  const acts = ACTIVATIONS.map(a => ({
-    n:a.n, label:MONTHS[lang][a.m - 1], short:MONTHS_SHORT[lang][a.m - 1]
-  }));
+  const trend = ORDERS_PER_DAY.map(x => {
+    const d = new Date(x.d + 'T00:00:00');
+    return { n:x.n, label:fmtDate(x.d), short:String(d.getDate()) };
+  });
 
-  const byDistrict = DISTRICTS
-    .map(d => ({ label:L(d), n:active.filter(a => a.district === d.key).length }))
-    .filter(r => r.n > 0).sort((a, b) => b.n - a.n);
+  /* What is stuck, in one panel, each row a link to the view that holds it.
+     A dashboard that reports a problem without a route to it is a poster. */
+  const items = [
+    { n:unclaimed.length,    key:'at.unclaimed',    go:"goView('orders','unclaimed')",  tone:'chip-bad' },
+    { n:pendingUsers.length, key:'at.pendingUsers', go:"goView('users','pending')",     tone:'chip-warn' },
+    { n:dormant.length,      key:'at.dormantPh',    go:"goView('pharmacies','dormant')",tone:'chip-bad' },
+    { n:noMatch.length,      key:'at.noMatch',      go:"goView('users','noMatch')",     tone:'chip-warn' },
+    { n:noBrands.length,     key:'at.noBrands',     go:"goView('drugs','noBrands')",    tone:'chip-mute' }
+  ].filter(x => x.n > 0);
 
-  const myTasks = DATA.tasks
-    .filter(x => x.owner === ME && !x.done && x.due <= ISO_TODAY)
+  const attention = '<section class="panel">' +
+    '<div class="panel-h">' + icon('alert') + esc(t('ch.attention')) +
+      '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt(items.length) + '</span></div>' +
+    (items.length
+      ? '<div class="panel-b flush">' + items.map(x =>
+          '<button class="task-row" style="width:100%;text-align:start;" onclick="' + x.go + '">' +
+            '<span class="chip ' + x.tone + ' figure">' + fmt(x.n) + '</span>' +
+            '<div style="flex:1;min-width:0;"><div class="task-t">' + esc(t(x.key, {n:x.n})) + '</div></div>' +
+            icon('chevron', 'go-chevron') + '</button>').join('') + '</div>'
+      : '<div class="empty" style="padding:26px;font-size:12.5px;">' + esc(t('ch.nothingUp')) + '</div>') +
+  '</section>';
+
+  const myTasks = DATA.tasks.filter(x => x.owner === ME && !x.done && x.due <= ISO_TODAY)
     .sort((a, b) => a.due.localeCompare(b.due));
-
   const tasksPanel = '<section class="panel">' +
     '<div class="panel-h">' + icon('check-circle') + esc(t('ch.tasks')) +
       '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt(myTasks.length) + '</span></div>' +
     (myTasks.length
       ? '<div class="panel-b flush">' + myTasks.map(x =>
-          '<div class="task-row' + (x.done ? ' task-done' : '') + '">' +
-            '<input type="checkbox"' + (x.done ? ' checked' : '') + ' onchange="toggleTask(' + attr(x.id) + ')" ' +
-              'style="margin-top:2px;">' +
-            '<div style="flex:1;min-width:0;">' +
-              '<button class="task-t" style="text-align:start;" onclick="openRecord(' + attr('activities') + ',' + attr(x.id) + ')">' +
-                esc(L(x.subject)) + '</button>' +
-              '<div class="task-m">' + priorityChip(x.priority) +
-                '<span' + (x.due < ISO_TODAY ? ' style="color:var(--critical);font-weight:600"' : '') + '>' +
-                esc(relDays(x.due)) + '</span>' +
-                (x.related ? '<span>·</span><button class="cell-link" style="font-size:11px;" onclick="openRecord(' +
-                  attr(x.related.kind) + ',' + attr(x.related.id) + ')">' +
-                  esc(recordName(x.related.kind, x.related.id)) + '</button>' : '') +
-              '</div></div></div>').join('') + '</div>'
+          '<div class="task-row"><input type="checkbox" onchange="toggleTask(' + attr(x.id) + ')" style="margin-top:2px;">' +
+            '<div style="flex:1;min-width:0;"><div class="task-t">' + esc(L(x.subject)) + '</div>' +
+            '<div class="task-m">' + priorityChip(x.priority) +
+              '<span' + (x.due < ISO_TODAY ? ' style="color:var(--critical);font-weight:600"' : '') + '>' +
+              esc(relDays(x.due)) + '</span>' +
+              (x.related ? '<span>·</span><button class="cell-link" style="font-size:11px;" onclick="openRecord(' +
+                attr(x.related.kind) + ',' + attr(x.related.id) + ')">' +
+                esc(recordName(x.related.kind, x.related.id)) + '</button>' : '') +
+            '</div></div></div>').join('') + '</div>'
       : '<div class="empty" style="padding:26px;font-size:12.5px;">' + esc(t('ch.noTasks')) + '</div>') +
   '</section>';
 
@@ -1752,116 +2415,288 @@ function homeView() {
           '<div class="tl-meta">' + esc(L(USERS[e.owner].name)) + ' · ' + esc(relDays(e.when)) + '</div>' +
         '</div></div>').join('') + '</div></div></section>';
 
-  return '<div class="dash">' + kpis +
-    '<div class="charts c32">' +
-      funnelChart(rows, { title:t('ch.funnel'), sub:t('ch.funnelSub') }) +
-      trendChart(acts, { title:t('ch.activation'), sub:t('ch.activationSub') }) +
-    '</div>' +
-    '<div class="charts c2">' + tasksPanel + recentPanel + '</div>' +
-    barChart(byDistrict, { title:t('ch.districts'), sub:t('ch.districtsSub'), id:'districts',
-                           unit:t('ch.pharmacies') }) +
-  '</div>';
-}
-
-/* ---------- Pipeline board ---------- */
-
-function dealsBoard() {
-  const f = S.filters.deals || {};
-  return '<div class="kanban">' + STAGES.map(s => {
-    let ds = DATA.deals.filter(d => d.stage === s.key);
-    Object.keys(f).forEach(facet => { if (f[facet]) ds = ds.filter(r => FACETS[facet].of(r) === f[facet]); });
-    const sum = ds.reduce((n, d) => n + d.value, 0);
-
-    return '<div class="kcol">' +
-      '<div class="kcol-h">' +
-        '<span class="kcol-swatch" style="background:' + STAGE_COLOR[s.key] + '"></span>' +
-        '<span class="kcol-name">' + esc(t('st.' + s.key)) + '</span>' +
-        '<span class="kcol-n">' + fmt(ds.length) + '</span>' +
-        '<span class="kcol-sum">' + esc(iqd(sum)) + '</span>' +
-      '</div>' +
-      '<div class="kcol-b" ondragover="dragOver(event,' + attr(s.key) + ')" ondragleave="dragLeave(event)" ' +
-        'ondrop="dropDeal(event,' + attr(s.key) + ')" data-stage="' + esc(s.key) + '">' +
-        ds.map(d =>
-          '<div class="kcard" draggable="true" ondragstart="dragDeal(event,' + attr(d.id) + ')" ' +
-            'ondragend="dragEnd(event)" onclick="openRecord(' + attr('deals') + ',' + attr(d.id) + ')" ' +
-            'tabindex="0" role="button">' +
-            '<div class="kcard-t">' + esc(L(d.name)) + '</div>' +
-            '<div class="kcard-m">' + esc(districtName(d.district)) + ' · ' + esc(fmtDate(d.close)) + '</div>' +
-            '<div class="kcard-f"><span class="kcard-v">' + esc(iqd(d.value)) + '</span>' +
-              '<span class="avatar kcard-owner">' + esc(L(USERS[d.owner].initials)) + '</span></div>' +
-          '</div>').join('') +
-      '</div></div>';
-  }).join('') + '</div>';
-}
-
-function dealsHead() {
-  const board = S.dealsMode === 'board';
-  const total = DATA.deals.filter(d => d.stage !== 'activated').reduce((n, d) => n + d.value, 0);
-  return '<div class="work-head">' +
-    '<span class="view-select">' + esc(t('d.pipeline')) + '</span>' +
-    '<span class="chip chip-info figure">' + esc(t('d.total')) + ' ' + esc(iqd(total)) + '</span>' +
-    '<span class="spacer"></span>' +
-    '<button class="btn-icon' + (board ? ' on' : '') + '" onclick="setDealsMode(\'board\')" title="' + esc(t('d.board')) + '">' +
-      icon('board') + '</button>' +
-    '<button class="btn-icon' + (!board ? ' on' : '') + '" onclick="setDealsMode(\'list\')" title="' + esc(t('d.list')) + '">' +
-      icon('table') + '</button>' +
-    '<button class="btn primary" onclick="openNew(\'deals\')">' + icon('plus') + esc(t('a.new')) + '</button>' +
-  '</div>';
-}
-
-/* ---------- Reports ---------- */
-
-function reportsView() {
-  const rows = funnelRows();
-  const acts = ACTIVATIONS.map(a => ({ n:a.n, label:MONTHS[lang][a.m - 1], short:MONTHS_SHORT[lang][a.m - 1] }));
-  const sources = LEAD_SOURCES_90D.map(s => ({ label:t('src.' + s.key), n:s.n }));
-
-  const owners = Object.keys(USERS).map(u => ({
-    name:L(USERS[u].name),
-    leads:DATA.leads.filter(l => l.owner === u).length,
-    won:DATA.deals.filter(d => d.owner === u && d.stage === 'activated').length,
-    active:DATA.accounts.filter(a => a.owner === u && isActive(a)).length
+  const byType = ORDER_TYPES.map(ty => ({
+    label:t('ot.' + ty), n:orders.filter(o => o.type === ty).length
   }));
 
-  const ownerTable = '<section class="panel">' +
-    '<div class="chart-h"><span class="chart-t">' + esc(t('r.ownerReport')) + '</span>' +
-      '<span class="chart-s">' + esc(t('r.ownerSub')) + '</span></div>' +
-    '<div class="chart-wrap"><table class="mini"><thead><tr><th>' + esc(t('f.owner')) + '</th>' +
-      '<th style="text-align:end">' + esc(t('r.leadsCol')) + '</th>' +
-      '<th style="text-align:end">' + esc(t('r.wonCol')) + '</th>' +
-      '<th style="text-align:end">' + esc(t('r.activeCol')) + '</th></tr></thead><tbody>' +
-      owners.map(o => '<tr><td>' + esc(o.name) + '</td><td class="n">' + fmt(o.leads) + '</td>' +
-        '<td class="n">' + fmt(o.won) + '</td><td class="n">' + fmt(o.active) + '</td></tr>').join('') +
-    '</tbody></table></div></section>';
-
-  return '<div class="dash">' +
-    '<div class="charts c2">' +
-      funnelChart(rows, { title:t('r.pipelineReport'), sub:t('ch.funnelSub') }) +
-      trendChart(acts, { title:t('r.activationReport'), sub:t('ch.activationSub') }) +
+  return '<div class="dash">' + kpis +
+    '<div class="charts c32">' +
+      trendChart(trend, { title:t('ch.orders'), sub:t('ch.ordersSub'), unit:t('ch.orderCount'), id:'orders-trend' }) +
+      funnelChart(orderStatusRows(), { title:t('ch.byStatus'), sub:t('ch.byStatusSub'), id:'by-status' }) +
     '</div>' +
+    '<div class="charts c2">' + attention + tasksPanel + '</div>' +
     '<div class="charts c2">' +
-      barChart(sources, { title:t('r.sourceReport'), sub:t('r.sourceSub'), id:'sources',
-                          catCol:t('f.source'), unit:t('r.leadsCol') }) +
-      ownerTable +
+      barChart(byType, { title:t('ch.byType'), sub:t('ch.byStatusSub'), id:'by-type',
+                         catCol:t('c.orderType'), unit:t('ch.orderCount') }) +
+      recentPanel +
     '</div>' +
   '</div>';
+}
+
+/* ==========================================================================
+   13. CSV IMPORT
+   Two things use it: the drug list, which arrives from a company as a
+   spreadsheet, and the Syndicate roster, which arrives from the Syndicate the
+   same way. Both are bulk, both are somebody else's file, and both will have
+   mistakes in them — so the import parses, validates, and shows what it WOULD
+   do, and writes nothing until that preview has been read.
+   ========================================================================== */
+
+/* A real CSV parser rather than split(','): a drug note containing a comma, or
+   a quoted field with a line break in it, is the normal case in a file a
+   pharmacist typed, and splitting on commas silently corrupts those rows. */
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', quoted = false;
+  const s = String(text).replace(/\r\n?/g, '\n');
+
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (quoted) {
+      if (c === '"') {
+        if (s[i + 1] === '"') { field += '"'; i++; }   // "" is a literal quote
+        else quoted = false;
+      } else field += c;
+    } else if (c === '"') { quoted = true; }
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+    else field += c;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(x => String(x).trim() !== ''));
+}
+
+const splitList = v => String(v || '').split(/[|;]/).map(x => x.trim()).filter(Boolean);
+
+/* Each importer declares its key column, the columns it needs, and how one row
+   becomes a record. Validation returns a message rather than throwing, so one
+   bad row is one skipped row and not a failed file. */
+const IMPORTERS = {
+  drugs: {
+    module:'drugs',
+    key:'scientific_name',
+    required:['scientific_name'],
+    columns:['scientific_name','arabic_name','atc','form','doses','notes','interactions','contraindications'],
+    sample:[
+      ['scientific_name','arabic_name','atc','form','doses','notes','interactions','contraindications'],
+      ['Ibuprofen','إيبوبروفين','M01AE01','tablet','200 mg|400 mg|600 mg',
+       'Take with food.','Warfarin:warning:May raise bleeding risk|Lisinopril:warning:Blunts the antihypertensive effect',
+       'Active peptic ulcer|Third trimester of pregnancy'],
+      ['Cetirizine','سيتيريزين','R06AE07','tablet','5 mg|10 mg','Non-sedating at standard doses.','','Severe renal impairment']
+    ],
+    parse(cells, head) {
+      const g = k => String(cells[head.indexOf(k)] || '').trim();
+      const sci = g('scientific_name');
+      if (!sci) return { error:t('imp.missingKey') };
+
+      const form = (g('form') || 'tablet').toLowerCase();
+      const FORMS_OK = ['tablet','capsule','syrup','injection','cream'];
+
+      const interactions = splitList(g('interactions')).map(x => {
+        const [w, sev, ...rest] = x.split(':');
+        const severity = ['warning','serious','critical'].includes((sev || '').trim())
+          ? sev.trim() : 'warning';
+        const note = rest.join(':').trim();
+        return { with:(w || '').trim(), severity, note:{ ar:note, en:note } };
+      }).filter(i => i.with);
+
+      const rec = {
+        sci,
+        ar: g('arabic_name') || sci,
+        atc: g('atc'),
+        form: FORMS_OK.includes(form) ? form : 'tablet',
+        doses: splitList(g('doses')),
+        notes: { ar:g('notes'), en:g('notes') },
+        interactions,
+        contraindications: splitList(g('contraindications')).map(c => ({ ar:c, en:c }))
+      };
+      const existing = DATA.drugs.find(d => d.sci.toLowerCase() === sci.toLowerCase());
+      return { rec, key:sci, mode: existing ? 'update' : 'new' };
+    },
+    apply(p) {
+      const i = DATA.drugs.findIndex(d => d.sci.toLowerCase() === p.key.toLowerCase());
+      if (i >= 0) Object.assign(DATA.drugs[i], p.rec); else DATA.drugs.push(p.rec);
+    }
+  },
+
+  syndicate: {
+    module:'syndicate',
+    key:'syndicate_no',
+    required:['syndicate_no','name'],
+    columns:['syndicate_no','name','graduation_year','status'],
+    sample:[
+      ['syndicate_no','name','graduation_year','status'],
+      ['IQ-PH-015001','سيف الدين محمد الجبوري','2024','active'],
+      ['IQ-PH-015002','دعاء عبد الكريم الزاملي','2024','active']
+    ],
+    parse(cells, head) {
+      const g = k => String(cells[head.indexOf(k)] || '').trim();
+      const no = g('syndicate_no');
+      const name = g('name');
+      if (!no) return { error:t('imp.missingKey') };
+      if (!name) return { error:t('n.required') };
+      const year = parseInt(g('graduation_year'), 10);
+      const rec = {
+        no, name:{ ar:name, en:name },
+        gradYear: Number.isFinite(year) ? year : null,
+        status: g('status').toLowerCase() === 'suspended' ? 'suspended' : 'active',
+        batch: ISO_TODAY
+      };
+      const existing = DATA.syndicate.find(r => r.no.toLowerCase() === no.toLowerCase());
+      return { rec, key:no, mode: existing ? 'update' : 'new' };
+    },
+    apply(p) {
+      const i = DATA.syndicate.findIndex(r => r.no.toLowerCase() === p.key.toLowerCase());
+      if (i >= 0) Object.assign(DATA.syndicate[i], p.rec); else DATA.syndicate.push(p.rec);
+    }
+  }
+};
+
+function openImport(which) {
+  S.modal = { kind:'import', which, text:'', parsed:null };
+  renderModal();
+}
+
+function importTemplate(which) {
+  const I = IMPORTERS[which];
+  const csv = I.sample.map(r => r.map(c =>
+    /[",\n]/.test(c) ? '"' + String(c).replace(/"/g, '""') + '"' : c).join(',')).join('\n');
+  // A local file can hand the browser a download; an artifact cannot. This one
+  // is opened from disk, so the anchor works.
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,﻿' + encodeURIComponent(csv);
+  a.download = 'saydali-' + which + '-template.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function readImportFile(input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    S.modal.text = String(r.result || '');
+    S.modal.parsed = null;
+    renderModal();
+    parseImport();
+  };
+  r.readAsText(f);
+}
+
+function setImportText(v) { S.modal.text = v; S.modal.parsed = null; }
+
+function parseImport() {
+  const I = IMPORTERS[S.modal.which];
+  const text = (S.modal.text || '').trim();
+  if (!text) { S.modal.parsed = { fatal:t('imp.noFile') }; renderModal(); return; }
+
+  const rows = parseCSV(text);
+  const head = (rows[0] || []).map(h => String(h).trim().toLowerCase().replace(/^﻿/, ''));
+  const missing = I.required.filter(c => !head.includes(c));
+  if (missing.length) {
+    S.modal.parsed = { fatal:t('imp.badHeader', { cols:missing.join(', ') }) };
+    renderModal(); return;
+  }
+
+  const seen = new Set();
+  const items = rows.slice(1).map((cells, i) => {
+    const out = I.parse(cells, head);
+    if (out.error) return { line:i + 2, mode:'error', message:out.error };
+    // A file that lists the same key twice is a mistake worth surfacing, not
+    // something to silently resolve by letting the last row win.
+    const k = String(out.key).toLowerCase();
+    if (seen.has(k)) return { line:i + 2, mode:'error', message:(lang === 'ar' ? 'مكرر في الملف: ' : 'Duplicated in the file: ') + out.key };
+    seen.add(k);
+    return { line:i + 2, mode:out.mode, key:out.key, rec:out.rec };
+  });
+
+  S.modal.parsed = {
+    items,
+    counts:{
+      new:    items.filter(x => x.mode === 'new').length,
+      update: items.filter(x => x.mode === 'update').length,
+      error:  items.filter(x => x.mode === 'error').length
+    }
+  };
+  renderModal();
+}
+
+function applyImport() {
+  const I = IMPORTERS[S.modal.which];
+  const good = (S.modal.parsed.items || []).filter(x => x.mode !== 'error');
+  good.forEach(p => I.apply(p));
+  const n = good.length;
+  S.modal = null;
+  toast(t('imp.done', { n }));
+  render();
+}
+
+function importModal() {
+  const I = IMPORTERS[S.modal.which];
+  const p = S.modal.parsed;
+
+  const preview = !p ? '' : p.fatal
+    ? '<div class="imp-fatal">' + icon('alert') + esc(p.fatal) + '</div>'
+    : '<div class="imp-summary">' +
+        '<span class="chip chip-good">' + esc(t('imp.new')) + ' ' + fmt(p.counts.new) + '</span>' +
+        '<span class="chip chip-info">' + esc(t('imp.update')) + ' ' + fmt(p.counts.update) + '</span>' +
+        '<span class="chip ' + (p.counts.error ? 'chip-bad' : 'chip-mute') + '">' +
+          esc(t('imp.error')) + ' ' + fmt(p.counts.error) + '</span>' +
+        '<span class="spacer" style="flex:1"></span>' +
+        '<span class="inline-note">' + esc(t('imp.rowsFound', { n:p.items.length })) + '</span>' +
+      '</div>' +
+      '<div class="imp-rows">' + p.items.map(x =>
+        '<div class="imp-row ' + x.mode + '">' +
+          '<span class="imp-line figure">' + x.line + '</span>' +
+          '<span class="chip ' + (x.mode === 'new' ? 'chip-good' : x.mode === 'update' ? 'chip-info' : 'chip-bad') + '">' +
+            esc(t('imp.' + x.mode)) + '</span>' +
+          '<span class="imp-key" dir="ltr">' + esc(x.key || '') + '</span>' +
+          (x.message ? '<span class="imp-msg">' + esc(x.message) + '</span>' : '') +
+        '</div>').join('') + '</div>' +
+      (p.counts.error ? '<p class="inline-note">' + esc(t('imp.errorsBlock')) + '</p>' : '');
+
+  const applicable = p && !p.fatal ? p.counts.new + p.counts.update : 0;
+
+  return '<div class="modal-h"><span class="modal-t">' + esc(t('imp.title')) + ' — ' + esc(t('mod.' + I.module)) + '</span>' +
+      '<span class="spacer" style="flex:1"></span>' +
+      '<button class="btn-icon" onclick="closeModal()" aria-label="' + esc(t('a.close')) + '">' + icon('x') + '</button></div>' +
+    '<div class="modal-b">' +
+      '<div class="imp-head">' +
+        '<label class="btn"><input type="file" accept=".csv,text/csv" style="display:none" onchange="readImportFile(this)">' +
+          icon('upload') + esc(t('imp.pick')) + '</label>' +
+        '<button class="btn" onclick="importTemplate(' + attr(S.modal.which) + ')">' + icon('download') +
+          esc(t('imp.template')) + '</button>' +
+      '</div>' +
+      '<div class="fld" style="margin-top:12px;"><label>' + esc(t('imp.or')) + '</label>' +
+        '<textarea id="imp-text" dir="ltr" class="figure" style="min-height:110px;font-size:11.5px;" ' +
+          'oninput="setImportText(this.value)" placeholder="' + esc(I.columns.join(',')) + '">' +
+          esc(S.modal.text || '') + '</textarea>' +
+        '<div class="hint">' + esc(I.columns.join(' · ')) + '</div></div>' +
+      '<button class="btn" onclick="parseImport()">' + icon('check-circle') + esc(t('imp.parse')) + '</button>' +
+      preview +
+      '<p class="inline-note" style="margin-top:12px;">' + esc(t('imp.previewNote')) + '</p>' +
+    '</div>' +
+    '<div class="modal-f"><button class="btn" onclick="closeModal()">' + esc(t('a.cancel')) + '</button>' +
+      '<button class="btn primary" onclick="applyImport()"' + (applicable ? '' : ' disabled') + '>' +
+        esc(t('imp.apply', { n:applicable })) + '</button></div>';
 }
 
 /* ==========================================================================
    8. STATE & RENDER
    ========================================================================== */
 
-const TABS = ['home', 'leads', 'accounts', 'contacts', 'deals', 'activities', 'reports'];
+const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs'];
 
 const S = {
   tab:'home',
   record:null,              // { mod, id }
-  view:{ leads:'all', accounts:'all', contacts:'all', deals:'all', activities:'mine' },
-  filters:{ leads:{}, accounts:{}, contacts:{}, deals:{}, activities:{} },
+  view:{ orders:'all', users:'all', pharmacies:'all', companies:'all',
+         universities:'all', syndicate:'all', drugs:'all' },
+  filters:{ orders:{}, users:{}, pharmacies:{}, companies:{},
+            universities:{}, syndicate:{}, drugs:{} },
   sort:{},
-  picked:{ leads:[], accounts:[], contacts:[], deals:[], activities:[] },
+  picked:{ orders:[], users:[], pharmacies:[], companies:[],
+           universities:[], syndicate:[], drugs:[] },
   viewMenu:null,
-  dealsMode:'board',
   modal:null,
   query:'',
   drag:null
@@ -1880,11 +2715,9 @@ function render() {
 
   document.getElementById('tabs').innerHTML = TABS.map(k => {
     const M = MODULES[k];
-    const n = M ? M.data().length : null;
     return '<button class="tab' + (S.tab === k ? ' active' : '') + '" onclick="goTab(' + attr(k) + ')">' +
-      icon(k === 'home' ? 'home' : k === 'reports' ? 'chart' : M.icon) +
-      esc(t('mod.' + k)) +
-      (n !== null ? '<span class="tab-count">' + fmt(n) + '</span>' : '') + '</button>';
+      icon(k === 'home' ? 'home' : M.icon) + esc(t('mod.' + k)) +
+      (M ? '<span class="tab-count">' + fmt(M.data().length) + '</span>' : '') + '</button>';
   }).join('');
 
   const rail = document.getElementById('rail');
@@ -1900,19 +2733,10 @@ function render() {
     head.innerHTML = '<div class="work-head"><span class="view-select">' +
       esc(t('h.greeting', { name:L(USERS[ME].name) })) + '</span></div>';
     body.innerHTML = homeView();
-  } else if (S.tab === 'reports') {
-    rail.classList.add('hidden');
-    head.innerHTML = '<div class="work-head"><span class="view-select">' + esc(t('r.title')) + '</span></div>';
-    body.innerHTML = reportsView();
-  } else if (S.tab === 'deals' && S.dealsMode === 'board') {
-    rail.classList.remove('hidden');
-    rail.innerHTML = listRail('deals');
-    head.innerHTML = dealsHead();
-    body.innerHTML = dealsBoard();
   } else {
     rail.classList.remove('hidden');
     rail.innerHTML = listRail(S.tab);
-    head.innerHTML = S.tab === 'deals' ? dealsHead() + listHead(S.tab).replace(/^<div class="work-head">[\s\S]*?<\/div>/, '') : listHead(S.tab);
+    head.innerHTML = listHead(S.tab);
     body.innerHTML = listBody(S.tab);
   }
 
@@ -1937,7 +2761,6 @@ function openRecord(mod, id) {
 }
 function closeRecord() { S.record = null; hideTip(); render(); }
 function setLang(l) { lang = l; hideTip(); render(); }
-function setDealsMode(m) { S.dealsMode = m; render(); }
 
 /* The two halves are one product: this hands off to the app, and an account
    row hands off to that pharmacy's own account inside it. */
@@ -1975,20 +2798,10 @@ function pickAll(mod, on) {
 function clearPicked(mod) { S.picked[mod] = []; render(); }
 
 function bulkDelete(mod) {
-  const ids = S.picked[mod] || [];
-  DATA[mod] = DATA[mod].filter(r => !ids.includes(r.id));
+  const ids = (S.picked[mod] || []).map(String);
+  DATA[mod] = DATA[mod].filter(r => !ids.includes(String(idOf(mod, r))));
   S.picked[mod] = [];
   toast(t('rec.deleted'));
-  render();
-}
-function bulkAssign(mod) {
-  // Round-robins through the team. A real assignment rule is a decision for
-  // the founder, not something to invent here.
-  const ids = S.picked[mod] || [];
-  const users = Object.keys(USERS);
-  DATA[mod].forEach((r, i) => { if (ids.includes(r.id)) r.owner = users[i % users.length]; });
-  S.picked[mod] = [];
-  toast(t('rec.saved'));
   render();
 }
 
@@ -2003,9 +2816,10 @@ function search(q) {
   if (!term) { box.innerHTML = ''; return; }
 
   const hits = [];
-  ['leads', 'accounts', 'contacts', 'deals', 'activities'].forEach(mod => {
+  TABS.filter(k => MODULES[k]).forEach(mod => {
     MODULES[mod].data().forEach(r => {
-      const hay = [L(r.name || r.subject), L(r.contact || ''), r.phone || '', r.email || '', r.licence || '']
+      const hay = [recordName(mod, idOf(mod, r)), L(r.name || ''), r.sci || '', r.no || '',
+                   r.phone || '', r.email || '', r.licence || '', r.reg || '', r.domain || '', r.id || '']
         .join(' ').toLowerCase();
       if (hay.includes(term)) hits.push({ mod, r });
     });
@@ -2013,10 +2827,10 @@ function search(q) {
 
   box.innerHTML = '<div class="tb-results">' + (hits.length
     ? hits.slice(0, 8).map(h =>
-        '<button class="tb-result" onclick="pickSearch(' + attr(h.mod) + ',' + attr(h.r.id) + ')">' +
+        '<button class="tb-result" onclick="pickSearch(' + attr(h.mod) + ',' + attr(idOf(h.mod, h.r)) + ')">' +
           icon(MODULES[h.mod].icon) +
           '<span style="flex:1;min-width:0;text-align:start;"><span style="display:block;font-weight:600;font-size:12.5px;">' +
-            esc(L(h.r.name || h.r.subject)) + '</span>' +
+            esc(recordName(h.mod, idOf(h.mod, h.r))) + '</span>' +
           '<span class="tb-result-sub" style="display:block;">' + esc(t('mod.' + h.mod)) + '</span></span></button>').join('')
     : '<div class="tb-empty">' + esc(t('searchEmpty')) + '</div>') + '</div>';
 }
@@ -2032,7 +2846,7 @@ function pickSearch(mod, id) {
 
 function startEdit(el, path, type) {
   const [mod, id, field] = path.split('.');
-  const rec = DATA[mod].find(r => r.id === id);
+  const rec = findRecord(mod, id);
   if (!rec) return;
 
   let input;
@@ -2067,7 +2881,7 @@ function startEdit(el, path, type) {
 function commitEdit(el, path) {
   if (el.dataset.abort) { render(); return; }
   const [mod, id, field] = path.split('.');
-  const rec = DATA[mod].find(r => r.id === id);
+  const rec = findRecord(mod, id);
   if (!rec) { render(); return; }
 
   let v = el.value;
@@ -2110,58 +2924,86 @@ function toggleTask(id) {
   if (x) x.done = !x.done;
   render();
 }
-function moveDeal(id, stage) {
-  const d = DATA.deals.find(r => r.id === id);
-  if (!d) return;
-  d.stage = stage;
-  toast(t('d.moveTo', { stage:t('st.' + stage) }));
+function toggleTaskFromRecord(id) { toggleTask(id); }
+
+function setOrderStatus(id, status) {
+  const o = DATA.orders.find(r => r.id === id);
+  if (!o) return;
+  o.status = status;
+  // Assigning without a person, or completing an order nobody took, is a state
+  // the real database refuses; refuse it here too rather than showing a row
+  // that could not exist.
+  if (['assigned','in_progress','completed'].includes(status) && !o.assignee) {
+    const pool = DATA.users.filter(u => u.verification === 'verified' &&
+      u.type === (o.type === 'training' ? 'student' : 'pharmacist'));
+    o.assignee = pool.length ? pool[0].id : null;
+    if (o.applicants === 0) o.applicants = 1;
+  }
+  if (status === 'open') o.assignee = null;
+  toast(t('d.moveTo', { stage:t('os.' + status) }));
   render();
 }
 
-/* Converting a lead creates the pharmacy record and carries the deal, the
-   contact and the whole timeline across — losing the history at conversion is
-   the classic CRM own-goal. */
-function convertLead(id) {
-  const l = DATA.leads.find(r => r.id === id);
-  if (!l) return;
-  const newId = 'A' + (DATA.accounts.length + 1) + Date.now().toString().slice(-3);
-
-  DATA.accounts.push({
-    id:newId, name:l.name, licence:'—', district:l.district, owner:l.owner,
-    signedUp:ISO_TODAY, appEmail:l.email, verification:'pending',
-    trialDays:30, trialUsed:0, shifts:0, filled:0, lastShift:null, commission:0, pharmacists:0
-  });
-  DATA.contacts.push({
-    id:'C' + (DATA.contacts.length + 1) + Date.now().toString().slice(-3),
-    name:l.contact, role:{ ar:'مالك', en:'Owner' }, account:newId,
-    phone:l.phone, email:l.email, district:l.district, owner:l.owner
-  });
-  DATA.deals.filter(d => d.lead === id).forEach(d => { d.lead = null; d.account = newId; d.stage = 'trial'; });
-  DATA.activity.filter(e => e.kind === 'leads' && e.id2 === id).forEach(e => { e.kind = 'accounts'; e.id2 = newId; });
-  DATA.tasks.filter(x => x.related && x.related.kind === 'leads' && x.related.id === id)
-            .forEach(x => { x.related = { kind:'accounts', id:newId }; });
-  DATA.leads = DATA.leads.filter(r => r.id !== id);
-
-  toast(t('rec.converted'));
-  openRecord('accounts', newId);
+function verifyUser(id) {
+  const u = DATA.users.find(r => r.id === id);
+  if (!u) return;
+  u.verification = 'verified';
+  DATA.activity.push({ id:'E' + (DATA.activity.length + 1), kind:'users', id2:id, type:'note',
+    when:ISO_TODAY, owner:ME,
+    text:{ ar:'وُثّق الحساب بعد مطابقة كشف النقابة.', en:'Account verified after checking the Syndicate roster.' } });
+  toast(t('rec.saved'));
+  render();
 }
 
-/* ---------- Drag and drop on the board ---------- */
+/* ---------- Brands ---------- */
 
-function dragDeal(e, id) {
-  S.drag = id;
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', id);
-  e.currentTarget.classList.add('dragging');
+function openNewBrand(sci) { S.modal = { kind:'brand', sci, editing:null, errors:{}, values:{} }; renderModal(); }
+function editBrand(id) {
+  const b = DATA.brands.find(x => x.id === id);
+  if (!b) return;
+  S.modal = { kind:'brand', sci:b.sci, editing:id, errors:{}, values:{
+    brand:b.brand, company:b.company,
+    doses:(b.dosesOverride || []).join(' | '), notes:L(b.notes)
+  }};
+  renderModal();
 }
-function dragEnd(e) { e.currentTarget.classList.remove('dragging'); S.drag = null; }
-function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
-function dragLeave(e) { e.currentTarget.classList.remove('over'); }
-function dropDeal(e, stage) {
-  e.preventDefault();
-  e.currentTarget.classList.remove('over');
-  const id = S.drag || e.dataTransfer.getData('text/plain');
-  if (id) moveDeal(id, stage);
+function deleteBrand(id) {
+  DATA.brands = DATA.brands.filter(b => b.id !== id);
+  toast(t('rec.deleted'));
+  render();
+}
+function saveBrand() {
+  const v = {
+    brand:  (document.getElementById('b-brand').value || '').trim(),
+    company:(document.getElementById('b-company').value || '').trim(),
+    doses:  (document.getElementById('b-doses').value || '').trim(),
+    notes:  (document.getElementById('b-notes').value || '').trim()
+  };
+  S.modal.values = v;
+  const errors = {};
+  if (!v.brand) errors.brand = t('n.required');
+  if (!v.company) errors.company = t('n.required');
+  if (Object.keys(errors).length) { S.modal.errors = errors; renderModal(); return; }
+
+  const doses = v.doses ? v.doses.split(/[|;]/).map(x => x.trim()).filter(Boolean) : null;
+  if (S.modal.editing) {
+    const b = DATA.brands.find(x => x.id === S.modal.editing);
+    Object.assign(b, { brand:v.brand, company:v.company, dosesOverride:doses,
+      notes:{ ar:v.notes, en:v.notes } });
+  } else {
+    DATA.brands.push({ id:'B' + Date.now().toString().slice(-6), brand:v.brand, sci:S.modal.sci,
+      company:v.company, dosesOverride:doses, notes:{ ar:v.notes, en:v.notes } });
+  }
+  S.modal = null;
+  toast(t('rec.saved'));
+  render();
+}
+
+/* Jump straight to a module's saved view — what the home panel's rows do. */
+function goView(mod, view) {
+  S.tab = mod; S.record = null; S.view[mod] = view; S.filters[mod] = {}; S.viewMenu = null;
+  render();
+  document.getElementById('work-body').scrollTop = 0;
 }
 
 /* ---------- Toast ---------- */
@@ -2201,45 +3043,62 @@ document.addEventListener('keydown', e => {
 const IQ_PHONE = /^07[3-9]\d{8}$/;
 
 const FORMS = {
-  leads: { title:'n.newLead', fields:[
+  users: { title:'n.newUser', fields:[
     { k:'name',     l:'c.name',     req:true, bi:true },
-    { k:'contact',  l:'c.company',  req:true, bi:true },
+    { k:'type',     l:'c.userType', req:true, opts:() => USER_TYPES.map(v => ({ v, n:t('ut1.' + v) })) },
     { k:'phone',    l:'c.phone',    req:true, phone:true, ltr:true },
-    { k:'email',    l:'c.email',    ltr:true },
+    { k:'email',    l:'c.email',    req:true, ltr:true },
     { k:'district', l:'c.district', req:true, opts:() => DISTRICTS.map(d => ({ v:d.key, n:L(d) })) },
-    { k:'source',   l:'c.source',   req:true, opts:() => SOURCES.map(s => ({ v:s, n:t('src.' + s) })) },
-    { k:'rating',   l:'c.rating',   opts:() => ['hot','warm','cold'].map(r => ({ v:r, n:t('rt.' + r) })) },
+    { k:'syndicateNo', l:'c.syndicateNo', ltr:true, hint:'sy.hintNo' },
     { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
   ]},
-  accounts: { title:'n.newAccount', fields:[
+  orders: { title:'n.newOrder', fields:[
+    { k:'type',     l:'c.orderType', req:true, opts:() => ORDER_TYPES.map(v => ({ v, n:t('ot.' + v) })) },
+    { k:'pharmacy', l:'c.pharmacy',  req:true, opts:() => DATA.pharmacies.map(p => ({ v:p.id, n:L(p.name) })) },
+    { k:'date',     l:'c.when',      req:true, date:true },
+    { k:'start',    l:'post.start',  time:true },
+    { k:'end',      l:'post.end',    time:true },
+    { k:'rate',     l:'c.rate',      num:true, hint:'iqd' },
+    { k:'owner',    l:'c.owner',     opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  ]},
+  pharmacies: { title:'n.newPharmacy', fields:[
     { k:'name',     l:'c.name',     req:true, bi:true },
     { k:'licence',  l:'c.licence',  req:true, unique:'licence', ltr:true },
     { k:'district', l:'c.district', req:true, opts:() => DISTRICTS.map(d => ({ v:d.key, n:L(d) })) },
-    { k:'appEmail', l:'c.email',    req:true, ltr:true },
+    { k:'address',  l:'pr.address', bi:true },
     { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
   ]},
-  contacts: { title:'n.newContact', fields:[
-    { k:'name',     l:'c.name',     req:true, bi:true },
-    { k:'role',     l:'c.role',     bi:true },
-    { k:'account',  l:'c.account',  req:true, opts:() => DATA.accounts.map(a => ({ v:a.id, n:L(a.name) })) },
-    { k:'phone',    l:'c.phone',    req:true, phone:true, ltr:true },
-    { k:'email',    l:'c.email',    ltr:true },
-    { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  companies: { title:'n.newCompany', fields:[
+    { k:'name',    l:'c.name',        req:true, bi:true },
+    { k:'type',    l:'c.companyType', req:true, opts:() => COMPANY_TYPES.map(v => ({ v, n:t('ct.' + v) })) },
+    { k:'reg',     l:'c.reg',         req:true, unique:'reg', ltr:true },
+    { k:'country', l:'c.country',     bi:true },
+    { k:'city',    l:'c.city',        bi:true },
+    { k:'contact', l:'c.contactName', bi:true },
+    { k:'phone',   l:'c.phone',       phone:true, ltr:true },
+    { k:'email',   l:'c.email',       ltr:true },
+    { k:'owner',   l:'c.owner',       opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
   ]},
-  deals: { title:'n.newDeal', fields:[
-    { k:'name',     l:'c.deal',      req:true, bi:true },
-    { k:'stage',    l:'c.stage',     req:true, opts:() => STAGES.map(s => ({ v:s.key, n:t('st.' + s.key) })) },
-    { k:'value',    l:'c.value',     req:true, num:true, hint:'iqd' },
-    { k:'close',    l:'c.closeDate', req:true, date:true },
-    { k:'district', l:'c.district',  req:true, opts:() => DISTRICTS.map(d => ({ v:d.key, n:L(d) })) },
-    { k:'owner',    l:'c.owner',     opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  universities: { title:'n.newUniversity', fields:[
+    { k:'name',      l:'c.name',        req:true, bi:true },
+    { k:'city',      l:'c.city',        bi:true },
+    /* The domain is the rule that makes student verification automatic, so it
+       has to be unique: two colleges sharing one would let either one's
+       students in under the other's agreement. */
+    { k:'domain',    l:'c.domain',      req:true, unique:'domain', ltr:true, hint:'uni.hintDomain' },
+    { k:'agreement', l:'c.agreement',   req:true, opts:() => ['signed','talks','none'].map(v => ({ v, n:t('ag.' + v) })) },
+    { k:'contact',   l:'c.contactName', bi:true },
+    { k:'phone',     l:'c.phone',       phone:true, ltr:true },
+    { k:'email',     l:'c.email',       ltr:true },
+    { k:'owner',     l:'c.owner',       opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
   ]},
-  activities: { title:'n.newTask', fields:[
-    { k:'subject',  l:'c.subject',  req:true, bi:true },
-    { k:'type',     l:'c.type',     req:true, opts:() => ['call','visit','followup','demo'].map(v => ({ v, n:t('ty.' + v) })) },
-    { k:'due',      l:'c.due',      req:true, date:true },
-    { k:'priority', l:'c.priority', opts:() => ['high','normal','low'].map(v => ({ v, n:t('pr.' + v) })) },
-    { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  drugs: { title:'n.newDrug', fields:[
+    { k:'sci',   l:'c.sci',    req:true, unique:'sci', ltr:true, hint:'dr.hintSci' },
+    { k:'ar',    l:'c.sciAr',  req:true },
+    { k:'atc',   l:'c.atc',    ltr:true },
+    { k:'form',  l:'c.form',   req:true, opts:() => ['tablet','capsule','syrup','injection','cream'].map(v => ({ v, n:t('df.' + v) })) },
+    { k:'doses', l:'c.doses',  list:true, ltr:true, hint:'dr.hintDoses' },
+    { k:'notes', l:'c.notesF', bi:true }
   ]}
 };
 
@@ -2268,6 +3127,17 @@ function closeModal() { S.modal = null; renderModal(); }
 function renderModal() {
   const root = document.getElementById('overlay');
   if (!S.modal) { root.innerHTML = ''; return; }
+
+  if (S.modal.kind === 'import') {
+    root.innerHTML = '<div class="scrim center" onclick="if(event.target===this)closeModal()">' +
+      '<div class="modal wide" role="dialog" aria-modal="true">' + importModal() + '</div></div>';
+    return;
+  }
+  if (S.modal.kind === 'brand') {
+    root.innerHTML = '<div class="scrim center" onclick="if(event.target===this)closeModal()">' +
+      '<div class="modal" role="dialog" aria-modal="true">' + brandModal() + '</div></div>';
+    return;
+  }
 
   const F = FORMS[S.modal.mod];
   const errs = S.modal.errors || {};
@@ -2317,9 +3187,10 @@ function submitNew() {
     if (f.req && !v) { errors[f.k] = t('n.required'); return; }
     if (f.phone && v && !IQ_PHONE.test(v)) { errors[f.k] = t('n.badPhone'); return; }
     if (f.unique && v && DATA[mod].some(r => String(r[f.unique]).toLowerCase() === v.toLowerCase())) {
-      errors[f.k] = t('n.dupLicence'); return;
+      errors[f.k] = t('n.duplicate', { v }); return;
     }
     if (f.num) v = Number(v) || 0;
+    if (f.list) { rec[f.k] = v ? v.split(/[|;,]/).map(x => x.trim()).filter(Boolean) : []; return; }
     // A name typed in one language is stored for both rather than left blank in
     // the other — a record with an empty Arabic name renders as "—" on the
     // screen most of this team actually uses.
@@ -2328,26 +3199,84 @@ function submitNew() {
 
   if (Object.keys(errors).length) { S.modal.errors = errors; renderModal(); return; }
 
-  const prefix = { leads:'L', accounts:'A', contacts:'C', deals:'D', activities:'T' }[mod];
-  rec.id = prefix + Date.now().toString().slice(-6);
+  const prefix = { users:'U', orders:'O-', pharmacies:'P', companies:'CO', universities:'V' }[mod];
+  if (prefix) rec.id = prefix + Date.now().toString().slice(-6);
   if (!rec.owner) rec.owner = ME;
 
-  if (mod === 'leads') { rec.created = ISO_TODAY; rec.lastTouch = ISO_TODAY; rec.rating = rec.rating || 'warm'; }
-  if (mod === 'accounts') Object.assign(rec, {
-    signedUp:ISO_TODAY, verification:'pending', trialDays:30, trialUsed:0,
-    shifts:0, filled:0, lastShift:null, commission:0, pharmacists:0
+  if (mod === 'users') Object.assign(rec, {
+    verification:'pending', joined:ISO_TODAY, orders:0, rating:null, reliability:null,
+    gradYear:null, pharmacy:null, university:null,
+    syndicateNo: rec.syndicateNo || null
   });
-  if (mod === 'deals') { rec.lead = null; rec.account = null; }
-  if (mod === 'activities') {
-    rec.done = false;
-    rec.priority = rec.priority || 'normal';
-    if (S.modal.preset && S.modal.preset.related) rec.related = S.modal.preset.related;
+  if (mod === 'pharmacies') Object.assign(rec, {
+    user:null, verification:'pending', signedUp:ISO_TODAY, trialDays:30, trialUsed:0,
+    orders:0, filled:0, lastOrder:null, commission:0
+  });
+  if (mod === 'companies') rec.status = 'review';
+  if (mod === 'universities') rec.students = 0;
+  if (mod === 'orders') {
+    const ph = pharmacyOf(rec.pharmacy);
+    Object.assign(rec, {
+      district: ph ? ph.district : 'karrada',
+      status:'open', assignee:null, applicants:0, controlled:false,
+      hours: (rec.start && rec.end) ? shiftHours(rec.start, rec.end) : 0,
+      rateType:'hourly'
+    });
+    // The total is derived from the rate and the hours, never typed. A CRM that
+    // lets someone key a total that disagrees with the rate has invented a
+    // second source of truth for money.
+    rec.total = rec.type === 'training' ? 0 : Math.round((rec.rate || 0) * rec.hours);
+  }
+  if (mod === 'drugs') {
+    rec.interactions = [];
+    rec.contraindications = [];
+    rec.doses = rec.doses || [];
   }
 
   DATA[mod].push(rec);
   S.modal = null;
   toast(t('n.created'));
   render();
+}
+
+function brandModal() {
+  const v = S.modal.values || {};
+  const e = S.modal.errors || {};
+  const drug = drugOf(S.modal.sci);
+  const fld = (id, label, control, err, hint) =>
+    '<div class="fld"><label for="' + id + '">' + esc(label) + '</label>' + control +
+    (hint ? '<div class="hint">' + esc(hint) + '</div>' : '') +
+    (err ? '<div class="err">' + esc(err) + '</div>' : '') + '</div>';
+
+  return '<div class="modal-h"><span class="modal-t">' +
+      esc(S.modal.editing ? t('a.edit') : t('dr.addBrand')) + ' — ' + esc(S.modal.sci) + '</span>' +
+      '<span class="spacer" style="flex:1"></span>' +
+      '<button class="btn-icon" onclick="closeModal()" aria-label="' + esc(t('a.close')) + '">' + icon('x') + '</button></div>' +
+    '<div class="modal-b"><div class="form-grid two">' +
+      fld('b-brand', t('c.brand'),
+        '<input id="b-brand" dir="ltr"' + (e.brand ? ' class="bad"' : '') + ' value="' + esc(v.brand || '') + '">', e.brand) +
+      fld('b-company', t('c.company'),
+        '<select id="b-company"' + (e.company ? ' class="bad"' : '') + '>' +
+        DATA.companies.map(c => '<option value="' + esc(c.id) + '"' +
+          (v.company === c.id ? ' selected' : '') + '>' + esc(L(c.name)) + '</option>').join('') + '</select>', e.company) +
+      fld('b-doses', t('c.override'),
+        '<input id="b-doses" dir="ltr" class="figure" value="' + esc(v.doses || '') + '" placeholder="' +
+          esc((drug ? drug.doses : []).join(' | ')) + '">', null,
+        t('dr.hintOverride')) +
+      fld('b-notes', t('c.notesF'),
+        '<textarea id="b-notes">' + esc(v.notes || '') + '</textarea>', null) +
+    '</div></div>' +
+    '<div class="modal-f"><button class="btn" onclick="closeModal()">' + esc(t('a.cancel')) + '</button>' +
+      '<button class="btn primary" onclick="saveBrand()">' + esc(t('a.save')) + '</button></div>';
+}
+
+/* The shift-hours rule, ported from src/lib/time.ts, so an overnight order
+   here reads 8 hours rather than minus sixteen. */
+function shiftHours(startTime, endTime) {
+  const m = x => { const [h, mi] = String(x).split(':').map(Number); return h * 60 + mi; };
+  let mins = m(endTime) - m(startTime);
+  if (mins <= 0) mins += 24 * 60;
+  return Math.round(mins / 60 * 100) / 100;
 }
 
 render();
