@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#2D2A6E">
+<title>Saydali+ CRM — إدارة العلاقات</title>
+<!--
+  Saydali+ CRM — the operator's side of the marketplace, in one file.
+  Open it in a browser: no server, no build.
+
+  WHAT THIS IS FOR. The app at demo/saydali-plus.html is what a pharmacy and a
+  pharmacist see. This is what the team in Baghdad sees: the pharmacies not yet
+  signed up, the ones signed up but not yet posting, the trials about to expire,
+  and who owes whom a phone call. The brief's premise is that pharmacist supply
+  is abundant and pharmacy demand is scarce, so the work that decides whether
+  this business exists is pharmacy acquisition and activation — which is what a
+  CRM is for.
+
+  SHAPE. Modelled on Zoho CRM, because that is the tool the founder already
+  reads fluently: module tabs across the top, a saved-view selector and filter
+  rail on every list, records with a summary panel and a timeline, a kanban
+  pipeline, and a reports module. The palette is Saydali+'s rather than Zoho's,
+  so the two halves read as one company's product.
+
+  STATE. Fixture data, held in memory, gone on refresh. Edits, filters, stage
+  moves and new records all work; nothing persists and there is no server.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Saydali+'s palette, so the CRM and the app read as one product. */
+    --ink:#1A1826; --ink-soft:#57536E; --ink-faint:#8B87A3;
+    --indigo:#2D2A6E; --indigo-dark:#191735; --indigo-tint:#E7E6F4; --indigo-tint-2:#F2F1FA;
+    --amber:#B8791F; --amber-tint:#F5E6C8;
+    --palm:#4F7A47; --palm-tint:#E7EFE3;
+    --page:#F4F4F8; --card:#FFFFFF; --border:#E2E0EC; --border-soft:#EDECF3;
+    --row-hover:#F7F7FB;
+
+    /* ---- Chart tokens ----
+       Ordinal indigo ramp, validated with the data-viz validator against this
+       page's #FFFFFF chart surface: monotone lightness, every adjacent gap
+       >= 0.06, light end 2.69:1 against the surface, hue spread 6deg. Used for
+       ORDERED categories only (funnel stages, tiers). Never for nominal ones —
+       colouring bars darker-where-bigger burns the free channel on information
+       the bar length already carries. */
+    --ord-1:#9C98CE; --ord-2:#7A74BC; --ord-3:#574FA3; --ord-4:#37327A; --ord-5:#201C4A;
+    /* Single-series magnitude and trend both use slot 3, the mid step. */
+    --series:#574FA3;
+    --series-soft:#E7E6F4;
+    /* Status is reserved: it means good/bad, never "series 4", and always ships
+       with an icon and a word beside it. Fixed steps from the data-viz skill. */
+    --good:#0CA30C; --warning:#FAB219; --serious:#EC835A; --critical:#D03B3B;
+    --grid:#EAE9F2; --axis:#D4D2E0; --muted-ink:#8B87A3;
+
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+    --font-ar:'Noto Kufi Arabic','IBM Plex Sans',sans-serif;
+    --rail:216px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--font-body); background:var(--page); color:var(--ink);
+    font-size:13px; -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  html[dir="rtl"] body{ font-family:var(--font-ar); }
+  button,input,select,textarea{ font-family:inherit; font-size:inherit; color:inherit; }
+  button{ cursor:pointer; background:none; border:none; }
+  a{ color:var(--indigo); }
+  :focus-visible{ outline:2px solid var(--indigo); outline-offset:1px; border-radius:3px; }
+  .figure{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+  .hidden{ display:none !important; }
+  .ico{ width:15px; height:15px; flex:none; }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb{ background:#D2D0DF; border-radius:10px; border:3px solid var(--page); }
+  ::-webkit-scrollbar-track{ background:transparent; }
+
+  /* ======================================================================
+     CHROME — the Zoho shape: a slim brand bar, module tabs beneath it, and
+     everything else inside the module.
+     ====================================================================== */
+  #shell{ display:flex; flex-direction:column; height:100%; }
+
+  .topbar{
+    flex:none; height:46px; background:var(--indigo-dark); color:#fff;
+    display:flex; align-items:center; gap:12px; padding:0 14px; position:relative; overflow:hidden;
+  }
+  .topbar > *{ position:relative; }
+  .tb-brand{ font-family:var(--font-display); font-weight:700; font-size:15px; letter-spacing:-.01em; }
+  .tb-suite{
+    font-size:10.5px; font-family:var(--font-mono); letter-spacing:.1em; text-transform:uppercase;
+    color:rgba(255,255,255,.62); border-inline-start:1px solid rgba(255,255,255,.24);
+    padding-inline-start:10px; margin-inline-start:2px;
+  }
+  .tb-search{
+    flex:1; max-width:400px; margin-inline:auto; position:relative;
+  }
+  .tb-search input{
+    width:100%; height:29px; border-radius:7px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.1); color:#fff; padding-inline:30px 11px; font-size:12.5px; outline:none;
+  }
+  .tb-search input::placeholder{ color:rgba(255,255,255,.52); }
+  .tb-search input:focus{ background:rgba(255,255,255,.17); border-color:rgba(255,255,255,.4); }
+  .tb-search .ico{ position:absolute; inset-inline-start:9px; top:7px; color:rgba(255,255,255,.6); }
+  .tb-results{
+    position:absolute; top:34px; inset-inline-start:0; width:100%; background:var(--card);
+    border:1px solid var(--border); border-radius:9px; box-shadow:0 14px 34px -12px rgba(20,18,40,.34);
+    overflow:hidden; z-index:60; max-height:320px; overflow-y:auto;
+  }
+  .tb-result{ display:flex; gap:9px; align-items:center; width:100%; text-align:start; padding:9px 11px; color:var(--ink); }
+  .tb-result:hover{ background:var(--indigo-tint-2); }
+  .tb-result .ico{ position:static; color:var(--ink-faint); }
+  .tb-result-sub{ font-size:11px; color:var(--ink-faint); }
+  .tb-empty{ padding:13px; font-size:12px; color:var(--ink-faint); text-align:center; }
+
+  .tb-btn{
+    height:29px; padding:0 11px; border-radius:7px; color:#fff; font-size:12.5px; font-weight:500;
+    display:flex; align-items:center; gap:6px; background:rgba(255,255,255,.12);
+  }
+  .tb-btn:hover{ background:rgba(255,255,255,.22); }
+  .tb-btn.ghost{ background:none; border:1px solid rgba(255,255,255,.22); }
+  .tb-btn.ghost:hover{ background:rgba(255,255,255,.14); }
+  .tb-avatar{
+    width:28px; height:28px; border-radius:50%; background:var(--amber); color:#2A1C05;
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none;
+  }
+
+  /* Module tabs */
+  .tabs{
+    flex:none; background:var(--card); border-bottom:1px solid var(--border);
+    display:flex; align-items:stretch; gap:0; padding-inline:8px; overflow-x:auto;
+  }
+  .tabs::-webkit-scrollbar{ height:0; }
+  .tab{
+    padding:0 15px; height:41px; display:flex; align-items:center; gap:7px; white-space:nowrap;
+    font-size:13px; font-weight:500; color:var(--ink-soft); border-bottom:2.5px solid transparent;
+  }
+  .tab:hover{ color:var(--indigo); background:var(--indigo-tint-2); }
+  .tab.active{ color:var(--indigo); border-bottom-color:var(--indigo); font-weight:600; }
+  .tab .ico{ width:14px; height:14px; }
+  .tab-count{
+    font-family:var(--font-mono); font-size:10.5px; background:var(--indigo-tint); color:var(--indigo);
+    border-radius:100px; padding:1px 6px; font-weight:600;
+  }
+
+  #main{ flex:1; min-height:0; display:flex; }
+  .rail{
+    width:var(--rail); flex:none; background:var(--card); border-inline-end:1px solid var(--border);
+    overflow-y:auto; padding:14px 12px 24px;
+  }
+  .work{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .work-head{
+    flex:none; background:var(--card); border-bottom:1px solid var(--border);
+    padding:12px 18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .work-body{ flex:1; min-height:0; overflow:auto; }
+
+  @media (max-width:1000px){
+    .rail{ display:none; }
+    .tb-search{ display:none; }
+  }
+  /* ======================================================================
+     LIST VIEWS
+     ====================================================================== */
+  .view-select{
+    display:flex; align-items:center; gap:7px; font-family:var(--font-display);
+    font-weight:700; font-size:16px; color:var(--ink);
+  }
+  html[dir="rtl"] .view-select{ font-family:var(--font-ar); font-size:15px; }
+  .view-select .ico{ width:16px; height:16px; color:var(--ink-faint); }
+  .view-menu{
+    position:absolute; top:38px; inset-inline-start:0; min-width:230px; background:var(--card);
+    border:1px solid var(--border); border-radius:10px; box-shadow:0 14px 34px -12px rgba(20,18,40,.3);
+    z-index:50; overflow:hidden; padding:4px;
+  }
+  .view-opt{
+    display:flex; align-items:center; gap:8px; width:100%; text-align:start; padding:8px 10px;
+    border-radius:7px; font-size:12.5px; color:var(--ink-soft);
+  }
+  .view-opt:hover{ background:var(--indigo-tint-2); }
+  .view-opt.on{ background:var(--indigo-tint); color:var(--indigo); font-weight:600; }
+  .view-opt .count{ margin-inline-start:auto; font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); }
+  .spacer{ flex:1; }
+
+  .btn{
+    height:31px; padding:0 13px; border-radius:7px; font-size:12.5px; font-weight:600;
+    display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border);
+    background:var(--card); color:var(--ink-soft); white-space:nowrap;
+  }
+  .btn:hover{ background:var(--row-hover); border-color:var(--ink-faint); }
+  .btn.primary{ background:var(--indigo); border-color:var(--indigo); color:#fff; }
+  .btn.primary:hover{ background:var(--indigo-dark); border-color:var(--indigo-dark); }
+  .btn.danger{ color:var(--critical); border-color:#E8C3C3; }
+  .btn.danger:hover{ background:#FCF2F2; }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-icon{
+    width:31px; height:31px; border-radius:7px; border:1px solid var(--border); background:var(--card);
+    display:inline-flex; align-items:center; justify-content:center; color:var(--ink-soft); flex:none;
+  }
+  .btn-icon:hover{ background:var(--row-hover); }
+  .btn-icon.on{ background:var(--indigo-tint); border-color:var(--indigo-tint); color:var(--indigo); }
+
+  table.grid{ width:100%; border-collapse:collapse; background:var(--card); }
+  table.grid th{
+    position:sticky; top:0; z-index:5; background:var(--card); text-align:start;
+    font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-faint);
+    padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap; user-select:none;
+  }
+  table.grid th.sortable{ cursor:pointer; }
+  table.grid th.sortable:hover{ color:var(--indigo); }
+  table.grid th .ico{ width:11px; height:11px; vertical-align:-1px; margin-inline-start:3px; }
+  table.grid td{
+    padding:11px 12px; border-bottom:1px solid var(--border-soft); font-size:12.5px; vertical-align:middle;
+  }
+  table.grid tr:hover td{ background:var(--row-hover); }
+  table.grid tr.picked td{ background:var(--indigo-tint-2); }
+  .col-check{ width:34px; padding-inline-end:0 !important; }
+  .cell-link{ font-weight:600; color:var(--indigo); text-align:start; }
+  .cell-link:hover{ text-decoration:underline; }
+  .cell-sub{ font-size:11px; color:var(--ink-faint); margin-top:1px; }
+  input[type="checkbox"]{ width:14px; height:14px; accent-color:var(--indigo); cursor:pointer; }
+
+  .bulkbar{
+    display:flex; align-items:center; gap:10px; padding:9px 18px; background:var(--indigo-tint);
+    border-bottom:1px solid var(--border); font-size:12.5px; color:var(--indigo-dark); font-weight:500;
+  }
+
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600;
+    padding:3px 9px; border-radius:100px; white-space:nowrap;
+  }
+  .chip .ico{ width:11px; height:11px; }
+  .chip-good{ background:var(--palm-tint); color:#3D6136; }
+  .chip-warn{ background:var(--amber-tint); color:#8A5610; }
+  .chip-bad{ background:#FBE9E9; color:#9E2B2B; }
+  .chip-info{ background:var(--indigo-tint); color:var(--indigo); }
+  .chip-mute{ background:#EFEEF4; color:var(--ink-faint); }
+
+  .avatar{
+    width:28px; height:28px; border-radius:8px; background:var(--indigo-tint); color:var(--indigo-dark);
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none;
+  }
+  html[dir="ltr"] .avatar{ font-family:var(--font-display); }
+  .avatar.lg{ width:46px; height:46px; border-radius:13px; font-size:16px; }
+  .avatar.amber{ background:var(--amber-tint); color:#8A5610; }
+  .with-avatar{ display:flex; align-items:center; gap:9px; }
+
+  /* Filter rail */
+  .rail-h{
+    font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--ink-faint); margin:16px 0 7px;
+  }
+  .rail-h:first-child{ margin-top:0; }
+  .rail-opt{
+    display:flex; align-items:center; gap:8px; width:100%; text-align:start; padding:6px 8px;
+    border-radius:7px; font-size:12.5px; color:var(--ink-soft);
+  }
+  .rail-opt:hover{ background:var(--indigo-tint-2); }
+  .rail-opt.on{ background:var(--indigo-tint); color:var(--indigo); font-weight:600; }
+  .rail-opt .count{ margin-inline-start:auto; font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); }
+  .rail-opt.on .count{ color:var(--indigo); }
+  .rail-clear{ font-size:11.5px; color:var(--indigo); text-decoration:underline; margin-top:10px; }
+
+  .empty{
+    text-align:center; color:var(--ink-faint); font-size:13px; padding:48px 20px; line-height:1.8;
+  }
+  .empty .ico{ width:26px; height:26px; opacity:.45; margin-bottom:8px; }
+
+  /* ======================================================================
+     RECORD PAGE
+     ====================================================================== */
+  .rec-head{
+    background:var(--card); border-bottom:1px solid var(--border); padding:14px 18px;
+    display:flex; align-items:flex-start; gap:13px; flex-wrap:wrap;
+  }
+  .rec-title{ font-family:var(--font-display); font-weight:700; font-size:18px; }
+  html[dir="rtl"] .rec-title{ font-family:var(--font-ar); font-size:17px; }
+  .rec-sub{ font-size:12px; color:var(--ink-faint); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .rec-tabs{ display:flex; gap:2px; padding:0 18px; background:var(--card); border-bottom:1px solid var(--border); }
+  .rec-tab{
+    padding:9px 13px; font-size:12.5px; font-weight:500; color:var(--ink-soft);
+    border-bottom:2.5px solid transparent; margin-bottom:-1px;
+  }
+  .rec-tab.active{ color:var(--indigo); border-bottom-color:var(--indigo); font-weight:600; }
+  .rec-body{ padding:18px; display:grid; gap:16px; align-items:start; }
+  @media (min-width:1080px){ .rec-body{ grid-template-columns:1fr 340px; } }
+
+  .panel{ background:var(--card); border:1px solid var(--border); border-radius:11px; }
+  .panel-h{
+    padding:11px 14px; border-bottom:1px solid var(--border-soft);
+    font-size:12px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:8px;
+  }
+  .panel-h .spacer{ flex:1; }
+  .panel-b{ padding:14px; }
+  .panel-b.flush{ padding:0; }
+
+  .fields{ display:grid; gap:1px 18px; }
+  @media (min-width:640px){ .fields.two{ grid-template-columns:1fr 1fr; } }
+  .field-row{ display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border-soft); align-items:baseline; }
+  .field-row:last-child{ border-bottom:none; }
+  .field-k{ width:44%; flex:none; font-size:11.5px; color:var(--ink-faint); }
+  .field-v{ flex:1; font-size:12.5px; font-weight:500; min-width:0; word-break:break-word; }
+  .field-v.editable{ cursor:text; border-radius:5px; padding:2px 4px; margin:-2px -4px; }
+  .field-v.editable:hover{ background:var(--indigo-tint-2); box-shadow:inset 0 0 0 1px var(--border); }
+  .field-v input, .field-v select{
+    width:100%; border:1px solid var(--indigo); border-radius:5px; padding:3px 5px; font-size:12.5px; outline:none;
+  }
+
+  .timeline{ padding:4px 0; }
+  .tl-item{ display:flex; gap:11px; padding:11px 14px; border-bottom:1px solid var(--border-soft); }
+  .tl-item:last-child{ border-bottom:none; }
+  .tl-dot{
+    width:26px; height:26px; border-radius:8px; flex:none; display:flex; align-items:center; justify-content:center;
+    background:var(--indigo-tint); color:var(--indigo);
+  }
+  .tl-dot .ico{ width:13px; height:13px; }
+  .tl-dot.good{ background:var(--palm-tint); color:#3D6136; }
+  .tl-dot.warn{ background:var(--amber-tint); color:#8A5610; }
+  .tl-title{ font-size:12.5px; line-height:1.5; }
+  .tl-meta{ font-size:11px; color:var(--ink-faint); margin-top:2px; }
+
+  .note-box{ display:flex; gap:9px; padding:12px 14px; border-bottom:1px solid var(--border-soft); }
+  .note-box textarea{
+    flex:1; border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:12.5px;
+    resize:none; min-height:38px; outline:none;
+  }
+  .note-box textarea:focus{ border-color:var(--indigo); }
+
+  /* ======================================================================
+     KANBAN
+     ====================================================================== */
+  .kanban{ display:flex; gap:12px; padding:16px 18px; align-items:flex-start; min-height:100%; }
+  .kcol{ width:262px; flex:none; display:flex; flex-direction:column; max-height:100%; }
+  .kcol-h{
+    display:flex; align-items:center; gap:8px; padding:9px 11px; border-radius:9px 9px 0 0;
+    background:var(--card); border:1px solid var(--border); border-bottom:none;
+  }
+  .kcol-swatch{ width:9px; height:9px; border-radius:3px; flex:none; }
+  .kcol-name{ font-size:12px; font-weight:600; }
+  .kcol-n{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); }
+  .kcol-sum{ margin-inline-start:auto; font-family:var(--font-mono); font-size:11px; color:var(--ink-soft); font-weight:600; }
+  .kcol-b{
+    background:var(--card); border:1px solid var(--border); border-radius:0 0 9px 9px; padding:8px;
+    display:flex; flex-direction:column; gap:8px; overflow-y:auto; min-height:90px;
+  }
+  .kcol-b.over{ background:var(--indigo-tint-2); border-color:var(--indigo); }
+  .kcard{
+    border:1px solid var(--border); border-radius:9px; padding:10px 11px; background:var(--card);
+    cursor:grab; text-align:start; width:100%;
+  }
+  .kcard:hover{ border-color:var(--indigo); box-shadow:0 4px 12px -6px rgba(20,18,40,.2); }
+  .kcard.dragging{ opacity:.45; }
+  .kcard-t{ font-size:12.5px; font-weight:600; line-height:1.4; }
+  .kcard-m{ font-size:11px; color:var(--ink-faint); margin-top:3px; }
+  .kcard-f{ display:flex; align-items:center; gap:6px; margin-top:9px; }
+  .kcard-v{ font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--indigo); }
+  .kcard-owner{ margin-inline-start:auto; width:21px; height:21px; border-radius:6px; font-size:9px; }
+  /* ======================================================================
+     DASHBOARD & CHARTS
+     Marks are thin, grid and axes are recessive hairlines, and every chart
+     carries a hover layer and a table twin — a tooltip never gates a value.
+     ====================================================================== */
+  .dash{ padding:16px 18px 30px; display:flex; flex-direction:column; gap:14px; }
+  .kpis{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(185px,1fr)); }
+  .kpi{ background:var(--card); border:1px solid var(--border); border-radius:11px; padding:14px 15px; }
+  .kpi-k{ font-size:11.5px; color:var(--ink-faint); display:flex; align-items:center; gap:6px; }
+  /* Proportional figures on a display-size number: tabular digits make a large
+     value look loose. tabular-nums is for columns that align. */
+  .kpi-v{ font-family:var(--font-body); font-size:27px; font-weight:600; letter-spacing:-.02em; margin-top:5px; line-height:1.1; }
+  html[dir="rtl"] .kpi-v{ font-family:var(--font-body); }
+  .kpi-d{ font-size:11.5px; margin-top:5px; display:flex; align-items:center; gap:5px; }
+  .kpi-d .ico{ width:12px; height:12px; }
+  .kpi-up{ color:#0A7D0A; } .kpi-down{ color:#A32E2E; } .kpi-flat{ color:var(--ink-faint); }
+  .kpi-spark{ margin-top:9px; height:26px; display:block; width:100%; }
+
+  .charts{ display:grid; gap:14px; }
+  @media (min-width:1080px){ .charts.c2{ grid-template-columns:1fr 1fr; } }
+  @media (min-width:1080px){ .charts.c32{ grid-template-columns:1.4fr 1fr; } }
+
+  .chart-h{ display:flex; align-items:baseline; gap:9px; padding:13px 15px 0; }
+  .chart-t{ font-size:13px; font-weight:600; }
+  .chart-s{ font-size:11.5px; color:var(--ink-faint); }
+  .chart-wrap{ padding:10px 15px 15px; position:relative; }
+  .chart-svg{ display:block; width:100%; overflow:visible; }
+  .grid-line{ stroke:var(--grid); stroke-width:1; }
+  .axis-line{ stroke:var(--axis); stroke-width:1; }
+  .axis-text{ font-family:var(--font-mono); font-size:10px; fill:var(--muted-ink); }
+  .val-text{ font-family:var(--font-mono); font-size:10.5px; fill:var(--ink-soft); font-weight:600; }
+  .cat-text{ font-size:11px; fill:var(--ink-soft); }
+
+  .tip{
+    position:absolute; z-index:30; pointer-events:none; background:var(--ink); color:#fff;
+    font-size:11.5px; line-height:1.55; padding:7px 10px; border-radius:7px; white-space:nowrap;
+    opacity:0; transform:translate(-50%,-100%); transition:opacity .1s;
+    box-shadow:0 8px 22px -8px rgba(20,18,40,.5);
+  }
+  .tip.on{ opacity:1; }
+  .tip b{ font-family:var(--font-mono); font-weight:600; }
+
+  /* The funnel is an ordered scale, so it takes the ordinal ramp. */
+  .funnel-row{ display:flex; align-items:center; gap:11px; padding:6px 0; }
+  .funnel-label{ display:block; width:132px; flex:none; font-size:12px; color:var(--ink-soft); line-height:1.35; }
+  /* These are spans inside a flex row: inline boxes ignore width and height, so
+     without display:block the bar has no geometry and never paints. */
+  .funnel-track{ display:block; flex:1; height:22px; position:relative; background:var(--grid); border-radius:3px; }
+  .funnel-bar{
+    display:block; height:100%; border-radius:0; position:relative;
+    /* 4px rounded data-end, square against the baseline */
+    border-start-end-radius:4px; border-end-end-radius:4px;
+  }
+  .funnel-bar:hover{ filter:brightness(1.08); }
+  .funnel-n{ display:block; font-family:var(--font-mono); font-size:12px; font-weight:600; width:38px; flex:none; text-align:end; }
+  .funnel-pct{ display:block; font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); width:44px; flex:none; text-align:end; }
+
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; padding:0 15px 13px; }
+  .legend-i{ display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink-soft); }
+  .legend-sw{ width:10px; height:10px; border-radius:3px; flex:none; }
+
+  .table-toggle{ font-size:11.5px; color:var(--indigo); text-decoration:underline; }
+  table.mini{ width:100%; border-collapse:collapse; font-size:12px; }
+  table.mini th{
+    text-align:start; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--ink-faint); font-weight:600; padding:6px 10px; border-bottom:1px solid var(--border);
+  }
+  table.mini td{ padding:7px 10px; border-bottom:1px solid var(--border-soft); }
+  table.mini td.n{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; text-align:end; }
+  table.mini tr:last-child td{ border-bottom:none; }
+
+  .task-row{ display:flex; align-items:flex-start; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border-soft); }
+  .task-row:last-child{ border-bottom:none; }
+  .task-row:hover{ background:var(--row-hover); }
+  .task-t{ font-size:12.5px; line-height:1.45; }
+  .task-m{ font-size:11px; color:var(--ink-faint); margin-top:2px; display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+  .task-done .task-t{ text-decoration:line-through; color:var(--ink-faint); }
+
+  /* ======================================================================
+     MODAL / DRAWER / TOAST
+     ====================================================================== */
+  .scrim{ position:fixed; inset:0; background:rgba(20,18,40,.42); z-index:70; display:flex; }
+  .scrim.center{ align-items:center; justify-content:center; padding:20px; }
+  .modal{
+    background:var(--card); border-radius:13px; width:100%; max-width:520px; max-height:88vh; overflow-y:auto;
+    box-shadow:0 30px 70px -20px rgba(20,18,40,.5);
+  }
+  .modal-h{ padding:15px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+  .modal-t{ font-family:var(--font-display); font-weight:700; font-size:15px; }
+  html[dir="rtl"] .modal-t{ font-family:var(--font-ar); }
+  .modal-b{ padding:18px; }
+  .modal-f{ padding:13px 18px; border-top:1px solid var(--border); display:flex; gap:9px; justify-content:flex-end; }
+
+  .form-grid{ display:grid; gap:13px; }
+  @media (min-width:520px){ .form-grid.two{ grid-template-columns:1fr 1fr; } }
+  .fld label{ display:block; font-size:11.5px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; }
+  .fld label .req{ color:var(--critical); }
+  .fld input, .fld select, .fld textarea{
+    width:100%; border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:12.5px; outline:none;
+    background:var(--card);
+  }
+  .fld input:focus, .fld select:focus, .fld textarea:focus{ border-color:var(--indigo); }
+  .fld textarea{ resize:none; min-height:70px; }
+  .fld .hint{ font-size:11px; color:var(--ink-faint); margin-top:4px; line-height:1.5; }
+  .fld .err{ font-size:11px; color:var(--critical); margin-top:4px; }
+  .fld input.bad, .fld select.bad{ border-color:var(--critical); }
+
+  .toast{
+    position:fixed; bottom:22px; inset-inline-start:50%; transform:translateX(-50%) translateY(8px);
+    background:var(--ink); color:#fff; font-size:12.5px; padding:10px 17px; border-radius:9px;
+    opacity:0; pointer-events:none; z-index:90; transition:opacity .16s,transform .16s; max-width:90vw;
+  }
+  html[dir="rtl"] .toast{ transform:translateX(50%) translateY(8px); }
+  .toast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
+  html[dir="rtl"] .toast.on{ transform:translateX(50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div id="shell">
+  <header class="topbar">
+    <svg class="header-pattern" style="position:absolute;inset:0;width:100%;height:100%;opacity:.5">
+      <rect width="100%" height="100%" fill="url(#starTile)"/></svg>
+    <!-- dir="ltr" on the Latin wordmark: in an RTL page the bidi algorithm
+         treats the trailing "+" as neutral and renders "+Saydali". -->
+    <span class="tb-brand" dir="ltr">Saydali+</span>
+    <span class="tb-suite" id="tb-suite">CRM</span>
+
+    <div class="tb-search">
+      <svg class="ico"><use href="#i-search"/></svg>
+      <input id="q" autocomplete="off" oninput="search(this.value)" onfocus="search(this.value)">
+      <div id="q-results"></div>
+    </div>
+
+    <button class="tb-btn ghost" onclick="openApp()" id="btn-app">
+      <svg class="ico"><use href="#i-grid"/></svg><span></span></button>
+    <button class="tb-btn" onclick="setLang(lang==='ar'?'en':'ar')" id="btn-lang"></button>
+    <div class="tb-avatar" id="me-avatar"></div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <div id="main">
+    <aside class="rail" id="rail"></aside>
+    <div class="work">
+      <div id="work-head"></div>
+      <div class="work-body" id="work-body"></div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay"></div>
+<div class="toast" id="toast"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="starTile" width="34" height="34" patternUnits="userSpaceOnUse">
+    <g stroke="#FFFFFF" stroke-opacity="0.13" stroke-width="1" fill="none">
+      <rect x="7" y="7" width="20" height="20"/>
+      <rect x="7" y="7" width="20" height="20" transform="rotate(45 17 17)"/>
+    </g>
+  </pattern>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9 12 3.5Z"/></g></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M4 21V6.2a1.2 1.2 0 0 1 1.2-1.2h8.6A1.2 1.2 0 0 1 15 6.2V21"/><path d="M15 10h3.8A1.2 1.2 0 0 1 20 11.2V21"/><path d="M2.5 21h19"/><path d="M7.4 9h4.2M7.4 13h4.2M7.4 17h4.2"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.3 20c0-4.3 3.5-6.9 7.7-6.9s7.7 2.6 7.7 6.9"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.3" r="3.1"/><path d="M3 19.5c0-3.6 2.6-5.7 5.5-5.7s5.5 2.1 5.5 5.7"/><circle cx="17" cy="9.2" r="2.4"/><path d="M15.3 13.9c2.3.3 3.9 2.1 4.2 4.6"/></g></symbol>
+  <symbol id="i-funnel" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 4.5h17l-6.5 7.6V20l-4-2.4v-5.5L3.5 4.5Z"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.6 2.6L16.2 9"/></g></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></g></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.5 15.5 20 20"/></g></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><g stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></g></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></g></symbol>
+  <symbol id="i-caret" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="M7 9l5-5 5 5M7 15l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6L16.5 13l4 1.5v3a2 2 0 0 1-2.2 2C10.4 19 5 13.6 4.5 5.7a2 2 0 0 1 2-2.2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.6 6.8 8.4 6 8.4-6"/></g></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.4 7-12.4a7 7 0 0 0-14 0C5 13.6 12 21 12 21Z"/><circle cx="12" cy="8.6" r="2.3"/></g></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.4"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></g></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.8A1.8 1.8 0 0 1 6.8 3h10.4A1.8 1.8 0 0 1 19 4.8v14.4A1.8 1.8 0 0 1 17.2 21H6.8A1.8 1.8 0 0 1 5 19.2Z"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15M9.5 6.5V4.8A1.3 1.3 0 0 1 10.8 3.5h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7"/><path d="M6.5 6.5 7.3 20a1.3 1.3 0 0 0 1.3 1.2h6.8a1.3 1.3 0 0 0 1.3-1.2l.8-13.5"/></g></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 4.5H19.5V10.5"/><path d="M19.5 4.5 11 13"/><path d="M18 14.5v4a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6h4"/></g></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.8 21 19.5H3L12 3.8Z"/><path d="M12 10v4.2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></g></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 21V4"/><path d="M5.5 5h11l-2 3.6 2 3.6h-11"/></g></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M2 9.5 12 5l10 4.5-10 4.5-10-4.5Z"/><path d="M6.5 11.7v3.8c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-3.8"/></g></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 1 0-.9 4.5"/><path d="M20 4.5v6h-6"/></g></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6.5h16M7 12h10M10 17.5h4"/></g></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9.5 9.5v10"/></g></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4.5" width="5" height="15" rx="1.6"/><rect x="10" y="4.5" width="5" height="10" rx="1.6"/><rect x="16.5" y="4.5" width="4" height="13" rx="1.6"/></g></symbol>
+</defs></svg>
+<script>
+"use strict";
+
+/* ==========================================================================
+   1. LANGUAGE
+   Arabic is the default, as it is in the app. Western numerals in both
+   languages; Levantine month names, not the Gulf transliterations Intl
+   produces for `ar`.
+   ========================================================================== */
+
+const STRINGS = {
+ar: {
+  'suite':'إدارة العلاقات','openApp':'التطبيق','lang':'EN',
+  'search':'ابحث في كل السجلات…','searchEmpty':'لا نتائج مطابقة.',
+  'mod.home':'الرئيسية','mod.leads':'العملاء المحتملون','mod.accounts':'الصيدليات',
+  'mod.contacts':'جهات الاتصال','mod.deals':'الصفقات','mod.activities':'المهام','mod.reports':'التقارير',
+  'a.new':'جديد','a.edit':'تعديل','a.save':'حفظ','a.cancel':'إلغاء','a.delete':'حذف','a.close':'إغلاق',
+  'a.convert':'تحويل إلى صيدلية','a.call':'تسجيل مكالمة','a.note':'أضف ملاحظة','a.task':'مهمة جديدة',
+  'a.openInApp':'افتح في صيدلي+','a.selected':'{n} محدّد','a.clear':'إلغاء التحديد','a.export':'تصدير',
+  'a.assign':'إسناد إلى','a.addNote':'اكتب ملاحظة…','a.post':'إضافة','a.done':'إنجاز','a.undone':'إرجاع',
+  'a.viewTable':'عرض الجدول','a.viewChart':'عرض الرسم','a.refresh':'تحديث',
+  'f.owner':'المسؤول','f.stage':'المرحلة','f.district':'المنطقة','f.status':'الحالة','f.source':'المصدر',
+  'f.all':'الكل','f.clear':'مسح عوامل التصفية','f.filters':'تصفية','f.rating':'التقييم',
+  'v.allLeads':'كل العملاء المحتملين','v.myLeads':'عملائي','v.hot':'الأكثر جاهزية','v.stale':'بلا متابعة منذ 14 يوماً',
+  'v.allAccounts':'كل الصيدليات','v.trialEnding':'تجارب تنتهي قريباً','v.dormant':'موثّقة ولم تنشر',
+  'v.atRisk':'معرّضة للتوقف','v.allContacts':'كل جهات الاتصال','v.allDeals':'كل الصفقات',
+  'v.openDeals':'الصفقات المفتوحة','v.myDeals':'صفقاتي','v.allTasks':'كل المهام','v.mine':'مهامي',
+  'v.overdue':'متأخرة','v.today':'اليوم',
+  'c.name':'الاسم','c.company':'الصيدلية','c.phone':'الهاتف','c.email':'البريد','c.district':'المنطقة',
+  'c.source':'المصدر','c.owner':'المسؤول','c.status':'الحالة','c.created':'أُنشئ','c.lastTouch':'آخر تواصل','c.rating':'التقييم',
+  'c.stage':'المرحلة','c.value':'القيمة الشهرية المتوقعة','c.closeDate':'تاريخ الإغلاق','c.deal':'الصفقة',
+  'c.licence':'رقم الإجازة','c.verification':'التوثيق','c.trial':'التجربة','c.shifts':'مناوبات منشورة',
+  'c.fillRate':'نسبة التغطية','c.lastShift':'آخر مناوبة','c.commission':'عمولة الشهر','c.account':'الصيدلية',
+  'c.role':'الصفة','c.subject':'المهمة','c.due':'الاستحقاق','c.related':'مرتبطة بـ','c.priority':'الأولوية',
+  'c.type':'النوع','c.activated':'التفعيل','c.pharmacists':'صيادلة تعاملوا معها',
+  'st.new':'جديد','st.contacted':'تم التواصل','st.visited':'زيارة تمت','st.trial':'تجربة نشطة',
+  'st.activated':'نشرت أول مناوبة','st.won':'عميل نشط','st.lost':'خسارة',
+  'rt.hot':'جاهز','rt.warm':'مهتم','rt.cold':'بارد',
+  'vs.verified':'موثّقة','vs.pending':'قيد التوثيق','vs.rejected':'مرفوضة','vs.none':'غير مسجّلة',
+  'src.visit':'زيارة ميدانية','src.referral':'ترشيح صيدلي','src.syndicate':'فعالية النقابة',
+  'src.inbound':'تواصل ذاتي','src.social':'وسائل التواصل',
+  'pr.high':'عالية','pr.normal':'عادية','pr.low':'منخفضة',
+  'ty.call':'مكالمة','ty.visit':'زيارة','ty.followup':'متابعة','ty.demo':'عرض تجريبي','ty.note':'ملاحظة',
+  'h.title':'الرئيسية','h.greeting':'صباح الخير، {name}',
+  'k.openDeals':'صفقات مفتوحة','k.pipelineValue':'قيمة خط الأنابيب','k.activePharmacies':'صيدليات نشطة',
+  'k.trialEnding':'تجارب تنتهي خلال 7 أيام','k.dormant':'موثّقة ولم تنشر','k.monthCommission':'عمولة الشهر',
+  'k.vsLast':'مقارنة بالشهر الماضي','k.needsCall':'تحتاج مكالمة',
+  'ch.funnel':'خط الأنابيب حسب المرحلة','ch.funnelSub':'عدد الصيدليات وقيمتها الشهرية المتوقعة',
+  'ch.activation':'من التسجيل إلى أول مناوبة','ch.activationSub':'صيدليات مفعّلة شهرياً',
+  'ch.districts':'الصيدليات النشطة حسب المنطقة','ch.districtsSub':'أُسندت مناوبة واحدة على الأقل خلال 30 يوماً',
+  'ch.tasks':'مهامي اليوم','ch.recent':'آخر النشاطات','ch.noTasks':'لا مهام مستحقة اليوم.',
+  'ch.pharmacies':'صيدلية','ch.month':'الشهر','ch.count':'العدد','ch.stageCol':'المرحلة',
+  'ch.valueCol':'القيمة','ch.conversion':'نسبة الانتقال','ch.share':'من القيمة','ch.districtCol':'المنطقة',
+  'r.title':'التقارير','r.pipelineReport':'تقرير خط الأنابيب','r.activationReport':'تقرير التفعيل',
+  'r.sourceReport':'العملاء المحتملون حسب المصدر','r.sourceSub':'آخر 90 يوماً',
+  'r.ownerReport':'الأداء حسب المسؤول','r.ownerSub':'صفقات مغلقة هذا الشهر','r.leadsCol':'عملاء محتملون',
+  'r.wonCol':'مكسوبة','r.activeCol':'نشطة',
+  'd.pipeline':'خط الأنابيب','d.board':'لوحة','d.list':'قائمة','d.total':'الإجمالي',
+  'd.moveTo':'نُقلت إلى {stage}','d.dealsIn':'{n} صفقة',
+  'rec.overview':'نظرة عامة','rec.timeline':'السجل الزمني','rec.notes':'الملاحظات','rec.related':'السجلات المرتبطة',
+  'rec.details':'التفاصيل','rec.platform':'حالة المنصة','rec.noTimeline':'لا نشاط مسجّل بعد.',
+  'rec.openDeals':'الصفقات','rec.contacts':'جهات الاتصال','rec.tasks':'المهام','rec.noneYet':'لا شيء بعد.',
+  'rec.notOnPlatform':'هذه الصيدلية ليست مسجّلة في صيدلي+ بعد.',
+  'rec.linked':'مرتبطة بحساب صيدلي+','rec.trialDay':'اليوم {a} من {b}','rec.daysLeft':'{n} يوماً متبقياً',
+  'rec.noShifts':'لم تنشر أي مناوبة','rec.shiftsPosted':'{n} مناوبة','rec.converted':'حُوّل إلى صيدلية.',
+  'rec.deleted':'حُذف السجل.','rec.saved':'حُفظ.','rec.noteAdded':'أُضيفت الملاحظة.',
+  'n.newLead':'عميل محتمل جديد','n.newAccount':'صيدلية جديدة','n.newContact':'جهة اتصال جديدة',
+  'n.newDeal':'صفقة جديدة','n.newTask':'مهمة جديدة','n.created':'أُنشئ السجل.',
+  'n.required':'هذا الحقل مطلوب.','n.badPhone':'أدخل رقم هاتف عراقي صحيح (07XXXXXXXXX).',
+  'n.dupLicence':'رقم الإجازة مسجّل لصيدلية أخرى.',
+  'e.noRecords':'لا سجلات في هذا العرض.','e.tryClearing':'جرّب مسح عوامل التصفية.',
+  'iqd':'د.ع','mo':'/شهر','of':'من'
+},
+en: {
+  'suite':'CRM','openApp':'App','lang':'العربية',
+  'search':'Search every record…','searchEmpty':'Nothing matches.',
+  'mod.home':'Home','mod.leads':'Leads','mod.accounts':'Pharmacies',
+  'mod.contacts':'Contacts','mod.deals':'Deals','mod.activities':'Tasks','mod.reports':'Reports',
+  'a.new':'New','a.edit':'Edit','a.save':'Save','a.cancel':'Cancel','a.delete':'Delete','a.close':'Close',
+  'a.convert':'Convert to pharmacy','a.call':'Log a call','a.note':'Add note','a.task':'New task',
+  'a.openInApp':'Open in Saydali+','a.selected':'{n} selected','a.clear':'Clear','a.export':'Export',
+  'a.assign':'Assign to','a.addNote':'Write a note…','a.post':'Add','a.done':'Done','a.undone':'Reopen',
+  'a.viewTable':'Table view','a.viewChart':'Chart view','a.refresh':'Refresh',
+  'f.owner':'Owner','f.stage':'Stage','f.district':'District','f.status':'Status','f.source':'Source',
+  'f.all':'All','f.clear':'Clear filters','f.filters':'Filters','f.rating':'Rating',
+  'v.allLeads':'All leads','v.myLeads':'My leads','v.hot':'Hot leads','v.stale':'No touch in 14 days',
+  'v.allAccounts':'All pharmacies','v.trialEnding':'Trial ending soon','v.dormant':'Verified, never posted',
+  'v.atRisk':'At risk','v.allContacts':'All contacts','v.allDeals':'All deals',
+  'v.openDeals':'Open deals','v.myDeals':'My deals','v.allTasks':'All tasks','v.mine':'My tasks',
+  'v.overdue':'Overdue','v.today':'Due today',
+  'c.name':'Name','c.company':'Pharmacy','c.phone':'Phone','c.email':'Email','c.district':'District',
+  'c.source':'Source','c.owner':'Owner','c.status':'Status','c.created':'Created','c.lastTouch':'Last touch','c.rating':'Rating',
+  'c.stage':'Stage','c.value':'Expected monthly','c.closeDate':'Close date','c.deal':'Deal',
+  'c.licence':'Licence no.','c.verification':'Verification','c.trial':'Trial','c.shifts':'Shifts posted',
+  'c.fillRate':'Fill rate','c.lastShift':'Last shift','c.commission':'Commission this month','c.account':'Pharmacy',
+  'c.role':'Role','c.subject':'Subject','c.due':'Due','c.related':'Related to','c.priority':'Priority',
+  'c.type':'Type','c.activated':'Activated','c.pharmacists':'Pharmacists worked with',
+  'st.new':'New','st.contacted':'Contacted','st.visited':'Visited','st.trial':'Trial running',
+  'st.activated':'First shift posted','st.won':'Active customer','st.lost':'Lost',
+  'rt.hot':'Hot','rt.warm':'Warm','rt.cold':'Cold',
+  'vs.verified':'Verified','vs.pending':'Pending','vs.rejected':'Rejected','vs.none':'Not registered',
+  'src.visit':'Field visit','src.referral':'Pharmacist referral','src.syndicate':'Syndicate event',
+  'src.inbound':'Inbound','src.social':'Social',
+  'pr.high':'High','pr.normal':'Normal','pr.low':'Low',
+  'ty.call':'Call','ty.visit':'Visit','ty.followup':'Follow-up','ty.demo':'Demo','ty.note':'Note',
+  'h.title':'Home','h.greeting':'Good morning, {name}',
+  'k.openDeals':'Open deals','k.pipelineValue':'Pipeline value','k.activePharmacies':'Active pharmacies',
+  'k.trialEnding':'Trials ending in 7 days','k.dormant':'Verified, never posted','k.monthCommission':'Commission this month',
+  'k.vsLast':'vs last month','k.needsCall':'need a call',
+  'ch.funnel':'Pipeline by stage','ch.funnelSub':'Pharmacies, and the monthly commission they would bring',
+  'ch.activation':'Sign-up to first shift','ch.activationSub':'Pharmacies activated per month',
+  'ch.districts':'Active pharmacies by district','ch.districtsSub':'At least one shift filled in the last 30 days',
+  'ch.tasks':'My tasks today','ch.recent':'Recent activity','ch.noTasks':'Nothing due today.',
+  'ch.pharmacies':'pharmacies','ch.month':'Month','ch.count':'Count','ch.stageCol':'Stage',
+  'ch.valueCol':'Value','ch.conversion':'Carry-through','ch.share':'Share of value','ch.districtCol':'District',
+  'r.title':'Reports','r.pipelineReport':'Pipeline report','r.activationReport':'Activation report',
+  'r.sourceReport':'Leads by source','r.sourceSub':'Last 90 days',
+  'r.ownerReport':'Performance by owner','r.ownerSub':'Closed this month','r.leadsCol':'Leads',
+  'r.wonCol':'Won','r.activeCol':'Active',
+  'd.pipeline':'Pipeline','d.board':'Board','d.list':'List','d.total':'Total',
+  'd.moveTo':'Moved to {stage}','d.dealsIn':'{n} deals',
+  'rec.overview':'Overview','rec.timeline':'Timeline','rec.notes':'Notes','rec.related':'Related',
+  'rec.details':'Details','rec.platform':'Platform status','rec.noTimeline':'Nothing logged yet.',
+  'rec.openDeals':'Deals','rec.contacts':'Contacts','rec.tasks':'Tasks','rec.noneYet':'None yet.',
+  'rec.notOnPlatform':'This pharmacy is not on Saydali+ yet.',
+  'rec.linked':'Linked to a Saydali+ account','rec.trialDay':'Day {a} of {b}','rec.daysLeft':'{n} days left',
+  'rec.noShifts':'Has never posted a shift','rec.shiftsPosted':'{n} shifts','rec.converted':'Converted to a pharmacy.',
+  'rec.deleted':'Record deleted.','rec.saved':'Saved.','rec.noteAdded':'Note added.',
+  'n.newLead':'New lead','n.newAccount':'New pharmacy','n.newContact':'New contact',
+  'n.newDeal':'New deal','n.newTask':'New task','n.created':'Record created.',
+  'n.required':'This field is required.','n.badPhone':'Enter a valid Iraqi number (07XXXXXXXXX).',
+  'n.dupLicence':'That licence number belongs to another pharmacy.',
+  'e.noRecords':'No records in this view.','e.tryClearing':'Try clearing the filters.',
+  'iqd':'IQD','mo':'/mo','of':'of'
+}};
+
+let lang = 'ar';
+const t = (key, vars) => {
+  let s = (STRINGS[lang] && STRINGS[lang][key]) || STRINGS.en[key] || key;
+  if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
+  return s;
+};
+const L = o => (o && (o[lang] !== undefined ? o[lang] : o.en)) || '';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const attr = s => JSON.stringify(String(s)).replace(/"/g, '&quot;');
+const icon = (n, cls) => '<svg class="ico ' + (cls || '') + '"><use href="#i-' + n + '"/></svg>';
+
+/* Almost every record here is "صيدلية X" / "X Pharmacy", so slicing the first
+   two characters gave every avatar in the CRM the same two letters. Drop the
+   generic word and take one letter from each of the first two that are left. */
+const GENERIC_WORDS = /^(صيدلية|صيدليه|pharmacy|dr|د\.|al|the)$/i;
+function initialsOf(text) {
+  const words = String(text || '').split(/[\s—·-]+/).filter(w => w && !GENERIC_WORDS.test(w));
+  if (!words.length) return String(text || '?').trim().slice(0, 2);
+  return words.slice(0, 2).map(w => w[0]).join('');
+}
+
+/* Western numerals in both languages — 40,000, never ٤٠٬٠٠٠. ZainCash, Qi Card
+   and every Iraqi digital interface use these. */
+const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const fmt = n => nf.format(Math.round(n || 0));
+const iqd = n => fmt(n) + ' ' + t('iqd');
+const pct = n => fmt(n) + '%';
+
+/* Levantine month names, not the Gulf transliterations Intl gives for `ar`. */
+const MONTHS = {
+  ar:['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'],
+  en:['January','February','March','April','May','June','July','August','September','October','November','December']
+};
+const MONTHS_SHORT = {
+  ar:['ك2','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','ت1','ت2','ك1'],
+  en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+};
+const TODAY = new Date(2026, 8, 11); // the demo's "now" — 11 September 2026
+
+function fmtDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.getDate() + ' ' + MONTHS[lang][d.getMonth()] + ' ' + d.getFullYear();
+}
+function daysBetween(a, b) {
+  return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+}
+function relDays(iso) {
+  const n = daysBetween(iso, TODAY.toISOString().slice(0, 10));
+  if (n === 0) return lang === 'ar' ? 'اليوم' : 'Today';
+  if (n === 1) return lang === 'ar' ? 'أمس' : 'Yesterday';
+  if (n > 0)  return lang === 'ar' ? ('قبل ' + n + ' يوماً') : (n + ' days ago');
+  if (n === -1) return lang === 'ar' ? 'غداً' : 'Tomorrow';
+  return lang === 'ar' ? ('خلال ' + (-n) + ' يوماً') : ('in ' + (-n) + ' days');
+}
+
+/* ==========================================================================
+   2. DATA
+   Fixture records, shaped by what actually decides this business. Pharmacist
+   supply is abundant; pharmacy demand is scarce — so the objects that matter
+   are the pharmacy's progress from "never heard of us" to "posts every week",
+   and the two places it stalls: never verified, and verified but never posted.
+   ========================================================================== */
+
+const USERS = {
+  u1: { name:{ar:'مروان العبيدي', en:'Marwan Al-Obaidi'}, initials:{ar:'مع', en:'MO'} },
+  u2: { name:{ar:'سارة الحسني', en:'Sara Al-Hasani'},   initials:{ar:'سح', en:'SH'} },
+  u3: { name:{ar:'حيدر الزبيدي', en:'Haider Al-Zubaidi'}, initials:{ar:'حز', en:'HZ'} }
+};
+const ME = 'u1';
+
+const DISTRICTS = [
+  { key:'karrada',  ar:'الكرادة',   en:'Karrada' },
+  { key:'jadriya',  ar:'الجادرية',  en:'Jadriya' },
+  { key:'mansour',  ar:'المنصور',   en:'Mansour' },
+  { key:'zayouna',  ar:'زيونة',     en:'Zayouna' },
+  { key:'adhamiya', ar:'الأعظمية',  en:'Adhamiya' },
+  { key:'kadhimiya',ar:'الكاظمية',  en:'Kadhimiya' },
+  { key:'dora',     ar:'الدورة',    en:'Dora' },
+  { key:'sadr',     ar:'مدينة الصدر',en:'Sadr City' }
+];
+const districtName = key => { const d = DISTRICTS.find(x => x.key === key); return d ? L(d) : key; };
+
+/* The pipeline. These are not generic sales stages — they are the four things
+   that have to happen to a pharmacy, in order, and the one that matters most
+   is the last: a pharmacy that signed up and never posted earns nothing and
+   churns silently. */
+const STAGES = [
+  { key:'new',       ord:1 },
+  { key:'contacted', ord:2 },
+  { key:'visited',   ord:3 },
+  { key:'trial',     ord:4 },
+  { key:'activated', ord:5 }
+];
+const STAGE_COLOR = {
+  new:'var(--ord-1)', contacted:'var(--ord-2)', visited:'var(--ord-3)',
+  trial:'var(--ord-4)', activated:'var(--ord-5)'
+};
+const SOURCES = ['visit','referral','syndicate','inbound','social'];
+
+const DATA = {
+  leads: [
+    { id:'L1', name:{ar:'صيدلية النهرين', en:'Al-Nahrain Pharmacy'}, contact:{ar:'د. سيف الجميلي', en:'Dr Saif Al-Jumaili'},
+      phone:'07701234567', email:'nahrain.ph@example.com', district:'mansour', source:'visit',
+      owner:'u1', rating:'hot', created:'2026-08-28', lastTouch:'2026-09-09' },
+    { id:'L2', name:{ar:'صيدلية دجلة', en:'Dijla Pharmacy'}, contact:{ar:'د. هند العاني', en:'Dr Hind Al-Ani'},
+      phone:'07712345678', email:'dijla@example.com', district:'karrada', source:'referral',
+      owner:'u1', rating:'hot', created:'2026-09-01', lastTouch:'2026-09-10' },
+    { id:'L3', name:{ar:'صيدلية بابل', en:'Babil Pharmacy'}, contact:{ar:'د. علي الشمري', en:'Dr Ali Al-Shammari'},
+      phone:'07723456789', email:'babil.pharm@example.com', district:'zayouna', source:'syndicate',
+      owner:'u2', rating:'warm', created:'2026-08-14', lastTouch:'2026-08-25' },
+    { id:'L4', name:{ar:'صيدلية الرشيد', en:'Al-Rasheed Pharmacy'}, contact:{ar:'د. زينة الكاظمي', en:'Dr Zeina Al-Kadhimi'},
+      phone:'07734567890', email:'rasheed@example.com', district:'kadhimiya', source:'inbound',
+      owner:'u2', rating:'warm', created:'2026-08-30', lastTouch:'2026-09-06' },
+    { id:'L5', name:{ar:'صيدلية الأنوار', en:'Al-Anwar Pharmacy'}, contact:{ar:'د. مصطفى الدليمي', en:'Dr Mustafa Al-Dulaimi'},
+      phone:'07745678901', email:'anwar.ph@example.com', district:'adhamiya', source:'visit',
+      owner:'u3', rating:'cold', created:'2026-07-20', lastTouch:'2026-08-18' },
+    { id:'L6', name:{ar:'صيدلية السلام', en:'Al-Salam Pharmacy'}, contact:{ar:'د. رغد العزاوي', en:'Dr Raghad Al-Azzawi'},
+      phone:'07756789012', email:'salam.pharmacy@example.com', district:'dora', source:'social',
+      owner:'u1', rating:'warm', created:'2026-09-03', lastTouch:'2026-09-08' },
+    { id:'L7', name:{ar:'صيدلية الفيحاء', en:'Al-Fayhaa Pharmacy'}, contact:{ar:'د. عمر التكريتي', en:'Dr Omar Al-Tikriti'},
+      phone:'07767890123', email:'fayhaa@example.com', district:'sadr', source:'referral',
+      owner:'u3', rating:'cold', created:'2026-07-11', lastTouch:'2026-08-12' },
+    { id:'L8', name:{ar:'صيدلية الزهراء', en:'Al-Zahraa Pharmacy'}, contact:{ar:'د. نور الساعدي', en:'Dr Noor Al-Saedi'},
+      phone:'07778901234', email:'zahraa.ph@example.com', district:'jadriya', source:'visit',
+      owner:'u1', rating:'hot', created:'2026-09-05', lastTouch:'2026-09-11' }
+  ],
+
+  /* Pharmacies on the platform. The platform block is what the CRM reads back
+     out of Saydali+ — it is why a row can say "verified three weeks ago and
+     has still never posted", which is the single most actionable fact here. */
+  accounts: [
+    { id:'A1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, licence:'IQ-PHM-000117',
+      district:'karrada', owner:'u1', signedUp:'2026-08-14', appEmail:'rahma@example.com',
+      verification:'verified', trialDays:30, trialUsed:28, shifts:11, filled:10,
+      lastShift:'2026-09-10', commission:31500, pharmacists:6 },
+    { id:'A2', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'}, licence:'IQ-PHM-000232',
+      district:'jadriya', owner:'u1', signedUp:'2026-07-02', appEmail:'furat@example.com',
+      verification:'verified', trialDays:30, trialUsed:30, shifts:24, filled:23,
+      lastShift:'2026-09-09', commission:68200, pharmacists:9 },
+    { id:'A3', name:{ar:'صيدلية الأمل', en:'Al-Amal Pharmacy'}, licence:'IQ-PHM-000345',
+      district:'zayouna', owner:'u2', signedUp:'2026-08-25', appEmail:'amal@example.com',
+      verification:'pending', trialDays:30, trialUsed:17, shifts:0, filled:0,
+      lastShift:null, commission:0, pharmacists:0 },
+    { id:'A4', name:{ar:'صيدلية النور', en:'Al-Noor Pharmacy'}, licence:'IQ-PHM-000401',
+      district:'karrada', owner:'u2', signedUp:'2026-08-18', appEmail:'noor.ph@example.com',
+      verification:'verified', trialDays:30, trialUsed:24, shifts:0, filled:0,
+      lastShift:null, commission:0, pharmacists:0 },
+    { id:'A5', name:{ar:'صيدلية الحكمة', en:'Al-Hikma Pharmacy'}, licence:'IQ-PHM-000418',
+      district:'adhamiya', owner:'u3', signedUp:'2026-06-11', appEmail:'hikma@example.com',
+      verification:'verified', trialDays:30, trialUsed:30, shifts:7, filled:5,
+      lastShift:'2026-08-02', commission:0, pharmacists:3 },
+    { id:'A6', name:{ar:'صيدلية المنصور', en:'Mansour Pharmacy'}, licence:'IQ-PHM-000512',
+      district:'mansour', owner:'u1', signedUp:'2026-09-04', appEmail:'mansourph@example.com',
+      verification:'verified', trialDays:30, trialUsed:7, shifts:3, filled:3,
+      lastShift:'2026-09-11', commission:9800, pharmacists:2 },
+    { id:'A7', name:{ar:'صيدلية الكاظمية', en:'Kadhimiya Pharmacy'}, licence:'IQ-PHM-000590',
+      district:'kadhimiya', owner:'u3', signedUp:'2026-09-08', appEmail:'kadh@example.com',
+      verification:'pending', trialDays:30, trialUsed:3, shifts:0, filled:0,
+      lastShift:null, commission:0, pharmacists:0 }
+  ],
+
+  contacts: [
+    { id:'C1', name:{ar:'د. رحمة الجبوري', en:'Dr Rahma Al-Jubouri'}, role:{ar:'مالكة وصيدلانية مسؤولة', en:'Owner & responsible pharmacist'},
+      account:'A1', phone:'07801112233', email:'rahma@example.com', district:'karrada', owner:'u1' },
+    { id:'C2', name:{ar:'د. كرار الموسوي', en:'Dr Karrar Al-Mousawi'}, role:{ar:'مالك', en:'Owner'},
+      account:'A2', phone:'07802223344', email:'furat@example.com', district:'jadriya', owner:'u1' },
+    { id:'C3', name:{ar:'د. سجى العبودي', en:'Dr Saja Al-Aboudi'}, role:{ar:'صيدلانية مسؤولة', en:'Responsible pharmacist'},
+      account:'A2', phone:'07803334455', email:'saja@example.com', district:'jadriya', owner:'u1' },
+    { id:'C4', name:{ar:'د. ليث الخفاجي', en:'Dr Laith Al-Khafaji'}, role:{ar:'مالك', en:'Owner'},
+      account:'A3', phone:'07804445566', email:'amal@example.com', district:'zayouna', owner:'u2' },
+    { id:'C5', name:{ar:'د. إيمان الربيعي', en:'Dr Iman Al-Rubaie'}, role:{ar:'مالكة', en:'Owner'},
+      account:'A4', phone:'07805556677', email:'noor.ph@example.com', district:'karrada', owner:'u2' },
+    { id:'C6', name:{ar:'د. باسم الحلفي', en:'Dr Basim Al-Halfi'}, role:{ar:'مالك', en:'Owner'},
+      account:'A5', phone:'07806667788', email:'hikma@example.com', district:'adhamiya', owner:'u3' },
+    { id:'C7', name:{ar:'د. تبارك الجنابي', en:'Dr Tabarak Al-Janabi'}, role:{ar:'مالكة', en:'Owner'},
+      account:'A6', phone:'07807778899', email:'mansourph@example.com', district:'mansour', owner:'u1' }
+  ],
+
+  /* Value is the monthly commission we would earn if the pharmacy posts at its
+     expected rate — not an invented deal size. It is derived from the shift
+     volume the owner says they need, at the platform's 10%. */
+  deals: [
+    { id:'D1', name:{ar:'صيدلية النهرين — تفعيل', en:'Al-Nahrain — onboarding'}, lead:'L1', account:null,
+      stage:'visited', value:34000, close:'2026-09-25', owner:'u1', district:'mansour' },
+    { id:'D2', name:{ar:'صيدلية دجلة — تفعيل', en:'Dijla — onboarding'}, lead:'L2', account:null,
+      stage:'contacted', value:28000, close:'2026-09-30', owner:'u1', district:'karrada' },
+    { id:'D3', name:{ar:'صيدلية بابل — تفعيل', en:'Babil — onboarding'}, lead:'L3', account:null,
+      stage:'new', value:22000, close:'2026-10-12', owner:'u2', district:'zayouna' },
+    { id:'D4', name:{ar:'صيدلية الرشيد — تفعيل', en:'Al-Rasheed — onboarding'}, lead:'L4', account:null,
+      stage:'contacted', value:26000, close:'2026-10-05', owner:'u2', district:'kadhimiya' },
+    { id:'D5', name:{ar:'صيدلية الأمل — تفعيل', en:'Al-Amal — onboarding'}, lead:null, account:'A3',
+      stage:'trial', value:30000, close:'2026-09-24', owner:'u2', district:'zayouna' },
+    { id:'D6', name:{ar:'صيدلية النور — تفعيل', en:'Al-Noor — onboarding'}, lead:null, account:'A4',
+      stage:'trial', value:33000, close:'2026-09-17', owner:'u2', district:'karrada' },
+    { id:'D7', name:{ar:'صيدلية المنصور — تفعيل', en:'Mansour — onboarding'}, lead:null, account:'A6',
+      stage:'activated', value:29000, close:'2026-09-11', owner:'u1', district:'mansour' },
+    { id:'D8', name:{ar:'صيدلية السلام — تفعيل', en:'Al-Salam — onboarding'}, lead:'L6', account:null,
+      stage:'new', value:19000, close:'2026-10-18', owner:'u1', district:'dora' },
+    { id:'D9', name:{ar:'صيدلية الزهراء — تفعيل', en:'Al-Zahraa — onboarding'}, lead:'L8', account:null,
+      stage:'new', value:25000, close:'2026-10-09', owner:'u1', district:'jadriya' },
+    { id:'D10', name:{ar:'صيدلية الكاظمية — تفعيل', en:'Kadhimiya — onboarding'}, lead:null, account:'A7',
+      stage:'trial', value:21000, close:'2026-10-08', owner:'u3', district:'kadhimiya' },
+    { id:'D11', name:{ar:'صيدلية الفيحاء — تفعيل', en:'Al-Fayhaa — onboarding'}, lead:'L7', account:null,
+      stage:'visited', value:17000, close:'2026-10-02', owner:'u3', district:'sadr' }
+  ],
+
+  tasks: [
+    { id:'T1', subject:{ar:'اتصل بصيدلية النور — موثّقة منذ 24 يوماً ولم تنشر', en:'Call Al-Noor — verified 24 days, still no shift'},
+      type:'call', due:'2026-09-11', owner:'u1', related:{kind:'accounts', id:'A4'}, priority:'high', done:false },
+    { id:'T2', subject:{ar:'زيارة صيدلية النهرين مع نموذج الإجازة', en:'Visit Al-Nahrain with the licence form'},
+      type:'visit', due:'2026-09-11', owner:'u1', related:{kind:'leads', id:'L1'}, priority:'high', done:false },
+    { id:'T3', subject:{ar:'تجربة صيدلية الرحمة تنتهي بعد يومين', en:'Al-Rahma trial ends in 2 days'},
+      type:'followup', due:'2026-09-11', owner:'u1', related:{kind:'accounts', id:'A1'}, priority:'high', done:false },
+    { id:'T4', subject:{ar:'أرسل عرضاً تجريبياً لصيدلية دجلة', en:'Send Dijla a demo walkthrough'},
+      type:'demo', due:'2026-09-12', owner:'u1', related:{kind:'leads', id:'L2'}, priority:'normal', done:false },
+    { id:'T5', subject:{ar:'متابعة صيدلية الحكمة — لم تنشر منذ 40 يوماً', en:'Follow up Al-Hikma — nothing posted in 40 days'},
+      type:'followup', due:'2026-09-09', owner:'u3', related:{kind:'accounts', id:'A5'}, priority:'high', done:false },
+    { id:'T6', subject:{ar:'اتصل بصيدلية بابل بعد فعالية النقابة', en:'Call Babil after the Syndicate event'},
+      type:'call', due:'2026-09-08', owner:'u2', related:{kind:'leads', id:'L3'}, priority:'normal', done:false },
+    { id:'T7', subject:{ar:'أرسل وثائق التوثيق لصيدلية الكاظمية', en:'Chase Kadhimiya for verification documents'},
+      type:'followup', due:'2026-09-13', owner:'u3', related:{kind:'accounts', id:'A7'}, priority:'normal', done:false },
+    { id:'T8', subject:{ar:'تدريب فريق صيدلية الفرات على نشر المناوبات الليلية', en:'Train Al-Furat on posting overnight shifts'},
+      type:'visit', due:'2026-09-05', owner:'u1', related:{kind:'accounts', id:'A2'}, priority:'low', done:true }
+  ],
+
+  /* Timeline entries, newest first when rendered. */
+  activity: [
+    { id:'E1', kind:'accounts', id2:'A1', type:'note', when:'2026-09-10', owner:'u1',
+      text:{ar:'د. رحمة تريد تغطية ليلية ثابتة كل خميس. وافقت على 6,000 د.ع للساعة.', en:'Dr Rahma wants standing Thursday overnight cover. Agreed 6,000 IQD/hour.'} },
+    { id:'E2', kind:'accounts', id2:'A1', type:'call', when:'2026-09-03', owner:'u1',
+      text:{ar:'مكالمة متابعة — نسبة التغطية 10 من 11، راضية.', en:'Check-in call — 10 of 11 shifts filled, happy.'} },
+    { id:'E3', kind:'accounts', id2:'A4', type:'call', when:'2026-08-30', owner:'u2',
+      text:{ar:'وُثّقت ولم تنشر. قالت إنها تنتظر أن ترى صيادلة في منطقتها أولاً.', en:'Verified but not posting. Says she wants to see pharmacists in her district first.'} },
+    { id:'E4', kind:'leads', id2:'L1', type:'visit', when:'2026-09-09', owner:'u1',
+      text:{ar:'زيارة ميدانية. مهتم، يحتاج نموذج الإجازة ورقياً — ليس لديه ماسح ضوئي.', en:'Field visit. Interested; needs the licence form on paper — has no scanner.'} },
+    { id:'E5', kind:'leads', id2:'L2', type:'call', when:'2026-09-10', owner:'u1',
+      text:{ar:'ترشيح من د. أحمد الكبيسي. طلبت عرضاً تجريبياً هذا الأسبوع.', en:'Referred by Dr Ahmed Al-Kubaisi. Asked for a demo this week.'} },
+    { id:'E6', kind:'accounts', id2:'A5', type:'note', when:'2026-08-02', owner:'u3',
+      text:{ar:'آخر مناوبة منشورة. توقف بعدها بلا سبب معلن — يحتاج مكالمة.', en:'Last shift posted. Went quiet afterwards with no stated reason — needs a call.'} },
+    { id:'E7', kind:'accounts', id2:'A2', type:'note', when:'2026-09-09', owner:'u1',
+      text:{ar:'24 مناوبة منذ تموز، 23 غُطّيت. أفضل حساب لدينا.', en:'24 shifts since July, 23 filled. Our best account.'} },
+    { id:'E8', kind:'leads', id2:'L8', type:'visit', when:'2026-09-11', owner:'u1',
+      text:{ar:'زيارة أولى. جاهزة للتسجيل، تريد معرفة العمولة بالضبط.', en:'First visit. Ready to sign up, wants the exact commission spelled out.'} }
+  ]
+};
+
+/* Monthly activations — the number that says whether onboarding works. */
+const ACTIVATIONS = [
+  { m:3, n:1 }, { m:4, n:2 }, { m:5, n:2 }, { m:6, n:4 },
+  { m:7, n:5 }, { m:8, n:8 }, { m:9, n:3 }
+];
+
+const LEAD_SOURCES_90D = [
+  { key:'visit', n:14 }, { key:'referral', n:11 }, { key:'syndicate', n:7 },
+  { key:'inbound', n:5 }, { key:'social', n:3 }
+];
+
+/* ==========================================================================
+   3. CHARTS
+   Rules this file holds itself to, from the data-viz method:
+     - Ordered categories (the funnel) take the ordinal indigo ramp, validated.
+     - Nominal categories (districts, lead sources) take ONE colour for every
+       bar. Colouring them darker-where-bigger would double-encode the bar's
+       own length and burn the only free channel.
+     - Thin marks, hairline grid, 4px rounded data-ends against a square
+       baseline, 2px lines, >=8px end markers with a 2px surface ring.
+     - Every chart has a hover layer AND a table twin. A tooltip enhances; it
+       never gates a value.
+     - Time axes render dir="ltr" in both languages: an Arabic chart still
+       reads earliest-to-latest left to right, and mirroring it is the kind of
+       cleverness that makes a reader distrust the numbers.
+   ========================================================================== */
+
+const CHART_SURFACE = '#FFFFFF';
+let tipEl = null;
+
+function ensureTip() {
+  if (!tipEl) {
+    tipEl = document.createElement('div');
+    tipEl.className = 'tip';
+    document.body.appendChild(tipEl);
+  }
+  return tipEl;
+}
+function showTip(html, x, y) {
+  const el = ensureTip();
+  el.innerHTML = html;
+  el.style.left = x + 'px';
+  el.style.top = (y - 8) + 'px';
+  el.classList.add('on');
+}
+function hideTip() { if (tipEl) tipEl.classList.remove('on'); }
+
+/* Wires hover + keyboard focus to the same tooltip, so a keyboard reader gets
+   what a mouse reader gets. */
+function bindTips(root) {
+  root.querySelectorAll('[data-tip]').forEach(el => {
+    const show = () => {
+      const r = el.getBoundingClientRect();
+      showTip(el.dataset.tip, r.left + r.width / 2, r.top);
+    };
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('focus', show);
+    el.addEventListener('mouseleave', hideTip);
+    el.addEventListener('blur', hideTip);
+  });
+}
+
+/* ---------- Funnel: ordered stages, ordinal ramp ---------- */
+
+function funnelChart(rows, opts) {
+  opts = opts || {};
+  const max = Math.max(1, ...rows.map(r => r.n));
+  const totalValue = rows.reduce((n, r) => n + r.value, 0) || 1;
+  const body = rows.map((r, i) => {
+    const w = Math.max(2, r.n / max * 100);
+    const share = Math.round(r.value / totalValue * 100);
+    const tip = esc(r.label) + '<br><b>' + fmt(r.n) + '</b> ' + esc(t('ch.pharmacies')) +
+      '<br><b>' + esc(iqd(r.value)) + '</b>' + esc(t('mo')) +
+      '<br>' + esc(t('ch.share')) + ' <b>' + share + '%</b>';
+    return '<div class="funnel-row">' +
+      '<span class="funnel-label">' + esc(r.label) + '</span>' +
+      '<span class="funnel-track"><span class="funnel-bar" tabindex="0" role="img" ' +
+        'aria-label="' + esc(r.label + ': ' + r.n) + '" data-tip="' + esc(tip) + '" ' +
+        'style="width:' + w + '%;background:' + r.color + '"></span></span>' +
+      '<span class="funnel-n">' + fmt(r.n) + '</span>' +
+      '<span class="funnel-pct">' + share + '%</span>' +
+    '</div>';
+  }).join('');
+
+  const table = '<table class="mini"><thead><tr>' +
+    '<th>' + esc(t('ch.stageCol')) + '</th><th style="text-align:end">' + esc(t('ch.count')) + '</th>' +
+    '<th style="text-align:end">' + esc(t('ch.valueCol')) + '</th>' +
+    '<th style="text-align:end">' + esc(t('ch.share')) + '</th></tr></thead><tbody>' +
+    rows.map(r => '<tr><td>' + esc(r.label) + '</td><td class="n">' + fmt(r.n) + '</td>' +
+      '<td class="n">' + fmt(r.value) + '</td>' +
+      '<td class="n">' + Math.round(r.value / totalValue * 100) + '%</td></tr>').join('') +
+    '</tbody></table>';
+
+  return chartCard(opts.title, opts.sub, body, table, 'funnel');
+}
+
+/* ---------- Single-series trend: 2px line, end marker, crosshair ---------- */
+
+function trendChart(points, opts) {
+  opts = opts || {};
+  const W = 100, H = 42, padT = 4, padB = 12;
+  const max = Math.max(1, ...points.map(p => p.n));
+  const stepX = points.length > 1 ? W / (points.length - 1) : 0;
+  const yOf = n => padT + (1 - n / max) * (H - padT - padB);
+  const xOf = i => i * stepX;
+
+  const line = points.map((p, i) => (i ? 'L' : 'M') + xOf(i).toFixed(2) + ' ' + yOf(p.n).toFixed(2)).join(' ');
+  const area = line + ' L' + xOf(points.length - 1).toFixed(2) + ' ' + (H - padB) + ' L0 ' + (H - padB) + ' Z';
+  const last = points[points.length - 1];
+
+  // Gridlines are solid hairlines, one shade off the surface — never dashed.
+  const grid = [0, 0.5, 1].map(f => {
+    const y = padT + f * (H - padT - padB);
+    return '<line class="grid-line" x1="0" y1="' + y.toFixed(2) + '" x2="' + W + '" y2="' + y.toFixed(2) +
+      '" vector-effect="non-scaling-stroke"/>';
+  }).join('');
+
+  // One hit band per point, wide enough to land on without aiming.
+  const bands = points.map((p, i) => {
+    const bw = stepX || W;
+    const bx = Math.max(0, xOf(i) - bw / 2);
+    const tip = esc(p.label) + '<br><b>' + fmt(p.n) + '</b> ' + esc(t('ch.pharmacies'));
+    return '<rect x="' + bx.toFixed(2) + '" y="0" width="' + Math.min(bw, W - bx).toFixed(2) + '" height="' + H + '" ' +
+      'fill="transparent" tabindex="0" role="img" aria-label="' + esc(p.label + ': ' + p.n) + '" ' +
+      'data-tip="' + esc(tip) + '"/>';
+  }).join('');
+
+  const dots = points.map((p, i) =>
+    '<circle cx="' + xOf(i).toFixed(2) + '" cy="' + yOf(p.n).toFixed(2) + '" r="1.4" fill="var(--series)" ' +
+    'stroke="' + CHART_SURFACE + '" stroke-width="0.9" vector-effect="non-scaling-stroke"/>').join('');
+
+  const body =
+    '<div dir="ltr">' +
+    '<svg class="chart-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" style="height:132px">' +
+      grid +
+      '<path d="' + area + '" fill="var(--series-soft)"/>' +
+      '<path d="' + line + '" fill="none" stroke="var(--series)" stroke-width="2" ' +
+        'stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+      dots +
+      /* The end marker is the one direct label: the latest value is the point
+         of a trend, and a number on every dot is chaos. */
+      '<circle cx="' + xOf(points.length - 1).toFixed(2) + '" cy="' + yOf(last.n).toFixed(2) + '" r="2.6" ' +
+        'fill="var(--series)" stroke="' + CHART_SURFACE + '" stroke-width="1.4" vector-effect="non-scaling-stroke"/>' +
+      '<line class="axis-line" x1="0" y1="' + (H - padB) + '" x2="' + W + '" y2="' + (H - padB) + '" ' +
+        'vector-effect="non-scaling-stroke"/>' +
+      bands +
+    '</svg>' +
+    '<div style="display:flex;justify-content:space-between;margin-top:2px;">' +
+      points.map(p => '<span class="axis-text" style="font-size:10px;">' + esc(p.short) + '</span>').join('') +
+    '</div></div>';
+
+  const table = '<table class="mini"><thead><tr><th>' + esc(t('ch.month')) + '</th>' +
+    '<th style="text-align:end">' + esc(t('ch.count')) + '</th></tr></thead><tbody>' +
+    points.map(p => '<tr><td>' + esc(p.label) + '</td><td class="n">' + fmt(p.n) + '</td></tr>').join('') +
+    '</tbody></table>';
+
+  return chartCard(opts.title, opts.sub, body, table, 'trend');
+}
+
+/* ---------- Nominal magnitude: one colour for every bar ---------- */
+
+function barChart(rows, opts) {
+  opts = opts || {};
+  const max = Math.max(1, ...rows.map(r => r.n));
+  const body = rows.map(r => {
+    const w = Math.max(2, r.n / max * 100);
+    const tip = esc(r.label) + '<br><b>' + fmt(r.n) + '</b>' + (opts.unit ? ' ' + esc(opts.unit) : '');
+    return '<div class="funnel-row">' +
+      '<span class="funnel-label">' + esc(r.label) + '</span>' +
+      '<span class="funnel-track" style="height:16px;"><span class="funnel-bar" tabindex="0" role="img" ' +
+        'aria-label="' + esc(r.label + ': ' + r.n) + '" data-tip="' + esc(tip) + '" ' +
+        'style="width:' + w + '%;background:var(--series);height:16px;"></span></span>' +
+      '<span class="funnel-n">' + fmt(r.n) + '</span>' +
+    '</div>';
+  }).join('');
+
+  const table = '<table class="mini"><thead><tr><th>' + esc(opts.catCol || t('ch.districtCol')) + '</th>' +
+    '<th style="text-align:end">' + esc(t('ch.count')) + '</th></tr></thead><tbody>' +
+    rows.map(r => '<tr><td>' + esc(r.label) + '</td><td class="n">' + fmt(r.n) + '</td></tr>').join('') +
+    '</tbody></table>';
+
+  return chartCard(opts.title, opts.sub, body, table, opts.id || 'bar');
+}
+
+/* A chart and its table twin share one card; the toggle swaps which is shown.
+   The table is not a fallback — it is the WCAG-clean equivalent, always one
+   click away. */
+const tableOpen = {};
+function chartCard(title, sub, chartBody, tableBody, id) {
+  const showing = !!tableOpen[id];
+  return '<section class="panel">' +
+    '<div class="chart-h"><span class="chart-t">' + esc(title) + '</span>' +
+      (sub ? '<span class="chart-s">' + esc(sub) + '</span>' : '') +
+      '<span class="spacer" style="flex:1"></span>' +
+      '<button class="table-toggle" onclick="toggleTable(' + attr(id) + ')">' +
+        esc(showing ? t('a.viewChart') : t('a.viewTable')) + '</button></div>' +
+    '<div class="chart-wrap">' + (showing ? tableBody : chartBody) + '</div>' +
+  '</section>';
+}
+function toggleTable(id) { tableOpen[id] = !tableOpen[id]; render(); }
+
+/* Sparkline for a stat tile. No tooltip: a stat tile's value is the text
+   beside it, and the spark is context, not a plot to interrogate. */
+function sparkline(values, tone) {
+  const W = 100, H = 26;
+  const max = Math.max(1, ...values), min = Math.min(...values);
+  const span = (max - min) || 1;
+  const d = values.map((v, i) =>
+    (i ? 'L' : 'M') + (i / (values.length - 1) * W).toFixed(2) + ' ' +
+    (H - 3 - ((v - min) / span) * (H - 8)).toFixed(2)).join(' ');
+  return '<svg class="kpi-spark" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+    '<path d="' + d + '" fill="none" stroke="' + (tone || 'var(--series)') + '" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity="0.85"/></svg>';
+}
+
+/* ==========================================================================
+   4. DERIVED FACTS
+   The things the team actually acts on are not columns — they are conclusions
+   drawn from columns, so they are computed here rather than stored and left to
+   rot. "Dormant" is the one that matters: verified, past the point where a
+   real pharmacy would have tried it, and still nothing posted.
+   ========================================================================== */
+
+const ISO_TODAY = TODAY.toISOString().slice(0, 10);
+const DORMANT_AFTER_DAYS = 10;   // verified this long ago and still no shift
+const AT_RISK_QUIET_DAYS  = 30;  // posted before, but not lately
+const TRIAL_ENDING_WITHIN  = 7;
+
+const trialLeft = a => Math.max(0, a.trialDays - a.trialUsed);
+const daysSinceSignup = a => daysBetween(a.signedUp, ISO_TODAY);
+const fillRate = a => a.shifts ? Math.round(a.filled / a.shifts * 100) : null;
+
+const isDormant = a =>
+  a.verification === 'verified' && a.shifts === 0 && daysSinceSignup(a) >= DORMANT_AFTER_DAYS;
+
+const isAtRisk = a =>
+  a.shifts > 0 && a.lastShift && daysBetween(a.lastShift, ISO_TODAY) >= AT_RISK_QUIET_DAYS;
+
+const isTrialEnding = a =>
+  a.verification !== 'rejected' && trialLeft(a) > 0 && trialLeft(a) <= TRIAL_ENDING_WITHIN;
+
+const isActive = a => a.shifts > 0 && !isAtRisk(a);
+
+const leadStale = l => daysBetween(l.lastTouch, ISO_TODAY) >= 14;
+
+/* A pharmacy's health, as one status token. Status colours are reserved for
+   this — they mean good/bad, never "series 4" — and each ships with an icon
+   and a word, so the colour never carries the meaning alone. */
+function accountHealth(a) {
+  if (a.verification === 'pending')  return { key:'pending',  chip:'chip-warn', ico:'clock',        label:t('vs.pending') };
+  if (a.verification === 'rejected') return { key:'rejected', chip:'chip-bad',  ico:'x',            label:t('vs.rejected') };
+  if (isDormant(a))                  return { key:'dormant',  chip:'chip-bad',  ico:'alert',        label:t('v.dormant') };
+  if (isAtRisk(a))                   return { key:'atrisk',   chip:'chip-warn', ico:'alert',        label:t('v.atRisk') };
+  return { key:'ok', chip:'chip-good', ico:'check-circle', label:t('vs.verified') };
+}
+
+const dealsFor = (kind, id) => DATA.deals.filter(d => (kind === 'leads' ? d.lead : d.account) === id);
+const contactsFor = accId => DATA.contacts.filter(c => c.account === accId);
+const tasksFor = (kind, id) => DATA.tasks.filter(x => x.related && x.related.kind === kind && x.related.id === id);
+const activityFor = (kind, id) => DATA.activity
+  .filter(e => e.kind === kind && e.id2 === id)
+  .slice().sort((a, b) => b.when.localeCompare(a.when));
+
+const recordName = (kind, id) => {
+  const set = DATA[kind] || [];
+  const r = set.find(x => x.id === id);
+  return r ? L(r.name || r.subject) : id;
+};
+
+function funnelRows() {
+  return STAGES.map(s => {
+    const ds = DATA.deals.filter(d => d.stage === s.key);
+    return {
+      key: s.key,
+      label: t('st.' + s.key),
+      n: ds.length,
+      value: ds.reduce((n, d) => n + d.value, 0),
+      color: STAGE_COLOR[s.key]
+    };
+  });
+}
+
+/* ==========================================================================
+   5. LIST VIEWS
+   One table engine, four modules. Each module supplies its saved views, its
+   filter facets and its columns; sorting, selection, filtering and the bulk
+   bar are shared, because four copies of a table is how four tables drift.
+   ========================================================================== */
+
+const MODULES = {
+  leads: {
+    icon:'funnel', data:() => DATA.leads,
+    views:{
+      all:   { label:'v.allLeads', fn:() => true },
+      mine:  { label:'v.myLeads',  fn:r => r.owner === ME },
+      hot:   { label:'v.hot',      fn:r => r.rating === 'hot' },
+      stale: { label:'v.stale',    fn:leadStale }
+    },
+    facets:['owner','district','source','rating'],
+    columns:[
+      { key:'name',      label:'c.name',      main:true },
+      { key:'contact',   label:'c.company',   get:r => L(r.contact) },
+      { key:'phone',     label:'c.phone',     mono:true },
+      { key:'district',  label:'c.district',  get:r => districtName(r.district) },
+      { key:'source',    label:'c.source',    get:r => t('src.' + r.source) },
+      { key:'rating',    label:'c.rating',    chip:r => ratingChip(r.rating) },
+      { key:'owner',     label:'c.owner',     get:r => L(USERS[r.owner].name) },
+      { key:'lastTouch', label:'c.lastTouch', get:r => relDays(r.lastTouch), sortAs:r => r.lastTouch }
+    ]
+  },
+  accounts: {
+    icon:'building', data:() => DATA.accounts,
+    views:{
+      all:        { label:'v.allAccounts', fn:() => true },
+      trialEnding:{ label:'v.trialEnding', fn:isTrialEnding },
+      dormant:    { label:'v.dormant',     fn:isDormant },
+      atRisk:     { label:'v.atRisk',      fn:isAtRisk }
+    },
+    facets:['owner','district','verification'],
+    columns:[
+      { key:'name',        label:'c.name',       main:true },
+      { key:'licence',     label:'c.licence',    mono:true },
+      { key:'district',    label:'c.district',   get:r => districtName(r.district) },
+      { key:'health',      label:'c.status',     chip:r => healthChip(r), sortAs:r => accountHealth(r).key },
+      { key:'trial',       label:'c.trial',      get:r => trialLeft(r) > 0 ? t('rec.daysLeft', {n:trialLeft(r)}) : '—',
+                                                 sortAs:r => trialLeft(r) },
+      { key:'shifts',      label:'c.shifts',     num:true, get:r => fmt(r.shifts), sortAs:r => r.shifts },
+      { key:'fillRate',    label:'c.fillRate',   num:true, get:r => fillRate(r) === null ? '—' : pct(fillRate(r)),
+                                                 sortAs:r => fillRate(r) === null ? -1 : fillRate(r) },
+      { key:'commission',  label:'c.commission', num:true, get:r => fmt(r.commission), sortAs:r => r.commission },
+      { key:'owner',       label:'c.owner',      get:r => L(USERS[r.owner].name) }
+    ]
+  },
+  contacts: {
+    icon:'users', data:() => DATA.contacts,
+    views:{ all:{ label:'v.allContacts', fn:() => true }, mine:{ label:'v.myLeads', fn:r => r.owner === ME } },
+    facets:['owner','district'],
+    columns:[
+      { key:'name',     label:'c.name',     main:true },
+      { key:'role',     label:'c.role',     get:r => L(r.role) },
+      { key:'account',  label:'c.account',  get:r => recordName('accounts', r.account) },
+      { key:'phone',    label:'c.phone',    mono:true },
+      { key:'email',    label:'c.email',    mono:true },
+      { key:'district', label:'c.district', get:r => districtName(r.district) },
+      { key:'owner',    label:'c.owner',    get:r => L(USERS[r.owner].name) }
+    ]
+  },
+  deals: {
+    icon:'chart', data:() => DATA.deals,
+    views:{
+      all:  { label:'v.allDeals',  fn:() => true },
+      open: { label:'v.openDeals', fn:d => d.stage !== 'activated' },
+      mine: { label:'v.myDeals',   fn:d => d.owner === ME }
+    },
+    facets:['owner','district','stage'],
+    columns:[
+      { key:'name',   label:'c.deal',      main:true },
+      { key:'stage',  label:'c.stage',     chip:d => stageChip(d.stage), sortAs:d => stageOrd(d.stage) },
+      { key:'value',  label:'c.value',     num:true, get:d => fmt(d.value), sortAs:d => d.value },
+      { key:'close',  label:'c.closeDate', get:d => fmtDate(d.close), sortAs:d => d.close },
+      { key:'district', label:'c.district', get:d => districtName(d.district) },
+      { key:'owner',  label:'c.owner',     get:d => L(USERS[d.owner].name) }
+    ]
+  },
+  activities: {
+    icon:'check-circle', data:() => DATA.tasks,
+    views:{
+      all:    { label:'v.allTasks', fn:() => true },
+      mine:   { label:'v.mine',     fn:x => x.owner === ME && !x.done },
+      today:  { label:'v.today',    fn:x => !x.done && x.due === ISO_TODAY },
+      overdue:{ label:'v.overdue',  fn:x => !x.done && x.due < ISO_TODAY }
+    },
+    facets:['owner','type','priority'],
+    columns:[
+      { key:'subject',  label:'c.subject',  main:true, get:r => L(r.subject) },
+      { key:'type',     label:'c.type',     get:r => t('ty.' + r.type) },
+      { key:'due',      label:'c.due',      get:r => relDays(r.due), sortAs:r => r.due,
+                        tone:r => (!r.done && r.due < ISO_TODAY) ? 'var(--critical)' : null },
+      { key:'priority', label:'c.priority', chip:r => priorityChip(r.priority), sortAs:r => ({high:0,normal:1,low:2})[r.priority] },
+      { key:'related',  label:'c.related',  get:r => r.related ? recordName(r.related.kind, r.related.id) : '—' },
+      { key:'owner',    label:'c.owner',    get:r => L(USERS[r.owner].name) }
+    ]
+  }
+};
+
+const stageOrd = k => (STAGES.find(s => s.key === k) || {ord:9}).ord;
+
+const chip = (cls, ico, label) =>
+  '<span class="chip ' + cls + '">' + (ico ? icon(ico) : '') + esc(label) + '</span>';
+const ratingChip = r => chip(
+  r === 'hot' ? 'chip-bad' : r === 'warm' ? 'chip-warn' : 'chip-mute',
+  r === 'hot' ? 'flag' : null, t('rt.' + r));
+const healthChip = a => { const h = accountHealth(a); return chip(h.chip, h.ico, h.label); };
+const stageChip = k => chip('chip-info', null, t('st.' + k));
+const priorityChip = p => chip(
+  p === 'high' ? 'chip-bad' : p === 'normal' ? 'chip-mute' : 'chip-mute', null, t('pr.' + p));
+
+/* ---------- The facets a filter rail offers, and what each row answers ---------- */
+
+const FACETS = {
+  owner:        { label:'f.owner',        of:r => r.owner,        name:v => L(USERS[v].name) },
+  district:     { label:'f.district',     of:r => r.district,     name:v => districtName(v) },
+  source:       { label:'f.source',       of:r => r.source,       name:v => t('src.' + v) },
+  rating:       { label:'f.rating',       of:r => r.rating,       name:v => t('rt.' + v) },
+  stage:        { label:'f.stage',        of:r => r.stage,        name:v => t('st.' + v) },
+  verification: { label:'f.status',       of:r => accountHealth(r).key,
+                  name:v => ({ ok:t('vs.verified'), pending:t('vs.pending'), rejected:t('vs.rejected'),
+                               dormant:t('v.dormant'), atrisk:t('v.atRisk') })[v] || v },
+  type:         { label:'c.type',         of:r => r.type,         name:v => t('ty.' + v) },
+  priority:     { label:'c.priority',     of:r => r.priority,     name:v => t('pr.' + v) }
+};
+
+function visibleRows(mod) {
+  const M = MODULES[mod];
+  const view = M.views[S.view[mod]] || M.views.all;
+  let rows = M.data().filter(view.fn);
+
+  const f = S.filters[mod] || {};
+  Object.keys(f).forEach(facet => {
+    const want = f[facet];
+    if (!want) return;
+    rows = rows.filter(r => FACETS[facet].of(r) === want);
+  });
+
+  const sort = S.sort[mod];
+  if (sort) {
+    const col = M.columns.find(c => c.key === sort.key);
+    if (col) {
+      const val = r => col.sortAs ? col.sortAs(r) : (col.get ? col.get(r) : L(r[col.key]) || r[col.key] || '');
+      rows = rows.slice().sort((a, b) => {
+        const x = val(a), y = val(b);
+        const c = (typeof x === 'number' && typeof y === 'number') ? x - y : String(x).localeCompare(String(y), lang);
+        return sort.dir === 'desc' ? -c : c;
+      });
+    }
+  }
+  return rows;
+}
+
+function listHead(mod) {
+  const M = MODULES[mod];
+  const viewKeys = Object.keys(M.views);
+  const cur = S.view[mod];
+  const menu = S.viewMenu === mod
+    ? '<div class="view-menu">' + viewKeys.map(k => {
+        const n = M.data().filter(M.views[k].fn).length;
+        return '<button class="view-opt' + (k === cur ? ' on' : '') + '" onclick="pickView(' + attr(mod) + ',' + attr(k) + ')">' +
+          esc(t(M.views[k].label)) + '<span class="count">' + fmt(n) + '</span></button>';
+      }).join('') + '</div>'
+    : '';
+
+  const picked = (S.picked[mod] || []).length;
+
+  return '<div class="work-head">' +
+      '<div style="position:relative;">' +
+        '<button class="view-select" onclick="toggleViewMenu(' + attr(mod) + ')">' +
+          esc(t(M.views[cur].label)) + icon('caret') + '</button>' + menu +
+      '</div>' +
+      '<span class="chip chip-mute figure">' + fmt(visibleRows(mod).length) + '</span>' +
+      '<span class="spacer"></span>' +
+      '<button class="btn" onclick="resetFilters(' + attr(mod) + ')">' + icon('refresh') + esc(t('a.refresh')) + '</button>' +
+      '<button class="btn primary" onclick="openNew(' + attr(mod) + ')">' + icon('plus') + esc(t('a.new')) + '</button>' +
+    '</div>' +
+    (picked
+      ? '<div class="bulkbar">' + esc(t('a.selected', {n:picked})) +
+          '<span class="spacer" style="flex:1"></span>' +
+          '<button class="btn" onclick="bulkAssign(' + attr(mod) + ')">' + esc(t('a.assign')) + '</button>' +
+          '<button class="btn danger" onclick="bulkDelete(' + attr(mod) + ')">' + icon('trash') + esc(t('a.delete')) + '</button>' +
+          '<button class="btn" onclick="clearPicked(' + attr(mod) + ')">' + esc(t('a.clear')) + '</button>' +
+        '</div>'
+      : '');
+}
+
+function listRail(mod) {
+  const M = MODULES[mod];
+  const all = M.data();
+  const f = S.filters[mod] || {};
+  let html = '<div class="rail-h">' + esc(t('f.filters')) + '</div>';
+
+  M.facets.forEach(facet => {
+    const F = FACETS[facet];
+    const values = [...new Set(all.map(F.of))].filter(v => v != null);
+    if (!values.length) return;
+    html += '<div class="rail-h">' + esc(t(F.label)) + '</div>' +
+      '<button class="rail-opt' + (!f[facet] ? ' on' : '') + '" onclick="setFilter(' + attr(mod) + ',' + attr(facet) + ',null)">' +
+        esc(t('f.all')) + '<span class="count">' + fmt(all.length) + '</span></button>' +
+      values.map(v =>
+        '<button class="rail-opt' + (f[facet] === v ? ' on' : '') + '" onclick="setFilter(' + attr(mod) + ',' + attr(facet) + ',' + attr(v) + ')">' +
+          esc(F.name(v)) + '<span class="count">' + fmt(all.filter(r => F.of(r) === v).length) + '</span></button>').join('');
+  });
+
+  if (Object.keys(f).some(k => f[k]))
+    html += '<button class="rail-clear" onclick="resetFilters(' + attr(mod) + ')">' + esc(t('f.clear')) + '</button>';
+  return html;
+}
+
+function listBody(mod) {
+  const M = MODULES[mod];
+  const rows = visibleRows(mod);
+  const picked = S.picked[mod] || [];
+  const sort = S.sort[mod];
+
+  if (!rows.length) {
+    return '<div class="empty">' + icon('search') + '<div>' + esc(t('e.noRecords')) + '</div>' +
+      '<div style="font-size:12px;">' + esc(t('e.tryClearing')) + '</div></div>';
+  }
+
+  const allPicked = rows.every(r => picked.includes(r.id));
+  const head = '<tr><th class="col-check"><input type="checkbox"' + (allPicked ? ' checked' : '') +
+      ' onchange="pickAll(' + attr(mod) + ', this.checked)"></th>' +
+    M.columns.map(c =>
+      '<th class="sortable"' + (c.num ? ' style="text-align:end"' : '') + ' onclick="sortBy(' + attr(mod) + ',' + attr(c.key) + ')">' +
+        esc(t(c.label)) +
+        (sort && sort.key === c.key ? icon(sort.dir === 'asc' ? 'up' : 'down') : icon('sort', 'sort-idle')) +
+      '</th>').join('') + '</tr>';
+
+  const body = rows.map(r => {
+    const on = picked.includes(r.id);
+    return '<tr class="' + (on ? 'picked' : '') + '">' +
+      '<td class="col-check"><input type="checkbox"' + (on ? ' checked' : '') +
+        ' onchange="pickOne(' + attr(mod) + ',' + attr(r.id) + ', this.checked)"></td>' +
+      M.columns.map(c => {
+        if (c.chip) return '<td>' + c.chip(r) + '</td>';
+        const raw = c.get ? c.get(r) : (L(r[c.key]) || r[c.key] || '—');
+        const tone = c.tone && c.tone(r);
+        if (c.main) return '<td><button class="cell-link" onclick="openRecord(' + attr(mod) + ',' + attr(r.id) + ')">' +
+          esc(raw) + '</button></td>';
+        return '<td' + (c.num ? ' class="figure" style="text-align:end"' : c.mono ? ' class="figure" dir="ltr"' : '') +
+          (tone ? ' style="color:' + tone + ';font-weight:600"' : '') + '>' + esc(raw) + '</td>';
+      }).join('') + '</tr>';
+  }).join('');
+
+  return '<table class="grid"><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+}
+
+/* ==========================================================================
+   6. RECORD PAGES
+   Summary panel, inline-editable fields, a timeline you can post to, and the
+   related lists. A pharmacy record also carries its platform state — the
+   reason the CRM and the app are one product rather than two.
+   ========================================================================== */
+
+function fieldRow(label, value, edit) {
+  return '<div class="field-row"><span class="field-k">' + esc(label) + '</span>' +
+    '<span class="field-v' + (edit ? ' editable' : '') + '"' +
+      (edit ? ' onclick="startEdit(this,' + attr(edit.path) + ',' + attr(edit.type || 'text') + ')"' : '') +
+      '>' + (value === '' || value == null ? '—' : value) + '</span></div>';
+}
+
+function timelinePanel(kind, id) {
+  const items = activityFor(kind, id);
+  const icons = { call:'phone', visit:'pin', note:'note', followup:'clock', demo:'cap' };
+  const tones = { call:'', visit:'', note:'', followup:'warn', demo:'good' };
+
+  return '<section class="panel">' +
+    '<div class="panel-h">' + icon('clock') + esc(t('rec.timeline')) + '</div>' +
+    '<div class="note-box">' +
+      '<textarea id="note-input" placeholder="' + esc(t('a.addNote')) + '"></textarea>' +
+      '<button class="btn primary" onclick="addNote(' + attr(kind) + ',' + attr(id) + ')">' + esc(t('a.post')) + '</button>' +
+    '</div>' +
+    (items.length
+      ? '<div class="timeline">' + items.map(e =>
+          '<div class="tl-item"><span class="tl-dot ' + (tones[e.type] || '') + '">' +
+            icon(icons[e.type] || 'note') + '</span><div style="flex:1;min-width:0;">' +
+            '<div class="tl-title">' + esc(L(e.text)) + '</div>' +
+            '<div class="tl-meta">' + esc(t('ty.' + e.type)) + ' · ' + esc(L(USERS[e.owner].name)) +
+              ' · ' + esc(relDays(e.when)) + '</div></div></div>').join('') + '</div>'
+      : '<div class="empty" style="padding:26px;">' + esc(t('rec.noTimeline')) + '</div>') +
+  '</section>';
+}
+
+function relatedPanel(title, rows, onOpen) {
+  return '<section class="panel">' +
+    '<div class="panel-h">' + esc(title) + '<span class="spacer"></span>' +
+      '<span class="chip chip-mute figure">' + fmt(rows.length) + '</span></div>' +
+    (rows.length
+      ? '<div class="panel-b flush">' + rows.map(r =>
+          '<button class="task-row" style="width:100%;text-align:start;" onclick="' + onOpen(r) + '">' +
+            '<div style="flex:1;min-width:0;"><div class="task-t">' + esc(r._t) + '</div>' +
+            '<div class="task-m">' + r._m + '</div></div></button>').join('') + '</div>'
+      : '<div class="empty" style="padding:22px;font-size:12px;">' + esc(t('rec.noneYet')) + '</div>') +
+  '</section>';
+}
+
+function recordPage(mod, id) {
+  const rec = (DATA[mod] || []).find(r => r.id === id);
+  if (!rec) return '<div class="empty">' + esc(t('e.noRecords')) + '</div>';
+
+  const title = L(rec.name || rec.subject);
+  const initials = initialsOf(title);
+
+  let sub = '', actions = '', details = '', platform = '', related = '';
+
+  if (mod === 'leads') {
+    sub = ratingChip(rec.rating) + '<span>' + esc(districtName(rec.district)) + '</span>' +
+      '<span>·</span><span>' + esc(t('src.' + rec.source)) + '</span>';
+    actions =
+      '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>' +
+      '<button class="btn" onclick="openNewTask(' + attr(mod) + ',' + attr(id) + ')">' + icon('check-circle') + esc(t('a.task')) + '</button>' +
+      '<button class="btn primary" onclick="convertLead(' + attr(id) + ')">' + icon('building') + esc(t('a.convert')) + '</button>';
+    details =
+      fieldRow(t('c.company'), esc(L(rec.contact)), { path:mod + '.' + id + '.contact' }) +
+      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:mod + '.' + id + '.phone' }) +
+      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:mod + '.' + id + '.email' }) +
+      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:mod + '.' + id + '.district', type:'district' }) +
+      fieldRow(t('c.source'), esc(t('src.' + rec.source))) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' }) +
+      fieldRow(t('c.created'), esc(fmtDate(rec.created))) +
+      fieldRow(t('c.lastTouch'), esc(relDays(rec.lastTouch)) +
+        (leadStale(rec) ? ' ' + chip('chip-warn', 'alert', t('v.stale')) : ''));
+    platform = '<section class="panel"><div class="panel-h">' + icon('grid') + esc(t('rec.platform')) + '</div>' +
+      '<div class="panel-b"><p style="font-size:12.5px;color:var(--ink-faint);line-height:1.7;">' +
+      esc(t('rec.notOnPlatform')) + '</p></div></section>';
+
+  } else if (mod === 'accounts') {
+    const h = accountHealth(rec);
+    const left = trialLeft(rec);
+    sub = healthChip(rec) + '<span>' + esc(districtName(rec.district)) + '</span>' +
+      '<span>·</span><span class="figure" dir="ltr">' + esc(rec.licence) + '</span>';
+    actions =
+      '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>' +
+      '<button class="btn" onclick="openNewTask(' + attr(mod) + ',' + attr(id) + ')">' + icon('check-circle') + esc(t('a.task')) + '</button>' +
+      '<button class="btn primary" onclick="openApp(' + attr(rec.appEmail) + ')">' + icon('external') + esc(t('a.openInApp')) + '</button>';
+    details =
+      fieldRow(t('c.licence'), '<span class="figure" dir="ltr">' + esc(rec.licence) + '</span>') +
+      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:mod + '.' + id + '.district', type:'district' }) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' }) +
+      fieldRow(t('c.created'), esc(fmtDate(rec.signedUp))) +
+      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.appEmail) + '</span>');
+
+    /* Read out of Saydali+: the trial clock, whether anything has been posted,
+       and how much of it got covered. The dormant case is called out in words
+       because it is the one a reader must not skim past. */
+    platform = '<section class="panel">' +
+      '<div class="panel-h">' + icon('grid') + esc(t('rec.platform')) +
+        '<span class="spacer"></span><span class="chip chip-info">' + esc(t('rec.linked')) + '</span></div>' +
+      '<div class="panel-b">' +
+        fieldRow(t('c.verification'), healthChip(rec)) +
+        fieldRow(t('c.trial'), left > 0
+          ? esc(t('rec.trialDay', {a:rec.trialUsed, b:rec.trialDays})) +
+            (isTrialEnding(rec) ? ' ' + chip('chip-warn', 'clock', t('rec.daysLeft', {n:left})) : '')
+          : '—') +
+        fieldRow(t('c.shifts'), rec.shifts
+          ? '<span class="figure">' + fmt(rec.shifts) + '</span>'
+          : chip('chip-bad', 'alert', t('rec.noShifts'))) +
+        fieldRow(t('c.fillRate'), fillRate(rec) === null ? '—' : '<span class="figure">' + pct(fillRate(rec)) + '</span>') +
+        fieldRow(t('c.lastShift'), rec.lastShift ? esc(relDays(rec.lastShift)) : '—') +
+        fieldRow(t('c.pharmacists'), '<span class="figure">' + fmt(rec.pharmacists) + '</span>') +
+        fieldRow(t('c.commission'), '<span class="figure">' + esc(iqd(rec.commission)) + '</span>') +
+      '</div></section>';
+
+    related =
+      relatedPanel(t('rec.contacts'), contactsFor(id).map(c => ({
+        _t:L(c.name), _m:esc(L(c.role)) + ' · <span class="figure" dir="ltr">' + esc(c.phone) + '</span>', id:c.id
+      })), r => 'openRecord(' + attr('contacts') + ',' + attr(r.id) + ')') +
+      relatedPanel(t('rec.openDeals'), dealsFor('accounts', id).map(d => ({
+        _t:L(d.name), _m:stageChip(d.stage) + ' <span class="figure">' + esc(iqd(d.value)) + '</span>', id:d.id
+      })), r => 'openRecord(' + attr('deals') + ',' + attr(r.id) + ')');
+
+  } else if (mod === 'contacts') {
+    sub = '<span>' + esc(L(rec.role)) + '</span><span>·</span><span>' + esc(recordName('accounts', rec.account)) + '</span>';
+    actions = '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>';
+    details =
+      fieldRow(t('c.role'), esc(L(rec.role)), { path:mod + '.' + id + '.role' }) +
+      fieldRow(t('c.account'), '<button class="cell-link" onclick="openRecord(' + attr('accounts') + ',' + attr(rec.account) + ')">' +
+        esc(recordName('accounts', rec.account)) + '</button>') +
+      fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:mod + '.' + id + '.phone' }) +
+      fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:mod + '.' + id + '.email' }) +
+      fieldRow(t('c.district'), esc(districtName(rec.district)), { path:mod + '.' + id + '.district', type:'district' }) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' });
+
+  } else if (mod === 'deals') {
+    const linkKind = rec.account ? 'accounts' : 'leads';
+    const linkId = rec.account || rec.lead;
+    sub = stageChip(rec.stage) + '<span class="figure">' + esc(iqd(rec.value)) + esc(t('mo')) + '</span>' +
+      '<span>·</span><span>' + esc(districtName(rec.district)) + '</span>';
+    actions = STAGES.filter(s => s.key !== rec.stage).slice(0, 2).map(s =>
+      '<button class="btn" onclick="moveDeal(' + attr(rec.id) + ',' + attr(s.key) + ')">' + esc(t('st.' + s.key)) + '</button>'
+    ).join('') +
+      '<button class="btn primary" onclick="openRecord(' + attr(linkKind) + ',' + attr(linkId) + ')">' +
+        icon(linkKind === 'accounts' ? 'building' : 'funnel') + esc(recordName(linkKind, linkId)) + '</button>';
+    details =
+      fieldRow(t('c.stage'), stageChip(rec.stage), { path:mod + '.' + id + '.stage', type:'stage' }) +
+      fieldRow(t('c.value'), '<span class="figure">' + esc(iqd(rec.value)) + '</span>', { path:mod + '.' + id + '.value', type:'number' }) +
+      fieldRow(t('c.closeDate'), esc(fmtDate(rec.close)), { path:mod + '.' + id + '.close', type:'date' }) +
+      fieldRow(t('c.district'), esc(districtName(rec.district))) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' });
+
+  } else if (mod === 'activities') {
+    sub = priorityChip(rec.priority) + '<span>' + esc(t('ty.' + rec.type)) + '</span>' +
+      '<span>·</span><span>' + esc(relDays(rec.due)) + '</span>';
+    actions = '<button class="btn' + (rec.done ? '' : ' primary') + '" onclick="toggleTask(' + attr(id) + ')">' +
+      icon('check-circle') + esc(rec.done ? t('a.undone') : t('a.done')) + '</button>';
+    details =
+      fieldRow(t('c.type'), esc(t('ty.' + rec.type))) +
+      fieldRow(t('c.due'), esc(fmtDate(rec.due)), { path:mod + '.' + id + '.due', type:'date' }) +
+      fieldRow(t('c.priority'), priorityChip(rec.priority), { path:mod + '.' + id + '.priority', type:'priority' }) +
+      fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:mod + '.' + id + '.owner', type:'owner' }) +
+      fieldRow(t('c.related'), rec.related
+        ? '<button class="cell-link" onclick="openRecord(' + attr(rec.related.kind) + ',' + attr(rec.related.id) + ')">' +
+          esc(recordName(rec.related.kind, rec.related.id)) + '</button>' : '—');
+  }
+
+  const tasks = tasksFor(mod, id);
+  const taskPanel = (mod === 'leads' || mod === 'accounts')
+    ? relatedPanel(t('rec.tasks'), tasks.map(x => ({
+        _t:L(x.subject),
+        _m:priorityChip(x.priority) + ' ' + esc(relDays(x.due)),
+        id:x.id
+      })), r => 'openRecord(' + attr('activities') + ',' + attr(r.id) + ')')
+    : '';
+
+  return '<div class="rec-head">' +
+      '<button class="btn-icon" onclick="closeRecord()" aria-label="' + esc(t('a.close')) + '">' + icon('x') + '</button>' +
+      '<div class="avatar lg">' + esc(initials) + '</div>' +
+      '<div style="flex:1;min-width:220px;">' +
+        '<div class="rec-title">' + esc(title) + '</div>' +
+        '<div class="rec-sub">' + sub + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + actions + '</div>' +
+    '</div>' +
+    '<div class="rec-body">' +
+      '<div style="display:flex;flex-direction:column;gap:16px;min-width:0;">' +
+        '<section class="panel"><div class="panel-h">' + icon('note') + esc(t('rec.details')) + '</div>' +
+          '<div class="panel-b">' + details + '</div></section>' +
+        timelinePanel(mod, id) +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:16px;min-width:0;">' +
+        platform + related + taskPanel +
+      '</div>' +
+    '</div>';
+}
+
+/* ==========================================================================
+   7. HOME, PIPELINE BOARD, REPORTS
+   ========================================================================== */
+
+function kpi(label, value, delta, spark, tone) {
+  const d = delta
+    ? '<div class="kpi-d ' + delta.cls + '">' + (delta.ico ? icon(delta.ico) : '') +
+      esc(delta.text) + '</div>' : '';
+  return '<div class="kpi"><div class="kpi-k">' + esc(label) + '</div>' +
+    '<div class="kpi-v">' + esc(value) + '</div>' + d +
+    (spark ? sparkline(spark, tone) : '') + '</div>';
+}
+
+function homeView() {
+  const open = DATA.deals.filter(d => d.stage !== 'activated');
+  const pipelineValue = open.reduce((n, d) => n + d.value, 0);
+  const active = DATA.accounts.filter(isActive);
+  const dormant = DATA.accounts.filter(isDormant);
+  const ending = DATA.accounts.filter(isTrialEnding);
+  const commission = DATA.accounts.reduce((n, a) => n + a.commission, 0);
+
+  const kpis = '<div class="kpis">' +
+    kpi(t('k.openDeals'), fmt(open.length), null, [4,5,7,8,9,10,open.length]) +
+    kpi(t('k.pipelineValue'), iqd(pipelineValue), null, [120,145,160,178,190,205,pipelineValue/1000]) +
+    kpi(t('k.activePharmacies'), fmt(active.length),
+        { cls:'kpi-up', ico:'up', text:'+2 ' + t('k.vsLast') }, [1,2,2,3,3,4,active.length]) +
+    kpi(t('k.monthCommission'), iqd(commission),
+        { cls:'kpi-up', ico:'up', text:'+18% ' + t('k.vsLast') }, [22,28,31,44,62,88,commission/1000]) +
+    /* Two tiles that are calls to action, not scores. Status colour plus an
+       icon plus a word — never colour alone. */
+    kpi(t('k.trialEnding'), fmt(ending.length),
+        ending.length ? { cls:'kpi-down', ico:'alert', text:t('k.needsCall') } : null) +
+    kpi(t('k.dormant'), fmt(dormant.length),
+        dormant.length ? { cls:'kpi-down', ico:'alert', text:t('k.needsCall') } : null) +
+  '</div>';
+
+  const rows = funnelRows();
+  const acts = ACTIVATIONS.map(a => ({
+    n:a.n, label:MONTHS[lang][a.m - 1], short:MONTHS_SHORT[lang][a.m - 1]
+  }));
+
+  const byDistrict = DISTRICTS
+    .map(d => ({ label:L(d), n:active.filter(a => a.district === d.key).length }))
+    .filter(r => r.n > 0).sort((a, b) => b.n - a.n);
+
+  const myTasks = DATA.tasks
+    .filter(x => x.owner === ME && !x.done && x.due <= ISO_TODAY)
+    .sort((a, b) => a.due.localeCompare(b.due));
+
+  const tasksPanel = '<section class="panel">' +
+    '<div class="panel-h">' + icon('check-circle') + esc(t('ch.tasks')) +
+      '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt(myTasks.length) + '</span></div>' +
+    (myTasks.length
+      ? '<div class="panel-b flush">' + myTasks.map(x =>
+          '<div class="task-row' + (x.done ? ' task-done' : '') + '">' +
+            '<input type="checkbox"' + (x.done ? ' checked' : '') + ' onchange="toggleTask(' + attr(x.id) + ')" ' +
+              'style="margin-top:2px;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<button class="task-t" style="text-align:start;" onclick="openRecord(' + attr('activities') + ',' + attr(x.id) + ')">' +
+                esc(L(x.subject)) + '</button>' +
+              '<div class="task-m">' + priorityChip(x.priority) +
+                '<span' + (x.due < ISO_TODAY ? ' style="color:var(--critical);font-weight:600"' : '') + '>' +
+                esc(relDays(x.due)) + '</span>' +
+                (x.related ? '<span>·</span><button class="cell-link" style="font-size:11px;" onclick="openRecord(' +
+                  attr(x.related.kind) + ',' + attr(x.related.id) + ')">' +
+                  esc(recordName(x.related.kind, x.related.id)) + '</button>' : '') +
+              '</div></div></div>').join('') + '</div>'
+      : '<div class="empty" style="padding:26px;font-size:12.5px;">' + esc(t('ch.noTasks')) + '</div>') +
+  '</section>';
+
+  const recent = DATA.activity.slice().sort((a, b) => b.when.localeCompare(a.when)).slice(0, 6);
+  const recentPanel = '<section class="panel">' +
+    '<div class="panel-h">' + icon('clock') + esc(t('ch.recent')) + '</div>' +
+    '<div class="panel-b flush"><div class="timeline">' + recent.map(e =>
+      '<div class="tl-item"><span class="tl-dot">' +
+        icon({ call:'phone', visit:'pin', note:'note' }[e.type] || 'note') + '</span>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<button class="cell-link" style="font-size:12px;" onclick="openRecord(' + attr(e.kind) + ',' + attr(e.id2) + ')">' +
+            esc(recordName(e.kind, e.id2)) + '</button>' +
+          '<div class="tl-title" style="font-size:12px;color:var(--ink-soft);margin-top:2px;">' + esc(L(e.text)) + '</div>' +
+          '<div class="tl-meta">' + esc(L(USERS[e.owner].name)) + ' · ' + esc(relDays(e.when)) + '</div>' +
+        '</div></div>').join('') + '</div></div></section>';
+
+  return '<div class="dash">' + kpis +
+    '<div class="charts c32">' +
+      funnelChart(rows, { title:t('ch.funnel'), sub:t('ch.funnelSub') }) +
+      trendChart(acts, { title:t('ch.activation'), sub:t('ch.activationSub') }) +
+    '</div>' +
+    '<div class="charts c2">' + tasksPanel + recentPanel + '</div>' +
+    barChart(byDistrict, { title:t('ch.districts'), sub:t('ch.districtsSub'), id:'districts',
+                           unit:t('ch.pharmacies') }) +
+  '</div>';
+}
+
+/* ---------- Pipeline board ---------- */
+
+function dealsBoard() {
+  const f = S.filters.deals || {};
+  return '<div class="kanban">' + STAGES.map(s => {
+    let ds = DATA.deals.filter(d => d.stage === s.key);
+    Object.keys(f).forEach(facet => { if (f[facet]) ds = ds.filter(r => FACETS[facet].of(r) === f[facet]); });
+    const sum = ds.reduce((n, d) => n + d.value, 0);
+
+    return '<div class="kcol">' +
+      '<div class="kcol-h">' +
+        '<span class="kcol-swatch" style="background:' + STAGE_COLOR[s.key] + '"></span>' +
+        '<span class="kcol-name">' + esc(t('st.' + s.key)) + '</span>' +
+        '<span class="kcol-n">' + fmt(ds.length) + '</span>' +
+        '<span class="kcol-sum">' + esc(iqd(sum)) + '</span>' +
+      '</div>' +
+      '<div class="kcol-b" ondragover="dragOver(event,' + attr(s.key) + ')" ondragleave="dragLeave(event)" ' +
+        'ondrop="dropDeal(event,' + attr(s.key) + ')" data-stage="' + esc(s.key) + '">' +
+        ds.map(d =>
+          '<div class="kcard" draggable="true" ondragstart="dragDeal(event,' + attr(d.id) + ')" ' +
+            'ondragend="dragEnd(event)" onclick="openRecord(' + attr('deals') + ',' + attr(d.id) + ')" ' +
+            'tabindex="0" role="button">' +
+            '<div class="kcard-t">' + esc(L(d.name)) + '</div>' +
+            '<div class="kcard-m">' + esc(districtName(d.district)) + ' · ' + esc(fmtDate(d.close)) + '</div>' +
+            '<div class="kcard-f"><span class="kcard-v">' + esc(iqd(d.value)) + '</span>' +
+              '<span class="avatar kcard-owner">' + esc(L(USERS[d.owner].initials)) + '</span></div>' +
+          '</div>').join('') +
+      '</div></div>';
+  }).join('') + '</div>';
+}
+
+function dealsHead() {
+  const board = S.dealsMode === 'board';
+  const total = DATA.deals.filter(d => d.stage !== 'activated').reduce((n, d) => n + d.value, 0);
+  return '<div class="work-head">' +
+    '<span class="view-select">' + esc(t('d.pipeline')) + '</span>' +
+    '<span class="chip chip-info figure">' + esc(t('d.total')) + ' ' + esc(iqd(total)) + '</span>' +
+    '<span class="spacer"></span>' +
+    '<button class="btn-icon' + (board ? ' on' : '') + '" onclick="setDealsMode(\'board\')" title="' + esc(t('d.board')) + '">' +
+      icon('board') + '</button>' +
+    '<button class="btn-icon' + (!board ? ' on' : '') + '" onclick="setDealsMode(\'list\')" title="' + esc(t('d.list')) + '">' +
+      icon('table') + '</button>' +
+    '<button class="btn primary" onclick="openNew(\'deals\')">' + icon('plus') + esc(t('a.new')) + '</button>' +
+  '</div>';
+}
+
+/* ---------- Reports ---------- */
+
+function reportsView() {
+  const rows = funnelRows();
+  const acts = ACTIVATIONS.map(a => ({ n:a.n, label:MONTHS[lang][a.m - 1], short:MONTHS_SHORT[lang][a.m - 1] }));
+  const sources = LEAD_SOURCES_90D.map(s => ({ label:t('src.' + s.key), n:s.n }));
+
+  const owners = Object.keys(USERS).map(u => ({
+    name:L(USERS[u].name),
+    leads:DATA.leads.filter(l => l.owner === u).length,
+    won:DATA.deals.filter(d => d.owner === u && d.stage === 'activated').length,
+    active:DATA.accounts.filter(a => a.owner === u && isActive(a)).length
+  }));
+
+  const ownerTable = '<section class="panel">' +
+    '<div class="chart-h"><span class="chart-t">' + esc(t('r.ownerReport')) + '</span>' +
+      '<span class="chart-s">' + esc(t('r.ownerSub')) + '</span></div>' +
+    '<div class="chart-wrap"><table class="mini"><thead><tr><th>' + esc(t('f.owner')) + '</th>' +
+      '<th style="text-align:end">' + esc(t('r.leadsCol')) + '</th>' +
+      '<th style="text-align:end">' + esc(t('r.wonCol')) + '</th>' +
+      '<th style="text-align:end">' + esc(t('r.activeCol')) + '</th></tr></thead><tbody>' +
+      owners.map(o => '<tr><td>' + esc(o.name) + '</td><td class="n">' + fmt(o.leads) + '</td>' +
+        '<td class="n">' + fmt(o.won) + '</td><td class="n">' + fmt(o.active) + '</td></tr>').join('') +
+    '</tbody></table></div></section>';
+
+  return '<div class="dash">' +
+    '<div class="charts c2">' +
+      funnelChart(rows, { title:t('r.pipelineReport'), sub:t('ch.funnelSub') }) +
+      trendChart(acts, { title:t('r.activationReport'), sub:t('ch.activationSub') }) +
+    '</div>' +
+    '<div class="charts c2">' +
+      barChart(sources, { title:t('r.sourceReport'), sub:t('r.sourceSub'), id:'sources',
+                          catCol:t('f.source'), unit:t('r.leadsCol') }) +
+      ownerTable +
+    '</div>' +
+  '</div>';
+}
+
+/* ==========================================================================
+   8. STATE & RENDER
+   ========================================================================== */
+
+const TABS = ['home', 'leads', 'accounts', 'contacts', 'deals', 'activities', 'reports'];
+
+const S = {
+  tab:'home',
+  record:null,              // { mod, id }
+  view:{ leads:'all', accounts:'all', contacts:'all', deals:'all', activities:'mine' },
+  filters:{ leads:{}, accounts:{}, contacts:{}, deals:{}, activities:{} },
+  sort:{},
+  picked:{ leads:[], accounts:[], contacts:[], deals:[], activities:[] },
+  viewMenu:null,
+  dealsMode:'board',
+  modal:null,
+  query:'',
+  drag:null
+};
+
+function render() {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+  document.getElementById('tb-suite').textContent = t('suite');
+  document.getElementById('btn-lang').textContent = t('lang');
+  document.querySelector('#btn-app span').textContent = t('openApp');
+  document.getElementById('q').placeholder = t('search');
+  document.getElementById('me-avatar').textContent = L(USERS[ME].initials);
+
+  document.getElementById('tabs').innerHTML = TABS.map(k => {
+    const M = MODULES[k];
+    const n = M ? M.data().length : null;
+    return '<button class="tab' + (S.tab === k ? ' active' : '') + '" onclick="goTab(' + attr(k) + ')">' +
+      icon(k === 'home' ? 'home' : k === 'reports' ? 'chart' : M.icon) +
+      esc(t('mod.' + k)) +
+      (n !== null ? '<span class="tab-count">' + fmt(n) + '</span>' : '') + '</button>';
+  }).join('');
+
+  const rail = document.getElementById('rail');
+  const head = document.getElementById('work-head');
+  const body = document.getElementById('work-body');
+
+  if (S.record) {
+    rail.classList.add('hidden');
+    head.innerHTML = '';
+    body.innerHTML = recordPage(S.record.mod, S.record.id);
+  } else if (S.tab === 'home') {
+    rail.classList.add('hidden');
+    head.innerHTML = '<div class="work-head"><span class="view-select">' +
+      esc(t('h.greeting', { name:L(USERS[ME].name) })) + '</span></div>';
+    body.innerHTML = homeView();
+  } else if (S.tab === 'reports') {
+    rail.classList.add('hidden');
+    head.innerHTML = '<div class="work-head"><span class="view-select">' + esc(t('r.title')) + '</span></div>';
+    body.innerHTML = reportsView();
+  } else if (S.tab === 'deals' && S.dealsMode === 'board') {
+    rail.classList.remove('hidden');
+    rail.innerHTML = listRail('deals');
+    head.innerHTML = dealsHead();
+    body.innerHTML = dealsBoard();
+  } else {
+    rail.classList.remove('hidden');
+    rail.innerHTML = listRail(S.tab);
+    head.innerHTML = S.tab === 'deals' ? dealsHead() + listHead(S.tab).replace(/^<div class="work-head">[\s\S]*?<\/div>/, '') : listHead(S.tab);
+    body.innerHTML = listBody(S.tab);
+  }
+
+  renderModal();
+  bindTips(document.body);
+}
+
+/* ==========================================================================
+   9. NAVIGATION
+   ========================================================================== */
+
+function goTab(k) {
+  S.tab = k; S.record = null; S.viewMenu = null; hideTip();
+  render();
+  document.getElementById('work-body').scrollTop = 0;
+}
+function openRecord(mod, id) {
+  S.record = { mod, id }; S.viewMenu = null; hideTip();
+  if (TABS.includes(mod)) S.tab = mod;
+  render();
+  document.getElementById('work-body').scrollTop = 0;
+}
+function closeRecord() { S.record = null; hideTip(); render(); }
+function setLang(l) { lang = l; hideTip(); render(); }
+function setDealsMode(m) { S.dealsMode = m; render(); }
+
+/* The two halves are one product: this hands off to the app, and an account
+   row hands off to that pharmacy's own account inside it. */
+function openApp(asEmail) {
+  const url = '../demo/saydali-plus.html' + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
+  window.open(url, '_blank', 'noopener');
+}
+
+function toggleViewMenu(mod) { S.viewMenu = S.viewMenu === mod ? null : mod; render(); }
+function pickView(mod, k) { S.view[mod] = k; S.viewMenu = null; S.picked[mod] = []; render(); }
+function setFilter(mod, facet, v) {
+  S.filters[mod] = S.filters[mod] || {};
+  if (v === null) delete S.filters[mod][facet]; else S.filters[mod][facet] = v;
+  S.picked[mod] = [];
+  render();
+}
+function resetFilters(mod) { S.filters[mod] = {}; S.picked[mod] = []; render(); }
+function sortBy(mod, key) {
+  const cur = S.sort[mod];
+  S.sort[mod] = (cur && cur.key === key)
+    ? { key, dir: cur.dir === 'asc' ? 'desc' : 'asc' }
+    : { key, dir:'asc' };
+  render();
+}
+function pickOne(mod, id, on) {
+  const set = new Set(S.picked[mod] || []);
+  if (on) set.add(id); else set.delete(id);
+  S.picked[mod] = [...set];
+  render();
+}
+function pickAll(mod, on) {
+  S.picked[mod] = on ? visibleRows(mod).map(r => r.id) : [];
+  render();
+}
+function clearPicked(mod) { S.picked[mod] = []; render(); }
+
+function bulkDelete(mod) {
+  const ids = S.picked[mod] || [];
+  DATA[mod] = DATA[mod].filter(r => !ids.includes(r.id));
+  S.picked[mod] = [];
+  toast(t('rec.deleted'));
+  render();
+}
+function bulkAssign(mod) {
+  // Round-robins through the team. A real assignment rule is a decision for
+  // the founder, not something to invent here.
+  const ids = S.picked[mod] || [];
+  const users = Object.keys(USERS);
+  DATA[mod].forEach((r, i) => { if (ids.includes(r.id)) r.owner = users[i % users.length]; });
+  S.picked[mod] = [];
+  toast(t('rec.saved'));
+  render();
+}
+
+/* ==========================================================================
+   10. SEARCH — one box, every module
+   ========================================================================== */
+
+function search(q) {
+  S.query = q;
+  const box = document.getElementById('q-results');
+  const term = q.trim().toLowerCase();
+  if (!term) { box.innerHTML = ''; return; }
+
+  const hits = [];
+  ['leads', 'accounts', 'contacts', 'deals', 'activities'].forEach(mod => {
+    MODULES[mod].data().forEach(r => {
+      const hay = [L(r.name || r.subject), L(r.contact || ''), r.phone || '', r.email || '', r.licence || '']
+        .join(' ').toLowerCase();
+      if (hay.includes(term)) hits.push({ mod, r });
+    });
+  });
+
+  box.innerHTML = '<div class="tb-results">' + (hits.length
+    ? hits.slice(0, 8).map(h =>
+        '<button class="tb-result" onclick="pickSearch(' + attr(h.mod) + ',' + attr(h.r.id) + ')">' +
+          icon(MODULES[h.mod].icon) +
+          '<span style="flex:1;min-width:0;text-align:start;"><span style="display:block;font-weight:600;font-size:12.5px;">' +
+            esc(L(h.r.name || h.r.subject)) + '</span>' +
+          '<span class="tb-result-sub" style="display:block;">' + esc(t('mod.' + h.mod)) + '</span></span></button>').join('')
+    : '<div class="tb-empty">' + esc(t('searchEmpty')) + '</div>') + '</div>';
+}
+function pickSearch(mod, id) {
+  document.getElementById('q').value = '';
+  document.getElementById('q-results').innerHTML = '';
+  openRecord(mod, id);
+}
+
+/* ==========================================================================
+   11. RECORD EDITING
+   ========================================================================== */
+
+function startEdit(el, path, type) {
+  const [mod, id, field] = path.split('.');
+  const rec = DATA[mod].find(r => r.id === id);
+  if (!rec) return;
+
+  let input;
+  if (type === 'owner') {
+    input = '<select onchange="commitEdit(this,' + attr(path) + ')" onblur="render()">' +
+      Object.keys(USERS).map(u => '<option value="' + u + '"' + (rec.owner === u ? ' selected' : '') + '>' +
+        esc(L(USERS[u].name)) + '</option>').join('') + '</select>';
+  } else if (type === 'district') {
+    input = '<select onchange="commitEdit(this,' + attr(path) + ')" onblur="render()">' +
+      DISTRICTS.map(d => '<option value="' + d.key + '"' + (rec.district === d.key ? ' selected' : '') + '>' +
+        esc(L(d)) + '</option>').join('') + '</select>';
+  } else if (type === 'stage') {
+    input = '<select onchange="commitEdit(this,' + attr(path) + ')" onblur="render()">' +
+      STAGES.map(s => '<option value="' + s.key + '"' + (rec.stage === s.key ? ' selected' : '') + '>' +
+        esc(t('st.' + s.key)) + '</option>').join('') + '</select>';
+  } else if (type === 'priority') {
+    input = '<select onchange="commitEdit(this,' + attr(path) + ')" onblur="render()">' +
+      ['high','normal','low'].map(p => '<option value="' + p + '"' + (rec.priority === p ? ' selected' : '') + '>' +
+        esc(t('pr.' + p)) + '</option>').join('') + '</select>';
+  } else {
+    const raw = typeof rec[field] === 'object' ? L(rec[field]) : rec[field];
+    input = '<input type="' + (type === 'number' ? 'number' : type === 'date' ? 'date' : 'text') + '" ' +
+      'value="' + attr(raw == null ? '' : raw) + '" onkeydown="if(event.key===\'Enter\')this.blur();if(event.key===\'Escape\'){this.dataset.abort=1;this.blur();}" ' +
+      'onblur="commitEdit(this,' + attr(path) + ')">';
+  }
+  el.innerHTML = input;
+  const f = el.querySelector('input,select');
+  f.focus();
+  if (f.select) f.select();
+}
+
+function commitEdit(el, path) {
+  if (el.dataset.abort) { render(); return; }
+  const [mod, id, field] = path.split('.');
+  const rec = DATA[mod].find(r => r.id === id);
+  if (!rec) { render(); return; }
+
+  let v = el.value;
+  if (field === 'value') v = Number(v) || 0;
+  // A bilingual field keeps both scripts: overwriting one language's copy with
+  // the other's text is how a record ends up Latin-only on an Arabic screen.
+  if (typeof rec[field] === 'object' && rec[field] !== null) rec[field] = { ar:v, en:v };
+  else rec[field] = v;
+
+  toast(t('rec.saved'));
+  render();
+}
+
+function addNote(kind, id) {
+  const box = document.getElementById('note-input');
+  const text = (box.value || '').trim();
+  if (!text) return;
+  DATA.activity.push({ id:'E' + (DATA.activity.length + 1), kind, id2:id, type:'note',
+    when:ISO_TODAY, owner:ME, text:{ ar:text, en:text } });
+  touch(kind, id);
+  toast(t('rec.noteAdded'));
+  render();
+}
+function logCall(kind, id) {
+  DATA.activity.push({ id:'E' + (DATA.activity.length + 1), kind, id2:id, type:'call',
+    when:ISO_TODAY, owner:ME,
+    text:{ ar:'مكالمة مسجّلة من قبل ' + L(USERS[ME].name) + '.', en:'Call logged by ' + L(USERS[ME].name) + '.' } });
+  touch(kind, id);
+  toast(t('rec.saved'));
+  render();
+}
+function touch(kind, id) {
+  if (kind !== 'leads') return;
+  const l = DATA.leads.find(r => r.id === id);
+  if (l) l.lastTouch = ISO_TODAY;
+}
+
+function toggleTask(id) {
+  const x = DATA.tasks.find(r => r.id === id);
+  if (x) x.done = !x.done;
+  render();
+}
+function moveDeal(id, stage) {
+  const d = DATA.deals.find(r => r.id === id);
+  if (!d) return;
+  d.stage = stage;
+  toast(t('d.moveTo', { stage:t('st.' + stage) }));
+  render();
+}
+
+/* Converting a lead creates the pharmacy record and carries the deal, the
+   contact and the whole timeline across — losing the history at conversion is
+   the classic CRM own-goal. */
+function convertLead(id) {
+  const l = DATA.leads.find(r => r.id === id);
+  if (!l) return;
+  const newId = 'A' + (DATA.accounts.length + 1) + Date.now().toString().slice(-3);
+
+  DATA.accounts.push({
+    id:newId, name:l.name, licence:'—', district:l.district, owner:l.owner,
+    signedUp:ISO_TODAY, appEmail:l.email, verification:'pending',
+    trialDays:30, trialUsed:0, shifts:0, filled:0, lastShift:null, commission:0, pharmacists:0
+  });
+  DATA.contacts.push({
+    id:'C' + (DATA.contacts.length + 1) + Date.now().toString().slice(-3),
+    name:l.contact, role:{ ar:'مالك', en:'Owner' }, account:newId,
+    phone:l.phone, email:l.email, district:l.district, owner:l.owner
+  });
+  DATA.deals.filter(d => d.lead === id).forEach(d => { d.lead = null; d.account = newId; d.stage = 'trial'; });
+  DATA.activity.filter(e => e.kind === 'leads' && e.id2 === id).forEach(e => { e.kind = 'accounts'; e.id2 = newId; });
+  DATA.tasks.filter(x => x.related && x.related.kind === 'leads' && x.related.id === id)
+            .forEach(x => { x.related = { kind:'accounts', id:newId }; });
+  DATA.leads = DATA.leads.filter(r => r.id !== id);
+
+  toast(t('rec.converted'));
+  openRecord('accounts', newId);
+}
+
+/* ---------- Drag and drop on the board ---------- */
+
+function dragDeal(e, id) {
+  S.drag = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
+  e.currentTarget.classList.add('dragging');
+}
+function dragEnd(e) { e.currentTarget.classList.remove('dragging'); S.drag = null; }
+function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+function dragLeave(e) { e.currentTarget.classList.remove('over'); }
+function dropDeal(e, stage) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  const id = S.drag || e.dataTransfer.getData('text/plain');
+  if (id) moveDeal(id, stage);
+}
+
+/* ---------- Toast ---------- */
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 2600);
+}
+
+document.addEventListener('click', e => {
+  if (S.viewMenu && !e.target.closest('.view-select') && !e.target.closest('.view-menu')) {
+    S.viewMenu = null; render();
+  }
+  if (!e.target.closest('.tb-search')) {
+    const box = document.getElementById('q-results');
+    if (box) box.innerHTML = '';
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (S.modal) closeModal();
+    else if (S.record) closeRecord();
+  }
+});
+
+/* ==========================================================================
+   12. CREATE FORMS
+   Validation is real: required fields, an Iraqi phone shape, and a licence
+   number that has to be unique — the same rule the database enforces, because
+   two pharmacies sharing a licence is a data problem you only find later.
+   ========================================================================== */
+
+const IQ_PHONE = /^07[3-9]\d{8}$/;
+
+const FORMS = {
+  leads: { title:'n.newLead', fields:[
+    { k:'name',     l:'c.name',     req:true, bi:true },
+    { k:'contact',  l:'c.company',  req:true, bi:true },
+    { k:'phone',    l:'c.phone',    req:true, phone:true, ltr:true },
+    { k:'email',    l:'c.email',    ltr:true },
+    { k:'district', l:'c.district', req:true, opts:() => DISTRICTS.map(d => ({ v:d.key, n:L(d) })) },
+    { k:'source',   l:'c.source',   req:true, opts:() => SOURCES.map(s => ({ v:s, n:t('src.' + s) })) },
+    { k:'rating',   l:'c.rating',   opts:() => ['hot','warm','cold'].map(r => ({ v:r, n:t('rt.' + r) })) },
+    { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  ]},
+  accounts: { title:'n.newAccount', fields:[
+    { k:'name',     l:'c.name',     req:true, bi:true },
+    { k:'licence',  l:'c.licence',  req:true, unique:'licence', ltr:true },
+    { k:'district', l:'c.district', req:true, opts:() => DISTRICTS.map(d => ({ v:d.key, n:L(d) })) },
+    { k:'appEmail', l:'c.email',    req:true, ltr:true },
+    { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  ]},
+  contacts: { title:'n.newContact', fields:[
+    { k:'name',     l:'c.name',     req:true, bi:true },
+    { k:'role',     l:'c.role',     bi:true },
+    { k:'account',  l:'c.account',  req:true, opts:() => DATA.accounts.map(a => ({ v:a.id, n:L(a.name) })) },
+    { k:'phone',    l:'c.phone',    req:true, phone:true, ltr:true },
+    { k:'email',    l:'c.email',    ltr:true },
+    { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  ]},
+  deals: { title:'n.newDeal', fields:[
+    { k:'name',     l:'c.deal',      req:true, bi:true },
+    { k:'stage',    l:'c.stage',     req:true, opts:() => STAGES.map(s => ({ v:s.key, n:t('st.' + s.key) })) },
+    { k:'value',    l:'c.value',     req:true, num:true, hint:'iqd' },
+    { k:'close',    l:'c.closeDate', req:true, date:true },
+    { k:'district', l:'c.district',  req:true, opts:() => DISTRICTS.map(d => ({ v:d.key, n:L(d) })) },
+    { k:'owner',    l:'c.owner',     opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  ]},
+  activities: { title:'n.newTask', fields:[
+    { k:'subject',  l:'c.subject',  req:true, bi:true },
+    { k:'type',     l:'c.type',     req:true, opts:() => ['call','visit','followup','demo'].map(v => ({ v, n:t('ty.' + v) })) },
+    { k:'due',      l:'c.due',      req:true, date:true },
+    { k:'priority', l:'c.priority', opts:() => ['high','normal','low'].map(v => ({ v, n:t('pr.' + v) })) },
+    { k:'owner',    l:'c.owner',    opts:() => Object.keys(USERS).map(u => ({ v:u, n:L(USERS[u].name) })) }
+  ]}
+};
+
+function openNew(mod, preset) {
+  S.modal = { kind:'new', mod, errors:{}, values:{}, preset:preset || null };
+  renderModal();
+}
+function openNewTask(kind, id) {
+  S.modal = { kind:'new', mod:'activities', errors:{}, values:{}, preset:{ related:{ kind, id } } };
+  renderModal();
+}
+
+/* Read every control into S.modal.values before anything can re-render. A form
+   that empties itself because one field was wrong is the fastest way to make
+   someone stop using a CRM. */
+function captureForm() {
+  const F = FORMS[S.modal.mod];
+  S.modal.values = S.modal.values || {};
+  F.fields.forEach(f => {
+    const el = document.getElementById('f-' + f.k);
+    if (el) S.modal.values[f.k] = el.value;
+  });
+}
+function closeModal() { S.modal = null; renderModal(); }
+
+function renderModal() {
+  const root = document.getElementById('overlay');
+  if (!S.modal) { root.innerHTML = ''; return; }
+
+  const F = FORMS[S.modal.mod];
+  const errs = S.modal.errors || {};
+  const vals = S.modal.values || {};
+
+  const body = F.fields.map(f => {
+    const id = 'f-' + f.k;
+    const v = vals[f.k] == null ? '' : String(vals[f.k]);
+    let control;
+    if (f.opts) {
+      control = '<select id="' + id + '"' + (errs[f.k] ? ' class="bad"' : '') + '>' +
+        (f.req ? '' : '<option value=""></option>') +
+        f.opts().map(o => '<option value="' + esc(o.v) + '"' + (String(o.v) === v ? ' selected' : '') + '>' +
+          esc(o.n) + '</option>').join('') + '</select>';
+    } else {
+      control = '<input id="' + id + '" type="' + (f.date ? 'date' : f.num ? 'number' : 'text') + '"' +
+        ' value="' + esc(v) + '"' +
+        (f.ltr ? ' dir="ltr" class="figure' + (errs[f.k] ? ' bad' : '') + '"' : (errs[f.k] ? ' class="bad"' : '')) + '>';
+    }
+    return '<div class="fld"><label for="' + id + '">' + esc(t(f.l)) +
+      (f.req ? ' <span class="req">*</span>' : '') + '</label>' + control +
+      (f.hint ? '<div class="hint">' + esc(t(f.hint)) + '</div>' : '') +
+      (errs[f.k] ? '<div class="err">' + esc(errs[f.k]) + '</div>' : '') + '</div>';
+  }).join('');
+
+  root.innerHTML = '<div class="scrim center" onclick="if(event.target===this)closeModal()">' +
+    '<div class="modal" role="dialog" aria-modal="true">' +
+      '<div class="modal-h"><span class="modal-t">' + esc(t(F.title)) + '</span>' +
+        '<span class="spacer" style="flex:1"></span>' +
+        '<button class="btn-icon" onclick="closeModal()" aria-label="' + esc(t('a.close')) + '">' + icon('x') + '</button></div>' +
+      '<div class="modal-b"><div class="form-grid two">' + body + '</div></div>' +
+      '<div class="modal-f"><button class="btn" onclick="closeModal()">' + esc(t('a.cancel')) + '</button>' +
+        '<button class="btn primary" onclick="submitNew()">' + esc(t('a.save')) + '</button></div>' +
+    '</div></div>';
+}
+
+function submitNew() {
+  captureForm();
+  const mod = S.modal.mod;
+  const F = FORMS[mod];
+  const rec = {};
+  const errors = {};
+
+  F.fields.forEach(f => {
+    let v = (S.modal.values[f.k] || '').trim();
+
+    if (f.req && !v) { errors[f.k] = t('n.required'); return; }
+    if (f.phone && v && !IQ_PHONE.test(v)) { errors[f.k] = t('n.badPhone'); return; }
+    if (f.unique && v && DATA[mod].some(r => String(r[f.unique]).toLowerCase() === v.toLowerCase())) {
+      errors[f.k] = t('n.dupLicence'); return;
+    }
+    if (f.num) v = Number(v) || 0;
+    // A name typed in one language is stored for both rather than left blank in
+    // the other — a record with an empty Arabic name renders as "—" on the
+    // screen most of this team actually uses.
+    rec[f.k] = f.bi ? { ar:v, en:v } : v;
+  });
+
+  if (Object.keys(errors).length) { S.modal.errors = errors; renderModal(); return; }
+
+  const prefix = { leads:'L', accounts:'A', contacts:'C', deals:'D', activities:'T' }[mod];
+  rec.id = prefix + Date.now().toString().slice(-6);
+  if (!rec.owner) rec.owner = ME;
+
+  if (mod === 'leads') { rec.created = ISO_TODAY; rec.lastTouch = ISO_TODAY; rec.rating = rec.rating || 'warm'; }
+  if (mod === 'accounts') Object.assign(rec, {
+    signedUp:ISO_TODAY, verification:'pending', trialDays:30, trialUsed:0,
+    shifts:0, filled:0, lastShift:null, commission:0, pharmacists:0
+  });
+  if (mod === 'deals') { rec.lead = null; rec.account = null; }
+  if (mod === 'activities') {
+    rec.done = false;
+    rec.priority = rec.priority || 'normal';
+    if (S.modal.preset && S.modal.preset.related) rec.related = S.modal.preset.related;
+  }
+
+  DATA[mod].push(rec);
+  S.modal = null;
+  toast(t('n.created'));
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

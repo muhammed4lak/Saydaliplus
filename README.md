@@ -66,6 +66,35 @@ the rules hold — the payout gate, the logbook's 80-character and attendance
 gates, forward-fill, the assistant never applying its own suggestion, and no
 horizontal scroll at 320px.
 
+### The CRM
+
+`crm/saydali-crm.html` is the other half of the same product, also one openable
+file: what the team in Baghdad sees, rather than what a pharmacy or a pharmacist
+sees. Modelled on Zoho CRM — module tabs, saved views, a filter rail, record
+pages with a timeline, a kanban pipeline, reports — in Saydali+'s palette, so
+the two read as one company's software.
+
+It exists because of the brief's own premise. Pharmacist supply is abundant and
+pharmacy demand is scarce, so the work that decides whether this business exists
+is pharmacy acquisition and activation. The pipeline stages are therefore not
+generic sales stages but the four things that have to happen to a pharmacy, and
+the module earns its keep on the two places that go wrong quietly:
+
+- **Verified, never posted.** A pharmacy that cleared Syndicate review, sat
+  through most of its free trial, and has still not posted a single shift. It
+  earns nothing and churns without ever complaining. It is a saved view, a home
+  KPI, and a red chip on the record.
+- **Trial ending.** The 30-day clock runs from each account's own signup date,
+  so it expires quietly, one pharmacy at a time.
+
+A pharmacy record reads its platform state — verification, trial day, shifts
+posted, fill rate, commission — and links straight through to that account in
+the app. The admin account in the app links back.
+
+```bash
+npm run check:crm     # drives it in a real browser
+```
+
 ### Policy tests
 
 RLS is the security boundary, so it is tested against a real database rather than
@@ -214,6 +243,7 @@ panels left.
 | Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
 | PWA | Manifest, generated icons, and a deliberately conservative service worker |
 | Single-file build | `demo/saydali-plus.html` — the same screens with stubbed data, in one openable file |
+| CRM | `crm/saydali-crm.html` — the operator's side: leads, pharmacies, contacts, pipeline, tasks, reports |
 
 **On the service worker.** It exists for installability and a civil offline
 notice, not offline browsing. The obvious "cache pages for speed" worker would

@@ -2370,6 +2370,11 @@ function render() {
 function headerActions() {
   const unread = unreadCount();
   return '<div class="header-actions">' +
+    /* The operator's half of the product. Only the platform's own reviewer
+       sees it — a pharmacy has no business in the CRM that tracks it. */
+    (S.role === 'admin'
+      ? '<button class="lang-btn" onclick="openCrm()" title="CRM">CRM</button>'
+      : '') +
     '<button class="lang-btn" onclick="setLang(\'' + (lang === 'ar' ? 'en' : 'ar') + '\')">' +
       (lang === 'ar' ? 'EN' : 'ع') + '</button>' +
     '<button class="icon-btn" onclick="goto(\'notifications\')" aria-label="' + esc(t('n.title')) + '">' +
@@ -2586,6 +2591,7 @@ function renderModal() {
    ========================================================================== */
 
 function setLang(l){ lang = l; render(); }
+function openCrm(){ window.open('../crm/saydali-crm.html', '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
 
