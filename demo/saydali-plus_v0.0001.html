@@ -2657,7 +2657,11 @@ function renderModal() {
    ========================================================================== */
 
 function setLang(l){ lang = l; render(); }
-function openCrm(){ window.open('../crm/saydali-crm.html', '_blank', 'noopener'); }
+/* The sibling build. Files carry their version in the name, so this is the one
+   thing a version bump can silently break — which is why demo/check.mjs
+   asserts the file named here exists on disk. Bump the CRM, change this line. */
+const PEER_CRM = '../crm/saydali-crm_v0.0001.html';
+function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
 

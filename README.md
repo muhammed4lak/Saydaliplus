@@ -36,7 +36,7 @@ npm run db:types   # regenerate src/lib/supabase/database.types.ts from the sche
 
 ### The single-file app
 
-`demo/saydali-plus.html` is the whole front end in one file — open it in a
+`demo/saydali-plus_v*.html` is the whole front end in one file — open it in a
 browser, no server and no build. It fills the window, you sign in as an account
 to get that account's app, and every screen in every navigation is a screen.
 The sign-in page lists the five seeded accounts; picking one is how you become
@@ -68,7 +68,7 @@ horizontal scroll at 320px.
 
 ### The CRM
 
-`crm/saydali-crm.html` is the other half of the same product, also one openable
+`crm/saydali-crm_v*.html` is the other half of the same product, also one openable
 file: what the team in Baghdad sees, rather than what a pharmacy or a pharmacist
 sees. Modelled on Zoho CRM — module tabs, saved views, a filter rail, record
 pages with a timeline, bulk actions, CSV import — in Saydali+'s palette, so the
@@ -142,6 +142,31 @@ student, a platform admin — checking what each can and cannot see or do.
 `harness.sql` supplies the small part of Supabase the schema depends on
 (`auth.users`, `auth.uid()`, the three roles), so this needs no Supabase
 installation.
+
+---
+
+## Versions
+
+Both single-file builds carry their version in the filename — `App_v0.0001`,
+`CRM_v0.0001` — because these files get emailed, opened from a desktop and
+shown on somebody else's laptop, where a filename is the only thing that says
+which one you are looking at. Each file also states its own build on screen,
+and a check asserts the two agree: a file called `_v0.0002` that still says
+`v0.0001` inside fails.
+
+Bumping a version renames the file, which breaks exactly one thing — the link
+between the two builds, since each opens the other by name. So each holds a
+`PEER_APP` / `PEER_CRM` constant, and each check asserts that the file it names
+exists on disk. **Bump one build, change that line in the other.** Forgetting
+makes a test fail rather than a button do nothing.
+
+The checks find the highest-numbered build in their directory themselves, so
+they never need updating for a rename:
+
+```bash
+npm run check:app     # newest demo/saydali-plus_v*.html
+npm run check:crm     # newest crm/saydali-crm_v*.html
+```
 
 ---
 
@@ -274,8 +299,8 @@ panels left.
 | Notifications | Raised by database triggers, rendered in the reader's current language |
 | Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
 | PWA | Manifest, generated icons, and a deliberately conservative service worker |
-| Single-file build | `demo/saydali-plus.html` — the same screens with stubbed data, in one openable file |
-| CRM | `crm/saydali-crm.html` — the operator's side: orders, users, pharmacies, companies, universities, the Syndicate roster, drugs |
+| Single-file build | `demo/saydali-plus_v*.html` — the same screens with stubbed data, in one openable file |
+| CRM | `crm/saydali-crm_v*.html` — the operator's side: orders, users, pharmacies, companies, universities, the Syndicate roster, drugs |
 
 **On the service worker.** It exists for installability and a civil offline
 notice, not offline browsing. The obvious "cache pages for speed" worker would

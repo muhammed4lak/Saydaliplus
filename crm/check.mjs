@@ -1,5 +1,5 @@
 /**
- * Drives crm/saydali-crm.html in a real browser.
+ * Drives the newest crm/saydali-crm_v*.html in a real browser.
  *
  * One file, no build step, no compiler: a typo inside concatenated HTML renders
  * an empty panel rather than failing anything. So the check is behavioural —
@@ -10,12 +10,28 @@
  *   node crm/check.mjs
  */
 import { chromium } from 'playwright';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const file = join(dirname(fileURLToPath(import.meta.url)), 'saydali-crm.html');
+
+/* Files carry their version in the name, so this picks the highest-numbered
+   build in the directory rather than a name baked into the test — otherwise
+   every bump silently tests a stale file, or fails for the wrong reason. */
+function newestBuild(dir, prefix) {
+  const found = readdirSync(dir)
+    .filter(f => f.startsWith(prefix) && f.endsWith('.html'))
+    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)/) || [0, 0, 0]).slice(1).map(Number) }))
+    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]));
+  if (!found.length) throw new Error(`no ${prefix}*.html in ${dir}`);
+  return found[0].f;
+}
+
+const here = dirname(fileURLToPath(import.meta.url));
+const build = newestBuild(here, 'saydali-crm_v');
+const file = join(here, build);
 const url = 'file://' + file;
+console.log('build: ' + build);
 const PREINSTALLED = '/opt/pw-browsers/chromium';
 const launch = existsSync(PREINSTALLED) ? { executablePath: PREINSTALLED } : {};
 
@@ -38,6 +54,16 @@ const tab = async (p, k) => { await p.evaluate(x => goTab(x), k); await p.waitFo
 const MODS = ['orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs'];
 
 const p = await open();
+
+console.log('\nversioning');
+ok('the file states the build its name claims',
+   (readFileSync(file, 'utf8').match(/const VERSION = '([^']+)'/) || [])[1]
+     === 'CRM_v' + (build.match(/_v([\d.]+)\.html$/) || [])[1]);
+{
+  const peer = (readFileSync(file, 'utf8').match(/const PEER_APP = '([^']+)'/) || [])[1];
+  ok(`the app link points at a file that exists (${peer})`,
+     !!peer && existsSync(join(here, peer)));
+}
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');

@@ -18,7 +18,7 @@
   really called صيدلية الرحمة, a drug really has an Arabic name — and those are
   fields on the record, not translations of the interface.
 
-  WHAT THIS IS FOR. The app at demo/saydali-plus.html is what a pharmacy and a
+  WHAT THIS IS FOR. The app in demo/ is what a pharmacy and a
   pharmacist see. This is what the team in Baghdad sees: the pharmacies not yet
   signed up, the ones signed up but not yet posting, the trials about to expire,
   and who owes whom a phone call. The brief's premise is that pharmacist supply
@@ -2640,8 +2640,12 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 
 /* The two halves are one product: this hands off to the app, and an account
    row hands off to that pharmacy's own account inside it. */
+/* The sibling build. Files carry their version in the name, so this is the one
+   thing a version bump can silently break — which is why crm/check.mjs asserts
+   the file named here exists on disk. Bump the app, change this line. */
+const PEER_APP = '../demo/saydali-plus_v0.0001.html';
 function openApp(asEmail) {
-  const url = '../demo/saydali-plus.html' + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
+  const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
 }
 

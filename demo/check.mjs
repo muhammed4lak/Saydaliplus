@@ -1,5 +1,5 @@
 /**
- * Drives demo/saydali-plus.html in a real browser.
+ * Drives the newest demo/saydali-plus_v*.html in a real browser.
  *
  * The single-file app has no build step and no test runner, which makes it the
  * easiest thing in the repository to break silently: a typo inside a string of
@@ -11,12 +11,28 @@
  *   node demo/check.mjs
  */
 import { chromium } from 'playwright';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const file = join(dirname(fileURLToPath(import.meta.url)), 'saydali-plus.html');
+
+/* Files carry their version in the name, so this picks the highest-numbered
+   build in the directory rather than a name baked into the test — otherwise
+   every bump silently tests a stale file, or fails for the wrong reason. */
+function newestBuild(dir, prefix) {
+  const found = readdirSync(dir)
+    .filter(f => f.startsWith(prefix) && f.endsWith('.html'))
+    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)/) || [0, 0, 0]).slice(1).map(Number) }))
+    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]));
+  if (!found.length) throw new Error(`no ${prefix}*.html in ${dir}`);
+  return found[0].f;
+}
+
+const here = dirname(fileURLToPath(import.meta.url));
+const build = newestBuild(here, 'saydali-plus_v');
+const file = join(here, build);
 const url = 'file://' + file;
+console.log('build: ' + build);
 
 // Sandboxes here ship one Chromium at a fixed path; everywhere else Playwright
 // finds its own.
@@ -49,6 +65,17 @@ async function signOut(p) {
 }
 
 const d = await open(1440, 900);
+
+console.log('\nversioning');
+ok('the file states the build its name claims',
+   (readFileSync(file, 'utf8').match(/const VERSION = '([^']+)'/) || [])[1]
+     === 'App_v' + (build.match(/_v([\d.]+)\.html$/) || [])[1]);
+{
+  // The cross-link is the one thing a rename can break silently.
+  const peer = (readFileSync(file, 'utf8').match(/const PEER_CRM = '([^']+)'/) || [])[1];
+  ok(`the CRM link points at a file that exists (${peer})`,
+     !!peer && existsSync(join(here, peer)));
+}
 
 console.log('\nsign-in');
 ok('the sign-in page is what you land on', await d.locator('#auth').isVisible());
