@@ -34,19 +34,37 @@ supabase db reset
 npm run db:types   # regenerate src/lib/supabase/database.types.ts from the schema
 ```
 
-### The demo
+### The single-file app
 
-`demo/saydali-plus-demo.html` is a single self-contained file — open it in a
-browser, no server and no build. It reproduces the screens, the design system
-and the arithmetic so the product can be shown to a pharmacy or an investor
-without standing anything up. Switch language, switch layout, switch role.
+`demo/saydali-plus.html` is the whole front end in one file — open it in a
+browser, no server and no build. It fills the window, you sign in as an account
+to get that account's app, and every screen in every navigation is a screen.
+The sign-in page lists the five seeded accounts; picking one is how you become
+that person, because a role switcher floating over the app is a thing a
+prototype has and a product does not.
 
-It is a demo, not the app: there is no database behind it, and therefore none
-of the row-level security that is the actual security model. Two things in it
-are real rather than mocked, because they are the things worth checking — the
-fee engine is a port of `src/config/fees.ts` and the shift-hours function a
-port of `src/lib/time.ts`, so the numbers it shows are the numbers the product
-charges. Screens that are not built in the real app say so there too.
+It is the front end with its data stubbed, not the whole product. What you can
+see and do here you can see and do in the real app; what stops you doing it to
+someone *else's* data is row-level security, which cannot exist in a file you
+open from disk. That half lives in `supabase/` and is tested there.
+
+Two things in it are real rather than mocked, because they are the things worth
+checking in front of a pharmacy: the fee engine is a port of `src/config/fees.ts`
+and the shift-hours function a port of `src/lib/time.ts`, so the numbers it shows
+are the numbers the product charges — including the floor falling on the
+pharmacy.
+
+```bash
+npm run check:app     # drives it in a real browser
+```
+
+There is no build step and no compiler over that file, which makes it the
+easiest thing here to break silently — a typo inside a string of concatenated
+HTML renders an empty screen rather than failing anything. So the check is
+behavioural: sign in as each of the five accounts, walk every screen, and assert
+the rules hold — the payout gate, the logbook's 80-character and attendance
+gates, forward-fill, the assistant never applying its own suggestion, and no
+horizontal scroll at 320px.
 
 ### Policy tests
 
@@ -195,6 +213,7 @@ panels left.
 | Notifications | Raised by database triggers, rendered in the reader's current language |
 | Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
 | PWA | Manifest, generated icons, and a deliberately conservative service worker |
+| Single-file build | `demo/saydali-plus.html` — the same screens with stubbed data, in one openable file |
 
 **On the service worker.** It exists for installability and a civil offline
 notice, not offline browsing. The obvious "cache pages for speed" worker would
