@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0001">
+<meta name="version" content="CRM_v0.0002">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -18,7 +18,7 @@
   really called صيدلية الرحمة, a drug really has an Arabic name — and those are
   fields on the record, not translations of the interface.
 
-  WHAT THIS IS FOR. The app in demo/ is what a pharmacy and a
+  WHAT THIS IS FOR. The app at demo/saydali-plus.html is what a pharmacy and a
   pharmacist see. This is what the team in Baghdad sees: the pharmacies not yet
   signed up, the ones signed up but not yet posting, the trials about to expire,
   and who owes whom a phone call. The brief's premise is that pharmacist supply
@@ -482,6 +482,62 @@
     letter-spacing:.04em; white-space:nowrap;
   }
 
+  /* ---------- Dashboard tiles ---------- */
+  .tiles{ display:grid; gap:14px; grid-template-columns:repeat(12, 1fr); align-items:start; }
+  .tile{ grid-column:span 12; }
+  @media (min-width:760px){
+    .tile.w-s{ grid-column:span 6; }
+    .tile.w-m{ grid-column:span 6; }
+    .tile.w-l{ grid-column:span 12; }
+  }
+  @media (min-width:1180px){
+    .tile.w-s{ grid-column:span 3; }
+    .tile.w-m{ grid-column:span 6; }
+    .tile.w-l{ grid-column:span 12; }
+  }
+  .tile-tools{ display:flex; align-items:center; gap:5px; }
+  .btn-icon.sm{ width:24px; height:24px; border-radius:6px; }
+  .btn-icon.sm .ico{ width:12px; height:12px; }
+  .btn-icon.sm:disabled{ opacity:.35; cursor:not-allowed; }
+  .btn-icon.sm.danger{ color:var(--critical); }
+  .tile-size{
+    height:24px; border:1px solid var(--border); border-radius:6px; font-size:11px;
+    padding:0 4px; background:var(--card); color:var(--ink-soft);
+  }
+
+  /* ---------- Report editor ---------- */
+  .rep-edit{ display:grid; gap:16px; padding:16px 18px 30px; align-items:start; }
+  @media (min-width:1080px){ .rep-edit{ grid-template-columns:1fr 260px; } }
+  .rep-main{ min-width:0; }
+  textarea.sql{
+    font-family:var(--font-mono); font-size:12.5px; line-height:1.65; min-height:150px;
+    tab-size:2; white-space:pre; overflow-x:auto;
+  }
+  .rep-result{
+    margin-top:16px; background:var(--card); border:1px solid var(--border);
+    border-radius:11px; padding:14px;
+  }
+  .rep-meta{
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-faint);
+    margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border-soft);
+  }
+  .rep-schema{
+    background:var(--card); border:1px solid var(--border); border-radius:11px;
+    padding:13px; max-height:70vh; overflow-y:auto;
+  }
+  .schema-t{ margin-bottom:11px; }
+  .schema-name{
+    font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--indigo);
+    display:block; text-align:start; margin-bottom:3px;
+  }
+  .schema-name:hover{ text-decoration:underline; }
+  .schema-cols{ display:flex; flex-wrap:wrap; gap:3px; }
+  .schema-col{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint);
+    padding:1px 5px; border-radius:4px; background:var(--mist);
+  }
+  .schema-col:hover{ background:var(--indigo-tint); color:var(--indigo); }
+
   /* ---------- Module notes & the importer ---------- */
   .mod-note{
     display:flex; gap:9px; align-items:flex-start; padding:10px 18px; font-size:12px; line-height:1.65;
@@ -611,7 +667,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0001';
+const VERSION = 'CRM_v0.0002';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -730,8 +786,8 @@ function relDays(iso) {
 Object.assign(STRINGS, {
   'mod.users':'Users','mod.orders':'Orders','mod.pharmacies':'Pharmacies',
   'mod.companies':'Companies','mod.universities':'Universities','mod.syndicate':'Syndicate roster','mod.drugs':'Drugs',
-  'ut.pharmacist':'Pharmacists','ut.pharmacy':'Pharmacies','ut.student':'Students',
-  'ut1.pharmacist':'Pharmacist','ut1.pharmacy':'Pharmacy','ut1.student':'Student',
+  'ut.pharmacist':'Pharmacists','ut.owner':'Pharmacy owners','ut.student':'Students',
+  'ut1.pharmacist':'Pharmacist','ut1.owner':'Pharmacy owner','ut1.student':'Student',
   'v.allUsers':'All users','v.pendingUsers':'Awaiting verification','v.noMatch':'No roster match',
   'ot.shift':'Pharmacist shift','ot.training':'Student training',
   'os.open':'Open','os.assigned':'Assigned','os.in_progress':'In progress','os.completed':'Completed','os.cancelled':'Cancelled',
@@ -784,7 +840,21 @@ Object.assign(STRINGS, {
   'n.newUser':'New user','n.newOrder':'New order','n.newPharmacy':'New pharmacy',
   'n.newCompany':'New company','n.newUniversity':'New university','n.newDrug':'New drug',
   'n.duplicate':'“{v}” is already on record.',
-  'a.verify':'Verify account','c.nameAr':'Arabic name','c.platformAccount':'Platform account','pr.address':'Address','app.noRecord':'No record yet',
+  'a.verify':'Verify account','c.nameAr':'Arabic name','c.platformAccount':'Platform account',
+  'c.ownsPharmacy':'Owns','mod.reports':'Reports',
+  'rep.new':'New report','rep.name':'Report name','rep.viz':'Shown as','rep.sql':'SQL',
+  'rep.run':'Run','rep.rows':'{n} rows','rep.noRows':'No rows.','rep.schema':'Tables',
+  'rep.schemaNote':'Click a table or column to drop its name into the query.',
+  'rep.subsetNote':'SELECT … FROM … [JOIN … ON a.x = b.y] [WHERE …] [GROUP BY …] [ORDER BY …] [LIMIT n]. Aggregates: COUNT, SUM, AVG, MIN, MAX. Subqueries, UNION, HAVING and OUTER JOIN are refused by name rather than ignored.',
+  'rep.pin':'Add to dashboard',
+  'viz.number':'Single number','viz.bar':'Bar chart','viz.line':'Line chart','viz.table':'Table',
+  'dash.customise':'Customise','dash.done':'Done','dash.add':'Add a tile','dash.reset':'Reset to default',
+  'dash.addNote':'Every tile is a saved report. The dashboard holds no numbers of its own — change the query and the tile changes with it.',
+  'dash.editNote':'Reorder, resize or remove tiles. Nothing here is a number the Reports module could not reproduce.',
+  'dash.onBoard':'On the dashboard','dash.added':'Added to the dashboard.',
+  'dash.source':'Source','dash.empty':'No tiles yet.','dash.missingReport':'The report this tile named ({id}) no longer exists.',
+  'dash.moveUp':'Move earlier','dash.moveDown':'Move later',
+  'dash.ws':'Small','dash.wm':'Medium','dash.wl':'Wide','pr.address':'Address','app.noRecord':'No record yet',
   'post.start':'From','post.end':'To',
   'sy.hintNo':'Matched against the Syndicate roster automatically; a person still decides.',
   'uni.hintDomain':'The university email domain — it is what makes student verification automatic.',
@@ -822,7 +892,11 @@ const districtName = key => { const d = DISTRICTS.find(x => x.key === key); retu
 
 /* The three account types the platform has, and nothing else. They are the
    segmentation the Users module is built on. */
-const USER_TYPES = ['pharmacist', 'pharmacy', 'student'];
+/* Three account types. A pharmacy owner is a pharmacist who also holds a
+   pharmacy licence — one person, two roles — so the type is "owner" and the
+   record carries BOTH a Syndicate number and a link to the pharmacy created
+   with their application. */
+const USER_TYPES = ['pharmacist', 'owner', 'student'];
 
 /* Order types. Two for now — the shift that pays and the placement that does
    not — but the module is segmented by this field rather than hard-wired to
@@ -864,22 +938,33 @@ const DATA = {
       phone:'07704445566', email:'zahraa.k@example.com', district:'mansour', verification:'pending',
       joined:'2026-09-09', syndicateNo:'IQ-PH-014772', gradYear:2023, pharmacy:null,
       university:null, orders:0, rating:null, reliability:null, owner:'u3' },
-    { id:'U5', type:'pharmacy', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'},
+    /* Owners are people, not premises: the account is the pharmacist who owns
+       the shop, with their own Syndicate number, and `pharmacy` points at the
+       licence created alongside their application. */
+    { id:'U5', type:'owner', name:{ar:'رحمة الجبوري', en:'Rahma Al-Jubouri'},
       phone:'07801112233', email:'rahma@example.com', district:'karrada', verification:'verified',
-      joined:'2026-08-14', syndicateNo:null, gradYear:null, pharmacy:'P1',
-      university:null, orders:11, rating:4.8, reliability:null, owner:'u1' },
-    { id:'U6', type:'pharmacy', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'},
+      joined:'2026-08-14', syndicateNo:'IQ-PH-005210', gradYear:2014, pharmacy:'P1',
+      university:null, orders:11, rating:4.8, reliability:94, owner:'u1' },
+    { id:'U6', type:'owner', name:{ar:'كرار الموسوي', en:'Karrar Al-Mousawi'},
       phone:'07802223344', email:'furat@example.com', district:'jadriya', verification:'verified',
-      joined:'2026-07-02', syndicateNo:null, gradYear:null, pharmacy:'P2',
-      university:null, orders:24, rating:4.6, reliability:null, owner:'u1' },
-    { id:'U7', type:'pharmacy', name:{ar:'صيدلية النور', en:'Al-Noor Pharmacy'},
+      joined:'2026-07-02', syndicateNo:'IQ-PH-002884', gradYear:2010, pharmacy:'P2',
+      university:null, orders:24, rating:4.6, reliability:97, owner:'u1' },
+    { id:'U7', type:'owner', name:{ar:'إيمان الربيعي', en:'Iman Al-Rubaie'},
       phone:'07805556677', email:'noor.ph@example.com', district:'karrada', verification:'verified',
-      joined:'2026-08-18', syndicateNo:null, gradYear:null, pharmacy:'P4',
+      joined:'2026-08-18', syndicateNo:'IQ-PH-003310', gradYear:2012, pharmacy:'P4',
       university:null, orders:0, rating:null, reliability:null, owner:'u2' },
-    { id:'U8', type:'pharmacy', name:{ar:'صيدلية الأمل', en:'Al-Amal Pharmacy'},
+    { id:'U8', type:'owner', name:{ar:'ليث الخفاجي', en:'Laith Al-Khafaji'},
       phone:'07806667788', email:'amal@example.com', district:'zayouna', verification:'pending',
-      joined:'2026-08-25', syndicateNo:null, gradYear:null, pharmacy:'P3',
+      joined:'2026-08-25', syndicateNo:'IQ-PH-013940', gradYear:2022, pharmacy:'P3',
       university:null, orders:0, rating:null, reliability:null, owner:'u2' },
+    { id:'U12', type:'owner', name:{ar:'باسم الحلفي', en:'Basim Al-Halfi'},
+      phone:'07806667788', email:'hikma@example.com', district:'adhamiya', verification:'verified',
+      joined:'2026-06-11', syndicateNo:'IQ-PH-001177', gradYear:2008, pharmacy:'P5',
+      university:null, orders:7, rating:4.1, reliability:82, owner:'u3' },
+    { id:'U13', type:'owner', name:{ar:'تبارك الجنابي', en:'Tabarak Al-Janabi'},
+      phone:'07807778899', email:'mansourph@example.com', district:'mansour', verification:'verified',
+      joined:'2026-09-04', syndicateNo:'IQ-PH-009004', gradYear:2020, pharmacy:'P6',
+      university:null, orders:3, rating:5.0, reliability:100, owner:'u1' },
     { id:'U9', type:'student', name:{ar:'زينب التميمي', en:'Zainab Al-Tamimi'},
       phone:'07709998877', email:'zainab@uobaghdad.edu.iq', district:'karrada', verification:'verified',
       joined:'2026-06-10', syndicateNo:null, gradYear:2028, pharmacy:null,
@@ -914,11 +999,11 @@ const DATA = {
       orders:0, filled:0, lastOrder:null, commission:0, owner:'u2' },
     { id:'P5', name:{ar:'صيدلية الحكمة', en:'Al-Hikma Pharmacy'}, licence:'IQ-PHM-000418',
       district:'adhamiya', address:{ar:'الأعظمية، شارع عمر بن عبد العزيز', en:'Adhamiya, Omar bin Abdulaziz Street'},
-      user:null, verification:'verified', signedUp:'2026-06-11', trialDays:30, trialUsed:30,
+      user:'U12', verification:'verified', signedUp:'2026-06-11', trialDays:30, trialUsed:30,
       orders:7, filled:5, lastOrder:'2026-08-02', commission:0, owner:'u3' },
     { id:'P6', name:{ar:'صيدلية المنصور', en:'Mansour Pharmacy'}, licence:'IQ-PHM-000512',
       district:'mansour', address:{ar:'المنصور، شارع الأميرات', en:'Mansour, Princesses Street'},
-      user:null, verification:'verified', signedUp:'2026-09-04', trialDays:30, trialUsed:7,
+      user:'U13', verification:'verified', signedUp:'2026-09-04', trialDays:30, trialUsed:7,
       orders:3, filled:3, lastOrder:'2026-09-11', commission:9800, owner:'u1' }
   ],
 
@@ -1431,7 +1516,10 @@ function namesAgree(a, b) {
   return hits >= Math.min(2, short.length) && hits / short.length >= 0.6;
 }
 function syndicateMatch(user) {
-  if (user.type !== 'pharmacist' || !user.syndicateNo) return { key:'notLinked', chip:'chip-mute', row:null };
+  /* Owners are pharmacists with a shop, so they are matched against the roster
+     on the same terms — their licence rests on the same registration. */
+  const isPharmacist = user.type === 'pharmacist' || user.type === 'owner';
+  if (!isPharmacist || !user.syndicateNo) return { key:'notLinked', chip:'chip-mute', row:null };
   const row = DATA.syndicate.find(r => r.no.toLowerCase() === String(user.syndicateNo).toLowerCase());
   if (!row) return { key:'unmatched', chip:'chip-bad', ico:'alert', row:null };
   if (!namesAgree(L(user.name), L(row.name))) return { key:'nameDiff', chip:'chip-warn', ico:'alert', row };
@@ -1528,7 +1616,7 @@ const MODULES = {
     views:{
       all:        { label:'v.allUsers',      fn:() => true },
       pharmacist: { label:'ut.pharmacist',   fn:u => u.type === 'pharmacist' },
-      pharmacy:   { label:'ut.pharmacy',     fn:u => u.type === 'pharmacy' },
+      owner:      { label:'ut.owner',        fn:u => u.type === 'owner' },
       student:    { label:'ut.student',      fn:u => u.type === 'student' },
       pending:    { label:'v.pendingUsers',  fn:u => u.verification === 'pending' },
       noMatch:    { label:'v.noMatch',       fn:u => u.type === 'pharmacist' && syndicateMatch(u).key !== 'matched' }
@@ -1540,6 +1628,8 @@ const MODULES = {
       { key:'verification', label:'c.verification',chip:u => verifChip(u.verification), sortAs:u => u.verification },
       { key:'match',        label:'c.match',       chip:u => u.type === 'pharmacist' ? matchChip(u) : '—',
                             sortAs:u => syndicateMatch(u).key },
+      { key:'owns',         label:'c.ownsPharmacy', get:u => u.pharmacy ? recordName('pharmacies', u.pharmacy) : '—',
+                            sortAs:u => u.pharmacy || '' },
       { key:'phone',        label:'c.phone',       mono:true },
       { key:'district',     label:'c.district',    get:u => districtName(u.district) },
       { key:'orders',       label:'c.orders',      num:true, get:u => fmt(u.orders), sortAs:u => u.orders },
@@ -1914,7 +2004,9 @@ function recordPage(mod, id) {
       fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:P + 'email' }) +
       fieldRow(t('c.district'), esc(districtName(rec.district)), { path:P + 'district', type:'district' }) +
       fieldRow(t('c.joined'), esc(fmtDate(rec.joined))) +
-      (rec.type === 'pharmacist'
+      /* An owner is a pharmacist too, so they carry the pharmacist fields AND
+         the pharmacy link — the record shows both rather than picking one. */
+      (rec.type === 'pharmacist' || rec.type === 'owner'
         ? fieldRow(t('c.syndicateNo'), '<span class="figure" dir="ltr">' + esc(rec.syndicateNo || '') + '</span>', { path:P + 'syndicateNo' }) +
           fieldRow(t('c.gradYear'), esc(String(rec.gradYear || ''))) +
           fieldRow(t('c.reliability'), rec.reliability === null
@@ -1924,7 +2016,7 @@ function recordPage(mod, id) {
             ? '<span class="no-record">' + esc(t('app.noRecord')) + '</span>'
             : '<span class="figure">' + rec.rating + '</span>')
         : '') +
-      (rec.type === 'pharmacy' && rec.pharmacy
+      (rec.type === 'owner' && rec.pharmacy
         ? fieldRow(t('c.pharmacy'), '<button class="cell-link" onclick="openRecord(' + attr('pharmacies') + ',' + attr(rec.pharmacy) + ')">' +
             esc(recordName('pharmacies', rec.pharmacy)) + '</button>') : '') +
       (rec.type === 'student' && rec.university
@@ -1933,7 +2025,7 @@ function recordPage(mod, id) {
 
     /* The verification panel. It says out loud what the check actually is —
        a person comparing a card against a list someone emailed us. */
-    if (rec.type === 'pharmacist') {
+    if (rec.type === 'pharmacist' || rec.type === 'owner') {
       side += '<section class="panel">' +
         '<div class="panel-h">' + icon('badge') + esc(t('mod.syndicate')) + '<span class="spacer"></span>' +
           chip(m.chip, m.ico, t('mt.' + m.key)) + '</div>' +
@@ -2562,10 +2654,699 @@ function importModal() {
 }
 
 /* ==========================================================================
+   14. THE QUERY ENGINE
+   Reports are SQL, and the dashboard is built from reports. That is the whole
+   design: one place where a number is defined, and a dashboard that cannot
+   invent a figure the reports module could not reproduce.
+
+   This runs a SUBSET of SQL over the in-memory tables. What it supports:
+
+     SELECT  col | tbl.col | * | COUNT(*) | COUNT|SUM|AVG|MIN|MAX(col) [AS alias]
+     FROM    table [alias]
+     JOIN    table [alias] ON a.col = b.col        (inner, equality only)
+     WHERE   comparisons joined by AND / OR, with ( ) grouping
+             =  !=  <>  <  <=  >  >=  IN (...)  LIKE 'x%'  IS [NOT] NULL
+     GROUP BY col[, col]
+     ORDER BY col|alias [ASC|DESC]
+     LIMIT   n
+
+   What it does not: subqueries, UNION, HAVING, OUTER JOIN, DISTINCT,
+   expressions in SELECT. It refuses those by name rather than guessing —
+   an engine that quietly ignores half a clause is worse than one that cannot
+   run it, because the number comes out wrong and looks right.
+   ========================================================================== */
+
+/* The tables a report can read. Flattened views of DATA: bilingual fields split
+   into plain columns so SQL sees scalars, and the derived facts the team
+   actually filters on (dormant, unclaimed, roster match) are columns here
+   rather than something every query has to recompute. */
+function sqlTables() {
+  return {
+    users: DATA.users.map(u => ({
+      id:u.id, name:L(u.name), name_ar:AR(u.name), type:u.type, verification:u.verification,
+      district:u.district, phone:u.phone, email:u.email, joined:u.joined,
+      syndicate_no:u.syndicateNo, grad_year:u.gradYear, orders:u.orders,
+      rating:u.rating, reliability:u.reliability, pharmacy_id:u.pharmacy,
+      university_id:u.university, owner:u.owner,
+      roster_match:(u.type === 'pharmacist' || u.type === 'owner') ? syndicateMatch(u).key : null
+    })),
+    orders: DATA.orders.map(o => ({
+      id:o.id, type:o.type, status:o.status, pharmacy_id:o.pharmacy, district:o.district,
+      date:o.date, hours:o.hours, rate:o.rate, total:o.total,
+      assignee_id:o.assignee, applicants:o.applicants, controlled:o.controlled ? 1 : 0,
+      owner:o.owner, unclaimed:isUnclaimed(o) ? 1 : 0
+    })),
+    pharmacies: DATA.pharmacies.map(p => ({
+      id:p.id, name:L(p.name), name_ar:AR(p.name), licence:p.licence, district:p.district,
+      verification:p.verification, signed_up:p.signedUp, trial_used:p.trialUsed,
+      trial_left:trialLeft(p), orders:p.orders, filled:p.filled,
+      fill_rate:fillRate(p), last_order:p.lastOrder, commission:p.commission,
+      owner:p.owner, user_id:p.user,
+      dormant:isDormant(p) ? 1 : 0, at_risk:isAtRisk(p) ? 1 : 0, active:isActivePharmacy(p) ? 1 : 0
+    })),
+    companies: DATA.companies.map(c => ({
+      id:c.id, name:L(c.name), name_ar:AR(c.name), type:c.type, country:L(c.country),
+      city:L(c.city), reg:c.reg, status:c.status, owner:c.owner,
+      brands:brandsOfCompany(c.id).length
+    })),
+    universities: DATA.universities.map(v => ({
+      id:v.id, name:L(v.name), city:L(v.city), domain:v.domain, agreement:v.agreement,
+      students:usersOfUniversity(v.id).length, owner:v.owner
+    })),
+    syndicate: DATA.syndicate.map(r => ({
+      no:r.no, name:L(r.name), name_ar:AR(r.name), grad_year:r.gradYear,
+      status:r.status, batch:r.batch, linked:rosterUser(r) ? 1 : 0
+    })),
+    drugs: DATA.drugs.map(d => ({
+      sci:d.sci, name_ar:d.ar, atc:d.atc, form:d.form, doses:d.doses.join(' | '),
+      brands:brandsOf(d.sci).length,
+      interactions:(d.interactions || []).length,
+      worst_interaction:worstInteraction(d) || null,
+      contraindications:(d.contraindications || []).length
+    })),
+    brands: DATA.brands.map(b => ({
+      id:b.id, brand:b.brand, sci:b.sci, company_id:b.company,
+      overrides_doses:(b.dosesOverride && b.dosesOverride.length) ? 1 : 0,
+      doses:brandDoses(b).join(' | ')
+    })),
+    tasks: DATA.tasks.map(x => ({
+      id:x.id, subject:L(x.subject), type:x.type, due:x.due, owner:x.owner,
+      priority:x.priority, done:x.done ? 1 : 0,
+      related_kind:x.related ? x.related.kind : null,
+      related_id:x.related ? x.related.id : null
+    }))
+  };
+}
+
+class SqlError extends Error {}
+
+function sqlTokens(text) {
+  const out = [];
+  const re = /\s+|--[^\n]*|('(?:[^']|'')*')|([A-Za-z_][A-Za-z0-9_.]*)|(\d+\.?\d*)|(<=|>=|<>|!=|=|<|>|\(|\)|,|\*)/g;
+  let m, last = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index !== last) throw new SqlError('Unexpected character at ' + last + ': ' + text.slice(last, m.index));
+    last = re.lastIndex;
+    if (m[1] !== undefined) out.push({ t:'str', v:m[1].slice(1, -1).split("''").join("'") });
+    else if (m[2] !== undefined) out.push({ t:'word', v:m[2] });
+    else if (m[3] !== undefined) out.push({ t:'num', v:Number(m[3]) });
+    else if (m[4] !== undefined) out.push({ t:'op', v:m[4] });
+  }
+  if (last !== text.length) throw new SqlError('Unexpected character at ' + last);
+  return out;
+}
+
+const SQL_KEYWORDS = ['SELECT','FROM','JOIN','INNER','ON','WHERE','GROUP','ORDER','BY','LIMIT',
+                      'AND','OR','NOT','IN','LIKE','IS','NULL','AS','ASC','DESC'];
+const SQL_REFUSED = { UNION:'UNION', HAVING:'HAVING', DISTINCT:'DISTINCT',
+                      LEFT:'OUTER JOIN', RIGHT:'OUTER JOIN', FULL:'OUTER JOIN' };
+
+function runSQL(text) {
+  const raw = String(text || '').trim().replace(/;+\s*$/, '');
+  if (!raw) throw new SqlError('Empty query.');
+
+  const upper = raw.toUpperCase();
+  for (const k in SQL_REFUSED) {
+    if (new RegExp('\\b' + k + '\\b').test(upper))
+      throw new SqlError('Not supported: ' + SQL_REFUSED[k] + '. This engine runs a documented subset.');
+  }
+  if (/\(\s*SELECT\b/i.test(raw)) throw new SqlError('Not supported: subqueries.');
+  if (!/^SELECT\b/i.test(raw)) throw new SqlError('Only SELECT is supported. Reports read; they never write.');
+
+  const toks = sqlTokens(raw);
+  let i = 0;
+  const peek = () => toks[i];
+  const isKw = k => peek() && peek().t === 'word' && peek().v.toUpperCase() === k;
+  const eat = k => { if (!isKw(k)) throw new SqlError('Expected ' + k); return toks[i++]; };
+  const eatOp = o => { if (!(peek() && peek().t === 'op' && peek().v === o)) throw new SqlError('Expected ' + o); return toks[i++]; };
+  const maybe = k => { if (isKw(k)) { i++; return true; } return false; };
+  const isPlainWord = () => peek() && peek().t === 'word' && !SQL_KEYWORDS.includes(peek().v.toUpperCase());
+
+  function inList(ref, neg) {
+    eatOp('(');
+    const vals = [];
+    do { const v = toks[i++]; if (!v || v.t === 'op') throw new SqlError('Expected a value inside IN ( )'); vals.push(v.v); }
+    while (peek() && peek().t === 'op' && peek().v === ',' && ++i);
+    eatOp(')');
+    return { in:ref, vals, neg };
+  }
+  function parseCmp() {
+    if (peek() && peek().t === 'op' && peek().v === '(') { i++; const e = parseOr(); eatOp(')'); return e; }
+    const lhs = toks[i++];
+    if (!lhs) throw new SqlError('Unfinished WHERE clause');
+    if (isKw('IS')) { i++; const neg = maybe('NOT'); eat('NULL'); return { isNull:lhs.v, neg }; }
+    if (isKw('NOT') && toks[i + 1] && String(toks[i + 1].v).toUpperCase() === 'IN') { i += 2; return inList(lhs.v, true); }
+    if (isKw('IN')) { i++; return inList(lhs.v, false); }
+    if (isKw('LIKE')) { i++; const p = toks[i++];
+      if (!p || p.t !== 'str') throw new SqlError('LIKE needs a quoted pattern');
+      return { like:lhs.v, pattern:p.v }; }
+    const op = toks[i++];
+    if (!op || op.t !== 'op') throw new SqlError('Expected a comparison after ' + lhs.v);
+    const rhs = toks[i++];
+    if (!rhs) throw new SqlError('Expected a value after ' + op.v);
+    return { cmp:op.v, lhs, rhs };
+  }
+  function parseAnd() { let l = parseCmp(); while (isKw('AND')) { i++; l = { and:[l, parseCmp()] }; } return l; }
+  function parseOr()  { let l = parseAnd(); while (isKw('OR'))  { i++; l = { or:[l, parseAnd()] }; } return l; }
+
+  eat('SELECT');
+  const cols = [];
+  do {
+    if (peek() && peek().t === 'op' && peek().v === '*') { i++; cols.push({ star:true }); }
+    else {
+      const first = peek();
+      if (!first || first.t !== 'word') throw new SqlError('Expected a column name after SELECT');
+      const AGGS = ['COUNT','SUM','AVG','MIN','MAX'];
+      let col;
+      if (AGGS.includes(first.v.toUpperCase()) && toks[i + 1] && toks[i + 1].v === '(') {
+        const fn = first.v.toUpperCase(); i += 2;
+        let arg;
+        if (peek() && peek().t === 'op' && peek().v === '*') { arg = '*'; i++; }
+        else { if (!peek() || peek().t !== 'word') throw new SqlError('Expected a column inside ' + fn + '()'); arg = toks[i++].v; }
+        eatOp(')');
+        col = { agg:fn, arg, name:fn.toLowerCase() + '_' + String(arg).replace(/[^A-Za-z0-9_]/g, '') };
+      } else { i++; col = { ref:first.v, name:first.v.includes('.') ? first.v.split('.')[1] : first.v }; }
+      if (maybe('AS')) {
+        if (!peek() || peek().t !== 'word') throw new SqlError('Expected an alias after AS');
+        col.name = toks[i++].v;
+      }
+      cols.push(col);
+    }
+  } while (peek() && peek().t === 'op' && peek().v === ',' && ++i);
+
+  eat('FROM');
+  if (!isPlainWord()) throw new SqlError('Expected a table name after FROM');
+  const base = { table:toks[i++].v };
+  base.alias = isPlainWord() ? toks[i++].v : base.table;
+
+  const joins = [];
+  while (isKw('JOIN') || isKw('INNER')) {
+    if (isKw('INNER')) i++;
+    eat('JOIN');
+    if (!isPlainWord()) throw new SqlError('Expected a table name after JOIN');
+    const j = { table:toks[i++].v };
+    j.alias = isPlainWord() ? toks[i++].v : j.table;
+    eat('ON');
+    const lhs = toks[i++], op = toks[i++], rhs = toks[i++];
+    if (!lhs || !op || !rhs || op.v !== '=')
+      throw new SqlError('JOIN ... ON supports equality only, as in ON a.id = b.a_id');
+    j.on = [lhs.v, rhs.v];
+    joins.push(j);
+  }
+
+  let where = null;
+  if (maybe('WHERE')) where = parseOr();
+
+  const groupBy = [];
+  if (isKw('GROUP')) { i++; eat('BY');
+    do { if (!peek() || peek().t !== 'word') throw new SqlError('Expected a column after GROUP BY');
+         groupBy.push(toks[i++].v); }
+    while (peek() && peek().t === 'op' && peek().v === ',' && ++i); }
+
+  let orderBy = null;
+  if (isKw('ORDER')) { i++; eat('BY');
+    if (!peek() || peek().t !== 'word') throw new SqlError('Expected a column after ORDER BY');
+    orderBy = { col:toks[i++].v, dir:'asc' };
+    if (maybe('DESC')) orderBy.dir = 'desc'; else maybe('ASC'); }
+
+  let limit = null;
+  if (maybe('LIMIT')) {
+    if (!peek() || peek().t !== 'num') throw new SqlError('Expected a number after LIMIT');
+    limit = toks[i++].v; }
+
+  if (i < toks.length) throw new SqlError('Unexpected trailing input: ' + toks.slice(i).map(x => x.v).join(' '));
+
+  const tables = sqlTables();
+  const src = tables[base.table];
+  if (!src) throw new SqlError('No such table: ' + base.table + '. Tables: ' + Object.keys(tables).join(', '));
+
+  /* Rows are namespaced by alias so a.col and b.col stay distinct; a bare
+     column name resolves against whichever table actually has it. */
+  let rows = src.map(r => { const o = {}; o[base.alias] = r; return o; });
+  for (const j of joins) {
+    const other = tables[j.table];
+    if (!other) throw new SqlError('No such table: ' + j.table);
+    const out = [];
+    for (const row of rows) for (const o of other) {
+      const cand = Object.assign({}, row); cand[j.alias] = o;
+      if (String(resolve(cand, j.on[0])) === String(resolve(cand, j.on[1]))) out.push(cand);
+    }
+    rows = out;
+  }
+
+  function resolve(row, ref) {
+    const s = String(ref);
+    if (s.indexOf('.') >= 0) { const parts = s.split('.'); return row[parts[0]] ? row[parts[0]][parts[1]] : undefined; }
+    for (const a of Object.keys(row)) if (row[a] && s in row[a]) return row[a][s];
+    return undefined;
+  }
+  const num = v => (v === null || v === undefined || v === '') ? NaN : Number(v);
+  function valueOf(row, tok) {
+    if (tok.t === 'str' || tok.t === 'num') return tok.v;
+    const up = String(tok.v).toUpperCase();
+    if (up === 'NULL') return null;
+    if (up === 'TRUE') return 1;
+    if (up === 'FALSE') return 0;
+    return resolve(row, tok.v);
+  }
+  function test(row, e) {
+    if (!e) return true;
+    if (e.and) return test(row, e.and[0]) && test(row, e.and[1]);
+    if (e.or) return test(row, e.or[0]) || test(row, e.or[1]);
+    if (e.isNull) { const v = resolve(row, e.isNull);
+      const isN = (v === null || v === undefined); return e.neg ? !isN : isN; }
+    if (e.in) { const v = resolve(row, e.in);
+      const hit = e.vals.some(x => String(x) === String(v)); return e.neg ? !hit : hit; }
+    if (e.like) {
+      const v = resolve(row, e.like);
+      if (v === null || v === undefined) return false;
+      const rx = new RegExp('^' + String(e.pattern)
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.') + '$', 'i');
+      return rx.test(String(v));
+    }
+    const a = valueOf(row, e.lhs), b = valueOf(row, e.rhs);
+    switch (e.cmp) {
+      case '=': return String(a) === String(b);
+      case '!=': case '<>': return String(a) !== String(b);
+      case '<': return num(a) < num(b);
+      case '<=': return num(a) <= num(b);
+      case '>': return num(a) > num(b);
+      case '>=': return num(a) >= num(b);
+      default: throw new SqlError('Unsupported comparison: ' + e.cmp);
+    }
+  }
+
+  rows = rows.filter(r => test(r, where));
+
+  /* An aggregate with no GROUP BY is one row over everything — what SQL does,
+     and what a KPI tile wants. */
+  const hasAgg = cols.some(c => c.agg);
+  let groups;
+  if (groupBy.length) {
+    const map = new Map();
+    for (const r of rows) {
+      const key = groupBy.map(g => String(resolve(r, g))).join('\u0000');
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(r);
+    }
+    groups = Array.from(map.values());
+  } else if (hasAgg) { groups = [rows]; }
+  else { groups = rows.map(r => [r]); }
+
+  function agg(fn, arg, bucket) {
+    if (fn === 'COUNT') return arg === '*' ? bucket.length
+      : bucket.filter(r => { const v = resolve(r, arg); return v !== null && v !== undefined; }).length;
+    const nums = bucket.map(r => Number(resolve(r, arg))).filter(n => Number.isFinite(n));
+    if (!nums.length) return null;
+    if (fn === 'SUM') return nums.reduce((a, b) => a + b, 0);
+    if (fn === 'AVG') return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length * 100) / 100;
+    if (fn === 'MIN') return Math.min.apply(null, nums);
+    if (fn === 'MAX') return Math.max.apply(null, nums);
+    throw new SqlError('Unsupported function: ' + fn);
+  }
+
+  let out = groups.map(bucket => {
+    const first = bucket[0];
+    const row = {};
+    for (const c of cols) {
+      if (c.star) { Object.keys(first).forEach(a => Object.assign(row, first[a])); continue; }
+      row[c.name] = c.agg ? agg(c.agg, c.arg, bucket) : resolve(first, c.ref);
+    }
+    return row;
+  });
+
+  const columns = out.length ? Object.keys(out[0]) : cols.filter(c => !c.star).map(c => c.name);
+
+  if (orderBy) {
+    const k = orderBy.col.indexOf('.') >= 0 ? orderBy.col.split('.')[1] : orderBy.col;
+    out.sort((x, y) => {
+      const a = x[k], b = y[k];
+      const c = (typeof a === 'number' && typeof b === 'number')
+        ? a - b : String(a == null ? '' : a).localeCompare(String(b == null ? '' : b));
+      return orderBy.dir === 'desc' ? -c : c;
+    });
+  }
+  if (limit !== null) out = out.slice(0, limit);
+
+  return { columns, rows:out };
+}
+
+/* ==========================================================================
+   15. REPORTS
+   A report is a name, a SQL query, and how to draw the result. The dashboard
+   is built only from these, so every number on it can be traced to the query
+   that produced it — and changing the query changes the tile.
+   ========================================================================== */
+
+const VIZ = ['number', 'bar', 'line', 'table'];
+
+const REPORTS = [
+  { id:'R1', name:'Orders by status', viz:'bar',
+    sql:"SELECT status, COUNT(*) AS orders\nFROM orders\nGROUP BY status\nORDER BY orders DESC" },
+  { id:'R2', name:'Open orders with no applicants', viz:'number',
+    sql:"SELECT COUNT(*) AS unclaimed\nFROM orders\nWHERE status = 'open' AND applicants = 0" },
+  { id:'R3', name:'Users awaiting verification', viz:'number',
+    sql:"SELECT COUNT(*) AS pending\nFROM users\nWHERE verification = 'pending'" },
+  { id:'R4', name:'Commission by pharmacy', viz:'bar',
+    sql:"SELECT name, commission\nFROM pharmacies\nWHERE commission > 0\nORDER BY commission DESC" },
+  { id:'R5', name:'Verified pharmacies that never posted', viz:'table',
+    sql:"SELECT name, district, trial_left, signed_up\nFROM pharmacies\nWHERE dormant = 1\nORDER BY signed_up" },
+  { id:'R6', name:'Pharmacists with no roster match', viz:'table',
+    sql:"SELECT name, syndicate_no, roster_match\nFROM users\nWHERE type = 'pharmacist' AND roster_match != 'matched'" },
+  { id:'R7', name:'Orders per pharmacy', viz:'bar',
+    sql:"SELECT p.name, COUNT(*) AS orders\nFROM orders o\nJOIN pharmacies p ON o.pharmacy_id = p.id\nGROUP BY p.name\nORDER BY orders DESC" },
+  { id:'R8', name:'Drugs with no brand listed', viz:'number',
+    sql:"SELECT COUNT(*) AS drugs\nFROM drugs\nWHERE brands = 0" },
+  { id:'R9', name:'Total commission this month', viz:'number',
+    sql:"SELECT SUM(commission) AS iqd\nFROM pharmacies" },
+  { id:'R10', name:'Brands by company', viz:'bar',
+    sql:"SELECT c.name, COUNT(*) AS brands\nFROM brands b\nJOIN companies c ON b.company_id = c.id\nGROUP BY c.name\nORDER BY brands DESC" }
+];
+
+const reportById = id => REPORTS.find(r => r.id === id) || null;
+
+/* Runs a report and turns the rows into whatever the tile needs to draw. A
+   report that fails returns the error rather than an empty chart, because a
+   tile silently showing zero is how a broken query survives for a month. */
+function runReport(rep) {
+  try {
+    const res = runSQL(rep.sql);
+    return { ok:true, columns:res.columns, rows:res.rows };
+  } catch (e) {
+    return { ok:false, error:(e && e.message) || String(e) };
+  }
+}
+
+/* A result becomes {label, n} pairs by convention: first text column labels,
+   first numeric column measures. Stated rather than guessed, so a report author
+   knows how to shape a query for a chart. */
+function resultSeries(res) {
+  if (!res.ok || !res.rows.length) return [];
+  const cols = res.columns;
+  const numeric = cols.filter(c => res.rows.every(r => r[c] === null || typeof r[c] === 'number'));
+  const measure = numeric[0] || cols[cols.length - 1];
+  const label = cols.find(c => c !== measure) || measure;
+  return res.rows.map(r => ({ label:String(r[label] == null ? '—' : r[label]), n:Number(r[measure]) || 0 }));
+}
+function resultScalar(res) {
+  if (!res.ok || !res.rows.length) return null;
+  const c = res.columns[0];
+  return res.rows[0][c];
+}
+
+function resultTable(res, limit) {
+  const rows = limit ? res.rows.slice(0, limit) : res.rows;
+  return '<div style="overflow-x:auto"><table class="mini"><thead><tr>' +
+    res.columns.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
+    (rows.length
+      ? rows.map(r => '<tr>' + res.columns.map(c => {
+          const v = r[c];
+          return '<td' + (typeof v === 'number' ? ' class="n"' : '') + '>' +
+            esc(v === null || v === undefined ? '—' : v) + '</td>';
+        }).join('') + '</tr>').join('')
+      : '<tr><td colspan="' + res.columns.length + '" style="text-align:center;color:var(--ink-faint)">' +
+        esc(t('rep.noRows')) + '</td></tr>') +
+    '</tbody></table></div>';
+}
+
+/* ---------- The reports module ---------- */
+
+function reportsHead() {
+  return '<div class="work-head">' +
+      '<span class="view-select">' + esc(t('mod.reports')) + '</span>' +
+      '<span class="chip chip-mute figure">' + fmt(REPORTS.length) + '</span>' +
+      '<span class="spacer"></span>' +
+      '<button class="btn primary" onclick="openReport(null)">' + icon('plus') + esc(t('rep.new')) + '</button>' +
+    '</div>';
+}
+
+function reportsBody() {
+  if (S.report) return reportEditor(S.report);
+
+  return '<div class="dash"><div class="charts c2">' + REPORTS.map(rep => {
+    const res = runReport(rep);
+    return '<section class="panel">' +
+      '<div class="chart-h"><span class="chart-t">' + esc(rep.name) + '</span>' +
+        '<span class="chart-s">' + esc(t('viz.' + rep.viz)) + '</span>' +
+        '<span class="spacer" style="flex:1"></span>' +
+        '<button class="table-toggle" onclick="openReport(' + attr(rep.id) + ')">' + esc(t('a.edit')) + '</button>' +
+        '<button class="table-toggle" style="margin-inline-start:10px;" onclick="pinReport(' + attr(rep.id) + ')">' +
+          esc(t('rep.pin')) + '</button></div>' +
+      '<div class="chart-wrap">' + reportViz(rep, res, true) + '</div>' +
+    '</section>';
+  }).join('') + '</div></div>';
+}
+
+function reportViz(rep, res, compact) {
+  if (!res.ok) return '<div class="imp-fatal">' + icon('alert') + esc(res.error) + '</div>';
+
+  if (rep.viz === 'number') {
+    const v = resultScalar(res);
+    return '<div class="kpi-v" style="font-size:34px;">' + esc(v === null ? '—' : fmt(v)) + '</div>' +
+      '<div class="inline-note">' + esc(res.columns[0]) + '</div>';
+  }
+  if (rep.viz === 'table') return resultTable(res, compact ? 5 : null);
+
+  const series = resultSeries(res);
+  if (!series.length) return '<p class="empty" style="padding:20px;">' + esc(t('rep.noRows')) + '</p>';
+  if (rep.viz === 'line') {
+    return trendChart(series.map(s => ({ n:s.n, label:s.label, short:s.label.slice(0, 6) })),
+      { title:'', sub:'', id:'rep-' + rep.id, bare:true });
+  }
+  return barRows(series);
+}
+
+/* The bar marks, without the card around them — the report card supplies that.
+   One colour for every bar: these are nominal categories, and shading them by
+   size would double-encode the length the bar already shows. */
+function barRows(series) {
+  const max = Math.max(1, ...series.map(s => s.n));
+  return series.map(s =>
+    '<div class="funnel-row">' +
+      '<span class="funnel-label">' + esc(s.label) + '</span>' +
+      '<span class="funnel-track" style="height:16px;"><span class="funnel-bar" tabindex="0" role="img" ' +
+        'aria-label="' + esc(s.label + ': ' + s.n) + '" data-tip="' + esc(s.label + '<br><b>' + fmt(s.n) + '</b>') + '" ' +
+        'style="width:' + Math.max(2, s.n / max * 100) + '%;background:var(--series);height:16px;"></span></span>' +
+      '<span class="funnel-n">' + fmt(s.n) + '</span>' +
+    '</div>').join('');
+}
+
+/* ---------- The editor: write SQL, run it, see it ---------- */
+
+function reportEditor(id) {
+  const rep = id === 'new'
+    ? (S.draft || { id:'new', name:'', viz:'table', sql:'SELECT * FROM orders LIMIT 10' })
+    : reportById(id);
+  if (!rep) return '<div class="empty">' + esc(t('e.noRecords')) + '</div>';
+  S.draft = S.draft || Object.assign({}, rep);
+  const d = S.draft;
+  const res = d.sql ? runReport(d) : { ok:true, columns:[], rows:[] };
+
+  const tables = Object.keys(sqlTables());
+  const schema = tables.map(tb => {
+    const one = sqlTables()[tb][0] || {};
+    return '<div class="schema-t"><button class="schema-name" onclick="insertSql(' + attr(tb) + ')">' +
+      esc(tb) + '</button><div class="schema-cols">' +
+      Object.keys(one).map(c => '<button class="schema-col" onclick="insertSql(' + attr(c) + ')">' +
+        esc(c) + '</button>').join('') + '</div></div>';
+  }).join('');
+
+  return '<div class="rep-edit">' +
+    '<div class="rep-main">' +
+      '<div class="form-grid two" style="margin-bottom:12px;">' +
+        '<div class="fld"><label for="rep-name">' + esc(t('rep.name')) + '</label>' +
+          '<input id="rep-name" value="' + esc(d.name) + '" oninput="setDraft(\'name\', this.value)"></div>' +
+        '<div class="fld"><label for="rep-viz">' + esc(t('rep.viz')) + '</label>' +
+          '<select id="rep-viz" onchange="setDraft(\'viz\', this.value); render()">' +
+            VIZ.map(v => '<option value="' + v + '"' + (d.viz === v ? ' selected' : '') + '>' +
+              esc(t('viz.' + v)) + '</option>').join('') + '</select></div>' +
+      '</div>' +
+      '<div class="fld"><label for="rep-sql">' + esc(t('rep.sql')) + '</label>' +
+        '<textarea id="rep-sql" class="sql" dir="ltr" spellcheck="false" ' +
+          'oninput="setDraft(\'sql\', this.value)">' + esc(d.sql) + '</textarea>' +
+        '<div class="hint">' + esc(t('rep.subsetNote')) + '</div></div>' +
+      '<div style="display:flex;gap:9px;flex-wrap:wrap;">' +
+        '<button class="btn primary" onclick="render()">' + icon('refresh') + esc(t('rep.run')) + '</button>' +
+        '<button class="btn" onclick="saveReport()">' + esc(t('a.save')) + '</button>' +
+        '<button class="btn" onclick="closeReport()">' + esc(t('a.cancel')) + '</button>' +
+        (id !== 'new' ? '<button class="btn danger" onclick="deleteReport(' + attr(id) + ')">' +
+          icon('trash') + esc(t('a.delete')) + '</button>' : '') +
+      '</div>' +
+      '<div class="rep-result">' +
+        (res.ok
+          ? '<div class="rep-meta">' + esc(t('rep.rows', { n:res.rows.length })) + '</div>' +
+            reportViz(d, res, false)
+          : '<div class="imp-fatal">' + icon('alert') + esc(res.error) + '</div>') +
+      '</div>' +
+    '</div>' +
+    '<aside class="rep-schema"><div class="rail-h">' + esc(t('rep.schema')) + '</div>' + schema +
+      '<p class="inline-note" style="margin-top:12px;">' + esc(t('rep.schemaNote')) + '</p></aside>' +
+  '</div>';
+}
+
+/* ==========================================================================
+   16. THE DASHBOARD
+   Tiles, not a fixed layout. Every tile names a report, so the dashboard holds
+   no numbers of its own — it cannot show a figure the Reports module could not
+   reproduce, and editing the query moves the tile with it.
+   ========================================================================== */
+
+/* What the dashboard opens with. A layout, not data. */
+const DEFAULT_TILES = [
+  { report:'R2', w:'s' },
+  { report:'R3', w:'s' },
+  { report:'R8', w:'s' },
+  { report:'R9', w:'s' },
+  { report:'R1', w:'m' },
+  { report:'R7', w:'m' },
+  { report:'R5', w:'l' }
+];
+
+function tileCard(tile, idx) {
+  const rep = reportById(tile.report);
+  if (!rep) {
+    return '<section class="panel tile w-' + tile.w + '">' +
+      '<div class="chart-wrap"><div class="imp-fatal">' + icon('alert') +
+      esc(t('dash.missingReport', { id:tile.report })) + '</div></div></section>';
+  }
+  const res = runReport(rep);
+  const editing = S.dashEdit;
+
+  return '<section class="panel tile w-' + tile.w + '">' +
+    '<div class="chart-h">' +
+      '<span class="chart-t">' + esc(rep.name) + '</span>' +
+      '<span class="spacer" style="flex:1"></span>' +
+      (editing
+        ? '<span class="tile-tools">' +
+            '<button class="btn-icon sm" onclick="moveTile(' + idx + ',-1)" title="' + esc(t('dash.moveUp')) + '"' +
+              (idx === 0 ? ' disabled' : '') + '>' + icon('up') + '</button>' +
+            '<button class="btn-icon sm" onclick="moveTile(' + idx + ',1)" title="' + esc(t('dash.moveDown')) + '"' +
+              (idx === S.tiles.length - 1 ? ' disabled' : '') + '>' + icon('down') + '</button>' +
+            '<select class="tile-size" onchange="setTileWidth(' + idx + ', this.value)">' +
+              ['s','m','l'].map(w => '<option value="' + w + '"' + (tile.w === w ? ' selected' : '') + '>' +
+                esc(t('dash.w' + w)) + '</option>').join('') + '</select>' +
+            '<button class="btn-icon sm danger" onclick="removeTile(' + idx + ')" title="' + esc(t('a.delete')) + '">' +
+              icon('x') + '</button>' +
+          '</span>'
+        : '<button class="table-toggle" onclick="goReport(' + attr(rep.id) + ')">' + esc(t('dash.source')) + '</button>') +
+    '</div>' +
+    '<div class="chart-wrap">' + reportViz(rep, res, true) + '</div>' +
+  '</section>';
+}
+
+function dashHead() {
+  return '<div class="work-head">' +
+    '<span class="view-select">' + esc(t('h.greeting', { name:L(USERS[ME].name) })) + '</span>' +
+    '<span class="spacer"></span>' +
+    (S.dashEdit
+      ? '<button class="btn" onclick="resetDash()">' + icon('refresh') + esc(t('dash.reset')) + '</button>' +
+        '<button class="btn" onclick="openAddTile()">' + icon('plus') + esc(t('dash.add')) + '</button>' +
+        '<button class="btn primary" onclick="toggleDashEdit()">' + esc(t('dash.done')) + '</button>'
+      : '<button class="btn" onclick="toggleDashEdit()">' + icon('edit') + esc(t('dash.customise')) + '</button>') +
+  '</div>' +
+  (S.dashEdit ? '<div class="mod-note">' + icon('alert') + '<span>' + esc(t('dash.editNote')) + '</span></div>' : '');
+}
+
+function dashBody() {
+  if (!S.tiles.length) {
+    return '<div class="empty">' + icon('chart') + '<div>' + esc(t('dash.empty')) + '</div>' +
+      '<button class="btn primary" style="margin-top:12px;" onclick="openAddTile()">' +
+        esc(t('dash.add')) + '</button></div>';
+  }
+  return '<div class="dash"><div class="tiles">' +
+    S.tiles.map(tileCard).join('') + '</div></div>';
+}
+
+function addTileModal() {
+  const used = new Set(S.tiles.map(x => x.report));
+  return '<div class="modal-h"><span class="modal-t">' + esc(t('dash.add')) + '</span>' +
+      '<span class="spacer" style="flex:1"></span>' +
+      '<button class="btn-icon" onclick="closeModal()" aria-label="' + esc(t('a.close')) + '">' + icon('x') + '</button></div>' +
+    '<div class="modal-b">' +
+      '<p class="inline-note" style="margin-bottom:12px;">' + esc(t('dash.addNote')) + '</p>' +
+      REPORTS.map(r =>
+        '<button class="account-btn" onclick="addTile(' + attr(r.id) + ')"' +
+          (used.has(r.id) ? ' disabled style="opacity:.5"' : '') + '>' +
+          '<span class="avatar">' + esc(t('viz.' + r.viz).slice(0, 2)) + '</span>' +
+          '<span style="min-width:0;"><span class="account-name">' + esc(r.name) + '</span>' +
+          '<span class="account-mail" dir="ltr">' + esc(r.sql.split('\n')[0]) + '…</span></span>' +
+          (used.has(r.id) ? '<span class="account-tag chip-mute">' + esc(t('dash.onBoard')) + '</span>' : '') +
+        '</button>').join('') +
+    '</div>' +
+    '<div class="modal-f"><button class="btn" onclick="closeModal()">' + esc(t('a.close')) + '</button></div>';
+}
+
+/* ---------- Actions ---------- */
+
+function toggleDashEdit() { S.dashEdit = !S.dashEdit; render(); }
+function moveTile(i, d) {
+  const j = i + d;
+  if (j < 0 || j >= S.tiles.length) return;
+  const t0 = S.tiles[i]; S.tiles[i] = S.tiles[j]; S.tiles[j] = t0;
+  render();
+}
+function setTileWidth(i, w) { S.tiles[i].w = w; render(); }
+function removeTile(i) { S.tiles.splice(i, 1); render(); }
+function openAddTile() { S.modal = { kind:'addTile' }; renderModal(); }
+function addTile(id) {
+  const rep = reportById(id);
+  S.tiles.push({ report:id, w:rep && rep.viz === 'number' ? 's' : 'm' });
+  S.modal = null;
+  toast(t('dash.added'));
+  render();
+}
+function resetDash() { S.tiles = DEFAULT_TILES.map(x => Object.assign({}, x)); toast(t('dash.reset')); render(); }
+function goReport(id) { S.tab = 'reports'; S.report = id; S.draft = null; render(); }
+
+function openReport(id) { S.tab = 'reports'; S.report = id || 'new'; S.draft = null; render(); }
+function closeReport() { S.report = null; S.draft = null; render(); }
+function setDraft(k, v) { S.draft = S.draft || {}; S.draft[k] = v; }
+function insertSql(text) {
+  const box = document.getElementById('rep-sql');
+  if (!box) return;
+  const at = box.selectionStart || box.value.length;
+  box.value = box.value.slice(0, at) + text + box.value.slice(box.selectionEnd || at);
+  setDraft('sql', box.value);
+  box.focus();
+  box.selectionStart = box.selectionEnd = at + text.length;
+}
+function saveReport() {
+  const d = S.draft;
+  if (!d || !String(d.name || '').trim()) { toast(t('n.required')); return; }
+  const res = runReport(d);
+  // A report that does not run is not saved. Saving a broken query is how a
+  // dashboard tile ends up permanently red with nobody owning it.
+  if (!res.ok) { toast(res.error); return; }
+  if (S.report === 'new') {
+    REPORTS.push({ id:'R' + Date.now().toString().slice(-6), name:d.name, viz:d.viz, sql:d.sql });
+  } else {
+    Object.assign(reportById(S.report), { name:d.name, viz:d.viz, sql:d.sql });
+  }
+  S.report = null; S.draft = null;
+  toast(t('rec.saved'));
+  render();
+}
+function deleteReport(id) {
+  const i = REPORTS.findIndex(r => r.id === id);
+  if (i >= 0) REPORTS.splice(i, 1);
+  // Tiles pointing at it say so rather than vanishing, so the dashboard cannot
+  // quietly lose a number somebody was relying on.
+  S.report = null; S.draft = null;
+  toast(t('rec.deleted'));
+  render();
+}
+function pinReport(id) {
+  if (S.tiles.some(x => x.report === id)) { toast(t('dash.onBoard')); return; }
+  const rep = reportById(id);
+  S.tiles.push({ report:id, w:rep && rep.viz === 'number' ? 's' : 'm' });
+  toast(t('dash.added'));
+}
+
+/* ==========================================================================
    8. STATE & RENDER
    ========================================================================== */
 
-const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs'];
+const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs', 'reports'];
 
 const S = {
   tab:'home',
@@ -2578,6 +3359,14 @@ const S = {
   picked:{ orders:[], users:[], pharmacies:[], companies:[],
            universities:[], syndicate:[], drugs:[] },
   viewMenu:null,
+
+  /* The dashboard is a list of tiles, each naming a report. Nothing on it holds
+     a number of its own. */
+  tiles:DEFAULT_TILES.map(x => Object.assign({}, x)),
+  dashEdit:false,
+  report:null,
+  draft:null,
+
   modal:null,
   query:'',
   drag:null
@@ -2592,9 +3381,10 @@ function render() {
 
   document.getElementById('tabs').innerHTML = TABS.map(k => {
     const M = MODULES[k];
+    const n = M ? M.data().length : (k === 'reports' ? REPORTS.length : null);
     return '<button class="tab' + (S.tab === k ? ' active' : '') + '" onclick="goTab(' + attr(k) + ')">' +
-      icon(k === 'home' ? 'home' : M.icon) + esc(t('mod.' + k)) +
-      (M ? '<span class="tab-count">' + fmt(M.data().length) + '</span>' : '') + '</button>';
+      icon(k === 'home' ? 'home' : k === 'reports' ? 'chart' : M.icon) + esc(t('mod.' + k)) +
+      (n !== null ? '<span class="tab-count">' + fmt(n) + '</span>' : '') + '</button>';
   }).join('');
 
   const rail = document.getElementById('rail');
@@ -2607,9 +3397,12 @@ function render() {
     body.innerHTML = recordPage(S.record.mod, S.record.id);
   } else if (S.tab === 'home') {
     rail.classList.add('hidden');
-    head.innerHTML = '<div class="work-head"><span class="view-select">' +
-      esc(t('h.greeting', { name:L(USERS[ME].name) })) + '</span></div>';
-    body.innerHTML = homeView();
+    head.innerHTML = dashHead();
+    body.innerHTML = dashBody();
+  } else if (S.tab === 'reports') {
+    rail.classList.add('hidden');
+    head.innerHTML = S.report ? '' : reportsHead();
+    body.innerHTML = reportsBody();
   } else {
     rail.classList.remove('hidden');
     rail.innerHTML = listRail(S.tab);
@@ -2626,7 +3419,7 @@ function render() {
    ========================================================================== */
 
 function goTab(k) {
-  S.tab = k; S.record = null; S.viewMenu = null; hideTip();
+  S.tab = k; S.record = null; S.viewMenu = null; S.report = null; S.draft = null; hideTip();
   render();
   document.getElementById('work-body').scrollTop = 0;
 }
@@ -2643,7 +3436,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0001.html';
+const PEER_APP = '../demo/saydali-plus_v0.0002.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
@@ -3011,6 +3804,11 @@ function renderModal() {
   if (S.modal.kind === 'import') {
     root.innerHTML = '<div class="scrim center" onclick="if(event.target===this)closeModal()">' +
       '<div class="modal wide" role="dialog" aria-modal="true">' + importModal() + '</div></div>';
+    return;
+  }
+  if (S.modal.kind === 'addTile') {
+    root.innerHTML = '<div class="scrim center" onclick="if(event.target===this)closeModal()">' +
+      '<div class="modal" role="dialog" aria-modal="true">' + addTileModal() + '</div></div>';
     return;
   }
   if (S.modal.kind === 'brand') {

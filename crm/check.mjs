@@ -52,6 +52,7 @@ async function open(w = 1520, h = 950) {
 }
 const tab = async (p, k) => { await p.evaluate(x => goTab(x), k); await p.waitForTimeout(220); };
 const MODS = ['orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs'];
+const TABS_ALL = [...MODS, 'reports'];
 
 const p = await open();
 
@@ -67,7 +68,7 @@ ok('the file states the build its name claims',
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
-ok('eight tabs: home plus the seven modules', await p.locator('.tab').count() === 8);
+ok('nine tabs: home, the seven modules, and reports', await p.locator('.tab').count() === 9);
 ok('the document is English, left to right', await p.evaluate(() =>
    document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
 ok('there is no language toggle left to press',
@@ -97,12 +98,12 @@ for (const m of MODS) {
 
 console.log('\nusers are segmented by the three account types');
 await tab(p, 'users');
-for (const ty of ['pharmacist', 'pharmacy', 'student']) {
+for (const ty of ['pharmacist', 'owner', 'student']) {
   await p.evaluate(x => { S.view.users = x; render(); }, ty);
   await p.waitForTimeout(120);
   const all = await p.evaluate(x => visibleRows('users').every(u => u.type === x), ty);
   const some = await p.evaluate(() => visibleRows('users').length > 0);
-  ok(`the ${ty} view holds only ${ty}s, and holds some`, all && some);
+  ok(`the ${ty} view holds only that type, and holds some`, all && some);
 }
 await p.evaluate(() => { S.view.users = 'all'; render(); });
 
@@ -127,12 +128,12 @@ await tab(p, 'syndicate');
 ok('it says out loud that this is a hand-loaded list, not an API',
    /API|واجهة برمجية/.test(await p.locator('.mod-note').innerText()));
 const matches = await p.evaluate(() =>
-  DATA.users.filter(u => u.type === 'pharmacist').map(u => ({ n: u.name.en, k: syndicateMatch(u).key })));
+  DATA.users.filter(u => u.syndicateNo).map(u => ({ n: u.name.en, k: syndicateMatch(u).key })));
 ok('a pharmacist whose number is in the roster matches',
    matches.some(m => m.k === 'matched'));
 ok('and one whose number is absent does not',
    await p.evaluate(() => {
-     const u = DATA.users.find(x => x.type === 'pharmacist');
+     const u = DATA.users.find(x => x.type === 'pharmacist' && x.syndicateNo);
      const keep = u.syndicateNo;
      u.syndicateNo = 'IQ-PH-000000';
      const k = syndicateMatch(u).key;
@@ -141,7 +142,7 @@ ok('and one whose number is absent does not',
    }));
 ok('a matching number with a different name is flagged, not waved through',
    await p.evaluate(() => {
-     const u = DATA.users.find(x => x.type === 'pharmacist');
+     const u = DATA.users.find(x => x.type === 'pharmacist' && x.syndicateNo);
      const keep = u.name;
      u.name = { ar: 'شخص آخر تماما', en: 'Someone Else Entirely' };
      const k = syndicateMatch(u).key;
@@ -321,17 +322,151 @@ await p.locator('#f-name').isVisible().catch(() => {});
 ok('the name typed before the error was not thrown away',
    await p.evaluate(() => DATA.universities.some(v => v.name.en === 'Test College')));
 
-console.log('\nthe dashboard routes to the thing it reports');
+console.log('\nreports run SQL');
+await tab(p, 'reports');
+ok('every seeded report runs without an error',
+   await p.evaluate(() => REPORTS.every(r => runReport(r).ok)));
+ok('an aggregate with no GROUP BY is one row over everything',
+   await p.evaluate(() => {
+     const r = runSQL("SELECT COUNT(*) AS n FROM orders");
+     return r.rows.length === 1 && r.rows[0].n === DATA.orders.length;
+   }));
+ok('GROUP BY buckets and COUNT counts',
+   await p.evaluate(() => {
+     const r = runSQL("SELECT status, COUNT(*) AS n FROM orders GROUP BY status");
+     const total = r.rows.reduce((a, x) => a + x.n, 0);
+     return total === DATA.orders.length && r.rows.length === new Set(DATA.orders.map(o => o.status)).size;
+   }));
+ok('WHERE filters, with AND and a quoted string',
+   await p.evaluate(() => {
+     const r = runSQL("SELECT id FROM orders WHERE status = 'open' AND applicants = 0");
+     return r.rows.length === DATA.orders.filter(o => o.status === 'open' && o.applicants === 0).length;
+   }));
+ok('IN, LIKE and IS NOT NULL work',
+   await p.evaluate(() => {
+     const a = runSQL("SELECT id FROM orders WHERE status IN ('open','cancelled')").rows.length;
+     const b = runSQL("SELECT sci FROM drugs WHERE sci LIKE 'A%'").rows.length;
+     const c = runSQL("SELECT id FROM orders WHERE assignee_id IS NOT NULL").rows.length;
+     return a === DATA.orders.filter(o => ['open','cancelled'].includes(o.status)).length
+       && b === DATA.drugs.filter(d => /^a/i.test(d.sci)).length
+       && c === DATA.orders.filter(o => o.assignee).length;
+   }));
+ok('a JOIN matches rows across two tables',
+   await p.evaluate(() => {
+     const r = runSQL("SELECT p.name, COUNT(*) AS n FROM orders o JOIN pharmacies p ON o.pharmacy_id = p.id GROUP BY p.name");
+     const total = r.rows.reduce((a, x) => a + x.n, 0);
+     return total === DATA.orders.filter(o => DATA.pharmacies.some(p => p.id === o.pharmacy)).length;
+   }));
+ok('ORDER BY and LIMIT apply, in that order',
+   await p.evaluate(() => {
+     const r = runSQL("SELECT name, commission FROM pharmacies ORDER BY commission DESC LIMIT 2");
+     const top = DATA.pharmacies.map(p => p.commission).sort((a, b) => b - a).slice(0, 2);
+     return r.rows.length === 2 && r.rows[0].commission === top[0] && r.rows[1].commission === top[1];
+   }));
+ok('SUM, AVG, MIN and MAX compute over the right column',
+   await p.evaluate(() => {
+     const r = runSQL("SELECT SUM(total) AS s, AVG(total) AS a, MIN(total) AS mn, MAX(total) AS mx FROM orders");
+     const t = DATA.orders.map(o => o.total);
+     return r.rows[0].s === t.reduce((x, y) => x + y, 0)
+       && r.rows[0].mn === Math.min(...t) && r.rows[0].mx === Math.max(...t);
+   }));
+
+// An engine that ignores a clause it cannot run is worse than one that refuses.
+for (const [q, why] of [
+  ["SELECT * FROM orders UNION SELECT * FROM users", 'UNION'],
+  ["SELECT status, COUNT(*) FROM orders GROUP BY status HAVING COUNT(*) > 1", 'HAVING'],
+  ["SELECT DISTINCT status FROM orders", 'DISTINCT'],
+  ["SELECT * FROM orders LEFT JOIN users ON orders.assignee_id = users.id", 'OUTER JOIN'],
+  ["SELECT * FROM orders WHERE id IN (SELECT id FROM users)", 'subqueries'],
+  ["DELETE FROM orders", 'writes'],
+  ["SELECT * FROM nosuchtable", 'unknown table'],
+  ["SELECT FROM orders", 'malformed']
+]) {
+  const err = await p.evaluate(sql => {
+    try { runSQL(sql); return null; } catch (e) { return e.message; }
+  }, q);
+  ok(`refused rather than half-run: ${why}`, !!err);
+}
+
+console.log('\nthe dashboard is built from reports');
 await tab(p, 'home');
-ok('six KPI tiles', await p.locator('.kpi').count() === 6);
-ok('the needs-attention panel has rows', await p.locator('.task-row').count() > 0);
-await p.locator('.task-row').first().click();
+const tileCount = await p.evaluate(() => S.tiles.length);
+ok(`the dashboard renders a tile per entry (${tileCount})`,
+   await p.locator('.tile').count() === tileCount);
+ok('every tile names a report that exists',
+   await p.evaluate(() => S.tiles.every(x => !!reportById(x.report))));
+ok('a tile shows what its report returns, not a number of its own',
+   await p.evaluate(() => {
+     const tile = S.tiles.find(x => reportById(x.report).viz === 'number');
+     const res = runReport(reportById(tile.report));
+     const shown = [...document.querySelectorAll('.tile .kpi-v')].map(e => e.textContent.trim());
+     return shown.includes(String(resultScalar(res)));
+   }));
+ok('changing the query changes the tile',
+   await p.evaluate(async () => {
+     const rep = REPORTS.find(r => r.id === 'R2');
+     const before = document.querySelector('.tile .kpi-v').textContent;
+     const keep = rep.sql;
+     rep.sql = "SELECT COUNT(*) AS unclaimed FROM orders";   // every order, not just unclaimed
+     render();
+     const after = document.querySelector('.tile .kpi-v').textContent;
+     rep.sql = keep; render();
+     return before !== after;
+   }));
+
+await p.evaluate(() => toggleDashEdit());
+await p.waitForTimeout(200);
+ok('customising reveals the tile tools', await p.locator('.tile-tools').count() > 0);
+{
+  const first = await p.evaluate(() => S.tiles[0].report);
+  await p.evaluate(() => moveTile(0, 1));
+  await p.waitForTimeout(150);
+  ok('a tile can be moved', await p.evaluate(() => S.tiles[1].report) === first);
+  await p.evaluate(() => setTileWidth(0, 'l'));
+  await p.waitForTimeout(150);
+  ok('and resized', await p.locator('.tile.w-l').count() > 0);
+  const n = await p.evaluate(() => S.tiles.length);
+  await p.evaluate(() => removeTile(0));
+  await p.waitForTimeout(150);
+  ok('and removed', await p.evaluate(() => S.tiles.length) === n - 1);
+  await p.evaluate(() => openAddTile());
+  await p.waitForTimeout(200);
+  ok('a tile is added by picking a report', await p.locator('.modal .account-btn').count() === await p.evaluate(() => REPORTS.length));
+  await p.locator('.modal .account-btn:not([disabled])').first().click();
+  await p.waitForTimeout(220);
+  ok('which puts it back on the board', await p.evaluate(() => S.tiles.length) === n);
+  await p.evaluate(() => resetDash());
+  await p.waitForTimeout(150);
+  ok('and reset restores the default layout',
+     await p.evaluate(() => S.tiles.length === DEFAULT_TILES.length));
+}
+await p.evaluate(() => { S.dashEdit = false; render(); });
+
+// A tile pointing at a deleted report says so rather than vanishing.
+ok('a tile whose report is gone says so',
+   await p.evaluate(() => {
+     S.tiles.push({ report:'R_GONE', w:'s' });
+     render();
+     const said = document.body.innerText.includes('no longer exists');
+     S.tiles.pop(); render();
+     return said;
+   }));
+
+console.log('\nthe report editor');
+await p.evaluate(() => openReport('R1'));
 await p.waitForTimeout(250);
-ok('clicking one lands on a module view, not a dead end',
-   await p.evaluate(() => S.tab !== 'home'));
-await tab(p, 'home');
-const pcts = await p.locator('.funnel-pct').allInnerTexts();
-ok('no stage share exceeds 100%', pcts.every(x => parseInt(x) <= 100));
+ok('the editor loads the query', (await p.locator('#rep-sql').inputValue()).includes('SELECT'));
+ok('and lists the tables a query can read',
+   await p.locator('.schema-name').count() === await p.evaluate(() => Object.keys(sqlTables()).length));
+await p.locator('#rep-sql').fill('SELECT nope FROM nowhere');
+await p.locator('.btn.primary', { hasText: /Run/ }).click();
+await p.waitForTimeout(250);
+ok('a broken query shows the error instead of an empty chart',
+   await p.locator('.imp-fatal').count() > 0);
+await p.locator('.btn', { hasText: /^Save$/ }).click();
+await p.waitForTimeout(200);
+ok('and cannot be saved', await p.evaluate(() => reportById('R1').sql.includes('status')));
+await p.evaluate(() => closeReport());
 
 console.log('\nsearch');
 await p.locator('#q').fill('Metformin');

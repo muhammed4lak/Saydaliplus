@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0001">
+<meta name="version" content="App_v0.0002">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -92,6 +92,13 @@
   .side-nav-item svg{ width:18px; height:18px; flex:none; }
   .side-nav-item:hover{ background:rgba(255,255,255,.09); color:#fff; }
   .side-nav-item.active{ background:rgba(255,255,255,.16); color:#fff; font-weight:600; }
+  .side-group{
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:.09em; text-transform:uppercase;
+    color:rgba(255,255,255,.45); padding:14px 12px 5px;
+  }
+  .side-group:first-child{ padding-top:2px; }
+  .more-chevron{ margin-inline-start:auto; color:var(--ink-faint); width:15px; height:15px; }
+  html[dir="rtl"] .more-chevron{ transform:scaleX(-1); }
   .side-nav-count{
     margin-inline-start:auto; font-family:var(--font-mono); font-size:11px; font-weight:600;
     background:var(--amber); color:#2A1C05; border-radius:100px; padding:1px 7px;
@@ -772,7 +779,7 @@ const STRINGS = {
     'auth.alreadyRegistered':'مسجّل مسبقاً؟','auth.chooseRole':'ما الذي يقودك إلى صيدلي+؟',
     'auth.changeType':'تغيير نوع الحساب',
     'roles.pharmacist':'أنا صيدلي','roles.pharmacistSub':'اعثر على مناوبات إسناد قريبة منك واحصل على أجرك عن كل مناوبة.',
-    'roles.pharmacy':'أملك صيدلية','roles.pharmacySub':'انشر المناوبات والتدريب، وجد من يغطيها بسرعة.',
+    'roles.owner':'أملك صيدلية','roles.pharmacy':'أملك صيدلية','roles.pharmacySub':'انشر المناوبات والتدريب، وجد من يغطيها بسرعة.',
     'roles.student':'أنا طالب صيدلة','roles.studentSub':'اعثر على صيدلية لتدريبك الصيفي.',
     'f.fullName':'الاسم الكامل','f.fullNameHint':'كما هو مكتوب في هوية النقابة',
     'f.phone':'رقم الهاتف','f.syndicateNo':'رقم التسجيل في النقابة','f.graduationYear':'سنة التخرج',
@@ -958,10 +965,15 @@ Object.assign(STRINGS.ar, {
   'auth.demoHint':'هذه هي الحسابات نفسها الموجودة في supabase/seed.sql. اختر حساباً لتعبئة الحقول — أي كلمة مرور تعمل هنا، فلا يوجد خادم خلف هذه الصفحة.',
   'acc.ahmed':'أحمد الكبيسي','acc.ahmedTag':'صيدلي موثّق',
   'acc.noor':'نور السلطاني','acc.noorTag':'صيدلي — قيد التوثيق',
-  'acc.rahma':'صيدلية الرحمة','acc.rahmaTag':'صيدلية',
+  'acc.rahma':'رحمة الجبوري','acc.pharmacyRahma':'صيدلية الرحمة','acc.rahmaTag':'صاحبة صيدلية الرحمة',
   'acc.zainab':'زينب التميمي','acc.zainabTag':'طالبة',
   'acc.admin':'مراجع المنصة','acc.adminTag':'إدارة',
-  'nav.notifications':'الإشعارات','nav.incidents':'البلاغات',
+  'nav.notifications':'الإشعارات','nav.incidents':'البلاغات','nav.more':'المزيد',
+  'grp.pharmacy':'صيدليتي','grp.pharmacist':'عملي كصيدلي','grp.account':'الحساب',
+  'f.aboutYou':'عنك كصيدلي','f.aboutPharmacy':'عن صيدليتك',
+  'f.pharmacyCreatedNote':'يُنشأ سجل صيدليتك مع طلبك، وتُراجَع هوية النقابة وإجازة الصيدلية معاً.',
+  'f.uploadBoth':'ارفع هوية النقابة وإجازة الصيدلية','f.uploadBothSub':'صورة أو مسح ضوئي للوثيقتين',
+  'roles.ownerSub':'أنت صيدلي وتملك صيدلية: غطِّ مناوباتك، وخذ مناوبات عند غيرك.',
   'f.pharmacyNameAr':'اسم الصيدلية بالعربية',
   'f.pharmacyNameArHint':'كما هو مكتوب على اللافتة. معظم الصيادلة يتصفحون بالعربية.',
   'f.pharmacyNameEn':'اسم الصيدلية بالإنجليزية',
@@ -1047,10 +1059,15 @@ Object.assign(STRINGS.en, {
   'auth.demoHint':'The same accounts as supabase/seed.sql. Pick one to fill the form — any password works here, because there is no server behind this page.',
   'acc.ahmed':'Ahmed Al-Kubaisi','acc.ahmedTag':'Verified pharmacist',
   'acc.noor':'Noor Al-Sultani','acc.noorTag':'Pharmacist — pending',
-  'acc.rahma':'Al-Rahma Pharmacy','acc.rahmaTag':'Pharmacy',
+  'acc.rahma':'Rahma Al-Jubouri','acc.pharmacyRahma':'Al-Rahma Pharmacy','acc.rahmaTag':'Owner, Al-Rahma Pharmacy',
   'acc.zainab':'Zainab Al-Tamimi','acc.zainabTag':'Student',
   'acc.admin':'Platform reviewer','acc.adminTag':'Admin',
-  'nav.notifications':'Notifications','nav.incidents':'Reports',
+  'nav.notifications':'Notifications','nav.incidents':'Reports','nav.more':'More',
+  'grp.pharmacy':'My pharmacy','grp.pharmacist':'My own work','grp.account':'Account',
+  'f.aboutYou':'About you, as a pharmacist','f.aboutPharmacy':'About your pharmacy',
+  'f.pharmacyCreatedNote':'Your pharmacy record is created with your application; the Syndicate card and the pharmacy licence are reviewed together.',
+  'f.uploadBoth':'Upload the Syndicate card and the pharmacy licence','f.uploadBothSub':'Photo or scan of both documents',
+  'roles.ownerSub':'You are a pharmacist who owns a pharmacy: cover your own shifts, and take shifts elsewhere.',
   'f.pharmacyNameAr':'Pharmacy name in Arabic',
   'f.pharmacyNameArHint':'As written on your sign. Most pharmacists browse in Arabic.',
   'f.pharmacyNameEn':'Pharmacy name in English',
@@ -1192,7 +1209,7 @@ const icon = (n, cls) => '<svg class="ico ' + (cls||'') + '"><use href="#i-' + n
 const ACCOUNTS = {
   'ahmed@example.com':      { role:'pharmacist', verified:true,  nameKey:'acc.ahmed',  tagKey:'acc.ahmedTag',  initials:{ar:'أك',en:'AK'}, trial:true  },
   'noor@example.com':       { role:'pharmacist', verified:false, nameKey:'acc.noor',   tagKey:'acc.noorTag',   initials:{ar:'نس',en:'NS'}, trial:true  },
-  'rahma@example.com':      { role:'pharmacy',   verified:true,  nameKey:'acc.rahma',  tagKey:'acc.rahmaTag',  initials:{ar:'صر',en:'AR'}, trial:true  },
+  'rahma@example.com':      { role:'owner',      verified:true,  nameKey:'acc.rahma',  tagKey:'acc.rahmaTag',  initials:{ar:'رج',en:'RJ'}, trial:true  },
   'zainab@uobaghdad.edu.iq':{ role:'student',    verified:true,  nameKey:'acc.zainab', tagKey:'acc.zainabTag', initials:{ar:'زت',en:'ZT'}, trial:false },
   'admin@saydali.example':  { role:'admin',      verified:true,  nameKey:'acc.admin',  tagKey:'acc.adminTag',  initials:{ar:'مر',en:'PR'}, trial:false }
 };
@@ -1243,7 +1260,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0001';
+const VERSION = 'App_v0.0002';
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -1272,7 +1289,7 @@ const TXNS = [
 ];
 
 const NOTIFS = [
-  { id:'n1', roles:['pharmacy'], key:'n.applicationReceived', vars:()=>({name:L(DATA.applicants[0].name), when:L(DATA.listings[0].short)}), ago:'n.ago.2h', read:false },
+  { id:'n1', roles:['owner'], key:'n.applicationReceived', vars:()=>({name:L(DATA.applicants[0].name), when:L(DATA.listings[0].short)}), ago:'n.ago.2h', read:false },
   { id:'n2', roles:['pharmacist'], key:'n.handoffWaiting', ago:'n.ago.5h', read:false },
   { id:'n3', roles:['pharmacist'], key:'n.payoutSettled', vars:()=>({amount:iqd(38800)}), ago:'n.ago.1d', read:true },
   { id:'n4', roles:['pharmacist'], key:'n.verified', ago:'n.ago.3d', read:true },
@@ -1368,7 +1385,7 @@ function headerHtml(eyebrow, title) {
 
 function verificationBanner() {
   if (S.verified) return '';
-  const msg = S.role === 'pharmacy' ? t('ver.bannerPharmacy') : t('ver.banner');
+  const msg = S.role === 'owner' ? t('ver.bannerPharmacy') : t('ver.banner');
   return '<div class="banner banner-amber" style="border-radius:0;border-inline:none;border-top:none;">' +
     icon('hourglass') + '<p>' + esc(msg) + '</p></div>';
 }
@@ -1555,26 +1572,71 @@ function screenDashboard() {
   const stat = (v, label) => '<div class="stat-card"><span class="stat-num">' + v +
     '</span><span class="stat-label">' + esc(label) + '</span></div>';
 
-  const post = (title, meta, badge, badgeClass) =>
-    '<div class="card card-pad"><div class="listing-top" style="margin-bottom:0;"><div>' +
+  const post = (title, meta, badge, badgeClass, go) =>
+    '<button class="listing-card" style="padding:14px 16px;" onclick="' + (go || "goto('applicants')") + '">' +
+      '<div class="listing-top" style="margin-bottom:0;"><div style="text-align:start;">' +
       '<div class="pharmacy-name" style="font-size:14px;">' + esc(title) + '</div>' +
       '<div class="meta-line" style="margin:4px 0 0;">' + esc(meta) + '</div></div>' +
-      '<span class="badge ' + badgeClass + '">' + esc(badge) + '</span></div></div>';
+      '<span class="badge ' + badgeClass + '">' + esc(badge) + '</span></div></button>';
+
+  /* The owner's home is two jobs stacked, pharmacy first — that is the half
+     they open the app to do. Their own pharmacist half sits below it rather
+     than on a separate screen, because an owner covering somebody else's
+     counter on Friday still wants to see it without switching hats. */
+  const pharmacyHalf =
+    '<div class="section-head"><p class="section-eyebrow">' +
+      esc(t('grp.pharmacy') + ' · ' + t('acc.pharmacyRahma')) + '</p>' +
+      '<button class="link-btn" onclick="goto(\'post\')">' + esc(t('nav.post')) + '</button></div>' +
+    '<div class="stat-grid">' + stat(2, t('p.openPosts')) + stat(6, t('p.filledMonth')) + stat(2, t('p.applicants')) + '</div>' +
+    '<div class="stack" style="margin-top:12px;">' +
+      post(lang==='ar'?'تغطية السبت':'Saturday coverage',
+           (lang==='ar'?'8:00 ص – 2:00 م · ':'8:00 AM – 2:00 PM · ') + fmt(30000) + ' ' + t('common.iqd'),
+           '2 ' + t('p.applicants'), 'badge-pending') +
+      post(lang==='ar'?'تدريب صيفي':'Summer training',
+           lang==='ar'?'15 حزيران – 7 أيلول':'15 June – 7 September',
+           t('l.certificate'), 'badge-stage', "goto('trainees')") +
+      post(lang==='ar'?'مساء الخميس':'Thursday evening',
+           (lang==='ar'?'6:00 م – 11:00 م · ':'6:00 PM – 11:00 PM · ') + fmt(42000) + ' ' + t('common.iqd'),
+           t('l.filled'), 'badge-verified') +
+    '</div>';
+
+  const pharmacistHalf =
+    '<div class="section-head" style="margin-top:22px;"><p class="section-eyebrow">' +
+      esc(t('grp.pharmacist')) + '</p>' +
+      '<button class="link-btn" onclick="goto(\'browse\')">' + esc(t('nav.browse')) + '</button></div>' +
+    '<div class="card card-pad">' +
+      '<div class="listing-top" style="margin-bottom:6px;">' +
+        '<div class="pharmacy-name">' + esc(L(DATA.listings[1].pharmacy)) + '</div>' +
+        '<span class="badge badge-pending">' + esc(t('b.startsIn', {n:2})) + '</span></div>' +
+      '<div class="meta-line" style="margin-bottom:12px;">' + icon('clock') +
+        esc(L(DATA.listings[1].when)) + '<span style="color:var(--ink-faint)">·</span>' +
+        '<span class="figure">' + iqd(45000) + '</span></div>' +
+      '<button class="btn-secondary" onclick="goto(\'shifts\')">' + esc(t('b.viewHandoff')) + '</button>' +
+    '</div>' +
+    '<div class="stat-grid" style="margin-top:12px;">' +
+      stat(38, t('pr.shifts')) + stat('96%', t('pr.reliability')) + stat(iqd(38800).split(' ')[0], t('nav.earnings')) +
+    '</div>';
+
+  return '<div class="screen-body"><div class="constrain">' +
+    (S.trial ? '<div class="banner banner-green" style="margin-bottom:16px;">' + icon('badge') + '<p>' +
+      esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
+    pharmacyHalf + pharmacistHalf +
+    '</div></div>';
+}
+
+/* ---------- The owner's "More" ---------- */
+
+function screenMore() {
+  const group = g => '<p class="section-eyebrow">' + esc(t(g.key)) + '</p>' +
+    '<div class="card">' + g.items.map(([id, ic, key]) =>
+      '<button class="row" style="width:100%;text-align:start;" onclick="goto(' + JSON.stringify(id) + ')">' +
+        '<span class="role-icon" style="width:32px;height:32px;border-radius:10px;">' + icon(ic) + '</span>' +
+        '<span class="row-body"><span class="row-title" style="display:block;">' + esc(t(key)) + '</span></span>' +
+        icon('chevron', 'more-chevron') +
+      '</button>').join('') + '</div>';
 
   return '<div class="screen-body"><div class="constrain stack">' +
-    (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
-      esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
-    '<div class="stat-grid">' + stat(2, t('p.openPosts')) + stat(6, t('p.filledMonth')) + stat(2, t('p.applicants')) + '</div>' +
-    '<p class="section-eyebrow">' + esc(t('p.dashboard')) + '</p>' +
-    post(lang==='ar'?'تغطية السبت':'Saturday coverage',
-         (lang==='ar'?'8:00 ص – 2:00 م · ':'8:00 AM – 2:00 PM · ') + fmt(30000) + ' ' + t('common.iqd'),
-         '2 ' + t('p.applicants'), 'badge-pending') +
-    post(lang==='ar'?'تدريب صيفي':'Summer training',
-         lang==='ar'?'15 حزيران – 7 أيلول':'15 June – 7 September',
-         t('l.certificate'), 'badge-stage') +
-    post(lang==='ar'?'مساء الخميس':'Thursday evening',
-         (lang==='ar'?'6:00 م – 11:00 م · ':'6:00 PM – 11:00 PM · ') + fmt(42000) + ' ' + t('common.iqd'),
-         t('l.filled'), 'badge-verified') +
+    OWNER_GROUPS.map(group).join('') +
     '</div></div>';
 }
 
@@ -2258,7 +2320,7 @@ function screenProfileAll() {
         kv('badge', t('pr.reg'), 'IQ-PH-004982') +
         kv('pin', t('f.primaryDistrict'), lang==='ar' ? 'الكرادة' : 'Karrada') +
       '</div>';
-  } else if (S.role === 'pharmacy') {
+  } else if (S.role === 'owner') {
     detail =
       '<p class="section-eyebrow">' + esc(t('pr.pharmacyDetails')) + '</p>' +
       '<div class="card card-pad">' +
@@ -2295,7 +2357,7 @@ function screenProfileAll() {
 
     detail +
 
-    (S.role === 'pharmacist' || S.role === 'pharmacy'
+    (S.role === 'pharmacist' || S.role === 'owner'
       ? '<div class="card"><button class="row" style="width:100%;text-align:start;" onclick="goto(\'incidents\')">' +
           '<span class="txn-icon txn-out">' + icon('alert') + '</span>' +
           '<span class="row-body"><span class="row-title" style="display:block;">' + esc(t('i.title')) + '</span>' +
@@ -2329,6 +2391,7 @@ const SCREENS = {
   cv:            { eyebrow:()=>currentName(), title:()=>t('cv.title'), body:screenCv },
 
   dashboard:     { eyebrow:()=>greeting(), title:()=>currentName(), body:screenDashboard },
+  more:          { eyebrow:()=>currentName(), title:()=>t('nav.more'), body:screenMore },
   post:          { eyebrow:()=>currentName(), title:()=>t('post.title'), body:screenPost },
   applicants:    { eyebrow:()=>currentName(), title:()=>t('app.title'), body:screenApplicants },
   trainees:      { eyebrow:()=>currentName(), title:()=>t('tr.title'), body:screenTrainees },
@@ -2345,21 +2408,43 @@ const SCREENS = {
 
 /* The bottom bar gets five at most — more than five targets on a phone is a
    menu pretending to be a nav. The sidebar can carry the rest. */
+/* A pharmacy owner is a pharmacist who also owns a pharmacy — one person, one
+   licence, two jobs. They get both sets of screens rather than a merged
+   compromise, with the pharmacy half leading because that is the half they
+   open the app to do. The pharmacist half is how they take a shift at somebody
+   else's counter, which owners really do.
+
+   Five thumb-sized targets is the bottom bar's honest limit, so the owner's
+   sixth-and-beyond live behind "More" — a screen, not a hidden menu, and the
+   desktop sidebar shows the same items under headings instead. */
 const NAV = {
   pharmacist: [['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],['earnings','wallet','nav.earnings'],
                ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
-  pharmacy:   [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
-               ['trainees','cap','nav.trainees'],['profile','user','nav.profile']],
+  owner:      [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
+               ['more','grid','nav.more'],['profile','user','nav.profile']],
   student:    [['browse','home','nav.browse'],['placement','calendar','nav.placement'],
                ['logbook','book','nav.logbook'],['profile','user','nav.profile']],
   admin:      [['queue','badge','nav.queue'],['profile','user','nav.profile']]
 };
 
+/* What the owner's "More" screen holds, and what the sidebar shows under
+   headings. Two groups, because "my pharmacy" and "my own shifts" are two
+   different jobs and mixing them into one list makes both harder to scan. */
+const OWNER_GROUPS = [
+  { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['post','plus','nav.post'],
+                               ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees']] },
+  { key:'grp.pharmacist', items:[['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],
+                                 ['earnings','wallet','nav.earnings'],['cv','clipboard','nav.cv']] },
+  { key:'grp.account', items:[['notifications','bell','nav.notifications'],
+                              ['incidents','alert','nav.incidents'],['profile','user','nav.profile']] }
+];
+
 /* Sidebar-only extras: real enough to reach, not important enough to spend one
-   of five thumb-sized targets on. */
+   of five thumb-sized targets on. The owner's sidebar is built from the groups
+   above instead, so it has no entry here. */
 const NAV_EXTRA = {
   pharmacist: [['notifications','bell','nav.notifications'],['incidents','alert','nav.incidents']],
-  pharmacy:   [['notifications','bell','nav.notifications'],['incidents','alert','nav.incidents']],
+  owner:      [],
   student:    [['notifications','bell','nav.notifications']],
   admin:      []
 };
@@ -2412,11 +2497,18 @@ function render() {
     '<button class="nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
     icon(ic) + '<span>' + esc(t(key)) + '</span></button>').join('');
 
-  document.getElementById('side-nav').innerHTML = nav.concat(extra).map(([id, ic, key]) =>
+  const sideItem = ([id, ic, key]) =>
     '<button class="side-nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
     icon(ic) + '<span>' + esc(t(key)) + '</span>' +
     (id === 'notifications' && unread ? '<span class="side-nav-count">' + unread + '</span>' : '') +
-    '</button>').join('');
+    '</button>';
+
+  /* The owner's sidebar is grouped under headings. Two jobs in one flat list is
+     how both become hard to scan. */
+  document.getElementById('side-nav').innerHTML = S.role === 'owner'
+    ? OWNER_GROUPS.map(g => '<div class="side-group">' + esc(t(g.key)) + '</div>' +
+        g.items.map(sideItem).join('')).join('')
+    : nav.concat(extra).map(sideItem).join('');
 
   const acct = ACCOUNTS[S.email];
   document.getElementById('side-account').innerHTML = acct
@@ -2540,7 +2632,7 @@ function renderAuth() {
       '<button class="auth-back" onclick="setAuth(\'signin\')">' + icon('back') + esc(t('common.back')) + '</button>' +
       '<h1 class="auth-heading">' + esc(t('auth.signUp')) + '</h1>' +
       '<p class="auth-sub">' + esc(t('auth.chooseRole')) + '</p>' +
-      opt('pharmacist','user') + opt('pharmacy','home') + opt('student','cap');
+      opt('pharmacist','user') + opt('owner','home') + opt('student','cap');
 
   } else if (authScreen === 'signup') {
     let fields = '';
@@ -2558,17 +2650,34 @@ function renderAuth() {
           '<span class="role-icon">' + icon('clipboard') + '</span><span>' +
           '<span class="role-title">' + esc(t('f.upload')) + '</span>' +
           '<span class="role-sub">' + esc(t('f.uploadSub')) + '</span></span></button>';
-    } else if (signupRole === 'pharmacy') {
-      /* Both names, Arabic first and required — Arabic is the default language
-         and a Latin-only pharmacy name is unreadable to most of the
-         pharmacists it is shown to. Mirrors migration 0013. */
-      fields = authField('su-ar', t('f.pharmacyNameAr'), 'text', t('f.pharmacyNameArHint')) +
-        authField('su-en', t('f.pharmacyNameEn')) +
-        authField('su-resp', t('f.responsible')) +
+    } else if (signupRole === 'owner') {
+      /* One form, two records. An owner IS a pharmacist — same Syndicate card,
+         same registration number — who also holds a pharmacy licence, so the
+         sign-up collects both and creates both. Asking them to register twice
+         would be asking one person to prove they are two. */
+      fields =
+        '<p class="section-eyebrow" style="margin-top:0;">' + esc(t('f.aboutYou')) + '</p>' +
+        authField('su-name', t('f.fullName'), 'text', t('f.fullNameHint')) +
+        authField('su-reg', t('f.syndicateNo'), 'text', null, true) +
+        '<div class="field-row">' +
+          '<div class="field"><label>' + esc(t('f.graduationYear')) + '</label><input type="number" class="figure" dir="ltr"></div>' +
+          '<div class="field"><label>' + esc(t('f.phone')) + '</label><input type="tel" class="figure" dir="ltr"></div>' +
+        '</div>' +
         authField('su-mail', t('auth.email'), 'email', null, true) +
-        authField('su-phone', t('f.phone'), 'tel', null, true) +
+
+        '<p class="section-eyebrow">' + esc(t('f.aboutPharmacy')) + '</p>' +
+        '<p class="inline-note" style="margin:-4px 0 12px;">' + esc(t('f.pharmacyCreatedNote')) + '</p>' +
+        authField('su-ar', t('f.pharmacyNameAr'), 'text', t('f.pharmacyNameArHint'), false) +
+        authField('su-en', t('f.pharmacyNameEn')) +
         authField('su-lic', t('f.licenceNo'), 'text', null, true) +
-        authField('su-addr', t('f.address'));
+        '<div class="field"><label>' + esc(t('f.district')) + '</label><select><option></option>' +
+          DATA.districts.filter(d=>d.key!=='all').map(d=>'<option>'+esc(L(d))+'</option>').join('') + '</select></div>' +
+        authField('su-addr', t('f.address')) +
+        '<button class="role-option" onclick="toast(t(\'f.uploadLicenceSub\'))">' +
+          '<span class="role-icon">' + icon('clipboard') + '</span><span>' +
+          '<span class="role-title">' + esc(t('f.uploadBoth')) + '</span>' +
+          '<span class="role-sub">' + esc(t('f.uploadBothSub')) + '</span></span></button>';
+
     } else {
       fields = authField('su-name', t('f.fullName')) +
         '<div class="field"><label>' + esc(t('f.university')) + '</label><select><option></option>' +
@@ -2621,7 +2730,7 @@ function renderAuth() {
       /* Limited access is the point: browsing and applying keep the account
          alive through a week of waiting. */
       '<button class="btn-primary" onclick="' +
-        (signupRole === 'pharmacy' ? 'signInAs(\'rahma@example.com\')' : 'signInAs(\'noor@example.com\')') + '">' +
+        (signupRole === 'owner' ? 'signInAs(\'rahma@example.com\')' : 'signInAs(\'noor@example.com\')') + '">' +
         esc(t('ver.continueLimited')) + '</button>';
   }
 
@@ -2660,7 +2769,7 @@ function setLang(l){ lang = l; render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0001.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0002.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

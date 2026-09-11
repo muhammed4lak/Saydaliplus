@@ -83,19 +83,39 @@ on the record rather than as a translation of the interface. The check enforces
 the line: Arabic in a column heading or a button fails; Arabic in a record field
 is expected.
 
-Eight tabs: a home dashboard and seven modules.
+Nine tabs: a customisable dashboard, seven data modules, and Reports.
 
 | Module | What it holds |
 |---|---|
 | **Orders** | The main one. Every shift and every placement, segmented by order type — pharmacist shift, student training — with the status lifecycle from posted to completed. Still marked in-progress on the screen itself. |
-| **Users** | Every account, segmented by the platform's three types: pharmacist, pharmacy, student. |
+| **Users** | Every account, segmented by the platform's three types: pharmacist, pharmacy owner, student. |
 | **Pharmacies** | The business behind a pharmacy account — licence, district, trial clock, fill rate. |
 | **Companies** | Manufacturers, marketing companies, importers and distributors. |
 | **Universities** | Colleges of pharmacy, and the email domain that makes student verification automatic. |
 | **Syndicate roster** | Pharmacist names and numbers as the Syndicate supplies them, with the match against platform accounts. |
 | **Drugs** | Scientific name as the identifier; brands under it, each owned by a company and able to override the doses. |
+| **Reports** | A report is a name, a SQL query and how to draw the result. The dashboard is built only from these. |
 
-Three things in it are worth reading the code for.
+**The dashboard holds no numbers of its own.** Every tile names a saved report,
+and a report is SQL. So a figure on the dashboard can always be traced to the
+query that produced it, changing the query moves the tile with it, and the
+dashboard cannot show something the Reports module could not reproduce. Tiles
+reorder, resize and come off; a tile whose report was deleted says so rather
+than vanishing.
+
+The query engine runs a documented subset of SQL over the in-memory tables —
+SELECT with COUNT/SUM/AVG/MIN/MAX, FROM, inner JOIN on equality, WHERE with
+AND/OR/IN/LIKE/IS NULL, GROUP BY, ORDER BY, LIMIT. It **refuses** subqueries,
+UNION, HAVING, OUTER JOIN and DISTINCT by name rather than ignoring them, because
+an engine that quietly drops half a clause returns a wrong number that looks
+right. A report that does not run cannot be saved.
+
+A report shows what its query returns, including raw column values — `in_progress`
+rather than "In progress". That is deliberate: the moment the dashboard prettifies
+a value the report did not produce, the two stop agreeing. Rename it in the SQL
+with `AS` if you want it prettier.
+
+Three more things worth reading the code for.
 
 **The Syndicate module is honest about what it is.** Iraq has no digital
 pharmacist registry and the Syndicate's processes are paper-based, so this is a
@@ -171,6 +191,16 @@ npm run check:crm     # newest crm/saydali-crm_v*.html
 ---
 
 ## Decisions worth knowing before you read the code
+
+**A pharmacy owner is a pharmacist and a pharmacy, not a third thing.** Same
+person, same Syndicate card, plus a pharmacy licence — so signing up collects
+both and creates both records at once, and the account carries both halves ever
+after. They get every pharmacist screen and every pharmacy screen. The pharmacy
+half leads, because that is what they open the app to do; the pharmacist half is
+how an owner covers somebody else's counter, which owners really do. Five
+thumb-sized targets is the bottom bar's limit, so the rest live behind "More" —
+a screen, not a hidden menu — and the desktop sidebar shows the same items under
+headings.
 
 **Applications are queued during verification, not blocked.** §3 of the brief left
 this open. An unverified pharmacist can browse *and apply*; the application is

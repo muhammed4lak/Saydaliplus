@@ -103,6 +103,68 @@ for (const mail of accounts) {
   await signOut(d);
 }
 
+console.log('\nthe pharmacy owner is a pharmacist and a pharmacy');
+await signIn(d, 'rahma@example.com');
+ok('the account is an owner, not a bare pharmacy',
+   await d.evaluate(() => S.role === 'owner'));
+ok('and the account is a person, as the CRM also has it',
+   await d.evaluate(() => /Rahma Al-Jubouri|رحمة الجبوري/.test(t('acc.rahma'))));
+ok('with the pharmacy named beside them rather than instead of them',
+   await d.evaluate(() => /Al-Rahma Pharmacy|صيدلية الرحمة/.test(t('acc.rahmaTag'))));
+ok('the sidebar groups the two jobs under headings',
+   await d.locator('.side-group').count() === 3);
+{
+  const reachable = await d.evaluate(() =>
+    OWNER_GROUPS.flatMap(g => g.items.map(i => i[0])));
+  // Every pharmacist screen AND every pharmacy screen, from one account.
+  const wantPharmacy = ['dashboard', 'post', 'applicants', 'trainees'];
+  const wantPharmacist = ['browse', 'shifts', 'earnings', 'cv'];
+  ok('every pharmacy screen is reachable', wantPharmacy.every(x => reachable.includes(x)));
+  ok('and every pharmacist screen too', wantPharmacist.every(x => reachable.includes(x)));
+
+  let empty = [];
+  for (const id of reachable) {
+    await go(d, id);
+    if ((await d.locator('#app-body').innerText()).trim().length < 30) empty.push(id);
+  }
+  ok(`all ${reachable.length} of them render (${empty.join(',') || 'none empty'})`, empty.length === 0);
+}
+ok('the pharmacy half leads the bottom bar',
+   await d.evaluate(() => NAV.owner[0][0] === 'dashboard'));
+ok('and the bottom bar still holds only five',
+   await d.evaluate(() => NAV.owner.length === 5));
+await go(d, 'dashboard');
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('the home page carries both halves, pharmacy first',
+     txt.indexOf(await d.evaluate(() => t('grp.pharmacy'))) >= 0
+     && txt.indexOf(await d.evaluate(() => t('grp.pharmacist'))) >
+        txt.indexOf(await d.evaluate(() => t('grp.pharmacy'))));
+}
+await go(d, 'more');
+ok('"More" lists what the bottom bar could not hold',
+   await d.locator('.row-title').count() >= 8);
+await signOut(d);
+
+console.log('\nsigning up as an owner creates both records');
+await d.locator('.link-btn', { hasText: /Create an account|أنشئ حساباً/ }).click();
+await d.waitForTimeout(200);
+await d.locator('.role-option').nth(1).click();
+await d.waitForTimeout(250);
+{
+  const form = await d.locator('.auth-form').innerText();
+  ok('the owner form asks for the Syndicate number (they are a pharmacist)',
+     await d.locator('#su-reg').count() === 1);
+  ok('and the pharmacy licence (they are a pharmacy)',
+     await d.locator('#su-lic').count() === 1);
+  ok('and says the pharmacy record is created with the application',
+     /created with your application|يُنشأ سجل صيدليتك/.test(form));
+  ok('and asks for the Arabic pharmacy name, which is mandatory',
+     await d.locator('#su-ar').count() === 1);
+}
+await d.evaluate(() => setAuth('signin'));
+await d.waitForTimeout(200);
+
 console.log('\nmoney');
 await signIn(d, 'ahmed@example.com');
 await go(d, 'earnings');
