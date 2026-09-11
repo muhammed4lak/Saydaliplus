@@ -42,7 +42,12 @@ const p = await open();
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
 ok('eight tabs: home plus the seven modules', await p.locator('.tab').count() === 8);
-ok('Arabic is the default', await p.evaluate(() => document.documentElement.dir) === 'rtl');
+ok('the document is English, left to right', await p.evaluate(() =>
+   document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
+ok('there is no language toggle left to press',
+   await p.locator('#btn-lang').count() === 0);
+ok('the build states which one it is',
+   /^CRM_v\d+\.\d+$/.test((await p.locator('#build-tag').innerText()).trim()));
 
 console.log('\nevery module renders and every saved view returns something sane');
 for (const k of ['home', ...MODS]) {
@@ -311,38 +316,46 @@ await p.waitForTimeout(250);
 ok('and opens the record', await p.evaluate(() => S.record && S.record.mod === 'drugs'));
 await p.evaluate(() => closeRecord());
 
-console.log('\nlanguage');
+console.log('\nEnglish only');
+/* A missing string falls through t() as its own key, which looks like a label
+   until you read it. Sweep every module and a record of each kind. */
 const KEYISH = /(?:^|[\s>|])[a-z]{1,12}\.[a-zA-Z][a-zA-Z0-9]{1,20}(?:$|[\s<|])/i;
-async function sweep(label) {
-  const leaks = [];
-  for (const k of ['home', ...MODS]) {
-    await tab(p, k);
-    const txt = await p.locator('#shell').innerText();
-    const hit = txt.match(KEYISH);
-    // A drug's ATC code and an email domain both look like a key; exclude them.
-    if (hit && !/\.(edu|com|iq|example)/i.test(hit[0])) leaks.push(k + ': ' + hit[0].trim());
-    if (/[٠-٩]/.test(txt)) leaks.push(k + ': eastern-arabic numerals');
-  }
-  for (const [mod, id] of [['orders','O-1041'], ['users','U5'], ['pharmacies','P4'],
-                           ['companies','CO3'], ['universities','V2'], ['syndicate','IQ-PH-007731'],
-                           ['drugs','Omeprazole']]) {
-    await p.evaluate(a => openRecord(a[0], a[1]), [mod, id]);
-    await p.waitForTimeout(140);
-    const txt = await p.locator('#shell').innerText();
-    const hit = txt.match(KEYISH);
-    if (hit && !/\.(edu|com|iq|example)/i.test(hit[0])) leaks.push(mod + ' record: ' + hit[0].trim());
-  }
-  await p.evaluate(() => closeRecord());
-  ok(label, leaks.length === 0);
-  leaks.forEach(x => console.log('        ' + x));
+/* Arabic in the CHROME would be a leftover translation; Arabic inside a record
+   field is the pharmacy's actual name. So the sweep looks at the furniture —
+   tabs, headers, column headings, buttons, filter rail — not the cells. */
+const CHROME = '.tabs, .work-head, .rail, table.grid thead, .panel-h, .field-k, .kpi-k, .chart-t, .btn, .mod-note';
+const ARABIC = /[\u0600-\u06FF]/;
+const leaks = [];
+for (const k of ['home', ...MODS]) {
+  await tab(p, k);
+  const txt = await p.locator('#shell').innerText();
+  const hit = txt.match(KEYISH);
+  if (hit && !/\.(edu|com|iq|example)/i.test(hit[0])) leaks.push(k + ': untranslated ' + hit[0].trim());
+  if (/[٠-٩]/.test(txt)) leaks.push(k + ': eastern-arabic numerals');
+  const chromeTxt = (await p.locator(CHROME).allInnerTexts()).join(' | ');
+  if (ARABIC.test(chromeTxt)) leaks.push(k + ': Arabic in the chrome — ' +
+    (chromeTxt.match(new RegExp('[^|]*' + ARABIC.source + '[^|]*')) || [''])[0].trim().slice(0, 40));
 }
-await p.evaluate(() => setLang('en'));
-await p.waitForTimeout(250);
-ok('English turns the page around', await p.evaluate(() => document.documentElement.dir) === 'ltr');
-await sweep('every English screen is fully translated, Western numerals throughout');
-await p.evaluate(() => setLang('ar'));
-await p.waitForTimeout(250);
-await sweep('every Arabic screen is too');
+for (const [mod, id] of [['orders','O-1041'], ['users','U5'], ['pharmacies','P4'],
+                         ['companies','CO3'], ['universities','V2'], ['syndicate','IQ-PH-007731'],
+                         ['drugs','Omeprazole']]) {
+  await p.evaluate(a => openRecord(a[0], a[1]), [mod, id]);
+  await p.waitForTimeout(140);
+  const txt = await p.locator('#shell').innerText();
+  const hit = txt.match(KEYISH);
+  if (hit && !/\.(edu|com|iq|example)/i.test(hit[0])) leaks.push(mod + ' record: untranslated ' + hit[0].trim());
+  const chromeTxt = (await p.locator(CHROME).allInnerTexts()).join(' | ');
+  if (ARABIC.test(chromeTxt)) leaks.push(mod + ' record: Arabic in the chrome');
+}
+await p.evaluate(() => closeRecord());
+ok('no untranslated keys, no Arabic in the interface, Western numerals throughout', leaks.length === 0);
+leaks.forEach(x => console.log('        ' + x));
+
+ok('Arabic data is still held, and still shown where it is the record',
+   await p.evaluate(() => {
+     const d = drugOf('Amoxicillin');
+     return d.ar === 'أموكسيسيلين' && AR(DATA.pharmacies[0].name) === 'صيدلية الرحمة';
+   }));
 
 console.log('\nnarrow viewport');
 const m = await open(430, 900);

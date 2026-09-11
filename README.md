@@ -74,6 +74,15 @@ sees. Modelled on Zoho CRM — module tabs, saved views, a filter rail, record
 pages with a timeline, bulk actions, CSV import — in Saydali+'s palette, so the
 two read as one company's software.
 
+**It is English only, on purpose.** The app is Arabic-first and stays that way;
+its users are pharmacists and owners across Iraq. This is the back office, used
+by one team, so a second language buys nothing and costs a permanent risk of
+half-translated screens. Arabic still appears as *data* — a pharmacy is really
+called صيدلية الرحمة, a drug really has an Arabic name — shown as its own field
+on the record rather than as a translation of the interface. The check enforces
+the line: Arabic in a column heading or a button fails; Arabic in a record field
+is expected.
+
 Eight tabs: a home dashboard and seven modules.
 
 | Module | What it holds |
@@ -261,7 +270,7 @@ panels left.
 | Handoff and completion | Five-item checklist, dual confirmation, derived stats, ratings, cancellation with notice classification |
 | Money | Fee engine with trial and floor, payout requests through the provider interface, per-booking transaction history |
 | Student module | 12-week forward-fill logbook, monthly approval and return, certificate with PDF export |
-| CV | Bilingual builder, preset pickers, verified half read from the record, PDF export, AI assistant |
+| CV | Bilingual builder, skills split into clinical and non-clinical, verified half read from the record, PDF export, AI assistant |
 | Notifications | Raised by database triggers, rendered in the reader's current language |
 | Incidents | Tiers 1-2, evidence gate, right of reply, symmetric both ways |
 | PWA | Manifest, generated icons, and a deliberately conservative service worker |

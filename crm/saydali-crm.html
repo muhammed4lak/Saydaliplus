@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
-<title>Saydali+ CRM — إدارة العلاقات</title>
+<title>Saydali+ CRM</title>
+<meta name="version" content="CRM_v0.0001">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
+
+  ENGLISH ONLY, deliberately. The app is Arabic-first and stays that way; its
+  users are pharmacists and owners across Iraq. This is the back office, used
+  by one team, so a second language would buy nothing and cost a permanent risk
+  of half-translated screens. Arabic still appears as DATA — a pharmacy is
+  really called صيدلية الرحمة, a drug really has an Arabic name — and those are
+  fields on the record, not translations of the interface.
 
   WHAT THIS IS FOR. The app at demo/saydali-plus.html is what a pharmacy and a
   pharmacist see. This is what the team in Baghdad sees: the pharmacies not yet
@@ -68,7 +76,6 @@
     font-family:var(--font-body); background:var(--page); color:var(--ink);
     font-size:13px; -webkit-font-smoothing:antialiased; overflow:hidden;
   }
-  html[dir="rtl"] body{ font-family:var(--font-ar); }
   button,input,select,textarea{ font-family:inherit; font-size:inherit; color:inherit; }
   button{ cursor:pointer; background:none; border:none; }
   a{ color:var(--indigo); }
@@ -171,7 +178,6 @@
     display:flex; align-items:center; gap:7px; font-family:var(--font-display);
     font-weight:700; font-size:16px; color:var(--ink);
   }
-  html[dir="rtl"] .view-select{ font-family:var(--font-ar); font-size:15px; }
   .view-select .ico{ width:16px; height:16px; color:var(--ink-faint); }
   .view-menu{
     position:absolute; top:38px; inset-inline-start:0; min-width:230px; background:var(--card);
@@ -245,7 +251,7 @@
     width:28px; height:28px; border-radius:8px; background:var(--indigo-tint); color:var(--indigo-dark);
     display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none;
   }
-  html[dir="ltr"] .avatar{ font-family:var(--font-display); }
+  .avatar{ font-family:var(--font-display); }
   .avatar.lg{ width:46px; height:46px; border-radius:13px; font-size:16px; }
   .avatar.amber{ background:var(--amber-tint); color:#8A5610; }
   .with-avatar{ display:flex; align-items:center; gap:9px; }
@@ -279,7 +285,6 @@
     display:flex; align-items:flex-start; gap:13px; flex-wrap:wrap;
   }
   .rec-title{ font-family:var(--font-display); font-weight:700; font-size:18px; }
-  html[dir="rtl"] .rec-title{ font-family:var(--font-ar); font-size:17px; }
   .rec-sub{ font-size:12px; color:var(--ink-faint); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   .rec-tabs{ display:flex; gap:2px; padding:0 18px; background:var(--card); border-bottom:1px solid var(--border); }
   .rec-tab{
@@ -372,7 +377,6 @@
   /* Proportional figures on a display-size number: tabular digits make a large
      value look loose. tabular-nums is for columns that align. */
   .kpi-v{ font-family:var(--font-body); font-size:27px; font-weight:600; letter-spacing:-.02em; margin-top:5px; line-height:1.1; }
-  html[dir="rtl"] .kpi-v{ font-family:var(--font-body); }
   .kpi-d{ font-size:11.5px; margin-top:5px; display:flex; align-items:center; gap:5px; }
   .kpi-d .ico{ width:12px; height:12px; }
   .kpi-up{ color:#0A7D0A; } .kpi-down{ color:#A32E2E; } .kpi-flat{ color:var(--ink-faint); }
@@ -449,7 +453,6 @@
   }
   .modal-h{ padding:15px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
   .modal-t{ font-family:var(--font-display); font-weight:700; font-size:15px; }
-  html[dir="rtl"] .modal-t{ font-family:var(--font-ar); }
   .modal-b{ padding:18px; }
   .modal-f{ padding:13px 18px; border-top:1px solid var(--border); display:flex; gap:9px; justify-content:flex-end; }
 
@@ -472,9 +475,12 @@
     background:var(--ink); color:#fff; font-size:12.5px; padding:10px 17px; border-radius:9px;
     opacity:0; pointer-events:none; z-index:90; transition:opacity .16s,transform .16s; max-width:90vw;
   }
-  html[dir="rtl"] .toast{ transform:translateX(50%) translateY(8px); }
   .toast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
-  html[dir="rtl"] .toast.on{ transform:translateX(50%) translateY(0); }
+
+  .build-tag{
+    font-family:var(--font-mono); font-size:10px; color:rgba(255,255,255,.42);
+    letter-spacing:.04em; white-space:nowrap;
+  }
 
   /* ---------- Module notes & the importer ---------- */
   .mod-note{
@@ -488,7 +494,6 @@
   .kpi.as-link{ text-align:start; width:100%; transition:border-color .12s, box-shadow .12s; }
   .kpi.as-link:hover{ border-color:var(--indigo); box-shadow:0 4px 14px -8px rgba(20,18,40,.25); }
   .go-chevron{ color:var(--ink-faint); align-self:center; }
-  html[dir="rtl"] .go-chevron{ transform:scaleX(-1); }
 
   .modal.wide{ max-width:680px; }
   .imp-head{ display:flex; gap:9px; flex-wrap:wrap; }
@@ -522,6 +527,7 @@
          treats the trailing "+" as neutral and renders "+Saydali". -->
     <span class="tb-brand" dir="ltr">Saydali+</span>
     <span class="tb-suite" id="tb-suite">CRM</span>
+    <span class="build-tag" id="build-tag"></span>
 
     <div class="tb-search">
       <svg class="ico"><use href="#i-search"/></svg>
@@ -531,7 +537,6 @@
 
     <button class="tb-btn ghost" onclick="openApp()" id="btn-app">
       <svg class="ico"><use href="#i-grid"/></svg><span></span></button>
-    <button class="tb-btn" onclick="setLang(lang==='ar'?'en':'ar')" id="btn-lang"></button>
     <div class="tb-avatar" id="me-avatar"></div>
   </header>
 
@@ -597,80 +602,21 @@
 "use strict";
 
 /* ==========================================================================
-   1. LANGUAGE
-   Arabic is the default, as it is in the app. Western numerals in both
-   languages; Levantine month names, not the Gulf transliterations Intl
-   produces for `ar`.
+   1. STRINGS
+   The CRM is English only. The app is not — Arabic is its default and stays
+   that way, because its users are pharmacists and pharmacy owners across Iraq.
+   This is the back office, used by one team, and a single language removes a
+   whole class of half-translated screens.
+   Arabic still appears here as DATA: a pharmacy really is called صيدلية الرحمة
+   and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
+const VERSION = 'CRM_v0.0001';
+
 const STRINGS = {
-ar: {
-  'suite':'إدارة العلاقات','openApp':'التطبيق','lang':'EN',
-  'search':'ابحث في كل السجلات…','searchEmpty':'لا نتائج مطابقة.',
-  'mod.home':'الرئيسية','mod.leads':'العملاء المحتملون','mod.accounts':'الصيدليات',
-  'mod.contacts':'جهات الاتصال','mod.deals':'الصفقات','mod.activities':'المهام','mod.reports':'التقارير',
-  'a.new':'جديد','a.edit':'تعديل','a.save':'حفظ','a.cancel':'إلغاء','a.delete':'حذف','a.close':'إغلاق',
-  'a.convert':'تحويل إلى صيدلية','a.call':'تسجيل مكالمة','a.note':'أضف ملاحظة','a.task':'مهمة جديدة',
-  'a.openInApp':'افتح في صيدلي+','a.selected':'{n} محدّد','a.clear':'إلغاء التحديد','a.export':'تصدير',
-  'a.assign':'إسناد إلى','a.addNote':'اكتب ملاحظة…','a.post':'إضافة','a.done':'إنجاز','a.undone':'إرجاع',
-  'a.viewTable':'عرض الجدول','a.viewChart':'عرض الرسم','a.refresh':'تحديث',
-  'f.owner':'المسؤول','f.stage':'المرحلة','f.district':'المنطقة','f.status':'الحالة','f.source':'المصدر',
-  'f.all':'الكل','f.clear':'مسح عوامل التصفية','f.filters':'تصفية','f.rating':'التقييم',
-  'v.allLeads':'كل العملاء المحتملين','v.myLeads':'عملائي','v.hot':'الأكثر جاهزية','v.stale':'بلا متابعة منذ 14 يوماً',
-  'v.allAccounts':'كل الصيدليات','v.trialEnding':'تجارب تنتهي قريباً','v.dormant':'موثّقة ولم تنشر',
-  'v.atRisk':'معرّضة للتوقف','v.allContacts':'كل جهات الاتصال','v.allDeals':'كل الصفقات',
-  'v.openDeals':'الصفقات المفتوحة','v.myDeals':'صفقاتي','v.allTasks':'كل المهام','v.mine':'مهامي',
-  'v.overdue':'متأخرة','v.today':'اليوم',
-  'c.name':'الاسم','c.company':'الصيدلية','c.phone':'الهاتف','c.email':'البريد','c.district':'المنطقة',
-  'c.source':'المصدر','c.owner':'المسؤول','c.status':'الحالة','c.created':'أُنشئ','c.lastTouch':'آخر تواصل','c.rating':'التقييم',
-  'c.stage':'المرحلة','c.value':'القيمة الشهرية المتوقعة','c.closeDate':'تاريخ الإغلاق','c.deal':'الصفقة',
-  'c.licence':'رقم الإجازة','c.verification':'التوثيق','c.trial':'التجربة','c.shifts':'مناوبات منشورة',
-  'c.fillRate':'نسبة التغطية','c.lastShift':'آخر مناوبة','c.commission':'عمولة الشهر','c.account':'الصيدلية',
-  'c.role':'الصفة','c.subject':'المهمة','c.due':'الاستحقاق','c.related':'مرتبطة بـ','c.priority':'الأولوية',
-  'c.type':'النوع','c.activated':'التفعيل','c.pharmacists':'صيادلة تعاملوا معها',
-  'st.new':'جديد','st.contacted':'تم التواصل','st.visited':'زيارة تمت','st.trial':'تجربة نشطة',
-  'st.activated':'نشرت أول مناوبة','st.won':'عميل نشط','st.lost':'خسارة',
-  'rt.hot':'جاهز','rt.warm':'مهتم','rt.cold':'بارد',
-  'vs.verified':'موثّقة','vs.pending':'قيد التوثيق','vs.rejected':'مرفوضة','vs.none':'غير مسجّلة',
-  'src.visit':'زيارة ميدانية','src.referral':'ترشيح صيدلي','src.syndicate':'فعالية النقابة',
-  'src.inbound':'تواصل ذاتي','src.social':'وسائل التواصل',
-  'pr.high':'عالية','pr.normal':'عادية','pr.low':'منخفضة',
-  'ty.call':'مكالمة','ty.visit':'زيارة','ty.followup':'متابعة','ty.demo':'عرض تجريبي','ty.note':'ملاحظة',
-  'h.title':'الرئيسية','h.greeting':'صباح الخير، {name}',
-  'k.openDeals':'صفقات مفتوحة','k.pipelineValue':'قيمة خط الأنابيب','k.activePharmacies':'صيدليات نشطة',
-  'k.trialEnding':'تجارب تنتهي خلال 7 أيام','k.dormant':'موثّقة ولم تنشر','k.monthCommission':'عمولة الشهر',
-  'k.vsLast':'مقارنة بالشهر الماضي','k.needsCall':'تحتاج مكالمة',
-  'ch.funnel':'خط الأنابيب حسب المرحلة','ch.funnelSub':'عدد الصيدليات وقيمتها الشهرية المتوقعة',
-  'ch.activation':'من التسجيل إلى أول مناوبة','ch.activationSub':'صيدليات مفعّلة شهرياً',
-  'ch.districts':'الصيدليات النشطة حسب المنطقة','ch.districtsSub':'أُسندت مناوبة واحدة على الأقل خلال 30 يوماً',
-  'ch.tasks':'مهامي اليوم','ch.recent':'آخر النشاطات','ch.noTasks':'لا مهام مستحقة اليوم.',
-  'ch.pharmacies':'صيدلية','ch.month':'الشهر','ch.count':'العدد','ch.stageCol':'المرحلة',
-  'ch.valueCol':'القيمة','ch.conversion':'نسبة الانتقال','ch.share':'من القيمة','ch.districtCol':'المنطقة',
-  'r.title':'التقارير','r.pipelineReport':'تقرير خط الأنابيب','r.activationReport':'تقرير التفعيل',
-  'r.sourceReport':'العملاء المحتملون حسب المصدر','r.sourceSub':'آخر 90 يوماً',
-  'r.ownerReport':'الأداء حسب المسؤول','r.ownerSub':'صفقات مغلقة هذا الشهر','r.leadsCol':'عملاء محتملون',
-  'r.wonCol':'مكسوبة','r.activeCol':'نشطة',
-  'd.pipeline':'خط الأنابيب','d.board':'لوحة','d.list':'قائمة','d.total':'الإجمالي',
-  'd.moveTo':'نُقلت إلى {stage}','d.dealsIn':'{n} صفقة',
-  'rec.overview':'نظرة عامة','rec.timeline':'السجل الزمني','rec.notes':'الملاحظات','rec.related':'السجلات المرتبطة',
-  'rec.details':'التفاصيل','rec.platform':'حالة المنصة','rec.noTimeline':'لا نشاط مسجّل بعد.',
-  'rec.openDeals':'الصفقات','rec.contacts':'جهات الاتصال','rec.tasks':'المهام','rec.noneYet':'لا شيء بعد.',
-  'rec.notOnPlatform':'هذه الصيدلية ليست مسجّلة في صيدلي+ بعد.',
-  'rec.linked':'مرتبطة بحساب صيدلي+','rec.trialDay':'اليوم {a} من {b}','rec.daysLeft':'{n} يوماً متبقياً',
-  'rec.noShifts':'لم تنشر أي مناوبة','rec.shiftsPosted':'{n} مناوبة','rec.converted':'حُوّل إلى صيدلية.',
-  'rec.deleted':'حُذف السجل.','rec.saved':'حُفظ.','rec.noteAdded':'أُضيفت الملاحظة.',
-  'n.newLead':'عميل محتمل جديد','n.newAccount':'صيدلية جديدة','n.newContact':'جهة اتصال جديدة',
-  'n.newDeal':'صفقة جديدة','n.newTask':'مهمة جديدة','n.created':'أُنشئ السجل.',
-  'n.required':'هذا الحقل مطلوب.','n.badPhone':'أدخل رقم هاتف عراقي صحيح (07XXXXXXXXX).',
-  'n.dupLicence':'رقم الإجازة مسجّل لصيدلية أخرى.',
-  'e.noRecords':'لا سجلات في هذا العرض.','e.tryClearing':'جرّب مسح عوامل التصفية.',
-  'iqd':'د.ع','mo':'/شهر','of':'من'
-},
-en: {
-  'suite':'CRM','openApp':'App','lang':'العربية',
+  'suite':'CRM','openApp':'App',
   'search':'Search every record…','searchEmpty':'Nothing matches.',
-  'mod.home':'Home','mod.leads':'Leads','mod.accounts':'Pharmacies',
-  'mod.contacts':'Contacts','mod.deals':'Deals','mod.activities':'Tasks','mod.reports':'Reports',
+  'mod.home':'Home',
   'a.new':'New','a.edit':'Edit','a.save':'Save','a.cancel':'Cancel','a.delete':'Delete','a.close':'Close',
   'a.convert':'Convert to pharmacy','a.call':'Log a call','a.note':'Add note','a.task':'New task',
   'a.openInApp':'Open in Saydali+','a.selected':'{n} selected','a.clear':'Clear','a.export':'Export',
@@ -727,15 +673,18 @@ en: {
   'n.dupLicence':'That licence number belongs to another pharmacy.',
   'e.noRecords':'No records in this view.','e.tryClearing':'Try clearing the filters.',
   'iqd':'IQD','mo':'/mo','of':'of'
-}};
+};
 
-let lang = 'ar';
 const t = (key, vars) => {
-  let s = (STRINGS[lang] && STRINGS[lang][key]) || STRINGS.en[key] || key;
+  let s = STRINGS[key] || key;
   if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
   return s;
 };
-const L = o => (o && (o[lang] !== undefined ? o[lang] : o.en)) || '';
+/* Data fields are stored bilingually because the app needs both; the CRM reads
+   the English side. Where the Arabic is worth seeing it is shown as its own
+   field, not as a translation of the English one. */
+const L = o => (o == null) ? '' : (typeof o === 'string' ? o : (o.en || o.ar || ''));
+const AR = o => (o && typeof o === 'object' && o.ar) ? o.ar : '';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
   c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const attr = s => JSON.stringify(String(s)).replace(/"/g, '&quot;');
@@ -751,108 +700,34 @@ function initialsOf(text) {
   return words.slice(0, 2).map(w => w[0]).join('');
 }
 
-/* Western numerals in both languages — 40,000, never ٤٠٬٠٠٠. ZainCash, Qi Card
-   and every Iraqi digital interface use these. */
+/* Western numerals — 40,000, never ٤٠٬٠٠٠. */
 const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 const fmt = n => nf.format(Math.round(n || 0));
 const iqd = n => fmt(n) + ' ' + t('iqd');
 const pct = n => fmt(n) + '%';
 
-/* Levantine month names, not the Gulf transliterations Intl gives for `ar`. */
-const MONTHS = {
-  ar:['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'],
-  en:['January','February','March','April','May','June','July','August','September','October','November','December']
-};
-const MONTHS_SHORT = {
-  ar:['ك2','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','ت1','ت2','ك1'],
-  en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-};
+const MONTHS = ['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
 const TODAY = new Date(2026, 8, 11); // the demo's "now" — 11 September 2026
 
 function fmtDate(iso) {
   const d = new Date(iso + 'T00:00:00');
-  return d.getDate() + ' ' + MONTHS[lang][d.getMonth()] + ' ' + d.getFullYear();
+  return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
 }
 function daysBetween(a, b) {
   return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
 }
 function relDays(iso) {
   const n = daysBetween(iso, TODAY.toISOString().slice(0, 10));
-  if (n === 0) return lang === 'ar' ? 'اليوم' : 'Today';
-  if (n === 1) return lang === 'ar' ? 'أمس' : 'Yesterday';
-  if (n > 0)  return lang === 'ar' ? ('قبل ' + n + ' يوماً') : (n + ' days ago');
-  if (n === -1) return lang === 'ar' ? 'غداً' : 'Tomorrow';
-  return lang === 'ar' ? ('خلال ' + (-n) + ' يوماً') : ('in ' + (-n) + ' days');
+  if (n === 0) return 'Today';
+  if (n === 1) return 'Yesterday';
+  if (n > 0) return n + ' days ago';
+  if (n === -1) return 'Tomorrow';
+  return 'in ' + (-n) + ' days';
 }
 
 /* Strings for the operational modules. */
-Object.assign(STRINGS.ar, {
-  'mod.users':'المستخدمون','mod.orders':'الطلبات','mod.pharmacies':'الصيدليات',
-  'mod.companies':'الشركات','mod.universities':'الجامعات','mod.syndicate':'كشف النقابة','mod.drugs':'الأدوية',
-  'ut.pharmacist':'صيادلة','ut.pharmacy':'صيدليات','ut.student':'طلبة',
-  'ut1.pharmacist':'صيدلي','ut1.pharmacy':'صيدلية','ut1.student':'طالب',
-  'v.allUsers':'كل المستخدمين','v.pendingUsers':'بانتظار التوثيق','v.noMatch':'بلا مطابقة في الكشف',
-  'ot.shift':'مناوبة صيدلي','ot.training':'تدريب طلابي',
-  'os.open':'مفتوح','os.assigned':'مُسند','os.in_progress':'جارٍ','os.completed':'مكتمل','os.cancelled':'ملغى',
-  'v.allOrders':'كل الطلبات','v.openOrders':'مفتوحة','v.todayOrders':'اليوم','v.unclaimed':'مفتوحة بلا متقدمين',
-  'v.shifts':'مناوبات الصيادلة','v.training':'التدريب الطلابي',
-  'c.orderNo':'رقم الطلب','c.orderType':'نوع الطلب','c.when':'الموعد','c.hours':'الساعات',
-  'c.rate':'الأجر','c.total':'الإجمالي','c.assignee':'المُسنَد إليه','c.applicants':'المتقدمون',
-  'c.pharmacy':'الصيدلية','c.controlled':'مواد خاضعة للرقابة','c.weeks':'الأسابيع',
-  'c.userType':'النوع','c.joined':'تاريخ الانضمام','c.syndicateNo':'رقم النقابة','c.gradYear':'سنة التخرج',
-  'c.orders':'الطلبات','c.match':'المطابقة','c.university':'الجامعة','c.reliability':'الالتزام','c.ratingV':'التقييم',
-  'c.companyType':'نوع الشركة','c.country':'البلد','c.city':'المدينة','c.reg':'رقم التسجيل',
-  'c.contactName':'جهة الاتصال','c.brands':'الأصناف','c.agreement':'الاتفاقية','c.domain':'النطاق',
-  'c.students':'الطلبة','c.sci':'الاسم العلمي','c.sciAr':'الاسم بالعربية','c.atc':'رمز ATC',
-  'c.form':'الشكل الصيدلاني','c.doses':'العيارات','c.brandCount':'عدد الأصناف التجارية',
-  'c.interactions':'التداخلات','c.contra':'موانع الاستعمال','c.notesF':'ملاحظات',
-  'c.brand':'الاسم التجاري','c.company':'الشركة','c.override':'عيارات مختلفة',
-  'c.batch':'دفعة الكشف','c.syndStatus':'الحالة النقابية',
-  'ct.manufacturer':'مصنع','ct.marketing':'شركة مسوِّقة','ct.importer':'مستورد/وكيل','ct.distributor':'موزّع',
-  'cs.active':'فعّالة','cs.review':'قيد المراجعة','cs.inactive':'متوقفة',
-  'ag.signed':'موقّعة','ag.talks':'قيد التفاوض','ag.none':'لا توجد',
-  'ss.active':'مزاول','ss.suspended':'موقوف',
-  'mt.matched':'مطابق','mt.unmatched':'غير موجود في الكشف','mt.nameDiff':'الرقم مطابق والاسم مختلف','mt.notLinked':'لم يسجّل بعد',
-  'sev.warning':'تداخل بسيط','sev.serious':'تداخل مهم','sev.critical':'تداخل خطر',
-  'df.tablet':'أقراص','df.capsule':'كبسولات','df.syrup':'شراب','df.injection':'حقن','df.cream':'كريم',
-  'v.allDrugs':'كل الأدوية','v.noBrands':'بلا أصناف تجارية','v.hasCritical':'فيها تداخل خطر',
-  'v.allCompanies':'كل الشركات','v.manufacturers':'المصانع','v.needsDocs':'بانتظار وثائق',
-  'v.allUnis':'كل الجامعات','v.signed':'اتفاقيات موقّعة','v.prospect':'قيد التفاوض',
-  'v.allSynd':'كل الكشف','v.unlinked':'لم يسجّلوا في المنصة','v.suspendedS':'موقوفون',
-  'imp.title':'استيراد من ملف CSV','imp.pick':'اختر ملفاً','imp.or':'أو الصق المحتوى هنا',
-  'imp.template':'نزّل نموذج CSV','imp.parse':'تحقّق','imp.apply':'تطبيق {n} صفاً',
-  'imp.new':'جديد','imp.update':'تحديث','imp.error':'خطأ','imp.rowsFound':'{n} صفاً في الملف',
-  'imp.summary':'{n} جديد · {u} تحديث · {e} خطأ','imp.noFile':'لا يوجد محتوى لتحليله.',
-  'imp.badHeader':'الأعمدة المطلوبة مفقودة: {cols}','imp.done':'استُوردت {n} صفاً.',
-  'imp.errRow':'السطر {n}: {msg}','imp.missingKey':'العمود المفتاح فارغ.',
-  'imp.unknownCompany':'شركة غير معروفة: {v}','imp.unknownDrug':'دواء غير معروف: {v}',
-  'imp.previewNote':'لا يُكتب شيء قبل مراجعتك للمعاينة.','imp.errorsBlock':'الصفوف التي فيها خطأ تُتجاهل، والباقي يُطبّق.',
-  'dr.addBrand':'أضف صنفاً تجارياً','dr.brandsOf':'الأصناف التجارية','dr.usesDefault':'يعتمد عيارات الدواء',
-  'dr.overrideOn':'عيارات خاصة بالشركة','dr.noInteractions':'لا تداخلات مسجّلة.','dr.noContra':'لا موانع مسجّلة.',
-  'sy.note':'هذا كشف يدوي حمّلناه من النقابة، وليس واجهة برمجية — لا يوجد سجل رقمي للصيادلة في العراق. المطابقة أدناه اقتراح، والقرار لموظف.',
-  'sy.import':'حمّل كشفاً جديداً','sy.linked':'مرتبط بـ','sy.batchOf':'دفعة {d}',
-  'or.placeholder':'وحدة الطلبات قيد التصميم — الحقول والمراحل أدناه مبنية على ما يفعله التطبيق اليوم، وتتغيّر عند اكتمال التصميم.',
-  'k.ordersToday':'طلبات اليوم','k.openNow':'مفتوحة الآن','k.fillRateK':'نسبة التغطية','k.unclaimed':'بلا متقدمين',
-  'k.pendingVerif':'بانتظار التوثيق','k.activePh':'صيدليات نشطة',
-  'ch.orders':'الطلبات المنشأة يومياً','ch.ordersSub':'آخر أسبوعين','ch.byStatus':'الطلبات حسب الحالة',
-  'ch.byStatusSub':'كل الطلبات المسجّلة','ch.byType':'حسب النوع','ch.day':'اليوم','ch.orderCount':'طلب',
-  'ch.attention':'يحتاج انتباهاً','ch.nothingUp':'لا شيء عالق.',
-  'at.unclaimed':'{n} طلباً مفتوحاً بلا متقدمين','at.pendingUsers':'{n} مستخدماً بانتظار التوثيق',
-  'at.dormantPh':'{n} صيدلية موثّقة ولم تنشر','at.noMatch':'{n} صيدلياً بلا مطابقة في كشف النقابة',
-  'at.noBrands':'{n} دواءً بلا أصناف تجارية',
-  'n.newUser':'مستخدم جديد','n.newOrder':'طلب جديد','n.newPharmacy':'صيدلية جديدة',
-  'n.newCompany':'شركة جديدة','n.newUniversity':'جامعة جديدة','n.newDrug':'دواء جديد',
-  'n.duplicate':'«{v}» مسجّل مسبقاً.',
-  'a.verify':'توثيق الحساب','pr.address':'العنوان','app.noRecord':'لا سجل بعد',
-  'post.start':'من','post.end':'إلى',
-  'sy.hintNo':'يُطابَق مع كشف النقابة تلقائياً، والقرار لموظف.',
-  'uni.hintDomain':'نطاق البريد الجامعي — هو ما يجعل توثيق الطلبة تلقائياً.',
-  'dr.hintSci':'الاسم العلمي هو المعرّف، ولا يتكرر.',
-  'dr.hintDoses':'افصل العيارات بـ | أو ؛',
-  'dr.hintOverride':'اتركه فارغاً ليعتمد الصنف عيارات الدواء نفسها.'
-});
-
-Object.assign(STRINGS.en, {
+Object.assign(STRINGS, {
   'mod.users':'Users','mod.orders':'Orders','mod.pharmacies':'Pharmacies',
   'mod.companies':'Companies','mod.universities':'Universities','mod.syndicate':'Syndicate roster','mod.drugs':'Drugs',
   'ut.pharmacist':'Pharmacists','ut.pharmacy':'Pharmacies','ut.student':'Students',
@@ -909,7 +784,7 @@ Object.assign(STRINGS.en, {
   'n.newUser':'New user','n.newOrder':'New order','n.newPharmacy':'New pharmacy',
   'n.newCompany':'New company','n.newUniversity':'New university','n.newDrug':'New drug',
   'n.duplicate':'“{v}” is already on record.',
-  'a.verify':'Verify account','pr.address':'Address','app.noRecord':'No record yet',
+  'a.verify':'Verify account','c.nameAr':'Arabic name','c.platformAccount':'Platform account','pr.address':'Address','app.noRecord':'No record yet',
   'post.start':'From','post.end':'To',
   'sy.hintNo':'Matched against the Syndicate roster automatically; a person still decides.',
   'uni.hintDomain':'The university email domain — it is what makes student verification automatic.',
@@ -1820,7 +1695,7 @@ const MODULES = {
 };
 
 function orderWhen(o) {
-  if (o.type === 'training') return fmtDate(o.date) + ' · ' + (o.weeks || 12) + ' ' + (lang === 'ar' ? 'أسبوعاً' : 'wks');
+  if (o.type === 'training') return fmtDate(o.date) + ' · ' + (o.weeks || 12) + ' ' + 'wks';
   return fmtDate(o.date) + ' · ' + o.start + '–' + o.end;
 }
 
@@ -1859,7 +1734,7 @@ function visibleRows(mod) {
       const val = r => col.sortAs ? col.sortAs(r) : (col.get ? col.get(r) : L(r[col.key]) || r[col.key] || '');
       rows = rows.slice().sort((a, b) => {
         const x = val(a), y = val(b);
-        const c = (typeof x === 'number' && typeof y === 'number') ? x - y : String(x).localeCompare(String(y), lang);
+        const c = (typeof x === 'number' && typeof y === 'number') ? x - y : String(x).localeCompare(String(y));
         return sort.dir === 'desc' ? -c : c;
       });
     }
@@ -2033,6 +1908,7 @@ function recordPage(mod, id) {
         ? '<button class="btn primary" onclick="verifyUser(' + attr(id) + ')">' + icon('check-circle') + esc(t('a.verify')) + '</button>'
         : '');
     details =
+      fieldRow(t('c.nameAr'), '<span dir="rtl">' + esc(AR(rec.name)) + '</span>') +
       fieldRow(t('c.userType'), typeChip(rec.type)) +
       fieldRow(t('c.phone'), '<span class="figure" dir="ltr">' + esc(rec.phone) + '</span>', { path:P + 'phone' }) +
       fieldRow(t('c.email'), '<span class="figure" dir="ltr">' + esc(rec.email) + '</span>', { path:P + 'email' }) +
@@ -2064,7 +1940,7 @@ function recordPage(mod, id) {
         '<div class="panel-b">' +
           fieldRow(t('c.syndicateNo'), '<span class="figure" dir="ltr">' + esc(rec.syndicateNo || '—') + '</span>') +
           (m.row
-            ? fieldRow(lang === 'ar' ? 'الاسم في الكشف' : 'Name on the roster',
+            ? fieldRow('Name on the roster',
                 '<button class="cell-link" onclick="openRecord(' + attr('syndicate') + ',' + attr(m.row.no) + ')">' +
                 esc(L(m.row.name)) + '</button>') +
               fieldRow(t('c.syndStatus'), chip(m.row.status === 'active' ? 'chip-good' : 'chip-bad',
@@ -2098,11 +1974,11 @@ function recordPage(mod, id) {
       (rec.type === 'shift'
         ? fieldRow(t('c.hours'), '<span class="figure">' + rec.hours + '</span>') +
           fieldRow(t('c.rate'), '<span class="figure">' + esc(iqd(rec.rate)) + '</span>' +
-            (rec.rateType === 'hourly' ? esc(lang === 'ar' ? '/ساعة' : '/hour') : '')) +
+            (rec.rateType === 'hourly' ? '/hour' : '')) +
           fieldRow(t('c.total'), '<span class="figure">' + esc(iqd(rec.total)) + '</span>') +
           fieldRow(t('c.controlled'), rec.controlled
-            ? chip('chip-warn', 'alert', lang === 'ar' ? 'نعم' : 'Yes')
-            : chip('chip-mute', null, lang === 'ar' ? 'لا' : 'No'))
+            ? chip('chip-warn', 'alert', 'Yes')
+            : chip('chip-mute', null, 'No'))
         : fieldRow(t('c.weeks'), '<span class="figure">' + (rec.weeksApproved || 0) + ' / ' + (rec.weeks || 12) + '</span>')) +
       fieldRow(t('c.status'), orderStatusChip(rec.status), { path:P + 'status', type:'orderStatus' }) +
       fieldRow(t('c.assignee'), rec.assignee
@@ -2123,13 +1999,16 @@ function recordPage(mod, id) {
       (acct ? '<button class="btn primary" onclick="openApp(' + attr(acct.email) + ')">' + icon('external') +
         esc(t('a.openInApp')) + '</button>' : '');
     details =
+      fieldRow(t('c.nameAr'), '<span dir="rtl">' + esc(AR(rec.name)) + '</span>') +
       fieldRow(t('c.licence'), '<span class="figure" dir="ltr">' + esc(rec.licence) + '</span>') +
       fieldRow(t('c.district'), esc(districtName(rec.district)), { path:P + 'district', type:'district' }) +
       fieldRow(t('pr.address'), esc(L(rec.address))) +
       fieldRow(t('c.owner'), esc(L(USERS[rec.owner].name)), { path:P + 'owner', type:'owner' }) +
       fieldRow(t('c.created'), esc(fmtDate(rec.signedUp))) +
-      (acct ? fieldRow(t('c.account'), '<button class="cell-link" onclick="openRecord(' + attr('users') + ',' + attr(acct.id) + ')">' +
-        esc(L(acct.name)) + '</button>') : '');
+      fieldRow(t('c.platformAccount'), acct
+        ? '<button class="cell-link" onclick="openRecord(' + attr('users') + ',' + attr(acct.id) + ')">' +
+          esc(L(acct.name)) + '</button>'
+        : chip('chip-mute', null, t('mt.notLinked')));
     side = '<section class="panel">' +
       '<div class="panel-h">' + icon('grid') + esc(t('rec.platform')) + '</div>' +
       '<div class="panel-b">' +
@@ -2155,6 +2034,7 @@ function recordPage(mod, id) {
       '<span>' + esc(L(rec.city)) + ', ' + esc(L(rec.country)) + '</span>';
     actions = '<button class="btn" onclick="logCall(' + attr(mod) + ',' + attr(id) + ')">' + icon('phone') + esc(t('a.call')) + '</button>';
     details =
+      fieldRow(t('c.nameAr'), '<span dir="rtl">' + esc(AR(rec.name)) + '</span>') +
       fieldRow(t('c.companyType'), chip('chip-info', null, t('ct.' + rec.type)), { path:P + 'type', type:'companyType' }) +
       fieldRow(t('c.reg'), '<span class="figure" dir="ltr">' + esc(rec.reg) + '</span>', { path:P + 'reg' }) +
       fieldRow(t('c.country'), esc(L(rec.country))) +
@@ -2200,6 +2080,7 @@ function recordPage(mod, id) {
     details =
       fieldRow(t('c.syndicateNo'), '<span class="figure" dir="ltr">' + esc(rec.no) + '</span>') +
       fieldRow(t('c.name'), esc(L(rec.name))) +
+      fieldRow(t('c.nameAr'), '<span dir="rtl">' + esc(AR(rec.name)) + '</span>') +
       fieldRow(t('c.gradYear'), esc(String(rec.gradYear))) +
       fieldRow(t('c.syndStatus'), chip(rec.status === 'active' ? 'chip-good' : 'chip-bad', null, t('ss.' + rec.status))) +
       fieldRow(t('c.batch'), esc(fmtDate(rec.batch))) +
@@ -2604,7 +2485,7 @@ function parseImport() {
     // A file that lists the same key twice is a mistake worth surfacing, not
     // something to silently resolve by letting the last row win.
     const k = String(out.key).toLowerCase();
-    if (seen.has(k)) return { line:i + 2, mode:'error', message:(lang === 'ar' ? 'مكرر في الملف: ' : 'Duplicated in the file: ') + out.key };
+    if (seen.has(k)) return { line:i + 2, mode:'error', message:'Duplicated in the file: ' + out.key };
     seen.add(k);
     return { line:i + 2, mode:out.mode, key:out.key, rec:out.rec };
   });
@@ -2703,12 +2584,8 @@ const S = {
 };
 
 function render() {
-  const html = document.documentElement;
-  html.lang = lang;
-  html.dir = lang === 'ar' ? 'rtl' : 'ltr';
-
   document.getElementById('tb-suite').textContent = t('suite');
-  document.getElementById('btn-lang').textContent = t('lang');
+  document.getElementById('build-tag').textContent = VERSION;
   document.querySelector('#btn-app span').textContent = t('openApp');
   document.getElementById('q').placeholder = t('search');
   document.getElementById('me-avatar').textContent = L(USERS[ME].initials);
@@ -2760,7 +2637,6 @@ function openRecord(mod, id) {
   document.getElementById('work-body').scrollTop = 0;
 }
 function closeRecord() { S.record = null; hideTip(); render(); }
-function setLang(l) { lang = l; hideTip(); render(); }
 
 /* The two halves are one product: this hands off to the app, and an account
    row hands off to that pharmacy's own account inside it. */
