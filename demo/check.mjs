@@ -104,6 +104,50 @@ ok('the CV language is independent of the app language',
 ok('and turns the sheet around', await d.locator('.cv-sheet').getAttribute('dir') === 'ltr');
 ok('the verified figures are on the sheet',
    /38/.test(await d.locator('.cv-sheet').innerText()));
+
+// Skills are two lists, and a skill goes into the one it was picked from
+// The editor's labels follow the APP language; the sheet's follow the CV's.
+ok('the editor offers a picker per group',
+   await d.evaluate(() => document.querySelectorAll('.pill-pick').length
+     === SKILL_PRESETS.medical.length + SKILL_PRESETS.nonMedical.length));
+ok('the editor labels each group in the app language',
+   await d.evaluate(() => {
+     const labels = [...document.querySelectorAll('.field-label')].map(e => e.textContent);
+     return labels.includes(t('cv.skills.medical')) && labels.includes(t('cv.skills.nonMedical'));
+   }));
+ok('the sheet heads them separately, in the CV language',
+   await d.evaluate(() => {
+     // .cv-sec is uppercased by CSS, and innerText reflects that.
+     const txt = document.querySelector('.cv-sheet').innerText.toLowerCase();
+     const h = SKILL_HEAD[S.cvLang];
+     return txt.includes(h.medical.toLowerCase()) && txt.includes(h.nonMedical.toLowerCase());
+   }));
+ok('the whole sheet is in the CV language, proficiencies included',
+   await d.evaluate(() => {
+     const txt = document.querySelector('.cv-sheet').innerText;
+     const wrong = CV_LEVELS[S.cvLang === 'en' ? 'ar' : 'en'];
+     return !Object.values(wrong).some(v => txt.includes(v));
+   }));
+const skillsBefore = await d.evaluate(() => JSON.parse(JSON.stringify(S.cv.en.skills)));
+await d.evaluate(() => toggleSkill('nonMedical', 'Supplier negotiation'));
+await d.waitForTimeout(180);
+ok('picking a non-medical skill lands in the non-medical list only',
+   await d.evaluate(() => S.cv.en.skills.nonMedical.includes('Supplier negotiation')
+     && !S.cv.en.skills.medical.includes('Supplier negotiation')));
+await d.evaluate(() => toggleSkill('nonMedical', 'Supplier negotiation'));
+await d.waitForTimeout(150);
+ok('and picking it again removes it',
+   await d.evaluate(s => JSON.stringify(S.cv.en.skills) === JSON.stringify(s), skillsBefore));
+ok('an empty group leaves no orphan heading on the sheet',
+   await d.evaluate(() => {
+     const keep = S.cv.en.skills.nonMedical.slice();
+     S.cv.en.skills.nonMedical = [];
+     render();
+     const gone = !/Other professional skills/.test(document.querySelector('.cv-sheet').innerText);
+     S.cv.en.skills.nonMedical = keep;
+     render();
+     return gone;
+   }));
 const before = await d.locator('.cv-sheet').innerText();
 await d.locator('.btn-ghost', { hasText: /Improve|حسّن/ }).click();
 await d.waitForTimeout(200);
