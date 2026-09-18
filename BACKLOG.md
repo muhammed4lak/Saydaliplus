@@ -797,13 +797,67 @@ Both are chargeable, and both land on **W14's billing ledger**, which is the
 argument for building the ledger first: this is the second revenue line and it
 should not need its own money plumbing.
 
-### Open questions
+### Decided 18 Sep 2026
 
-- Do partners self-serve at all, or is everything operator-entered at first?
-  Operator-entered is slower and much safer for a first version.
-- Does a banner placement price by slot, by day, or by impression? Impressions
-  need counting infrastructure that does not exist; day-rate does not.
-- Students on the jobs view — yes or no.
+**Who may refuse a placement: the app admin, case by case.** In CRM terms that
+is the owner admin (W5) — a named role, not "whoever is around".
+
+*The risk in a case-by-case veto, named once so it is a choice rather than an
+oversight:* the person holding it is also the person with the revenue interest.
+That is unavoidable in a one-founder company and it is not a reason to move the
+veto. It **is** a reason to write the refusal criteria down **now, while no
+money is on the table** — so a future decision argues with a past decision
+rather than with nothing. Four questions the admin answers on the record for
+each placement, stored on the placement itself:
+
+1. Does it sit on a permitted surface? *(If no, it stops here.)*
+2. Does it make a clinical claim, or could it be read as one?
+3. Would a pharmacist seeing it understand it is paid?
+4. Would we be comfortable if the Syndicate saw this placement and the fee?
+
+A refusal and an approval both leave a row. The log is the whole point: a
+case-by-case veto with no record is indistinguishable from no veto.
+
+**Pricing: by day, from launch.** Impression counting is wanted and comes as a
+*measurement* layer alongside it, never as the price at first — see below.
+
+**Students see the jobs view.** A graduating student is exactly the audience for
+a first job, and it costs nothing: the view is the same, the listings are the
+same.
+
+**Partners do not self-serve in v1.** Everything is operator-entered from the
+CRM: a partner emails or phones, an employee creates the listing or books the
+slot. Slower, and right for a first version — there is no partner-facing sign-up
+to build, no approval queue to staff, no abuse surface, and every listing passes
+a human before a pharmacist sees it, which is what the P1 criteria above assume.
+Self-serve is a later step and it needs: a partner sign-up and verification path,
+a submission queue with review states, and a way for a partner to see their own
+placement performance. **Do not build those until the manual version has
+customers**, because the manual version is also how you learn what a partner
+actually asks for.
+
+### Impression counting, without building a targeting engine
+
+Wanted, and safe to build if it is built the right way round.
+
+**What it requires:** an event on each render, deduplication (one person
+scrolling past twice is not two impressions), a viewability rule (was it
+actually on screen), and a rollup for the partner's report.
+
+**The trap:** an impression log is a behavioural log. A row saying *this
+pharmacist saw this banner* is exactly the substrate P1's second rule promises
+never to use — and once it exists, the argument for using it arrives on its own.
+
+**The design that avoids it: count without identity.** Increment a counter keyed
+on `(placement, day)`. Nothing records who. The partner report says *"shown
+1,240 times on 14 September"*, which is the number they want, and **no query can
+reconstruct a pharmacist's viewing history**, because the rows to reconstruct it
+from were never written. Same shape as W8's tallies, for the same reason.
+
+**Sequence:** day-rate pricing from launch; the anonymous counter alongside it
+from the start so there are real numbers to show a partner; impression-based
+*pricing* only once there are months of counts to price against. Quoting a CPM
+before you know typical volumes is quoting a number you cannot defend.
 
 ---
 
@@ -972,9 +1026,38 @@ here.** Aggregate above the individual pharmacy unless that pharmacy consented;
 disclose it to pharmacists where they log; give the pharmacy its own analytics
 before anyone outside sees a number. The third is built. The first two are not.
 
-**Needs deciding:** how far up this ladder you are willing to go, decided once
-and in advance rather than one lucrative offer at a time. Rung 5 with a weak
-policy is how a platform loses a profession.
+**How far to go — recommendation, 18 Sep 2026.** Not one answer for the whole
+ladder; the line falls between rung 3 and rung 4.
+
+**Rungs 1–3 — go, with the W15 rules.** A directory touches no pharmacist. Job
+listings and banners reach one, but on a shift board, where advertising is
+expected and recognised as such. Visit logging is a tool for the rep's employer
+and never reaches a pharmacist at all. None of the three touches clinical
+judgement, which is what P1 actually protects.
+
+**Rung 4 — sponsored education: only with the policy written and the reviewer
+named.** This is where the money is and where the line is. It is doable, and it
+is exactly what ACPE's commercial-support standards exist to make doable: the
+funder buys the slot, an independent clinician writes the content, the
+sponsorship is disclosed on the module, and no sponsored material ranks a
+product inside a clinical recommendation. Without those four, it is
+advertising wearing a lab coat.
+
+**Rung 5 — market research panels: the same policy, plus two more conditions.**
+The pharmacist is **paid** for their time, and declining carries **no
+consequence of any kind** — not to their shift access, their ranking, or their
+standing. The failure here is quiet: a pharmacist who merely *suspects* that
+saying no costs them work is already being coerced, whether or not it is true.
+That makes it as much a design problem as a policy one — the ask must visibly
+sit outside the part of the app that gives them work.
+
+**Ruled out permanently, at every rung:** using clinical behaviour — what a
+pharmacist looked up in the reference, what they checked in the dispensing
+helper, what their pharmacy dispensed — to target a placement or to select a
+panel. It is the most valuable signal the platform will ever hold and using it
+converts a safety tool into a lead generator. Once pharmacists work that out,
+they stop using the safety tool, and the safety tool is what the whole of Part 2
+rests on (S8).
 
 ## S6. Embedded finance on procurement
 *Much later. Arguably a different company.*
@@ -1138,12 +1221,17 @@ using it.
 
 **What "settled" looks like:** a one-page written policy covering (a) what a
 sponsor can buy, (b) what they can never buy, (c) who reviews a placement before
-it runs, (d) what the disclosure says, in Arabic, and (e) **who can refuse a
-placement and cannot be overruled on revenue grounds**. The fifth is the one
-that makes the other four real.
+it runs, (d) what the disclosure says, in Arabic, and (e) who can refuse a
+placement.
 
-**Needs your judgement:** how far up S5's ladder you will go, and who holds the
-veto.
+**Decided 18 Sep 2026: the app admin refuses, case by case**, against the four
+written criteria in W15, with every approval and refusal logged on the placement.
+The criteria exist because a case-by-case veto with no record is
+indistinguishable from no veto — and they were written before there was revenue
+riding on any of them, which is the only time criteria are easy to write.
+
+**Still open:** how far up S5's ladder to go. Rungs 1–3 are a different question
+from rungs 4–5; see S5.
 
 ## P2. Non-exclusivity with the Syndicate
 
