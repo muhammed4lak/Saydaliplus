@@ -15,8 +15,11 @@ IDs are stable. Reordering does not renumber anything.
 open questions did not** (18 Sep 2026). They are kept
 below rather than deleted, because what each one says about *why* is the part
 worth not re-deriving; each now opens with a **Built** line saying what landed
-and what was decided along the way. W6 and W7 are still untouched, as is
-everything in Parts 2–4.
+and what was decided along the way. W6 and W7 have not been started.
+
+Parts 2–4 are not untouched either: S8 is largely built, and S4, S5, S6 and P1
+each carry what the dispensing log changed about them. Read W8 before any of
+those four.
 
 ---
 
