@@ -390,6 +390,39 @@ the other way. Every mature comparable (Medscape, Doximity) keeps the two
 separated by a wall the clinician can see. Decide where that wall is before the
 first rep account exists.
 
+## W11. Name the check "مساعد الوصفات" / "Dispensing Helper"
+
+**Raised:** 18 Sep 2026. **Touches:** app strings only. Small.
+
+The module is currently called **فحص الصرف** / **Dispensing check**. Rename it to
+**مساعد الوصفات** / **Dispensing Helper**.
+
+**Where it appears** — one string, `dc.tabCheck`, in both language blocks of
+`demo/saydali-plus_v*.html`. It renders in exactly two places: the tab in the
+Drugs module's segmented control, and the title of the card on the home screen.
+`dc.cardSub` sits under that title and may want rewording to match the softer
+name. Nothing in the CRM carries it; the check is app-only.
+
+**Two things worth not "correcting" later.**
+
+The two names are not translations of each other, deliberately. The Arabic keys
+on **الوصفة** — the prescription, the thing physically in the pharmacist's
+hand — and the English on **dispensing**, the act. Each is the word its own
+reader would use, which is the point of having both rather than one rendered
+twice. Somebody will eventually notice they do not match and try to align them;
+the mismatch is the decision.
+
+And **"helper" softens the claim on purpose**, which lands on the right side of
+a line this product has already drawn twice: the verdict never says a
+combination is safe, only what was checked, and the contraindications are
+questions rather than warnings. A tool called *check* implies a verdict; a tool
+called *helper* implies a second pair of eyes. That is what it is, and it is
+also the safer thing for it to be called if a dispensing error ever gets argued
+over.
+
+**Not the same as W9.** That entry renames the *platform*; this renames one
+module inside it. They can be decided independently and in either order.
+
 ---
 
 # Part 2 — Strategy
@@ -610,7 +643,7 @@ Part 2 is chosen), **W7** (chain and multi-branch accounts, which is large), the
 unbuilt half of **W8**, and the two entries that decide what this becomes:
 **W9** (a name that is not "pharmacist") and **W10** (medical reps). W9 is
 cheap now and expensive at every later point, and it gates the Syndicate
-conversation.
+conversation. **W11** is a one-string rename and can go in with anything.
 
 W8 is the one to read first, because it is the only entry here where the code
 shipped ahead of the decisions. The dispensing check and the log are in
