@@ -223,7 +223,11 @@ because a pharmacist keying a name in a hurry writes ا for أ and ه for ة.
 
 The reference answers "tell me about this drug". The check answers the question
 a pharmacist actually has — *can they take these together* — and it is a second
-tab of the same screen rather than a second place. Add the drugs on a
+tab of the same screen rather than a second place. It is what the module
+**opens on**, and it has a card at the top of the home screen: looking a single
+drug up is the rarer errand, and two taps is too many for something you reach
+for with a patient waiting. Moving between the two tabs sticks while you stay
+on the screen; only arriving from the navigation resets to the check. Add the drugs on a
 prescription and it reports, worst first:
 
 1. **Interactions** between any two drugs in the basket, every pair, not just
@@ -538,7 +542,7 @@ npm run test:e2e       # Playwright, against the seeded database
 - 85 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
 - 130 policy assertions run against a real Postgres as real users.
-- 146 behavioural assertions driving the app build in a real browser
+- 156 behavioural assertions driving the app build in a real browser
   (`npm run check:app`), and 185 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the

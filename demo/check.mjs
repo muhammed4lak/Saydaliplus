@@ -324,6 +324,10 @@ ok('a pharmacist has it in the bottom bar, not buried behind More',
 ok(`and the app and the CRM hold the same list, from the same file (${DRUG_DATA.length})`,
    await d.evaluate(() => DRUGS.length) === DRUG_DATA.length);
 await go(d, 'drugs');
+ok('the module opens on the check, not the reference',
+   await d.evaluate(() => S.drugTab) === 'check');
+await d.evaluate(() => setDrugTab('reference'));
+await d.waitForTimeout(200);
 ok('the module renders every drug', await d.locator('.drug-row').count() === DRUG_DATA.length);
 ok('and says what kind of reference it is',
    /مرجع مساعد|A reference, not a substitute/.test(await d.locator('.inline-note').first().innerText()));
@@ -351,7 +355,7 @@ await d.evaluate(() => setDrugQuery(''));
 ok('the search box keeps the caret after a keystroke',
    await d.evaluate(() => document.activeElement && document.activeElement.id === 'drug-q'));
 
-await d.evaluate(() => { S.drugForm = 'inhaler'; render(); });
+await d.evaluate(() => { setDrugTab('reference'); S.drugForm = 'inhaler'; render(); });
 await d.waitForTimeout(200);
 ok('a form filter narrows to that form and nothing else',
    await d.evaluate(() => DRUGS.filter(x => x.form === 'inhaler').length) === await d.locator('.drug-row').count()
@@ -402,7 +406,7 @@ ok('the worst interaction is reported rather than swallowed',
      && drugWorst({ interactions: [] }) === ''));
 ok('and the list shows it on more rows than not',
    await d.evaluate(() => {
-     goto('drugs');
+     goto('drugs'); setDrugTab('reference');
      return document.querySelectorAll('.drug-row .sev').length > 50;
    }));
 
@@ -420,7 +424,7 @@ ok('More renders those rows rather than an empty screen',
    await d.locator('.row').count() >= 4);
 
 console.log('\nboth languages');
-await d.evaluate(() => { setLang('ar'); goto('drugs'); });
+await d.evaluate(() => { setLang('ar'); goto('drugs'); setDrugTab('reference'); });
 await d.waitForTimeout(250);
 ok('the Arabic list leads with the Arabic name',
    await d.evaluate(() => {
@@ -437,6 +441,46 @@ ok('while the scientific name stays Latin and left-to-right',
      return !!el && el.getAttribute('dir') === 'ltr';
    }));
 await d.evaluate(() => { setLang('en'); goto('browse'); });
+
+console.log('\nthe check is the way in');
+ok('the home screen carries it above the board',
+   await d.evaluate(() => { goto('browse'); return !!document.querySelector('.check-card'); })
+   && await d.locator('.check-card').count() === 1);
+ok('and it is the first thing on that screen, not buried under the listings',
+   await d.evaluate(() => {
+     const card = document.querySelector('.check-card');
+     const first = document.querySelector('.grid-cards, .chip-row');
+     return !!card && !!first &&
+       (card.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+   }));
+ok('tapping it opens the module on the check',
+   await d.evaluate(() => { document.querySelector('.check-card').click();
+     return S.screen === 'drugs' && S.drugTab === 'check'; }));
+ok('a part-built basket is named on the card rather than lost',
+   await d.evaluate(() => {
+     clearBasket(); ['Warfarin', 'Ibuprofen'].forEach(addToBasket);
+     goto('browse');
+     return /2/.test(document.querySelector('.check-card-n').textContent);
+   }));
+ok('and the card reads as a prompt when there is nothing in it',
+   await d.evaluate(() => {
+     clearBasket(); goto('browse');
+     return !document.querySelector('.check-card-n')
+       && document.querySelector('.check-card-s').textContent.length > 20;
+   }));
+/* Entering the module resets to the check, but moving between its own tabs
+   must not — a pharmacist mid-scroll in the reference is not yanked back. */
+ok('switching to the reference tab sticks while you stay on the screen',
+   await d.evaluate(() => { setDrugTab('reference'); setDrugQuery('met'); return S.drugTab === 'reference'; }));
+ok('and coming back from a drug record returns to the reference, not the check',
+   await d.evaluate(() => {
+     setDrugTab('reference'); openDrug('Metformin'); backToReference();
+     return S.screen === 'drugs' && S.drugTab === 'reference';
+   }));
+ok('while arriving from the navigation resets to the check',
+   await d.evaluate(() => { setDrugTab('reference'); goto('browse'); goto('drugs'); return S.drugTab === 'check'; }));
+ok('a student gets the same door from their home screen',
+   await d.evaluate(() => navFor('student').some(x => x[0] === 'drugs')));
 
 console.log('\nthe dispensing check');
 await go(d, 'drugs');

@@ -330,6 +330,66 @@ both places.
   and not others, so consumption is a floor, not a count. Anything built on it
   for procurement (S4, S6) has to say so or a pharmacy will under-order.
 
+## W9. A name that does not mean "pharmacist"
+
+**Raised:** 18 Sep 2026. **Touches:** everything, and the sooner the cheaper.
+
+Saydali+ means *pharmacist+*. It is a good name for what exists and a wall in
+front of what is intended: the same machinery — verified professional, shift
+posted, shift taken, hours logged, money moved — is what a hospital needs for
+locum doctors and nurses, and none of them will sign up to something called
+"pharmacist". Renaming later means the licence, the domain, the Syndicate
+paperwork and whatever brand equity exists by then.
+
+**What the name has to survive:** a pharmacist in a community pharmacy, a doctor
+taking a hospital shift, a nurse, a student on placement, and — separately — a
+medical representative who is not clinical at all (W10). It also has to work
+said aloud in Arabic in Baghdad and typed in Latin script by a foreign supplier.
+
+**What does not change:** the pharmacy side is still the scarce side and still
+the customer. A broader name must not turn into a broader product before the
+pharmacy market is won — the failure mode is a marketplace that is thin in five
+professions instead of deep in one. Name broad, launch narrow.
+
+**Sequencing:** decide the name before the Syndicate conversation, because the
+first thing they will ask is what this is called and who it is for.
+
+## W10. Medical representatives as an account type
+
+**Raised:** 18 Sep 2026. **Touches:** app, CRM, and P1.
+
+A medical rep works for a manufacturer or a scientific bureau and calls on
+pharmacies. Externals (W4) already models the companies they work for, so the
+link exists; what does not exist is a person who belongs to one.
+
+**Why it is not simply another user type.** Every account type on the platform
+today is a licensed clinician whose verification is the Syndicate roster. A rep
+is not clinical, is not on that roster, and is verified by their *employer*
+rather than by a register — the company vouches for them, which is a different
+mechanism with a different failure mode (a rep who leaves the company keeps
+their login unless the company says otherwise). That alone makes it a build
+rather than a row in `USER_TYPES`.
+
+**What a rep would actually do here**, roughly in order of how defensible each
+is:
+- See which pharmacies exist, where, and who to ask for — a directory, which is
+  the least controversial and probably the first paid thing.
+- Log a visit. This is the CRM the reps' employers are currently keeping in
+  notebooks, and it is worth more to the company than to the pharmacy.
+- Reach pharmacists with product information. **This is where P1 applies** and
+  where it currently has nothing to say: P1 governs sponsored clinical content,
+  not a salesperson messaging a pharmacist directly. Settle it before building
+  the channel, not after somebody complains.
+- See consumption data (W8). Do not, or not without the pharmacy's explicit
+  consent — see S5 and the trust argument in W8. A rep reading what a pharmacy
+  dispensed is the single fastest way to make pharmacists stop logging.
+
+**The conflict to resolve first:** the platform's value to a pharmacist rests on
+it being on their side. A rep channel is a second customer whose interests point
+the other way. Every mature comparable (Medscape, Doximity) keeps the two
+separated by a wall the clinician can see. Decide where that wall is before the
+first rep account exists.
+
 ---
 
 # Part 2 — Strategy
@@ -546,8 +606,11 @@ expected, not a defect — those were built from what was known then.
 
 What is left in Part 1 is **W6** (data-model changes that are cheap now and
 awkward later — mostly CPD groundwork, and speculative until a revenue route in
-Part 2 is chosen), **W7** (chain and multi-branch accounts, which is large), and
-the unbuilt half of **W8**.
+Part 2 is chosen), **W7** (chain and multi-branch accounts, which is large), the
+unbuilt half of **W8**, and the two entries that decide what this becomes:
+**W9** (a name that is not "pharmacist") and **W10** (medical reps). W9 is
+cheap now and expensive at every later point, and it gates the Syndicate
+conversation.
 
 W8 is the one to read first, because it is the only entry here where the code
 shipped ahead of the decisions. The dispensing check and the log are in

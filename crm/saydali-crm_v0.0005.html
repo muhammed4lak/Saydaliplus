@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0004">
+<meta name="version" content="CRM_v0.0005">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -758,7 +758,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0004';
+const VERSION = 'CRM_v0.0005';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -4370,7 +4370,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0004.html';
+const PEER_APP = '../demo/saydali-plus_v0.0005.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');

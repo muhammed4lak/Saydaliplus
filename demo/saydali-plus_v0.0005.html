@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0004">
+<meta name="version" content="App_v0.0005">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -758,6 +758,32 @@
   .cn-bar{ display:block; height:14px; background:var(--series, #574FA3); border-radius:100px; }
   .cn-n{ flex:none; font-size:12px; min-width:34px; text-align:end; }
 
+  /* The check, from the home screen. Deliberately the widest thing on the
+     board above it: the listings are something you browse, this is something
+     you reach for. */
+  .check-card{
+    display:flex; align-items:center; gap:13px; width:100%; text-align:start;
+    background:var(--indigo); color:#fff; border-radius:16px; padding:15px 17px;
+    box-shadow:0 10px 24px -14px rgba(25,23,53,.6);
+  }
+  .check-card:hover{ background:var(--indigo-dark); }
+  .check-card-ico{
+    width:38px; height:38px; border-radius:12px; background:rgba(255,255,255,.16);
+    display:inline-flex; align-items:center; justify-content:center; flex:none;
+  }
+  .check-card-ico .ico{ width:19px; height:19px; }
+  .check-card-body{ flex:1; min-width:0; }
+  .check-card-t{ display:block; font-size:14.5px; font-weight:600; }
+  html[dir="rtl"] .check-card-t{ font-family:var(--font-ar); }
+  .check-card-s{ display:block; font-size:12px; opacity:.78; line-height:1.55; margin-top:2px; }
+  .check-card-n{
+    flex:none; min-width:28px; height:28px; padding:0 9px; border-radius:100px;
+    background:#fff; color:var(--indigo); font-size:13px; font-weight:700;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .check-card .more-chevron{ color:rgba(255,255,255,.7); }
+  .empty-check .btn-ghost{ margin-top:10px; }
+
   /* ---------- Misc ---------- */
   .progress{ height:7px; border-radius:100px; background:var(--border); overflow:hidden; }
   .progress i{ display:block; height:100%; background:var(--palm); border-radius:100px; }
@@ -1118,6 +1144,9 @@ Object.assign(STRINGS.ar, {
   'nav.drugs':'الأدوية','common.clear':'مسح',
   'common.remove':'إزالة','nav.consumption':'الاستهلاك',
   'dx.tabReference':'المرجع','dc.tabCheck':'فحص الصرف',
+  'dc.cardSub':'افحص تداخلات وصفة كاملة قبل صرفها.',
+  'dc.cardResume':'{n} من الأدوية في الفحص الحالي',
+  'dc.orLookUp':'أو ابحث عن دواء واحد في المرجع',
   'dc.addPlaceholder':'أضف دواء إلى الوصفة…',
   'dc.added':'مضاف','dc.addToCheck':'أضف إلى الفحص','dc.clear':'إفراغ',
   'dc.emptyTitle':'أضف أدوية الوصفة',
@@ -1261,6 +1290,9 @@ Object.assign(STRINGS.en, {
   'nav.drugs':'Drugs','common.clear':'Clear',
   'common.remove':'Remove','nav.consumption':'Consumption',
   'dx.tabReference':'Reference','dc.tabCheck':'Dispensing check',
+  'dc.cardSub':'Check a whole prescription for interactions before you hand it over.',
+  'dc.cardResume':'{n} drugs in the check you started',
+  'dc.orLookUp':'Or look one drug up in the reference',
   'dc.addPlaceholder':'Add a drug from the prescription…',
   'dc.added':'Added','dc.addToCheck':'Add to check','dc.clear':'Clear',
   'dc.emptyTitle':'Add the drugs on the prescription',
@@ -1675,7 +1707,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0004';
+const VERSION = 'App_v0.0005';
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -1746,7 +1778,11 @@ const S = {
   drugQuery: '',
   drugForm: 'all',
   openDrug: null,
-  drugTab: 'reference',
+  /* The module opens on the CHECK, not the reference. Looking a single drug up
+     is the rarer errand: the common one is a prescription in hand and a
+     question about the whole of it. The reference is one tap away and the tab
+     you last chose survives while you stay on the screen. */
+  drugTab: 'check',
   basket: [],
   /* Tallies, never baskets. One row per (pharmacy, pharmacist, day, drug) with
      a count — see recordDispense() for why the basket is thrown away. */
@@ -1842,6 +1878,25 @@ function listingCard(l) {
     '</div></button>';
 }
 
+/* The check, from the screen the app opens on.
+
+   Browse is a board you read when you are looking for work; the check is the
+   thing you need while you are doing it. Two taps through a nav item is fine
+   for something you go looking for and too many for something you reach for
+   with a patient waiting — so it sits at the top of the first screen, and says
+   what is in the basket if a check is already part-built. */
+function checkCard() {
+  const n = S.basket.length;
+  return '<button class="check-card" onclick="goto(\'drugs\')">' +
+    '<span class="check-card-ico">' + icon('pill') + '</span>' +
+    '<span class="check-card-body">' +
+      '<span class="check-card-t">' + esc(t('dc.tabCheck')) + '</span>' +
+      '<span class="check-card-s">' + esc(n ? t('dc.cardResume', { n }) : t('dc.cardSub')) + '</span>' +
+    '</span>' +
+    (n ? '<span class="check-card-n figure">' + fmt(n) + '</span>' : icon('chevron', 'more-chevron')) +
+  '</button>';
+}
+
 function screenBrowse() {
   // A student browsing the shift board would be browsing work they cannot
   // legally take. Same screen, different listings.
@@ -1854,6 +1909,7 @@ function screenBrowse() {
     esc(L(d)) + '</button>').join('');
 
   return '<div class="screen-body">' +
+    '<div class="constrain stack">' + checkCard() + '</div>' +
     '<div class="chip-row">' + chips + '</div>' +
     '<p class="section-eyebrow">' + list.length + ' ' +
       esc(t(wanted === 'internship' ? 'l.openPlacements' : 'l.openShifts')) + '</p>' +
@@ -2266,7 +2322,9 @@ function screenCheck() {
     return '<div class="constrain stack">' + picker +
       '<div class="card card-pad empty-check">' + icon('pill') +
         '<p class="empty-check-t">' + esc(t('dc.emptyTitle')) + '</p>' +
-        '<p class="empty-check-s">' + esc(t('dc.emptyBody')) + '</p></div>' +
+        '<p class="empty-check-s">' + esc(t('dc.emptyBody')) + '</p>' +
+        '<button class="btn-ghost" onclick="backToReference()">' +
+          esc(t('dc.orLookUp')) + '</button></div>' +
       shiftPanel() +
       drugDisclaimer() +
     '</div>';
@@ -2423,7 +2481,7 @@ function screenDrug() {
 
   return '<div class="screen-body"><div class="constrain stack">' +
     '<div class="rec-actions">' +
-      '<button class="btn-ghost" onclick="goto(\'drugs\')">' + esc(t('common.back')) + '</button>' +
+      '<button class="btn-ghost" onclick="backToReference()">' + esc(t('common.back')) + '</button>' +
       (S.basket.indexOf(d.sci) >= 0
         ? '<span class="pill-tag">' + esc(t('dc.added')) + '</span>'
         : '<button class="btn-secondary" onclick="addToBasket(' + attr(d.sci) + ')">' +
@@ -3931,7 +3989,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0004.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0005.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -3974,7 +4032,17 @@ function signOut(){
   render();
 }
 
-function goto(s){ S.screen = s; S.modal = null; render(); scrollTop(); }
+function goto(s){
+  /* Arriving at the module from anywhere lands on the check. Moving between
+     its own tabs does not go through here, so a pharmacist reading the
+     reference is not yanked back mid-scroll. */
+  if (s === 'drugs') S.drugTab = 'check';
+  S.screen = s; S.modal = null; render(); scrollTop();
+}
+
+/* The one route into the module that must NOT reset the tab: coming back from
+   a drug record you opened out of the reference. */
+function backToReference() { S.drugTab = 'reference'; S.screen = 'drugs'; render(); scrollTop(); }
 
 /* The search re-renders on every keystroke, which would move focus to the top
    of a rebuilt screen. So the field is restored and the caret put back at the
