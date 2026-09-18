@@ -561,43 +561,75 @@ the same one.
 billing screen, and a new CRM module. **Price set in discussion: 25,000 IQD per
 pharmacy per month.**
 
-### First, the arithmetic — because it changes the design
+### The tiers, and the arithmetic behind them
+
+**Set in discussion: Basic 9,000 IQD/month, Premium 19,000 IQD/month.** Premium
+carries extra features, to be chosen later — candidates at the end of this
+entry.
 
 Per 40,000 IQD shift today: pharmacy pays 2,800 (7% on top), pharmacist pays
 1,200 (3% deducted), platform grosses 4,000 and keeps **3,224** after the ~2%
-processor cut on the disbursement.
+processor cut. A plan replaces the **pharmacy's 7% only**; the pharmacist's 3%
+always remains.
 
-If 25,000/month simply **replaces the pharmacy's 7%**, break-even is **8.9
-shifts a month**, for both sides at once — it is a zero-sum swap, so there is
-one crossing point, not two.
+| Shifts/mo | On commission | Basic 9,000 | Premium 19,000 | Platform: commission | Platform: Basic |
+| --- | --- | --- | --- | --- | --- |
+| 2 | 5,600 | 9,000 | 19,000 | 6,448 | 9,848 |
+| **4** *(expected)* | **11,200** | **9,000** | 19,000 | **12,896** | **10,696** |
+| 7 | 19,600 | 9,000 | 19,000 | 22,568 | 11,968 |
+| 20 | 56,000 | 9,000 | 19,000 | 64,480 | 17,480 |
 
-| Shifts/month | Pharmacy pays now | On subscription | Platform net now | Platform net on sub |
-| --- | --- | --- | --- | --- |
-| 2 | 5,600 | 25,000 | 6,448 | 25,848 |
-| 4 | 11,200 | 25,000 | 12,896 | 26,696 |
-| 6 | 16,800 | 25,000 | 19,344 | 27,544 |
-| **9** | **25,200** | **25,000** | **29,016** | **28,816** |
-| 12 | 33,600 | 25,000 | 38,688 | 30,088 |
-| 20 | 56,000 | 25,000 | 64,480 | 33,480 |
+**Basic at 9,000 is well priced.** Break-even is 3.2 shifts a month, so at the
+expected four it is already cheaper than commission — the pharmacy saves 2,200
+and needs no argument made to them. The platform gives up about 2,200 a month
+at that volume, which is the correct trade: a predictable floor and a committed
+customer are worth more than the last two thousand dinars of a variable fee.
 
-**The conclusion that matters: at the expected volume of four shifts a month, a
-pure commission swap asks a pharmacy to pay 25,000 instead of 11,200.** Nobody
-buys that. So 25,000 is not a swap — it is a **bundle**, and it has to be built
-and sold as one. Three ways to make the price right, not mutually exclusive:
+**Premium at 19,000 breaks even at 6.8 shifts**, so below that it is more
+expensive than commission. That is fine and it is the right shape — Premium is
+sold on what it includes, never on price. Do not let anyone pitch it as a
+saving to a four-shift pharmacy.
 
-1. **Bundle beyond commission relief** — multi-branch, staff accounts, priority
-   placement, consumption analytics, the drug reference for the whole staff,
-   later a procurement discount. The comparison stops being 25,000 vs 11,200.
-2. **Sell it first to the pharmacies that post most** — 9+ shifts a month
-   (chains, 24-hour, hospital-adjacent). There it is immediately cheaper and
-   needs no argument.
-3. **Or drop the price to ~12,000–15,000** and let it be a genuine swap at
-   typical volume.
+### The hole: unlimited posting on Basic
 
-**The pharmacist's 3% always remains**, subscribed or not. It keeps per-shift
-revenue growing with volume even on a flat plan (25,848 at two shifts → 33,480
-at twenty), and it preserves the one rule the supply side can hold in their
-head.
+If Basic includes unlimited shifts, a high-volume pharmacy subscribes and the
+platform bleeds:
+
+| Shifts/mo | Platform on commission | Platform on Basic | Lost |
+| --- | --- | --- | --- |
+| 20 | 64,480 | 17,480 | **47,000** |
+| 40 | 128,960 | 25,960 | **103,000** |
+
+A chain would find this in a week. **Give each tier an included shift
+allowance, with ordinary commission beyond it.** Proposal: **Basic 5 included,
+Premium 12 included.**
+
+| | 4 shifts | 10 shifts | 40 shifts |
+| --- | --- | --- | --- |
+| Basic — pharmacy pays | 9,000 | 23,000 | 107,000 |
+| Basic — platform keeps | 10,696 | 27,240 | 123,960 |
+| *(vs commission)* | *12,896* | *32,240* | *128,960* |
+
+The intended deal survives at the bottom and the runaway disappears at the top:
+a forty-shift pharmacy still saves 5,000 and the platform still earns 124,000.
+The allowance is also the natural upgrade prompt — "you used 5 of 5 this month"
+is the best Premium pitch there is.
+
+### Premium: ideas to choose from later
+
+Not decided, kept so the conversation starts from somewhere. **Operational:**
+multi-branch and staff accounts (needs W7), priority placement on the shift
+board, a larger shift allowance, saved shift templates (W12c). **Analytical:**
+the pharmacy's consumption analytics with history and export, fill-rate and
+time-to-fill benchmarking against the district. **Clinical:** the drug
+reference and check for every member of staff rather than the owner alone.
+**Commercial, later:** a procurement discount (S4), first look at
+near-expiry stock (S9).
+
+One to think about carefully: putting the **dispensing check** behind Premium
+would be the single most effective upsell and the wrong thing to do. It is a
+patient-safety tool and the doc commits it to being free. Extending it to *more
+staff* is a fair paid feature; gating it at all is not.
 
 ### Build three primitives, not one feature
 
@@ -607,7 +639,7 @@ that is expensive to retrofit.
 
 1. **A plan on the account.** Not on the pharmacy specifically: on the account,
    so an Externals company (W10, S5) or a university can hold one later.
-2. **An entitlement check.** `can(account, 'post.unlimited')`. Features ask the
+2. **An entitlement check.** `can(account, 'shifts.allowance')`. Features ask the
    entitlement, never the plan name — otherwise every pricing change becomes a
    code change.
 3. **One append-only billing ledger.** Every charge, whatever its source:
@@ -684,6 +716,92 @@ what P1 does not yet cover (see W8).
 5. The app's billing screen and the upgrade path.
 6. Only then: sell it, to the high-volume pharmacies first.
 
+## W15. The PARTNER account: job listings and banner placements
+
+**Raised:** 18 Sep 2026. **Touches:** app (two new views), CRM (a new module),
+schema, and P1 — which this is the first thing to actually test.
+
+`PARTNER` is a **placeholder**. The account links to an Externals record (W4)
+and belongs to a company rather than a clinician: it posts permanent job
+listings and books banner placements, both operated from the CRM.
+
+### Naming — to decide
+
+| Candidate | Arabic | For | Against |
+| --- | --- | --- | --- |
+| **Partner** *(recommended)* | شريك | Standard marketplace word; covers a manufacturer, bureau, importer or storage house without implying any of them; short in both scripts | Can read as a revenue-share relationship |
+| Company | شركة | Maximally plain, zero ambiguity | Bland; does not stretch to a university or hospital later |
+| Sponsor | راعٍ | Accurate for the banner half | **Collides with P1** — implies paying for influence, which is the thing the principle forbids |
+| Supplier | مورّد | Right for the supply chain | Wrong for a bureau posting a job |
+| Employer | جهة توظيف | Right for job listings | Wrong for banners, and pharmacies are employers too |
+
+**Recommendation: Partner / شريك** as the account name, with the CRM keeping
+**Externals** as the record type. The account is a relationship; the record is a
+licence-holding entity. Two words for two things is correct here.
+
+### Why it is not simply another `USER_TYPE`
+
+Every account today is a licensed clinician verified against the Syndicate
+roster. A partner is not clinical, is not on that roster, and is verified by
+**the operator team in the CRM** — nobody self-serves into this type. That is a
+different verification mechanism with a different failure mode (an employee who
+leaves keeps their login until the company or the operator says otherwise), and
+it is the same shape as W10's medical representative. **Build W15 and W10 on one
+account model**, or you will build it twice.
+
+### P1: the banner rules, which are the hard part
+
+This is the first feature that puts pharma money anywhere near a pharmacist,
+and P1 currently governs sponsored *clinical content* only. Extend it with
+these, and treat them as commitments rather than defaults:
+
+1. **No banner inside the dispensing check or the drug reference. Ever.** A
+   placement beside an interaction warning is precisely what P1 exists to
+   prevent, and it is also the highest-paying slot anybody will ever offer you.
+2. **Never target a banner on clinical behaviour.** What a pharmacist looked up
+   is the most valuable targeting signal on the platform and the most
+   corrosive to use. The moment the safety tool feeds the ad engine,
+   pharmacists work it out and stop using the safety tool — see W8's trust
+   argument, which is the same argument.
+3. **Labelled as a paid placement**, plainly, in Arabic.
+4. **Permitted surfaces only:** the shift board, the jobs view, and the home
+   screen below the fold. Nowhere else.
+
+### The app
+
+**Jobs is a second tab of Browse**, not a new bar item — Browse is already
+"find work", and a permanent job is the same errand on a longer timescale. It
+matches the Reference / Check tab pattern the drug module already uses, and the
+bar has no free slot (W13).
+
+Who sees it: pharmacists and owners. Students — open question, since a
+graduating student is exactly the audience for a first job.
+
+### The CRM: a Listings module
+
+Segmented by listing type the way Orders is segmented by order type:
+**Jobs** and **Banners**. Assumed rather than stated — confirm.
+
+- A **job listing**: partner, role, location, description, dates, status.
+  Approved by an operator before it appears, like every other externally
+  supplied content in this product.
+- A **banner placement**: slot, date range, partner, creative, price, status.
+  Needs a **scheduling model** — two partners cannot hold the same slot on the
+  same day, which is a booking conflict and has to be refused rather than
+  resolved by whoever saved last.
+
+Both are chargeable, and both land on **W14's billing ledger**, which is the
+argument for building the ledger first: this is the second revenue line and it
+should not need its own money plumbing.
+
+### Open questions
+
+- Do partners self-serve at all, or is everything operator-entered at first?
+  Operator-entered is slower and much safer for a first version.
+- Does a banner placement price by slot, by day, or by impression? Impressions
+  need counting infrastructure that does not exist; day-rate does not.
+- Students on the jobs view — yes or no.
+
 ---
 
 # Part 2 — Strategy
@@ -736,6 +854,10 @@ that treats it as a count will make pharmacies under-order.
 Product education, sponsored CPD, launches, market research panels. Comparable:
 **Medscape**, **Doximity** — both make most of their money here, and neither
 sold the network as the product. Requires P1 settled first.
+
+**W15 is the first paid pharma surface** — job listings and banners — and it
+arrives before any of the content products below. Its P1 rules are the
+precedent everything here inherits.
 
 The consumption tallies from W8 are the most sellable thing here and the most
 dangerous: aggregate above the individual pharmacy unless that pharmacy has
@@ -823,6 +945,11 @@ something equivalent to ACPE's commercial-support standards. Retrofitting ethics
 onto a live revenue line is how these platforms lose a profession permanently.
 Needs W6d to be structural rather than a habit.
 
+**W15 is the first feature that actually tests this**, and its banner rules are
+written there: no placement inside the dispensing check or the drug reference,
+and never a banner targeted on what a pharmacist looked up. Fold them in here
+when they are agreed.
+
 **W8 widened this and the wording has not caught up.** This principle covers
 clinical *content*. Since v0.0004 the platform also holds data **generated by** a
 clinical tool — what each pharmacy dispensed, collected inside a safety checker.
@@ -909,9 +1036,11 @@ cheap now and expensive at every later point, and it gates the Syndicate
 conversation. **W11** is a one-string rename and can go in with anything, and
 **W12** is five measured pieces of friction, of which W12a and W12b are the
 cheapest work in this file with the highest effect. **W13** is navigation and
-the three home screens. **W14** is the subscription — read its arithmetic
-before its architecture: the price as set does not work as a pure commission
-swap at expected volume, and that changes what gets built.
+the three home screens. **W14** is the subscription, at Basic 9,000 and Premium
+19,000 — read its arithmetic before its architecture, especially the shift
+allowance that stops a chain subscribing to Basic and posting forty shifts.
+**W15** is the partner account, job listings and banners, and it is the first
+feature that tests P1 rather than merely respecting it.
 
 W8 is the one to read first, because it is the only entry here where the code
 shipped ahead of the decisions. The dispensing check and the log are in
