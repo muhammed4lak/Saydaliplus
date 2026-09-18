@@ -11,7 +11,8 @@ Split four ways because they are read at different times:
 
 IDs are stable. Reordering does not renumber anything.
 
-**W1–W5 shipped in App_v0.0003 / CRM_v0.0003, and W8 in v0.0004** (18 Sep 2026). They are kept
+**W1–W5 shipped in App_v0.0003 / CRM_v0.0003. W8's code shipped in v0.0004; its
+open questions did not** (18 Sep 2026). They are kept
 below rather than deleted, because what each one says about *why* is the part
 worth not re-deriving; each now opens with a **Built** line saying what landed
 and what was decided along the way. W6 and W7 are still untouched, as is
@@ -264,6 +265,32 @@ saved reports without *edit*.
 Every record carries an `owner`; orphaning them silently is how a pharmacy stops
 being anybody's job.
 
+## W6. Data-model changes that are cheap now and awkward later
+
+**Raised:** 18 Sep 2026. Small, individually. Grouped because none justifies its
+own entry and all become expensive once there is real data.
+
+- **W6a. Subscription in the fee config.** A plan alongside the commission
+  constants in `src/config/fees.ts`. Required by S1.
+- **W6b. CPD credit ledger on the user.** Append-only; provider, topic, hours,
+  date, evidence. Same principle as the verified CV stats — issued or computed,
+  never editable by the holder. Required by S7.
+- **W6c. Provider as a first-class entity.** A university, a clinical society,
+  the Syndicate. The Universities and Externals modules are most of it.
+- **W6d. Sponsorship field on a module, separate from its content.** So
+  disclosure is structural rather than something someone remembers to type.
+  Required by P1.
+- **W6e. Model the real supply chain in Externals.** Covered by W4; listed here
+  because it is also what a procurement product (S4) later runs on.
+
+## W7. Chain and multi-branch accounts
+
+**Raised:** 18 Sep 2026. **Touches:** app + CRM.
+
+Excluded from v1 by the brief. Worth revisiting sooner than that implies: the
+first customer willing to pay a real subscription (S1) is a chain with several
+branches and a staffing headache, and the exclusion blocks exactly that sale.
+
 ## W8. The dispensing log: what v0.0004 settled, and what it did not
 
 **Raised:** 18 Sep 2026. **Touches:** app, CRM, and — before any of it is real —
@@ -299,32 +326,6 @@ both places.
 - **Incomplete data is biased data.** Pharmacists will log some prescriptions
   and not others, so consumption is a floor, not a count. Anything built on it
   for procurement (S4, S6) has to say so or a pharmacy will under-order.
-
-## W6. Data-model changes that are cheap now and awkward later
-
-**Raised:** 18 Sep 2026. Small, individually. Grouped because none justifies its
-own entry and all become expensive once there is real data.
-
-- **W6a. Subscription in the fee config.** A plan alongside the commission
-  constants in `src/config/fees.ts`. Required by S1.
-- **W6b. CPD credit ledger on the user.** Append-only; provider, topic, hours,
-  date, evidence. Same principle as the verified CV stats — issued or computed,
-  never editable by the holder. Required by S7.
-- **W6c. Provider as a first-class entity.** A university, a clinical society,
-  the Syndicate. The Universities and Externals modules are most of it.
-- **W6d. Sponsorship field on a module, separate from its content.** So
-  disclosure is structural rather than something someone remembers to type.
-  Required by P1.
-- **W6e. Model the real supply chain in Externals.** Covered by W4; listed here
-  because it is also what a procurement product (S4) later runs on.
-
-## W7. Chain and multi-branch accounts
-
-**Raised:** 18 Sep 2026. **Touches:** app + CRM.
-
-Excluded from v1 by the brief. Worth revisiting sooner than that implies: the
-first customer willing to pay a real subscription (S1) is a chain with several
-branches and a staffing headache, and the exclusion blocks exactly that sale.
 
 ---
 
@@ -365,6 +366,11 @@ pharmacy. Comparable: **Grinta** (Egypt), **DrugStoc** (Nigeria), **Retailio**
 (India), **MaxAB** (Egypt). Do not build early; do model the supply chain now
 (W4).
 
+**W8 gave this its first demand signal** — per-pharmacy consumption tallies —
+and a caveat that has to travel with it: pharmacists will log some prescriptions
+and not others, so consumption is a floor, not a count. A procurement engine
+that treats it as a count will make pharmacies under-order.
+
 ## S5. Pharma company access
 *The margin business. Needs a daily-active audience first.*
 
@@ -372,12 +378,19 @@ Product education, sponsored CPD, launches, market research panels. Comparable:
 **Medscape**, **Doximity** — both make most of their money here, and neither
 sold the network as the product. Requires P1 settled first.
 
+The consumption tallies from W8 are the most sellable thing here and the most
+dangerous: aggregate above the individual pharmacy unless that pharmacy has
+consented, disclose it to pharmacists where they log, and give the pharmacy its
+own analytics before anyone outside sees a number. The first of those is built;
+the other two are not.
+
 ## S6. Embedded finance on procurement
 *Much later. Arguably a different company.*
 
 Working capital underwritten against observed purchase history. Comparable:
 **MaxAB**, **Halan**, **Khazna**. Needs a licensed partner — same warning as the
-payments provider note in the README.
+payments provider note in the README. Underwriting on W8's tallies inherits
+their bias: they under-count, so they under-state a pharmacy's turnover.
 
 ## S7. CPD — the ledger, not the courses
 
@@ -451,6 +464,14 @@ something equivalent to ACPE's commercial-support standards. Retrofitting ethics
 onto a live revenue line is how these platforms lose a profession permanently.
 Needs W6d to be structural rather than a habit.
 
+**W8 widened this and the wording has not caught up.** This principle covers
+clinical *content*. Since v0.0004 the platform also holds data **generated by** a
+clinical tool — what each pharmacy dispensed, collected inside a safety checker.
+Selling that is not selling content, but it is selling the exhaust of something
+pharmacists were told was for patient safety, and if they work that out they stop
+using it. Either extend the principle to cover it or decide deliberately not to;
+do not leave it resting on the fact that nobody has asked yet.
+
 ## P2. Non-exclusivity with the Syndicate
 
 Do not ask a professional body to lock out competitors. It is how you get
@@ -498,6 +519,20 @@ teaches both sides to transact around you by the third booking. Subscription
 (S1), the reliability record, the handoff evidence and the drug reference (S8)
 are all defences against it — a better reason to build them than the revenue.
 
+## C3. The CRM's build source is not in the repository
+
+The CRM ships as one 260 KB file, assembled by a `build.sh` from about twenty
+part files that live in a session scratchpad rather than in git. Nothing is lost
+— the built file is complete, self-contained and committed, and the drug data it
+carries is regenerable from `data/drugs.mjs` with `npm run drugs` — but the next
+person to change the CRM edits the built file directly rather than the parts.
+
+Two options, neither urgent: commit the part files and the build script beside
+the output, or accept the single file as the source and delete the split. The
+worst outcome is the current ambiguity persisting long enough that someone edits
+the built file while a stale set of parts still exists somewhere, and a rebuild
+silently reverts their work.
+
 ---
 
 ## Picking these up
@@ -506,7 +541,14 @@ Each Work entry names the files and identifiers involved, so nothing needs
 re-deriving. W1 and W2 revised decisions made in the v0.0002 builds; that was
 expected, not a defect — those were built from what was known then.
 
-What is left in Part 1 is W6 (data-model changes that are cheap now and awkward
-later — mostly CPD groundwork, and speculative until a revenue route in Part 2
-is chosen) and W7 (chain and multi-branch accounts, which is large). Neither is
-blocking anything in v0.0003.
+What is left in Part 1 is **W6** (data-model changes that are cheap now and
+awkward later — mostly CPD groundwork, and speculative until a revenue route in
+Part 2 is chosen), **W7** (chain and multi-branch accounts, which is large), and
+the unbuilt half of **W8**.
+
+W8 is the one to read first, because it is the only entry here where the code
+shipped ahead of the decisions. The dispensing check and the log are in
+v0.0004; the legal read, the consent wording, the ruling on controlled
+substances and the extension of P1 are not, and none of them is a coding task.
+Nothing breaks if they wait, but the first real pharmacy is the wrong place to
+discover any of them.
