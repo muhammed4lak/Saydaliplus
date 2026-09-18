@@ -600,9 +600,9 @@ platform bleeds:
 | 20 | 64,480 | 17,480 | **47,000** |
 | 40 | 128,960 | 25,960 | **103,000** |
 
-A chain would find this in a week. **Give each tier an included shift
-allowance, with ordinary commission beyond it.** Proposal: **Basic 5 included,
-Premium 12 included.**
+A chain would find this in a week. **DECIDED: each tier carries an included
+shift allowance, with ordinary commission beyond it.** Starting numbers, open to
+moving once real volume is visible: **Basic 5 included, Premium 12 included.**
 
 | | 4 shifts | 10 shifts | 40 shifts |
 | --- | --- | --- | --- |
@@ -721,11 +721,11 @@ what P1 does not yet cover (see W8).
 **Raised:** 18 Sep 2026. **Touches:** app (two new views), CRM (a new module),
 schema, and P1 — which this is the first thing to actually test.
 
-`PARTNER` is a **placeholder**. The account links to an Externals record (W4)
+**DECIDED: the account is called Partner / شريك.** It links to an Externals record (W4)
 and belongs to a company rather than a clinician: it posts permanent job
 listings and books banner placements, both operated from the CRM.
 
-### Naming — to decide
+### Naming — decided 18 Sep 2026
 
 | Candidate | Arabic | For | Against |
 | --- | --- | --- | --- |
@@ -735,7 +735,7 @@ listings and books banner placements, both operated from the CRM.
 | Supplier | مورّد | Right for the supply chain | Wrong for a bureau posting a job |
 | Employer | جهة توظيف | Right for job listings | Wrong for banners, and pharmacies are employers too |
 
-**Recommendation: Partner / شريك** as the account name, with the CRM keeping
+**Chosen: Partner / شريك** as the account name, with the CRM keeping
 **Externals** as the record type. The account is a relationship; the record is a
 licence-holding entity. Two words for two things is correct here.
 
@@ -782,6 +782,9 @@ graduating student is exactly the audience for a first job.
 Segmented by listing type the way Orders is segmented by order type:
 **Jobs** and **Banners**. Assumed rather than stated — confirm.
 
+**Agreed 18 Sep 2026:** this shape, the P1 banner rules above, Jobs as a tab of
+Browse, and the Jobs / Banners segmentation.
+
 - A **job listing**: partner, role, location, description, dates, status.
   Approved by an operator before it appears, like every other externally
   supplied content in this product.
@@ -810,70 +813,189 @@ Revenue routes and the features that follow from them. Not work until chosen.
 Every market figure here is an order of magnitude to sanity-check, not research.
 
 ## S1. Pharmacy subscription alongside or instead of commission
-*Near term. Highest priority of the revenue routes.*
+*Near term. Specified and priced in W14.*
 
-Flat monthly fee per pharmacy for unlimited posting plus the management tools.
-Comparable: **Lantum**, **Locum's Nest**, **Patchwork** (UK) all moved off
-per-shift commission. Commission makes you an agency and agencies get
-disintermediated; subscription makes you infrastructure. Needs W6a. **Priced
-and specified in W14** — including why 25,000 IQD/month is a bundle rather than
-a commission swap.
+Flat monthly fee per pharmacy. Comparable: **Lantum**, **Locum's Nest**,
+**Patchwork** (UK) all moved off per-shift commission. Commission makes you an
+agency and agencies get disintermediated; subscription makes you infrastructure.
+
+**Priced in W14**: Basic 9,000, Premium 19,000, each with an included shift
+allowance and ordinary commission beyond it.
+
+**What subscription does not fix.** It defends the *pharmacy* end of leakage
+(C2) and does nothing about the pharmacist end. A subscribed pharmacy still has
+every pharmacist's phone number. What holds the pharmacist is the reliability
+record, the payment trail and the drug reference — not the billing model.
+
+**Needs deciding:** whether commission survives at all for non-subscribers, or
+whether subscription eventually becomes the only way to post. Keeping both
+forever means maintaining two revenue models and explaining the choice to every
+new pharmacy. A date to retire commission — even a distant one — makes the sales
+conversation one sentence instead of a comparison table.
 
 ## S2. Verified credentials as a product
 *Near term. Half-built already.*
 
-Verification-on-demand for employers, or a paid verified profile for the
-pharmacist. Comparable: **Medallion**, **Verifiable** (US). Builds directly on
-the Syndicate roster module. Nobody in Iraq has a clean, matched, current map of
-pharmacist ↔ registration ↔ employment history.
+Comparable: **Medallion**, **Verifiable** (US). Builds directly on the Syndicate
+roster module and the verification queue, both of which exist.
+
+**The product is not a badge on a profile.** It is an answer to a question
+somebody is already asking by phone: *does this person hold a current licence,
+and have they actually worked?* Three shapes, ascending in value:
+
+1. **A one-off check.** An employer asks about a named pharmacist; you answer
+   from the roster match plus the platform's own work history. Cheapest to
+   build, sold per check.
+2. **A verified transcript the pharmacist controls.** They export a signed
+   record — licence, shifts completed, reliability, hours — and hand it to
+   whoever asks. The pharmacist is the distribution channel, which means no
+   sales team.
+3. **Continuous verification for an employer.** A standing feed: this person's
+   licence lapsed, this person's details changed. Recurring revenue, and the
+   thing US comparables actually monetise.
+
+**Who pays is the important question, and the answer is the employer, not the
+pharmacist.** Charging a pharmacist to prove they are licensed is charging the
+oversupplied side for the privilege of being employable, and it will be read
+exactly that way.
+
+**The Gulf angle is the real money.** An Iraqi pharmacist applying to SCFHS,
+DHA, DOH or MOHAP assembles licence and experience evidence by hand today, in
+paper, across years. A signed, exportable transcript is worth far more to that
+person than a badge in an Iraqi app — and they are the ones already paying
+agents for help with it. *Verify current requirements; these bodies revise
+them.*
+
+**The line to watch:** this is how you drift into being a credentialing
+authority without deciding to (P4). A transcript that says *"Saydali+ confirms
+this licence is current"* is a claim about a regulator's register. Say instead
+*"the Syndicate roster of [date] lists this number"* — attribution, not
+assertion.
+
+**Needs deciding:** which of the three shapes ships first, and whether the
+transcript is free to the pharmacist (distribution) or paid (revenue). They
+point in opposite directions.
 
 ## S3. Permanent placement fees
 *Near term. Nearly free given what exists.*
 
-The relief network is a recruiting funnel that already knows who is reliable.
-Charge when a locum becomes a hire. Comparable: **Doximity**'s hiring line.
-55,000 pharmacists against 17,000 pharmacies with a hiring freeze is the largest
-pool of under-employed pharmacists in the region.
+Charge when a relief pharmacist becomes a permanent hire. Comparable:
+**Doximity**'s hiring line. The relief network is already a recruiting funnel
+that knows who turns up.
+
+**The hard part is not the fee, it is the trigger.** Both sides have a reason to
+hide a conversion: the pharmacy avoids the fee, the pharmacist keeps the
+pharmacy happy. A conversion fee you cannot observe is a fee nobody pays. Three
+options, least to most workable:
+
+- **Self-declaration.** Honest pharmacies declare; the rest do not. Do not build
+  a revenue line on it.
+- **Inference.** The same pharmacist covers the same pharmacy repeatedly, then
+  the shifts stop being posted. That is a strong signal and an ugly
+  conversation — you are accusing a customer.
+- **Sell the hire instead of policing it.** A posted permanent vacancy with a
+  flat fee to advertise it, paid up front whether or not it fills. No trigger to
+  detect, no accusation, and it slots straight into **W15's Jobs listings** —
+  the same module, a pharmacy instead of a partner.
+
+**The third is the one to build**, and it is nearly free once W15 exists.
+
+**The pricing norm does not transfer.** Recruitment charges a percentage of
+first-year salary. At Iraqi pharmacist salaries that is both small in absolute
+terms and offensive to quote. A flat listing fee is more honest and easier to
+sell.
+
+**Needs deciding:** flat listing fee (recommended) or conversion fee. If
+conversion, accept that it is unenforceable and price it as an honesty box.
 
 ## S4. B2B procurement marketplace
-*Later. Capital-heavy. Largest revenue.*
+*Later. Capital-heavy. Largest ceiling.*
 
-1–2% of procurement GMV is plausibly 50–100× the shift commission from the same
-pharmacy. Comparable: **Grinta** (Egypt), **DrugStoc** (Nigeria), **Retailio**
-(India), **MaxAB** (Egypt). Do not build early; do model the supply chain now
-(W4).
+1–2% of procurement value is plausibly 50–100× the shift commission from the
+same pharmacy. Comparable: **Grinta** (Egypt), **DrugStoc** (Nigeria),
+**Retailio** (India), **MaxAB** (Egypt).
 
-**W8 gave this its first demand signal** — per-pharmacy consumption tallies —
-and a caveat that has to travel with it: pharmacists will log some prescriptions
-and not others, so consumption is a floor, not a count. A procurement engine
-that treats it as a count will make pharmacies under-order.
+**Two models, and they are different companies.**
+
+- **Marketplace.** You connect pharmacies to distributors and take a fee. Light
+  on capital, weak on margin, and easy to route around once both sides know each
+  other — the same leakage problem as shifts (C2), on larger numbers.
+- **Distributor.** You hold stock, set prices and deliver. Real margin, real
+  moat, and a different business entirely: warehousing, a fleet, working
+  capital, and a **wholesale distribution licence**. The Externals model (W4)
+  already describes exactly the licence you would need to hold.
+
+**Do not build early.** But the modelling is already done — W4's licence model
+and W8's consumption tallies are the two things a procurement product needs and
+neither was built for it.
+
+**The caveat that has to travel with the data:** pharmacists log some
+prescriptions and not others, so consumption is a floor, not a count. A
+procurement engine that treats it as a count makes pharmacies under-order.
+
+**Needs deciding, eventually:** marketplace or distributor. Not now — but know
+that the answer determines whether this is a feature or a second company, and do
+not let a "light marketplace pilot" drift into holding stock without that
+decision being made deliberately.
 
 ## S5. Pharma company access
 *The margin business. Needs a daily-active audience first.*
 
-Product education, sponsored CPD, launches, market research panels. Comparable:
-**Medscape**, **Doximity** — both make most of their money here, and neither
-sold the network as the product. Requires P1 settled first.
+Comparable: **Medscape**, **Doximity** — both make most of their money here, and
+neither sold the network as the product.
 
-**W15 is the first paid pharma surface** — job listings and banners — and it
-arrives before any of the content products below. Its P1 rules are the
-precedent everything here inherits.
+**A ladder, ascending in revenue and in P1 exposure.** Each rung needs the one
+below it to exist first.
 
-The consumption tallies from W8 are the most sellable thing here and the most
-dangerous: aggregate above the individual pharmacy unless that pharmacy has
-consented, disclose it to pharmacists where they log, and give the pharmacy its
-own analytics before anyone outside sees a number. The first of those is built;
-the other two are not.
+1. **Directory.** A partner sees which pharmacies exist, where, and who to ask
+   for. No pharmacist is touched. Least controversial, probably the first paid
+   thing, and it is mostly built — the Pharmacies module is the product.
+2. **Job listings and banners — W15.** The first rung that reaches a
+   pharmacist. Its P1 rules are the precedent every rung above inherits.
+3. **Visit logging.** The CRM a rep's employer currently keeps in a notebook.
+   Worth more to the company than to the pharmacy, which is worth knowing when
+   pricing it.
+4. **Sponsored education.** Real money, and where P1 stops being a principle
+   and becomes an operating procedure: who writes it, who reviews it, what the
+   disclosure says, who can refuse a placement.
+5. **Market research panels.** Asking pharmacists questions on a sponsor's
+   behalf. Highest margin, and the rung where the pharmacist must be paid and
+   must be able to decline without consequence.
+
+**The audience gate.** Nobody buys access to 200 pharmacists. This entire ladder
+is worthless until the app has a daily-active population, which is why S8 — the
+thing that generates no revenue — is upstream of the thing that generates the
+most.
+
+**The consumption tallies (W8) are the most sellable and most dangerous asset
+here.** Aggregate above the individual pharmacy unless that pharmacy consented;
+disclose it to pharmacists where they log; give the pharmacy its own analytics
+before anyone outside sees a number. The third is built. The first two are not.
+
+**Needs deciding:** how far up this ladder you are willing to go, decided once
+and in advance rather than one lucrative offer at a time. Rung 5 with a weak
+policy is how a platform loses a profession.
 
 ## S6. Embedded finance on procurement
 *Much later. Arguably a different company.*
 
 Working capital underwritten against observed purchase history. Comparable:
-**MaxAB**, **Halan**, **Khazna**. Needs a licensed partner — same warning as the
-payments provider note in the README. Underwriting on W8's tallies inherits
-their bias: they under-count, so they under-state a pharmacy's turnover.
+**MaxAB**, **Halan**, **Khazna**.
+
+**This is lending**, and lending is licensed, capital-intensive and collections-
+heavy. A software company that starts lending discovers it has become a lender
+with a software problem. **Partner, do not build** — and the partner brings the
+licence, the capital and the appetite for default.
+
+Underwriting on W8's tallies inherits their bias: they under-count, so they
+under-state a pharmacy's turnover, which makes credit decisions conservative in
+a way that looks like caution and is actually a data artefact.
+
+**Needs deciding:** nothing yet. Revisit only when procurement (S4) is real and
+a licensed partner has approached you rather than the other way round.
 
 ## S7. CPD — the ledger, not the courses
+*The one that compounds. Longest horizon.*
 
 The asset is the **credit ledger**: the authoritative record of who holds how
 many credits. Comparable: **NABP's CPE Monitor** (US) — accredited providers
@@ -894,69 +1016,134 @@ entire career. Needs W6b and W6c.
   nice-to-have; together it renews without thinking.
 - **S7c. Be the platform, not a content company.** Content from colleges of
   pharmacy (Universities module), clinical societies, the Syndicate. You run
-  identity, delivery, the ledger and the certificate.
+  identity, delivery, the ledger and the certificate. **Content is the trap** —
+  it is expensive, it dates, and it puts you in competition with the bodies you
+  need as partners.
 - **S7d. The combined Syndicate ask.** The register alone reads as a taking —
   you want their data, what do they get? Register *plus* a CPD system they do
-  not have reads as a trade in their favour. Same meeting, same proposition: let
-  us be your digital infrastructure.
+  not have reads as a trade in their favour. Same meeting, same proposition.
+
+**The sequencing question underneath all of it:** S7a works without the
+Syndicate and S7d needs them. Launching S7a first proves the thing works and
+arrives at the meeting with evidence — but a Syndicate that finds you already
+issuing credits may read it as a land grab rather than a demonstration. That is
+a judgement about the relationship, not about the product.
+
+**Needs deciding:** whether CPD launches before, with, or only after a Syndicate
+agreement — and P4, which this crosses.
 
 ## S8. Drug reference as a daily-use tool
+*Built. The retention hook the rest of Part 2 depends on.*
 
 **Built — App_v0.0003 / App_v0.0004.** `data/drugs.mjs` holds 119 molecules,
 embedded into both builds by `npm run drugs`. v0.0003 gave the app the
 *reference*; v0.0004 gave it the *check* — a basket that takes the whole
-prescription at once, which is the thing that turns a lookup into a habit.
+prescription at once, which is what turns a lookup into a habit.
 
-Still open under this heading: availability ("which pharmacy near me has this"),
-which needs stock data the platform does not have, and whatever the Syndicate or
-the Ministry will confirm as authoritative, which is a conversation rather than a
-build.
-*Highest-leverage feature on the list.*
+Shift-hunting is episodic; a drug lookup is daily. Nothing else on this list
+makes the app open every day, and S4, S5 and S7 all need it to.
 
-Arabic interaction and contraindication checking. Shift-hunting is episodic; a
-drug lookup is daily. This is the retention hook that makes S4, S5 and S7
-possible, and the CRM's Drugs module is already the schema for it.
+**Still open under this heading:**
+
+- **The full formulary.** 119 molecules is a working reference, not a complete
+  one. The coverage line is honest about it; a real launch wants everything
+  marketed in Iraq, which is a data-sourcing problem rather than a build.
+- **Availability** — "which pharmacy near me has this". Needs stock data the
+  platform does not have. Arguably arrives free with S4.
+- **Authoritative status.** Whatever the Syndicate or the Ministry will confirm.
+  A conversation, not a build — and the single thing that would make the
+  reference unassailable.
 
 ## S9. Near-expiry stock exchange between pharmacies
+*Later. A density play, not a revenue line.*
 
-Pharmacies list near-expiry stock to each other. Expiry write-off is a real
-unsolved cost in fragmented pharmacy markets. Not directly monetised — a density
-engine that makes the pharmacy side valuable independent of shifts.
+Pharmacies list near-expiry stock to each other. Expiry write-off is a real,
+unsolved cost in fragmented pharmacy markets, and a pharmacy that opens the app
+to shift surplus opens it for reasons unrelated to shifts.
+
+**The reason it is not simple: liability.** Facilitating the transfer of
+medicines between pharmacies is a regulated activity in most jurisdictions, and
+if something is dispensed past expiry after moving through your platform, the
+question of who is responsible has to already have an answer. Two versions:
+
+- **Visibility only.** You show what exists and who holds it; the pharmacies
+  transact and document it themselves, exactly as they do today by phone. Much
+  lower exposure, most of the density benefit.
+- **Facilitated transfer.** You handle the transaction. Higher value, and you
+  are now in the supply chain with the licensing and liability that implies.
+
+**Start with visibility.** It is the version that does not need a lawyer before
+the first line of code.
+
+**Needs deciding:** nothing near-term. Note it as the cheapest way to make the
+pharmacy side valuable independent of shifts, whenever pharmacy density is high
+enough for a listing to find a taker.
 
 ## S10. WhatsApp as an interface, not a feature
+*Near term for notifications. Later for posting.*
 
-Post a shift by WhatsApp, have it appear in the app. Removes the largest
-adoption barrier for an older pharmacy owner. Distribution beats product in a
-market that has not seen this category.
+Removes the largest adoption barrier for an older pharmacy owner who will not
+install an app. Distribution beats product in a market that has not seen this
+category.
+
+**Two halves with very different costs.**
+
+- **Outbound — notifications.** "Your shift is filled." "Your invoice is due."
+  Template messages through the WhatsApp Business API, priced per conversation.
+  Straightforward, and it is the half that lifts fill rates and collections
+  (W14's dunning ladder wants exactly this).
+- **Inbound — posting a shift by message.** Much harder than it sounds.
+  Free-text needs parsing and will be wrong in ways that cost a filled shift;
+  structured commands need teaching. The workable middle is a **guided reply
+  flow** — the platform asks four questions and the owner answers each.
+
+**Build outbound first.** It is most of the value for a fraction of the work,
+and it teaches you whether pharmacies read WhatsApp from you at all before you
+invest in listening on it.
+
+*Verify Business API pricing and template-approval rules for Iraq before
+committing — both change, and per-conversation pricing at scale is a real line
+item, not a rounding error.*
 
 ---
 
 # Part 3 — Principles to settle before the relevant build
 
+Each of these is cheap to hold now and expensive to retrofit. A principle is not
+settled until it is **written down and someone owns saying no with it** — an
+intention held only in the founder's head does not survive the first lucrative
+offer made while the founder is tired.
+
 ## P1. Pharma money never touches clinical content
-*Settle before the first sponsorship cheque, not after.*
+*Settle before the first sponsorship cheque. **W15 makes this urgent.***
 
 If a manufacturer funds a module and the module nudges toward their product, you
 have influenced what reaches patients who did not consent to that. The
 international answer: funders buy the **slot**, never the **content**; an
 independent clinician writes it; sponsorship is disclosed on the module;
 sponsored material never ranks a product inside a clinical recommendation. Adopt
-something equivalent to ACPE's commercial-support standards. Retrofitting ethics
-onto a live revenue line is how these platforms lose a profession permanently.
-Needs W6d to be structural rather than a habit.
+something equivalent to ACPE's commercial-support standards.
 
-**W15 is the first feature that actually tests this**, and its banner rules are
-written there: no placement inside the dispensing check or the drug reference,
-and never a banner targeted on what a pharmacist looked up. Fold them in here
-when they are agreed.
+**W15 is the first feature that actually tests this**, and its banner rules
+belong here once agreed: no placement inside the dispensing check or the drug
+reference, ever; never target a banner on what a pharmacist looked up; labelled
+as a paid placement; permitted surfaces named explicitly.
 
 **W8 widened this and the wording has not caught up.** This principle covers
 clinical *content*. Since v0.0004 the platform also holds data **generated by** a
 clinical tool — what each pharmacy dispensed, collected inside a safety checker.
 Selling that is not selling content, but it is selling the exhaust of something
 pharmacists were told was for patient safety, and if they work that out they stop
-using it. Either extend the principle to cover it or decide deliberately not to;
-do not leave it resting on the fact that nobody has asked yet.
+using it.
+
+**What "settled" looks like:** a one-page written policy covering (a) what a
+sponsor can buy, (b) what they can never buy, (c) who reviews a placement before
+it runs, (d) what the disclosure says, in Arabic, and (e) **who can refuse a
+placement and cannot be overruled on revenue grounds**. The fifth is the one
+that makes the other four real.
+
+**Needs your judgement:** how far up S5's ladder you will go, and who holds the
+veto.
 
 ## P2. Non-exclusivity with the Syndicate
 
@@ -964,27 +1151,97 @@ Do not ask a professional body to lock out competitors. It is how you get
 refused, and if granted, how you become the thing the membership resents.
 Non-exclusive-but-first is a more durable position than a contract nobody likes.
 
+**The harder half is what they get.** "Give us your register" is a taking. The
+ask has to be a trade, written before the meeting: a CPD system they do not have
+(S7d), a verification queue that reduces their phone calls, and reporting on
+their own membership they currently cannot produce. **Non-exclusivity is what
+makes that trade safe for them to accept** — they are not handing a monopoly to
+a company, they are digitising a function and keeping the right to do it with
+someone else.
+
+**Needs your judgement:** the shape of the ask, and whether it is one
+conversation or a pilot with one governorate first. A pilot is easier to say yes
+to and slower to scale.
+
 ## P3. Register data stays the Syndicate's, and stays exportable
 
 You run it; you do not own it. The right answer, and the one that survives a
-change of Syndicate leadership.
+change of Syndicate leadership — which it will have to.
+
+**What "settled" looks like:** contractual language, not goodwill. Specifically:
+the register remains their property; they can export it whole, in a documented
+format, on request and without cause; termination returns it and deletes your
+copy; and none of that depends on who is running either organisation. A clause
+that can only be exercised by asking nicely is not a clause.
+
+**The asymmetry to be honest about:** this protects them, and it also protects
+you. A platform that can be accused of holding a profession's register hostage
+has a political problem no product solves.
+
+**Needs your judgement:** nothing — unless you disagree, in which case say so
+before the meeting rather than after.
 
 ## P4. The credentialing-authority line
 
 The student certificate deliberately states that Saydali+ **is not** a
-credentialing authority. CPD is the move to becoming one. Do it with a signed
-recognition rather than by quietly issuing credits and hoping it sticks — the
-difference between "a company that issues certificates" and "the recognised CPD
-tracker" is that signature, and everything downstream depends on which one you
-are.
+credentialing authority. CPD (S7) is the move to becoming one, and S2's
+transcript brushes against it too.
+
+Do it with a signed recognition rather than by quietly issuing credits and
+hoping it sticks — the difference between "a company that issues certificates"
+and "the recognised CPD tracker" is that signature, and everything downstream
+depends on which one you are.
+
+**The drift risk is real and quiet.** Nobody decides to become a credentialing
+authority. You issue a certificate, then a transcript, then something that
+*looks* like a credit, and one day an employer treats your record as
+authoritative and you have the liability without the mandate. The wording on the
+student certificate is the current guard; it needs the same guard on anything
+S2 or S7 emits.
+
+**Needs your judgement:** whether CPD launches before, with, or only after a
+signed recognition. S7a says it can work without one; P4 says doing so has a
+cost that is not on the invoice.
+
+## P5. What the platform says about a pharmacist, and what they can do about it
+*Not previously written down. It should be.*
+
+The app computes and displays a **reliability percentage and a rating** that
+follow a pharmacist between pharmacies. That is the most valuable thing the
+platform holds for the supply side — and the most consequential thing it says
+about a person's livelihood.
+
+There is currently no written answer to any of:
+
+- **Can a pharmacist see what a pharmacy said about them?** Ratings that are
+  invisible to their subject are rumours with arithmetic.
+- **Can they contest one?** A single unfair no-show mark — a family emergency, a
+  pharmacy that changed the time — sits on a reliability score indefinitely.
+- **Does a rating expire?** A bad month two years ago should probably not price
+  someone out of work today.
+- **What happens on account closure?** They leave; does the record follow them,
+  vanish, or stay visible to pharmacies?
+- **Who else sees it?** It is visible to pharmacies. Is it visible to a partner
+  (W15)? To a future employer through S2? Those are very different promises.
+
+**This costs nothing to settle now and is nearly impossible to retrofit**, for
+the same reason every rating system discovers late: by the time it matters,
+there are ten thousand scores computed under rules nobody wrote down.
+
+**Needs your judgement:** all five. The one I would not compromise on is the
+first — a pharmacist should be able to see everything the platform says about
+them.
 
 ---
 
 # Part 4 — Context
 
+Findings worth not re-deriving. Nothing here is a task.
+
 ## C1. The commission ceiling
 
-At ~40,000 IQD a shift, the 10% is ~4,000 IQD ≈ $3.
+At ~40,000 IQD a shift, the 10% is ~4,000 IQD ≈ $3 gross, **~3,224 net** once
+the processor takes its cut.
 
 | Active pharmacies | Shifts each / month | Revenue / year |
 |---|---|---|
@@ -994,16 +1251,31 @@ At ~40,000 IQD a shift, the 10% is ~4,000 IQD ≈ $3.
 
 The last row is a *mature* business — a third of every community pharmacy in
 Iraq transacting monthly — at roughly half a million dollars. Real, but not what
-justifies years of category creation on its own. The conclusion is not "charge
-more": it is that the shift network's value is the relationship and the data,
-not the take rate.
+justifies years of category creation on its own.
+
+**Subscription raises the floor, not the ceiling.** At Basic 9,000 a pharmacy
+yields ~108,000 IQD a year (≈$82) whether or not it posts, against ~$36 from two
+shifts a month on commission. That roughly doubles revenue per pharmacy at low
+volume and *caps* it at high volume — which is the trade W14 makes deliberately.
+It does not change the conclusion: **the shift network's value is the
+relationship and the data, not the take rate.**
 
 ## C2. Leakage is the existential risk
 
 In a market where everyone has everyone's number, a commission-only marketplace
-teaches both sides to transact around you by the third booking. Subscription
-(S1), the reliability record, the handoff evidence and the drug reference (S8)
-are all defences against it — a better reason to build them than the revenue.
+teaches both sides to transact around you by the third booking.
+
+**What it looks like in the data**, so it can be watched rather than assumed: a
+pharmacy whose posting rate falls while its staffing need obviously has not; the
+same pharmacist covering the same pharmacy repeatedly and then both going quiet;
+a rising share of shifts posted and cancelled rather than filled. None is proof.
+Together they are the metric that matters more than GMV, and **nobody is
+currently computing any of them** — the Reports module could, and should, before
+there is enough volume for the trend to be invisible.
+
+The defences are subscription (S1/W14), the reliability record, the handoff
+evidence, the payment trail and the drug reference (S8) — a better reason to
+build each of them than the revenue.
 
 ## C3. The CRM's build source is not in the repository
 
@@ -1015,16 +1287,61 @@ person to change the CRM edits the built file directly rather than the parts.
 
 Two options, neither urgent: commit the part files and the build script beside
 the output, or accept the single file as the source and delete the split. The
-worst outcome is the current ambiguity persisting long enough that someone edits
-the built file while a stale set of parts still exists somewhere, and a rebuild
-silently reverts their work.
+worst outcome is the ambiguity persisting long enough that someone edits the
+built file while a stale set of parts still exists, and a rebuild silently
+reverts their work.
+
+## C4. The regulated surfaces this roadmap touches
+
+Not legal advice, and not a blocker list — a map of where a licence or a
+licensed partner is required, so none of it arrives as a surprise mid-build.
+
+| Activity | Where it appears | Position taken |
+|---|---|---|
+| Holding customer funds | Payments, any wallet | **Avoided by design.** Money moves pharmacy → merchant account → pharmacist; no balances held |
+| Payment processing | Every shift | Merchant agreement with a licensed processor (ZainCash / Qi Card) |
+| Wholesale drug distribution | S4 procurement | Licensed. Either hold one or partner — W4 already models exactly this licence |
+| Lending | S6 embedded finance | Licensed. Partner; do not build |
+| Health data | W8's dispensing log | Mitigated by design (no patient identity), **not yet lawyer-reviewed** — W8 |
+| Controlled substances | The drug reference, W8's log | The log disclaims the legal register on screen; whether controlled substances belong in it at all is open — W8 |
+| Credentialing | S2, S7 | P4. Recognition, not assertion |
+
+**Iraq has no comprehensive data protection statute.** That is an absence of a
+path, not a safe harbour: no clear compliance route, and no safe harbour either.
+The Syndicate and the Ministry may hold views that matter more in practice than
+a statute would.
+
+## C5. What competition would actually look like
+
+Worth having thought about once, since the answer shapes how much of Part 2 is
+urgent.
+
+The shift board is **not** the defensible part. It is a few months of work for
+anyone, and a well-funded copy could exist within a year of proof that the
+market is real. What is slow to copy, in order:
+
+1. **The Syndicate relationship** (P2, P3). One professional body, one
+   agreement. Hardest to copy and the least under your control.
+2. **The verified roster and work history.** Time-based. Every month of
+   operation widens it and a competitor starts at zero.
+3. **The drug reference and check** (S8). Copyable in principle; the data
+   curation and the clinical judgement in it are a genuine grind.
+4. **Pharmacy relationships and the CRM discipline behind them.** Unglamorous
+   and the most durable of the four.
+
+**The strategic conclusion:** speed matters most on the things that compound
+with time, and least on the things that can be built any time. Shipping the
+shift board faster wins little; starting the Syndicate conversation and the
+verified history earlier wins a lot.
 
 ---
 
 ## Picking these up
 
 Each Work entry names the files and identifiers involved, so nothing needs
-re-deriving. W1 and W2 revised decisions made in the v0.0002 builds; that was
+re-deriving. **Parts 2–4 were expanded on 18 Sep 2026**, and P5 and C4–C5 are
+new: a rating policy that was never written down, the regulated surfaces the
+roadmap touches, and what a competitor could and could not copy. W1 and W2 revised decisions made in the v0.0002 builds; that was
 expected, not a defect — those were built from what was known then.
 
 What is left in Part 1 is **W6** (data-model changes that are cheap now and
