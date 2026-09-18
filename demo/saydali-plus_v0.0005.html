@@ -783,6 +783,7 @@
   }
   .check-card .more-chevron{ color:rgba(255,255,255,.7); }
   .empty-check .btn-ghost{ margin-top:10px; }
+  .browse-lead{ margin-bottom:16px; }
 
   /* ---------- Misc ---------- */
   .progress{ height:7px; border-radius:100px; background:var(--border); overflow:hidden; }
@@ -1908,8 +1909,13 @@ function screenBrowse() {
     '<button class="chip' + (S.district === d.key ? ' active' : '') + '" onclick="setDistrict(\'' + d.key + '\')">' +
     esc(L(d)) + '</button>').join('');
 
+  /* No .constrain here. The rest of this screen — the district chips and the
+     listing grid — sits directly in .screen-body and uses its full width, so a
+     660px-capped wrapper around the card made it stop lining up with them at
+     any window wider than about 700px: inset on one side, flush on the other.
+     The card belongs in the same box as the board it sits above. */
   return '<div class="screen-body">' +
-    '<div class="constrain stack">' + checkCard() + '</div>' +
+    '<div class="browse-lead">' + checkCard() + '</div>' +
     '<div class="chip-row">' + chips + '</div>' +
     '<p class="section-eyebrow">' + list.length + ' ' +
       esc(t(wanted === 'internship' ? 'l.openPlacements' : 'l.openShifts')) + '</p>' +

@@ -725,6 +725,37 @@ console.log('\nevery inline handler actually parses');
   broken.slice(0, 6).forEach(x => console.log('        ' + x));
 }
 
+console.log('\nthings on one screen line up with each other');
+/* The home card shipped inside a 660px-capped wrapper while the chip row and
+   the listing grid below it used the screen's full width, so above about
+   700px they stopped lining up — inset on one side, flush on the other, and
+   invisible at phone width where the cap never binds. Width- and
+   direction-dependent, so the check has to be both. */
+{
+  const off = [];
+  for (const w of [430, 700, 800, 1000, 1440]) {
+    const q = await open(w, 860);
+    await signIn(q, 'ahmed@example.com');
+    for (const dir of ['rtl', 'ltr']) {
+      await q.evaluate(x => { setLang(x === 'rtl' ? 'ar' : 'en'); goto('browse'); }, dir);
+      await q.waitForTimeout(220);
+      const bad = await q.evaluate(() => {
+        const edge = el => { const r = el.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; };
+        const card = document.querySelector('.check-card');
+        const grid = document.querySelector('.grid-cards') || document.querySelector('.chip-row');
+        if (!card || !grid) return 'missing';
+        const a = edge(card), c = edge(grid);
+        return (Math.abs(a[0] - c[0]) > 1 || Math.abs(a[1] - c[1]) > 1) ? `${a} vs ${c}` : null;
+      });
+      if (bad) off.push(`${w}px ${dir}: ${bad}`);
+    }
+    await q.close();
+  }
+  ok('the home card shares its edges with the board below it, at every width and both directions',
+     off.length === 0);
+  off.forEach(x => console.log('        ' + x));
+}
+
 console.log('\nlayout');
 ok('the sidebar carries navigation at 1440px', await d.locator('.sidebar').isVisible());
 ok('the bottom bar does not', await d.locator('.bottom-nav').isHidden());
