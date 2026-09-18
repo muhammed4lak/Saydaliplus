@@ -1,6 +1,6 @@
 # Backlog
 
-Agreed but not built. Split four ways because they are read at different times:
+Split four ways because they are read at different times:
 
 - **Work** — things to build. Each says where the code stands, what it should
   become, and what needs deciding first.
@@ -9,14 +9,26 @@ Agreed but not built. Split four ways because they are read at different times:
 - **Principles** — decisions to settle before the relevant build, not after.
 - **Context** — findings worth not re-deriving.
 
-IDs are stable. Reordering does not renumber anything. Nothing here has been
-started.
+IDs are stable. Reordering does not renumber anything.
+
+**W1–W5 shipped in App_v0.0003 / CRM_v0.0003** (18 Sep 2026). They are kept
+below rather than deleted, because what each one says about *why* is the part
+worth not re-deriving; each now opens with a **Built** line saying what landed
+and what was decided along the way. W6 and W7 are still untouched, as is
+everything in Parts 2–4.
 
 ---
 
 # Part 1 — Work
 
 ## W1. Model a pharmacy owner as a pharmacist *linked to* a pharmacy
+
+**Built — App_v0.0003 / CRM_v0.0003.** The app's `ACCOUNTS` carries `type` and
+`pharmacy`; `isOwner()` derives ownership from the link and `viewRole()` turns it
+into a navigation. The CRM's `USER_TYPES` is down to two, "owner" is a saved view
+over `isOwner`, the type column renders one chip reading "Pharmacist + Owner",
+and `owns_pharmacy` is a derived column in the SQL view. The check proves it is
+derived by clearing the link and watching the row leave the view.
 
 **Raised:** 11 Sep 2026. **Touches:** app + CRM.
 
@@ -45,6 +57,14 @@ owner" becomes a derived fact, like `dormant` and `unclaimed` already are.
   key.
 
 ## W2. Owner's pharmacist half: off by default, enabled in settings
+
+**Built — App_v0.0003.** `S.takesShifts`, off by default, with the switch on
+the profile screen. `navFor()` and `ownerGroups()` rebuild both navigations from
+it, and turning it off while standing on a screen it removes lands you on the
+profile rather than on a blank. Two things were decided while building: the CV
+stays visible either way (it is a professional record, not a feature of taking
+shifts), and the verified-pharmacist stats block is gated on actually having a
+shift record, so an owner who never takes one is not shown an empty one.
 
 **Raised:** 11 Sep 2026, judgement calls made 18 Sep. **Touches:** app.
 
@@ -83,6 +103,9 @@ different from hiding one that does not.
 
 ## W3. Rename "Student training" to "Student placement"
 
+**Built — App_v0.0003 / CRM_v0.0003.** Interface strings only; the order type
+is still `training` in the data, so nothing downstream had to move.
+
 **Raised:** 11 Sep 2026. **Touches:** CRM, and probably the app.
 
 **Where it stands.** Type key `training`, label `ot.training`, saved view
@@ -94,6 +117,16 @@ disagreeing about the same thing is the sort of inconsistency that costs trust
 in a demo. Probably both or neither.
 
 ## W4. Externals: roles are licences, registration is a product fact
+
+**Built — CRM_v0.0003.** `EXTERNAL_ROLES` is the five licences; `roles` is an
+array on the company and the facet matches on *one of* rather than equality;
+`represents` links a bureau to its principals and `bureauxFor()` reads it back
+the other way. Registration moved onto the brand as `registrationHolder`, beside
+`bureau`, and the drug record renders the three-line chain. The fixtures now
+carry the case that proves the model: a metformin brand made at Samarra under
+licence from Hikma, who hold the registration, represented by a Baghdad bureau —
+so "is Samarra a manufacturer or the registration holder" has no answer except
+*of which product*.
 
 **Raised:** 18 Sep 2026. **Settled:** 18 Sep 2026. **Touches:** CRM.
 
@@ -175,6 +208,27 @@ saved report R10 references it. Keep the table name and change only the label �
 recommended — or plan the rename as a migration that rewrites saved queries.
 
 ## W5. CRM accounts: owner admin, admin, employee
+
+**Built — CRM_v0.0003.** `CAPS` is the matrix, in one object beside the data it
+protects, and the team screen draws the table on screen from it rather than
+retyping it. The proposal above was adopted unchanged, including the report
+editor sitting at admin. Three things were decided while building:
+
+- **Every gated action is hidden *and* refused.** Hiding alone is decoration —
+  the handler is a global on a page anyone with the file can open — and refusing
+  alone leaves a button that does nothing. The check calls each gated function
+  directly to prove the refusal is real, including posting a role an admin
+  cannot grant.
+- **The open question — records owned by a leaver — is settled by not deleting.**
+  An account is deactivated rather than deleted, so its history stays, and the
+  dialog will not complete until the records have a named new owner. It counts
+  them first, so nobody agrees to inherit an unknown number of pharmacies.
+- **The owner admin is transferred, in one step.** The account handing it over
+  becomes an admin in the same operation, so the CRM is never left with zero
+  owner admins and never with two.
+
+Still open: nothing in the CRM stores who did what. The matrix says who *may*;
+an audit trail saying who *did* is a separate piece of work and is not here.
 
 **Raised:** 18 Sep 2026. **Touches:** CRM.
 
@@ -403,5 +457,10 @@ are all defences against it — a better reason to build them than the revenue.
 ## Picking these up
 
 Each Work entry names the files and identifiers involved, so nothing needs
-re-deriving. W1 and W2 revise decisions made in the v0.0002 builds; that is
+re-deriving. W1 and W2 revised decisions made in the v0.0002 builds; that was
 expected, not a defect — those were built from what was known then.
+
+What is left in Part 1 is W6 (data-model changes that are cheap now and awkward
+later — mostly CPD groundwork, and speculative until a revenue route in Part 2
+is chosen) and W7 (chain and multi-branch accounts, which is large). Neither is
+blocking anything in v0.0003.

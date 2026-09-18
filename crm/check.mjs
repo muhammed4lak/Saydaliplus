@@ -44,7 +44,9 @@ async function open(w = 1520, h = 950) {
   const p = await ctx.newPage();
   p.on('pageerror', e => errs.push('pageerror: ' + e.message));
   p.on('console', m => {
-    if (m.type() === 'error' && !/ERR_(CONNECTION|NAME|INTERNET)/.test(m.text())) errs.push('console: ' + m.text());
+    // Network noise only: the file:// page asks for Google Fonts, which this
+    // sandbox serves through a proxy. A real script error has no ERR_ code.
+    if (m.type() === 'error' && !/ERR_(CONNECTION|NAME|INTERNET|CERT)/.test(m.text())) errs.push('console: ' + m.text());
   });
   await p.goto(url);
   await p.waitForTimeout(400);
@@ -76,6 +78,19 @@ ok('there is no language toggle left to press',
 ok('the build states which one it is',
    /^CRM_v\d+\.\d+$/.test((await p.locator('#build-tag').innerText()).trim()));
 
+ok('the signed-in account is named in the top bar',
+   (await p.locator('#me-avatar').getAttribute('aria-label')).includes('Owner admin'));
+{
+  await p.locator('#me-avatar').click();
+  await p.waitForTimeout(200);
+  ok('the account menu opens and states the role and what it allows',
+     await p.locator('.acct-menu').isVisible()
+     && /creating other admins/.test(await p.locator('.acct-caps').innerText()));
+  await p.locator('body').click({ position: { x: 5, y: 400 } });
+  await p.waitForTimeout(180);
+  ok('and closes when you click away', await p.locator('.acct-menu').count() === 0);
+}
+
 console.log('\nevery module renders and every saved view returns something sane');
 for (const k of ['home', ...MODS]) {
   await tab(p, k);
@@ -96,15 +111,40 @@ for (const m of MODS) {
   ok(`${m}: ${views.length} saved views, none returns more than the module holds`, bad.length === 0);
 }
 
-console.log('\nusers are segmented by the three account types');
+console.log('\nusers: two account types, and ownership as a link rather than a third');
 await tab(p, 'users');
-for (const ty of ['pharmacist', 'owner', 'student']) {
+ok('the model holds exactly two types', await p.evaluate(() =>
+   JSON.stringify(USER_TYPES) === JSON.stringify(['pharmacist', 'student'])));
+for (const ty of ['pharmacist', 'student']) {
   await p.evaluate(x => { S.view.users = x; render(); }, ty);
   await p.waitForTimeout(120);
   const all = await p.evaluate(x => visibleRows('users').every(u => u.type === x), ty);
   const some = await p.evaluate(() => visibleRows('users').length > 0);
   ok(`the ${ty} view holds only that type, and holds some`, all && some);
 }
+await p.evaluate(() => { S.view.users = 'owner'; render(); });
+await p.waitForTimeout(120);
+ok('the owner view is a view over pharmacists, not a type of its own',
+   await p.evaluate(() => {
+     const r = visibleRows('users');
+     return r.length > 0 && r.every(u => u.type === 'pharmacist' && !!u.pharmacy);
+   }));
+ok('an owner is derived from the link — clear it and they leave the view',
+   await p.evaluate(() => {
+     const u = DATA.users.find(isOwner);
+     const keep = u.pharmacy;
+     u.pharmacy = null;
+     const gone = !visibleRows('users').some(x => x.id === u.id) && !isOwner(u);
+     u.pharmacy = keep; render();
+     return gone;
+   }));
+ok('and the list says so in one chip rather than two columns',
+   await p.evaluate(() => {
+     const u = DATA.users.find(isOwner);
+     const plain = DATA.users.find(x => x.type === 'pharmacist' && !x.pharmacy);
+     return /Owner/.test(typeChip(u)) && /Pharmacist/.test(typeChip(u))
+       && /Pharmacist/.test(typeChip(plain)) && !/Owner/.test(typeChip(plain));
+   }));
 await p.evaluate(() => { S.view.users = 'all'; render(); });
 
 console.log('\norders are segmented by order type');
@@ -151,6 +191,75 @@ ok('a matching number with a different name is flagged, not waved through',
    }));
 ok('the roster tolerates a longer tribal name on one side',
    await p.evaluate(() => namesAgree('Ahmed Al-Kubaisi', 'Ahmed Sabah Al-Kubaisi')));
+
+console.log('\nExternals: a role is a licence, registration is a fact about a product');
+await tab(p, 'companies');
+ok('the five licences are the model, and "pharmaceutical company" is not one of them',
+   await p.evaluate(() => JSON.stringify(EXTERNAL_ROLES) ===
+     JSON.stringify(['manufacturer', 'bureau', 'importer', 'storage', 'distributor'])));
+ok('a company can hold more than one at once',
+   await p.evaluate(() => DATA.companies.some(c => (c.roles || []).length > 1)));
+ok('and a foreign principal is allowed to hold none',
+   await p.evaluate(() => DATA.companies.some(c => !(c.roles || []).length)));
+for (const [view, fn] of [['manufacturers', 'manufacturer'], ['bureaux', 'bureau'], ['storage', 'storage']]) {
+  await p.evaluate(x => { S.view.companies = x; render(); }, view);
+  await p.waitForTimeout(120);
+  ok(`the ${view} view holds only licence-holders of that kind, and holds some`,
+     await p.evaluate(x => { const r = visibleRows('companies'); return r.length > 0 && r.every(c => hasRole(c, x)); }, fn));
+}
+await p.evaluate(() => { S.view.companies = 'foreign'; render(); });
+await p.waitForTimeout(120);
+ok('the foreign-principal view is exactly the companies with no Iraqi licence',
+   await p.evaluate(() => { const r = visibleRows('companies'); return r.length > 0 && r.every(c => !(c.roles || []).length); }));
+await p.evaluate(() => { S.view.companies = 'all'; render(); });
+await p.waitForTimeout(120);
+{
+  // The roles facet is multi-valued: a company with two licences appears under both.
+  const before = await p.locator('table.grid tbody tr').count();
+  await p.evaluate(() => setFilter('companies', 'externalRole', 'bureau'));
+  await p.waitForTimeout(150);
+  const after = await p.evaluate(() => visibleRows('companies'));
+  ok('the roles facet filters on one of several, not on an exact match',
+     after.length > 0 && after.every(c => (c.roles || []).includes('bureau')) && after.length <= before);
+  await p.evaluate(() => resetFilters('companies'));
+}
+{
+  const bureau = await p.evaluate(() => (DATA.companies.find(c => hasRole(c, 'bureau')) || {}).id);
+  await p.evaluate(x => openRecord('companies', x), bureau);
+  await p.waitForTimeout(220);
+  const txt = await p.locator('#work-body').innerText();
+  ok('a bureau record names the principals it represents', /Represents|represents/i.test(txt));
+  ok('and the principal names the bureau back',
+     await p.evaluate(x => {
+       const c = DATA.companies.find(y => y.id === x);
+       const principal = principalsOf(c)[0];
+       return !!principal && bureauxFor(principal.id).some(b => b.id === x);
+     }, bureau));
+  await p.evaluate(() => closeRecord());
+}
+ok('a brand answers the three questions separately: made by, registered to, represented by',
+   await p.evaluate(() => {
+     // Contract manufacture: the factory and the registration holder differ.
+     const b = DATA.brands.find(x => x.registrationHolder && x.company !== x.registrationHolder);
+     return !!b && !!b.bureau && companyOf(b.company) && companyOf(b.registrationHolder);
+   }));
+ok('and the drug record renders all three lines for it',
+   await p.evaluate(async () => {
+     const b = DATA.brands.find(x => x.registrationHolder && x.company !== x.registrationHolder);
+     openRecord('drugs', b.sci);
+     const chain = document.querySelectorAll('.brand-chain .chain-line');
+     const txt = document.querySelector('#work-body').innerText;
+     closeRecord();
+     return chain.length >= 3
+       && txt.includes(companyOf(b.company).name.en)
+       && txt.includes(companyOf(b.registrationHolder).name.en);
+   }));
+ok('and "who is the manufacturer" has no single answer for a company, only per product',
+   await p.evaluate(() => {
+     const c = DATA.companies.find(x => brandsInvolving(x.id).length > 1);
+     const bs = brandsInvolving(c.id);
+     return bs.some(b => b.company === c.id) || bs.some(b => b.registrationHolder === c.id) || bs.some(b => b.bureau === c.id);
+   }));
 
 console.log('\ndrugs, brands, and the dose override');
 await tab(p, 'drugs');
@@ -468,6 +577,176 @@ await p.waitForTimeout(200);
 ok('and cannot be saved', await p.evaluate(() => reportById('R1').sql.includes('status')));
 await p.evaluate(() => closeReport());
 
+console.log('\nteam & access: three levels, and what each one may actually do');
+await p.evaluate(() => { closeRecord(); goTab('team'); });
+await p.waitForTimeout(250);
+ok('the team screen is reachable and renders',
+   (await p.locator('#work-body').innerText()).length > 200);
+ok('exactly one owner admin exists',
+   await p.evaluate(() => STAFF.filter(s => s.role === 'owner_admin').length === 1));
+ok('the matrix on screen is drawn from CAPS rather than retyped beside it',
+   await p.evaluate(() => {
+     const ticks = [...document.querySelectorAll('table.matrix tbody tr')].map(tr =>
+       [...tr.querySelectorAll('td')].slice(1).map(td => td.classList.contains('yes')));
+     // rows after the first are CAPS keys, columns are CRM_ROLES reversed
+     const caps = ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin'];
+     const cols = CRM_ROLES.slice().reverse();
+     return ticks.slice(1).every((row, i) =>
+       row.every((on, j) => on === (CAPS[cols[j]] || []).includes(caps[i])));
+   }));
+
+/* The employee is the interesting account: it is the one the matrix restricts,
+   and the one a hidden-button-only implementation would leave wide open. */
+await p.evaluate(() => signInAs(DATA ? STAFF.find(s => s.role === 'employee').id : null));
+await p.waitForTimeout(220);
+ok('signing in as an employee changes who the CRM thinks you are',
+   await p.evaluate(() => me().role === 'employee'));
+
+await tab(p, 'drugs');
+ok('an employee sees no CSV import button',
+   await p.locator('.work-head .btn', { hasText: /Import|CSV/i }).count() === 0);
+ok('and calling the importer directly is refused, not just hidden',
+   await p.evaluate(() => { openImport('drugs'); return S.modal === null; }));
+{
+  const before = await p.evaluate(() => DATA.drugs.length);
+  await p.evaluate(() => { S.picked.drugs = DATA.drugs.slice(0, 2).map(d => d.sci); render(); });
+  await p.waitForTimeout(160);
+  ok('the bulk bar offers an employee no delete',
+     await p.locator('.bulkbar .btn.danger').count() === 0);
+  await p.evaluate(() => bulkDelete('drugs'));
+  await p.waitForTimeout(160);
+  ok('and calling bulkDelete directly deletes nothing',
+     await p.evaluate(() => DATA.drugs.length) === before);
+  await p.evaluate(() => clearPicked('drugs'));
+}
+await tab(p, 'reports');
+ok('an employee still runs every report',
+   await p.evaluate(() => REPORTS.every(r => runReport(r).ok))
+   && await p.locator('.panel').count() > 0);
+ok('but is offered no editor',
+   await p.locator('.work-head .btn.primary').count() === 0
+   && await p.locator('.table-toggle', { hasText: /^Edit$/ }).count() === 0);
+ok('and is told why rather than left to wonder',
+   /export|SQL/i.test(await p.locator('.mod-note').innerText()));
+ok('opening the editor directly is refused',
+   await p.evaluate(() => { openReport('R1'); return S.report === null; }));
+ok('and saveReport cannot be reached round the back',
+   await p.evaluate(() => {
+     const keep = reportById('R1').sql;
+     S.draft = { id:'R1', name:'x', viz:'table', sql:'SELECT * FROM users' };
+     saveReport();
+     const same = reportById('R1').sql === keep;
+     S.draft = null;
+     return same;
+   }));
+await p.evaluate(() => { goTab('team'); });
+await p.waitForTimeout(200);
+ok('an employee is offered no way to create an account',
+   await p.locator('.work-head .btn.primary').count() === 0);
+ok('and openNewStaff is refused',
+   await p.evaluate(() => { openNewStaff(); return S.modal === null; }));
+
+/* Admin: everything operational, plus employees — but not another admin. */
+await p.evaluate(() => signInAs(STAFF.find(s => s.role === 'admin').id));
+await p.waitForTimeout(220);
+ok('an admin may import, delete and write reports',
+   await p.evaluate(() => can('import') && can('delete') && can('reports.edit')));
+ok('an admin may create an employee but not an admin',
+   await p.evaluate(() => can('staff.employee') && !can('staff.admin')));
+await p.evaluate(() => { goTab('team'); openNewStaff(); });
+await p.waitForTimeout(220);
+ok('so the role dropdown an admin sees offers employee only',
+   await p.evaluate(() => [...document.querySelectorAll('#s-role option')].map(o => o.value).join() === 'employee'));
+await p.locator('#s-name').fill('Zainab Al-Amiri');
+await p.locator('#s-email').fill('not-an-email');
+await p.locator('.modal .btn.primary').click();
+await p.waitForTimeout(200);
+ok('a malformed email is refused', await p.locator('.modal .err').count() > 0);
+await p.locator('#s-email').fill('sara@saydaliplus.iq');
+await p.locator('.modal .btn.primary').click();
+await p.waitForTimeout(200);
+ok('and so is one already in use', (await p.locator('.modal').innerText()).includes('already'));
+ok('the name typed before the error survived',
+   await p.locator('#s-name').inputValue() === 'Zainab Al-Amiri');
+{
+  const before = await p.evaluate(() => STAFF.length);
+  await p.locator('#s-email').fill('zainab@saydaliplus.iq');
+  await p.locator('.modal .btn.primary').click();
+  await p.waitForTimeout(250);
+  ok('a valid account is created as an employee',
+     await p.evaluate(() => STAFF.length) === before + 1
+     && await p.evaluate(() => STAFF[STAFF.length - 1].role === 'employee'));
+}
+ok('an admin cannot grant admin even by posting the value',
+   await p.evaluate(() => {
+     S.modal = { kind:'staff', errors:{}, values:{ name:'Sneaky', email:'sneaky@saydaliplus.iq', role:'admin' } };
+     renderModal();
+     const sel = document.getElementById('s-role');
+     const opt = document.createElement('option'); opt.value = 'admin'; sel.appendChild(opt);
+     sel.value = 'admin';
+     document.getElementById('s-name').value = 'Sneaky';
+     document.getElementById('s-email').value = 'sneaky@saydaliplus.iq';
+     saveStaff();
+     const refused = !STAFF.some(s => s.email === 'sneaky@saydaliplus.iq');
+     closeModal();
+     return refused;
+   }));
+
+/* The open question BACKLOG W5 left: what happens to a leaver's records. */
+await p.evaluate(() => { goTab('team'); });
+await p.waitForTimeout(200);
+{
+  const victim = await p.evaluate(() => {
+    const s = STAFF.find(x => x.role === 'employee' && x.active && ownedBy(x.id) > 0);
+    return s ? { id:s.id, n:ownedBy(s.id) } : null;
+  });
+  ok('an employee with records to lose exists to test with', !!victim && victim.n > 0);
+  await p.evaluate(x => openDeactivate(x), victim.id);
+  await p.waitForTimeout(220);
+  ok('deactivating asks who takes the work, and says how much of it there is',
+     (await p.locator('.modal').innerText()).includes(String(victim.n)));
+  const successor = await p.evaluate(() => document.getElementById('d-to').value);
+  const successorBefore = await p.evaluate(x => ownedBy(x), successor);
+  await p.locator('.modal .btn.danger').click();
+  await p.waitForTimeout(250);
+  ok('the account is deactivated rather than deleted — the history stays',
+     await p.evaluate(x => { const s = staffById(x); return !!s && s.active === false; }, victim.id));
+  ok('and every record it owned moved to the named successor, none orphaned',
+     await p.evaluate(a => ownedBy(a[0]) === a[1] + a[2], [successor, successorBefore, victim.n])
+     && await p.evaluate(x => ownedBy(x) === 0, victim.id));
+  ok('a deactivated account is gone from the owner dropdowns',
+     await p.evaluate(x => !ownerOpts().some(o => o.v === x), victim.id));
+}
+
+/* Owner admin: the one account nobody deletes, and the transfer that replaces
+   deleting it. */
+await p.evaluate(() => signInAs(STAFF.find(s => s.role === 'owner_admin').id));
+await p.waitForTimeout(220);
+ok('the owner admin may create admins', await p.evaluate(() => can('staff.admin')));
+ok('nothing offers to deactivate the owner admin',
+   await p.evaluate(() => { const o = STAFF.find(s => s.role === 'owner_admin'); openDeactivate(o.id); return S.modal === null; }));
+ok('and openRole refuses to demote it',
+   await p.evaluate(() => { const o = STAFF.find(s => s.role === 'owner_admin'); openRole(o.id); return S.modal === null; }));
+{
+  await p.evaluate(() => { goTab('team'); openTransfer(); });
+  await p.waitForTimeout(220);
+  const to = await p.evaluate(() => document.getElementById('x-to').value);
+  const from = await p.evaluate(() => ME);
+  await p.locator('.modal .btn.primary').click();
+  await p.waitForTimeout(250);
+  ok('transferring moves the owner admin and leaves exactly one',
+     await p.evaluate(x => staffById(x).role === 'owner_admin', to)
+     && await p.evaluate(() => STAFF.filter(s => s.role === 'owner_admin').length === 1));
+  ok('and the account that handed it over becomes an admin, not nothing',
+     await p.evaluate(x => staffById(x).role === 'admin', from));
+  // put it back, so what follows runs as the owner admin again
+  await p.evaluate(a => { signInAs(a[0]); openTransfer(); document.getElementById('x-to').value = a[1];
+    S.modal.values.to = a[1]; confirmTransfer(); signInAs(a[1]); }, [to, from]);
+  await p.waitForTimeout(200);
+  ok('and it transfers back the same way',
+     await p.evaluate(x => staffById(x).role === 'owner_admin' && ME === x, from));
+}
+
 console.log('\nsearch');
 await p.locator('#q').fill('Metformin');
 await p.waitForTimeout(250);
@@ -484,10 +763,11 @@ const KEYISH = /(?:^|[\s>|])[a-z]{1,12}\.[a-zA-Z][a-zA-Z0-9]{1,20}(?:$|[\s<|])/i
 /* Arabic in the CHROME would be a leftover translation; Arabic inside a record
    field is the pharmacy's actual name. So the sweep looks at the furniture —
    tabs, headers, column headings, buttons, filter rail — not the cells. */
-const CHROME = '.tabs, .work-head, .rail, table.grid thead, .panel-h, .field-k, .kpi-k, .chart-t, .btn, .mod-note';
+const CHROME = '.tabs, .work-head, .rail, table.grid thead, .panel-h, .field-k, .kpi-k, .chart-t, .btn, ' +
+               '.mod-note, .acct-role, .acct-sep, .acct-note, table.matrix';
 const ARABIC = /[\u0600-\u06FF]/;
 const leaks = [];
-for (const k of ['home', ...MODS]) {
+for (const k of ['home', ...MODS, 'team']) {
   await tab(p, k);
   const txt = await p.locator('#shell').innerText();
   const hit = txt.match(KEYISH);
@@ -509,6 +789,17 @@ for (const [mod, id] of [['orders','O-1041'], ['users','U5'], ['pharmacies','P4'
   if (ARABIC.test(chromeTxt)) leaks.push(mod + ' record: Arabic in the chrome');
 }
 await p.evaluate(() => closeRecord());
+{
+  await p.evaluate(() => { S.accountMenu = true; render(); });
+  await p.waitForTimeout(160);
+  const txt = await p.locator('.acct-menu').innerText();
+  const hit = txt.match(KEYISH);
+  if (hit && !/\.(edu|com|iq|example)/i.test(hit[0])) leaks.push('account menu: untranslated ' + hit[0].trim());
+  // Staff names are data and may be Arabic; the labels around them are not.
+  const chromeTxt = (await p.locator('.acct-role, .acct-sep, .acct-note').allInnerTexts()).join(' | ');
+  if (ARABIC.test(chromeTxt)) leaks.push('account menu: Arabic in the chrome');
+  await p.evaluate(() => { S.accountMenu = false; render(); });
+}
 ok('no untranslated keys, no Arabic in the interface, Western numerals throughout', leaks.length === 0);
 leaks.forEach(x => console.log('        ' + x));
 

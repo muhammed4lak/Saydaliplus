@@ -87,14 +87,17 @@ Nine tabs: a customisable dashboard, seven data modules, and Reports.
 
 | Module | What it holds |
 |---|---|
-| **Orders** | The main one. Every shift and every placement, segmented by order type — pharmacist shift, student training — with the status lifecycle from posted to completed. Still marked in-progress on the screen itself. |
-| **Users** | Every account, segmented by the platform's three types: pharmacist, pharmacy owner, student. |
+| **Orders** | The main one. Every shift and every placement, segmented by order type — pharmacist shift, student placement — with the status lifecycle from posted to completed. Still marked in-progress on the screen itself. |
+| **Users** | Every account. Two types — pharmacist and student — plus a saved view for owners, which is a view and not a type. |
 | **Pharmacies** | The business behind a pharmacy account — licence, district, trial clock, fill rate. |
-| **Companies** | Manufacturers, marketing companies, importers and distributors. |
+| **Externals** | Everyone in the supply chain who is not a pharmacy: factories, scientific bureaux, importers, storage houses, distributors, and the foreign principals behind them. |
 | **Universities** | Colleges of pharmacy, and the email domain that makes student verification automatic. |
 | **Syndicate roster** | Pharmacist names and numbers as the Syndicate supplies them, with the match against platform accounts. |
-| **Drugs** | Scientific name as the identifier; brands under it, each owned by a company and able to override the doses. |
+| **Drugs** | Scientific name as the identifier; brands under it, each naming who made it, who holds its registration and who represents the principal — and able to override the doses. |
 | **Reports** | A report is a name, a SQL query and how to draw the result. The dashboard is built only from these. |
+
+Plus **Team & access**, reached from the account menu rather than the tab bar,
+because it is who may do what rather than a pile of records to work through.
 
 **The dashboard holds no numbers of its own.** Every tile names a saved report,
 and a report is SQL. So a figure on the dashboard can always be traced to the
@@ -142,6 +145,35 @@ is the normal case, and splitting on commas silently corrupts those rows. It
 validates each row, flags duplicates *within the file*, shows what it would do
 as new / update / error, and writes nothing until that preview has been read.
 Rows with an error are skipped; the rest apply.
+
+**An Externals role is a licence, and registration is a fact about a product.**
+"Is Acino a manufacturer or a marketing authorisation holder?" has no answer,
+and asking it is the mistake. A company holds whatever Iraqi licences it holds —
+manufacturer, scientific bureau, importer/agent, storage house, distributor —
+and the normal Iraqi case is one entity wearing four of them at once, so roles
+are multi-valued and the facet matches on *one of* rather than on equality. A
+foreign principal holds none, and the form lets it: ticking a licence to fill in
+a required field puts a lie in the data. Registration does not live on the
+company at all, because the same company is the registration holder for one
+product and merely the factory for another — so it lives on the brand, beside
+who manufactured it and which bureau represents the principal. The fixtures
+include the case that proves it: a metformin brand made at Samarra under licence
+from Hikma, who hold the registration, represented here by a Baghdad bureau.
+
+**The CRM has three levels of account, and the report editor is the sharp one.**
+One owner admin — transferred rather than deleted, so the operation is never
+left with none and never with two. Admins run it and can create employees;
+employees do the day-to-day work. Everyone reads every module, because an
+operator who cannot see a pharmacy cannot phone it. What separates the levels is
+deleting, CSV import, creating accounts — and writing SQL. That last one is a
+data-export capability wearing a chart's clothes: arbitrary `SELECT` across every
+table is the roster, the phone numbers and the licence numbers in one download.
+So employees keep *run* and *pin* on saved reports and do not get the editor.
+Every gated action is hidden **and** refused: hiding a button is decoration when
+the handler is a global on a page anyone can open, and the check calls each one
+directly to prove the refusal is real. Deactivating an account will not complete
+until its records have a named new owner — a pharmacy that stops being anybody's
+job is how a customer stops being called.
 
 ```bash
 npm run check:crm     # drives it in a real browser
@@ -192,15 +224,23 @@ npm run check:crm     # newest crm/saydali-crm_v*.html
 
 ## Decisions worth knowing before you read the code
 
-**A pharmacy owner is a pharmacist and a pharmacy, not a third thing.** Same
-person, same Syndicate card, plus a pharmacy licence — so signing up collects
-both and creates both records at once, and the account carries both halves ever
-after. They get every pharmacist screen and every pharmacy screen. The pharmacy
-half leads, because that is what they open the app to do; the pharmacist half is
-how an owner covers somebody else's counter, which owners really do. Five
-thumb-sized targets is the bottom bar's limit, so the rest live behind "More" —
-a screen, not a hidden menu — and the desktop sidebar shows the same items under
-headings.
+**A pharmacy owner is a pharmacist *linked to* a pharmacy, not a third type.**
+Same person, same Syndicate card, plus a pharmacy licence — so signing up
+collects both and creates both records at once. The account type stays
+`pharmacist`; what makes them an owner is the link to the licence created with
+their application. So "is an owner" is derived, never stored: clear the link and
+every screen, view and count follows, which is the whole reason not to make it a
+third type that can disagree with the data.
+
+**The pharmacist half of an owner's app is off by default.** They get every
+pharmacy screen from the start; the shift-taking screens — browse, my shifts,
+earnings — appear only once they turn shift management on in settings. Most
+owners never take a locum shift, and a screen you will not use is clutter on a
+phone. Their CV stays visible either way: it is their professional record, not a
+feature of taking shifts. Five thumb-sized targets is the bottom bar's limit, so
+the rest live behind "More" — a screen, not a hidden menu — and the desktop
+sidebar shows the same items under headings, which is why turning the toggle on
+reshuffles both navigations rather than only one.
 
 **Applications are queued during verification, not blocked.** §3 of the brief left
 this open. An unverified pharmacist can browse *and apply*; the application is
@@ -381,6 +421,8 @@ npm run test:e2e       # Playwright, against the seeded database
 - 85 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
 - 130 policy assertions run against a real Postgres as real users.
+- 68 behavioural assertions driving the app build in a real browser
+  (`npm run check:app`), and 161 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee

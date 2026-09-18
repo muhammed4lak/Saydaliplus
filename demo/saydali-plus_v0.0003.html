@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0002">
+<meta name="version" content="App_v0.0003">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -92,6 +92,18 @@
   .side-nav-item svg{ width:18px; height:18px; flex:none; }
   .side-nav-item:hover{ background:rgba(255,255,255,.09); color:#fff; }
   .side-nav-item.active{ background:rgba(255,255,255,.16); color:#fff; font-weight:600; }
+  .toggle-row{ display:flex; align-items:flex-start; gap:14px; }
+  .toggle-title{ font-size:13.5px; font-weight:600; }
+  .switch{
+    flex:none; width:46px; height:27px; border-radius:100px; background:var(--border);
+    position:relative; transition:background .15s; margin-top:2px;
+  }
+  .switch.on{ background:var(--palm); }
+  .switch .knob{
+    position:absolute; top:3px; inset-inline-start:3px; width:21px; height:21px; border-radius:50%;
+    background:#fff; box-shadow:0 1px 3px rgba(20,30,28,.3); transition:inset-inline-start .15s;
+  }
+  .switch.on .knob{ inset-inline-start:22px; }
   .side-group{
     font-family:var(--font-mono); font-size:9.5px; letter-spacing:.09em; text-transform:uppercase;
     color:rgba(255,255,255,.45); padding:14px 12px 5px;
@@ -970,6 +982,16 @@ Object.assign(STRINGS.ar, {
   'acc.admin':'مراجع المنصة','acc.adminTag':'إدارة',
   'nav.notifications':'الإشعارات','nav.incidents':'البلاغات','nav.more':'المزيد',
   'grp.pharmacy':'صيدليتي','grp.pharmacist':'عملي كصيدلي','grp.account':'الحساب',
+  'nav.billing':'الفواتير','pr.settings':'الإعدادات',
+  'set.takeShifts':'العمل كصيدلي إسناد',
+  'set.takeShiftsNote':'فعّلها إذا كنت تريد تغطية مناوبات في صيدليات أخرى إلى جانب إدارة صيدليتك.',
+  'set.takeShiftsOff':'مطفأة: لا تظهر لك شاشات التصفح والمناوبات. سيرتك الذاتية تبقى كما هي.',
+  'set.turnedOn':'فُعّل العمل كصيدلي إسناد.','set.turnedOff':'أُطفئ العمل كصيدلي إسناد.',
+  'bill.thisMonth':'مستحق هذا الشهر','bill.ofWhich':'منها {amount} عمولة المنصة',
+  'bill.history':'الحركات','bill.shiftCovered':'مناوبة مغطّاة','bill.breakdown':'تفصيل الحساب',
+  'bill.platformFee':'عمولة المنصة (7%)','bill.youPay':'المبلغ المستحق',
+  'bill.trialNote':'أنت ضمن فترة التجربة: لا عمولة لمدة {n} يوماً أخرى.',
+  'bill.explainer':'تُحتسب العمولة على كل مناوبة تُغطّى فعلياً، وتُضاف فوق أجر الصيدلي.',
   'f.aboutYou':'عنك كصيدلي','f.aboutPharmacy':'عن صيدليتك',
   'f.pharmacyCreatedNote':'يُنشأ سجل صيدليتك مع طلبك، وتُراجَع هوية النقابة وإجازة الصيدلية معاً.',
   'f.uploadBoth':'ارفع هوية النقابة وإجازة الصيدلية','f.uploadBothSub':'صورة أو مسح ضوئي للوثيقتين',
@@ -1064,6 +1086,16 @@ Object.assign(STRINGS.en, {
   'acc.admin':'Platform reviewer','acc.adminTag':'Admin',
   'nav.notifications':'Notifications','nav.incidents':'Reports','nav.more':'More',
   'grp.pharmacy':'My pharmacy','grp.pharmacist':'My own work','grp.account':'Account',
+  'nav.billing':'Billing','pr.settings':'Settings',
+  'set.takeShifts':'Take shifts as a pharmacist',
+  'set.takeShiftsNote':'Turn this on if you want to cover shifts at other pharmacies alongside running your own.',
+  'set.takeShiftsOff':'Off: browsing and my-shifts screens are hidden. Your CV is unaffected.',
+  'set.turnedOn':'Shift work turned on.','set.turnedOff':'Shift work turned off.',
+  'bill.thisMonth':'Due this month','bill.ofWhich':'of which {amount} is platform commission',
+  'bill.history':'Charges','bill.shiftCovered':'Shift covered','bill.breakdown':'How this was worked out',
+  'bill.platformFee':'Platform commission (7%)','bill.youPay':'You pay',
+  'bill.trialNote':'You are inside your free trial: no commission for another {n} days.',
+  'bill.explainer':'Commission is charged on each shift actually covered, and is added on top of the pharmacist’s rate.',
   'f.aboutYou':'About you, as a pharmacist','f.aboutPharmacy':'About your pharmacy',
   'f.pharmacyCreatedNote':'Your pharmacy record is created with your application; the Syndicate card and the pharmacy licence are reviewed together.',
   'f.uploadBoth':'Upload the Syndicate card and the pharmacy licence','f.uploadBothSub':'Photo or scan of both documents',
@@ -1206,13 +1238,26 @@ const icon = (n, cls) => '<svg class="ico ' + (cls||'') + '"><use href="#i-' + n
    These are the accounts in supabase/seed.sql. Signing in as one is how you
    become that person: there is no role switcher, because a role switcher is a
    thing a prototype has and an application does not. */
+/* An account is a type plus, for a pharmacy owner, an ownership LINK. There is
+   no "owner" account type: an owner is a pharmacist who owns a pharmacy, which
+   is a fact about a relationship rather than about the person. `viewRole()`
+   derives what the interface should show; nothing stores it. */
 const ACCOUNTS = {
-  'ahmed@example.com':      { role:'pharmacist', verified:true,  nameKey:'acc.ahmed',  tagKey:'acc.ahmedTag',  initials:{ar:'أك',en:'AK'}, trial:true  },
-  'noor@example.com':       { role:'pharmacist', verified:false, nameKey:'acc.noor',   tagKey:'acc.noorTag',   initials:{ar:'نس',en:'NS'}, trial:true  },
-  'rahma@example.com':      { role:'owner',      verified:true,  nameKey:'acc.rahma',  tagKey:'acc.rahmaTag',  initials:{ar:'رج',en:'RJ'}, trial:true  },
-  'zainab@uobaghdad.edu.iq':{ role:'student',    verified:true,  nameKey:'acc.zainab', tagKey:'acc.zainabTag', initials:{ar:'زت',en:'ZT'}, trial:false },
-  'admin@saydali.example':  { role:'admin',      verified:true,  nameKey:'acc.admin',  tagKey:'acc.adminTag',  initials:{ar:'مر',en:'PR'}, trial:false }
+  'ahmed@example.com':      { type:'pharmacist', pharmacy:null, verified:true,  nameKey:'acc.ahmed',  tagKey:'acc.ahmedTag',  initials:{ar:'أك',en:'AK'}, trial:true  },
+  'noor@example.com':       { type:'pharmacist', pharmacy:null, verified:false, nameKey:'acc.noor',   tagKey:'acc.noorTag',   initials:{ar:'نس',en:'NS'}, trial:true  },
+  'rahma@example.com':      { type:'pharmacist', pharmacy:'P1', verified:true,  nameKey:'acc.rahma',  tagKey:'acc.rahmaTag',  initials:{ar:'رج',en:'RJ'}, trial:true,
+                              /* Off by default: most owners never take a locum
+                                 shift, and a screen you will not use is clutter
+                                 on a phone. Turned on in settings. */
+                              takesShifts:false },
+  'zainab@uobaghdad.edu.iq':{ type:'student',    pharmacy:null, verified:true,  nameKey:'acc.zainab', tagKey:'acc.zainabTag', initials:{ar:'زت',en:'ZT'}, trial:false },
+  'admin@saydali.example':  { type:'admin',      pharmacy:null, verified:true,  nameKey:'acc.admin',  tagKey:'acc.adminTag',  initials:{ar:'مر',en:'PR'}, trial:false }
 };
+
+const isOwner = a => !!(a && a.type === 'pharmacist' && a.pharmacy);
+/* What the interface shows. Derived, never stored — change the link and the
+   view follows. */
+const viewRole = a => isOwner(a) ? 'owner' : (a ? a.type : 'pharmacist');
 
 /* Levantine month names — حزيران، تموز، آب، أيلول — not the Gulf
    transliterations Intl produces for `ar`. */
@@ -1260,7 +1305,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0002';
+const VERSION = 'App_v0.0003';
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -1320,7 +1365,8 @@ function seedWeeks() {
 const S = {
   signedIn: false,
   email: null,
-  role: 'pharmacist',
+  role: 'pharmacist',        // the VIEW role, derived at sign-in from the account
+  takesShifts: false,        // owners only: W2's opt-in
   verified: true,
   trial: true,
   trialDays: 18,
@@ -1592,7 +1638,7 @@ function screenDashboard() {
       post(lang==='ar'?'تغطية السبت':'Saturday coverage',
            (lang==='ar'?'8:00 ص – 2:00 م · ':'8:00 AM – 2:00 PM · ') + fmt(30000) + ' ' + t('common.iqd'),
            '2 ' + t('p.applicants'), 'badge-pending') +
-      post(lang==='ar'?'تدريب صيفي':'Summer training',
+      post(lang==='ar'?'تدريب صيفي':'Summer placement',
            lang==='ar'?'15 حزيران – 7 أيلول':'15 June – 7 September',
            t('l.certificate'), 'badge-stage', "goto('trainees')") +
       post(lang==='ar'?'مساء الخميس':'Thursday evening',
@@ -1624,6 +1670,72 @@ function screenDashboard() {
     '</div></div>';
 }
 
+/* ---------- Billing: what the PHARMACY is charged ----------
+   The owner previously reached "Earnings", which is the pharmacist payout view.
+   A pharmacy is charged, not paid, so gating the pharmacist half left an owner
+   with no way to see what they owe. Priced by the same fee engine, so this and
+   the listing preview cannot disagree. */
+
+function screenBilling() {
+  const rows = [
+    { who:DATA.listings[0].pharmacy, when:{en:'10 September', ar:'10 أيلول'}, gross:20000 },
+    { who:DATA.listings[1].pharmacy, when:{en:'8 September',  ar:'8 أيلول'},  gross:45000 },
+    { who:DATA.listings[2].pharmacy, when:{en:'2 September',  ar:'2 أيلول'},  gross:40000 }
+  ];
+  const fees = rows.map(r => calculateFees({
+    grossAmount:r.gross, pharmacyInTrial:S.trial, pharmacistInTrial:false }));
+  const charged = fees.reduce((n, f) => n + f.pharmacyCharge, 0);
+  const commission = fees.reduce((n, f) => n + f.pharmacyFee, 0);
+
+  const line = (i) =>
+    '<button class="txn" onclick="openBillingLine(' + i + ')">' +
+      '<span class="txn-icon txn-out">' + icon('wallet') + '</span>' +
+      '<span class="txn-body"><span class="txn-title">' + esc(L(rows[i].who)) + '</span>' +
+        '<span class="txn-sub">' + esc(L(rows[i].when)) + ' · ' + esc(t('bill.shiftCovered')) + '</span></span>' +
+      '<span class="txn-amount">' + iqd(fees[i].pharmacyCharge) + '</span></button>';
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="balance-card">' +
+      '<svg class="header-pattern" style="opacity:.4"><rect width="100%" height="100%" fill="url(#starTile)"/></svg>' +
+      '<div class="balance-label">' + esc(t('bill.thisMonth')) + '</div>' +
+      '<div class="balance-amount">' + esc(iqd(charged)) + '</div>' +
+      '<div class="balance-sub">' + esc(t('bill.ofWhich', { amount:iqd(commission) })) + '</div>' +
+    '</div>' +
+
+    (S.trial
+      ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
+        esc(t('bill.trialNote', { n:22 })) + '</p></div>'
+      : '') +
+
+    '<p class="section-eyebrow">' + esc(t('bill.history')) + '</p>' +
+    '<div class="card">' + rows.map((r, i) => line(i)).join('') + '</div>' +
+    '<p class="inline-note">' + esc(t('bill.explainer')) + '</p>' +
+    '</div></div>';
+}
+
+function openBillingLine(i) {
+  const gross = [20000, 45000, 40000][i];
+  const f = calculateFees({ grossAmount:gross, pharmacyInTrial:S.trial, pharmacistInTrial:false });
+  S.modal = { kind:'billing', gross, f };
+  renderModal();
+}
+
+function billingModal() {
+  const f = S.modal.f;
+  return '<div class="modal-title">' + esc(t('bill.breakdown')) + '</div>' +
+    '<dl>' +
+      '<div class="fee-line"><dt>' + esc(t('fee.yourRate')) + '</dt><dd>' + iqd(f.grossAmount) + '</dd></div>' +
+      '<div class="fee-line"><dt>' + esc(t('bill.platformFee')) + '</dt>' +
+        '<dd' + (S.trial ? ' class="fee-trial"' : '') + '>' +
+        (S.trial ? esc(t('fee.trialActive')) : '+ ' + iqd(f.pharmacyFee)) + '</dd></div>' +
+      '<div class="fee-line fee-total"><dt>' + esc(t('bill.youPay')) + '</dt>' +
+        '<dd>' + iqd(f.pharmacyCharge) + '</dd></div>' +
+    '</dl>' +
+    (f.floorApplied ? '<p class="fee-foot">' + esc(t('fee.floorNote')) + '</p>' : '') +
+    '<div class="modal-actions"><button class="btn-secondary" onclick="closeModal()">' +
+      esc(t('common.close')) + '</button></div>';
+}
+
 /* ---------- The owner's "More" ---------- */
 
 function screenMore() {
@@ -1636,7 +1748,7 @@ function screenMore() {
       '</button>').join('') + '</div>';
 
   return '<div class="screen-body"><div class="constrain stack">' +
-    OWNER_GROUPS.map(group).join('') +
+    ownerGroups().map(group).join('') +
     '</div></div>';
 }
 
@@ -2308,8 +2420,13 @@ function screenProfileAll() {
   const stat = (v, label) => '<div class="stat-card"><span class="stat-num">' + v +
     '</span><span class="stat-label">' + esc(label) + '</span></div>';
 
+  /* An owner who has never taken a shift would otherwise show a row of zeros
+     and "no reliability record", which reads as a bad record rather than an
+     absent one. Show the block only when there is something in it. */
+  const hasRecord = S.role === 'pharmacist' || (S.role === 'owner' && S.takesShifts);
+
   let detail = '';
-  if (S.role === 'pharmacist') {
+  if (hasRecord) {
     detail =
       '<p class="section-eyebrow">' + esc(t('pr.verifiedSection')) + '</p>' +
       '<div class="stat-grid">' + stat(38, t('pr.shifts')) + stat('96%', t('pr.reliability')) + stat('4.9', t('pr.rating')) + '</div>' +
@@ -2320,8 +2437,9 @@ function screenProfileAll() {
         kv('badge', t('pr.reg'), 'IQ-PH-004982') +
         kv('pin', t('f.primaryDistrict'), lang==='ar' ? 'الكرادة' : 'Karrada') +
       '</div>';
-  } else if (S.role === 'owner') {
-    detail =
+  }
+  if (S.role === 'owner') {
+    detail +=
       '<p class="section-eyebrow">' + esc(t('pr.pharmacyDetails')) + '</p>' +
       '<div class="card card-pad">' +
         kv('home', t('f.pharmacyName'), lang==='ar' ? 'صيدلية الرحمة' : 'Al-Rahma Pharmacy') +
@@ -2365,6 +2483,28 @@ function screenProfileAll() {
         '</button></div>'
       : '') +
 
+    /* The opt-in itself. An owner is a pharmacist, but most of them will never
+       work somebody else's counter, so the half that exists for that is asked
+       for rather than assumed. */
+    (S.role === 'owner'
+      ? '<p class="section-eyebrow">' + esc(t('pr.settings')) + '</p>' +
+        '<div class="card card-pad">' +
+          '<div class="toggle-row">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="toggle-title">' + esc(t('set.takeShifts')) + '</div>' +
+              '<p class="inline-note" style="margin-top:3px;">' + esc(t('set.takeShiftsNote')) + '</p>' +
+            '</div>' +
+            '<button class="switch' + (S.takesShifts ? ' on' : '') + '" role="switch" ' +
+              'aria-checked="' + !!S.takesShifts + '" onclick="toggleTakesShifts()">' +
+              '<span class="knob"></span></button>' +
+          '</div>' +
+          (S.takesShifts
+            ? ''
+            : '<p class="inline-note" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;">' +
+              esc(t('set.takeShiftsOff')) + '</p>') +
+        '</div>'
+      : '') +
+
     '<p class="section-eyebrow">' + esc(t('pr.language')) + '</p>' +
     '<div class="segmented">' +
       '<button class="' + (lang==='ar'?'active':'') + '" onclick="setLang(\'ar\')">العربية</button>' +
@@ -2392,6 +2532,7 @@ const SCREENS = {
 
   dashboard:     { eyebrow:()=>greeting(), title:()=>currentName(), body:screenDashboard },
   more:          { eyebrow:()=>currentName(), title:()=>t('nav.more'), body:screenMore },
+  billing:       { eyebrow:()=>currentName(), title:()=>t('nav.billing'), body:screenBilling },
   post:          { eyebrow:()=>currentName(), title:()=>t('post.title'), body:screenPost },
   applicants:    { eyebrow:()=>currentName(), title:()=>t('app.title'), body:screenApplicants },
   trainees:      { eyebrow:()=>currentName(), title:()=>t('tr.title'), body:screenTrainees },
@@ -2417,34 +2558,64 @@ const SCREENS = {
    Five thumb-sized targets is the bottom bar's honest limit, so the owner's
    sixth-and-beyond live behind "More" — a screen, not a hidden menu, and the
    desktop sidebar shows the same items under headings instead. */
+/* A pharmacy owner is a pharmacist who also owns a pharmacy — one person, one
+   licence, two jobs. They get both sets of screens, with the pharmacy half
+   leading because that is the half they open the app to do.
+
+   But most owners will never take a locum shift, so the pharmacist half is
+   OFF by default and switched on in settings (W2). With it off the bottom bar
+   holds the pharmacy screens outright; with it on there are too many for five
+   thumb-sized targets, so the rest move behind "More" — a screen, not a hidden
+   menu — and the desktop sidebar groups them under headings either way. */
 const NAV = {
   pharmacist: [['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],['earnings','wallet','nav.earnings'],
                ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
-  owner:      [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
-               ['more','grid','nav.more'],['profile','user','nav.profile']],
   student:    [['browse','home','nav.browse'],['placement','calendar','nav.placement'],
                ['logbook','book','nav.logbook'],['profile','user','nav.profile']],
   admin:      [['queue','badge','nav.queue'],['profile','user','nav.profile']]
 };
 
-/* What the owner's "More" screen holds, and what the sidebar shows under
-   headings. Two groups, because "my pharmacy" and "my own shifts" are two
-   different jobs and mixing them into one list makes both harder to scan. */
-const OWNER_GROUPS = [
-  { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['post','plus','nav.post'],
-                               ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees']] },
-  { key:'grp.pharmacist', items:[['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],
-                                 ['earnings','wallet','nav.earnings'],['cv','clipboard','nav.cv']] },
-  { key:'grp.account', items:[['notifications','bell','nav.notifications'],
-                              ['incidents','alert','nav.incidents'],['profile','user','nav.profile']] }
-];
+/* The owner's bottom bar. Without shift-taking, the pharmacy screens fit on
+   their own; with it, Trainees gives up its slot to "More". */
+const NAV_OWNER_PHARMACY_ONLY =
+  [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
+   ['trainees','cap','nav.trainees'],['profile','user','nav.profile']];
+const NAV_OWNER_BOTH =
+  [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
+   ['more','grid','nav.more'],['profile','user','nav.profile']];
 
-/* Sidebar-only extras: real enough to reach, not important enough to spend one
-   of five thumb-sized targets on. The owner's sidebar is built from the groups
-   above instead, so it has no entry here. */
+function navFor(role) {
+  if (role !== 'owner') return NAV[role] || NAV.pharmacist;
+  return S.takesShifts ? NAV_OWNER_BOTH : NAV_OWNER_PHARMACY_ONLY;
+}
+
+/* The owner's sidebar, and what "More" lists. The pharmacist group appears only
+   when they have asked for it. Billing is pharmacy-side and always present: an
+   owner is CHARGED whether or not they ever earn anything, and hiding what
+   somebody owes is not a simplification. */
+function ownerGroups() {
+  const groups = [
+    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['post','plus','nav.post'],
+                                 ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
+                                 ['billing','wallet','nav.billing']] }
+  ];
+  if (S.takesShifts) {
+    groups.push({ key:'grp.pharmacist', items:[['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],
+                                               ['earnings','wallet','nav.earnings']] });
+  }
+  /* The CV is not shift-specific: an owner uses it for a supplier, a regulator
+     or a bank, which is why the clinical / non-clinical split exists. It stays
+     whether or not they take shifts. */
+  groups.push({ key:'grp.account', items:[['cv','clipboard','nav.cv'],
+                                          ['notifications','bell','nav.notifications'],
+                                          ['incidents','alert','nav.incidents'],
+                                          ['profile','user','nav.profile']] });
+  return groups;
+}
+
+/* Sidebar-only extras for the flat roles. */
 const NAV_EXTRA = {
   pharmacist: [['notifications','bell','nav.notifications'],['incidents','alert','nav.incidents']],
-  owner:      [],
   student:    [['notifications','bell','nav.notifications']],
   admin:      []
 };
@@ -2490,7 +2661,7 @@ function render() {
   document.getElementById('app-header').innerHTML = headerHtml(screen.eyebrow(), screen.title());
   document.getElementById('app-body').innerHTML = verificationBanner() + screen.body();
 
-  const nav = NAV[S.role] || NAV.pharmacist;
+  const nav = navFor(S.role);
   const extra = NAV_EXTRA[S.role] || [];
 
   document.getElementById('bottom-nav').innerHTML = nav.map(([id, ic, key]) =>
@@ -2506,7 +2677,7 @@ function render() {
   /* The owner's sidebar is grouped under headings. Two jobs in one flat list is
      how both become hard to scan. */
   document.getElementById('side-nav').innerHTML = S.role === 'owner'
-    ? OWNER_GROUPS.map(g => '<div class="side-group">' + esc(t(g.key)) + '</div>' +
+    ? ownerGroups().map(g => '<div class="side-group">' + esc(t(g.key)) + '</div>' +
         g.items.map(sideItem).join('')).join('')
     : nav.concat(extra).map(sideItem).join('');
 
@@ -2755,6 +2926,8 @@ function renderModal() {
     inner = payoutModal();
   } else if (S.modal.kind === 'return') {
     inner = returnModal(S.modal.month);
+  } else if (S.modal.kind === 'billing') {
+    inner = billingModal();
   }
 
   root.innerHTML = '<div class="modal-back" onclick="if(event.target===this)closeModal()">' +
@@ -2766,10 +2939,24 @@ function renderModal() {
    ========================================================================== */
 
 function setLang(l){ lang = l; render(); }
+
+/* Switching it off governs FINDING new work: Browse and My Shifts go. Earnings
+   stays reachable while there is anything in it — hiding a screen that holds
+   someone's money is not the same as hiding one that does not. */
+function toggleTakesShifts(){
+  S.takesShifts = !S.takesShifts;
+  const acct = ACCOUNTS[S.email];
+  if (acct) acct.takesShifts = S.takesShifts;
+  const reachable = navFor(S.role).map(x => x[0])
+    .concat(ownerGroups().flatMap(g => g.items.map(x => x[0])));
+  if (!reachable.includes(S.screen)) S.screen = 'profile';
+  toast(t(S.takesShifts ? 'set.turnedOn' : 'set.turnedOff'));
+  render();
+}
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0002.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0003.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -2794,11 +2981,12 @@ function attemptSignIn(){
 function signInAs(mail){
   const a = ACCOUNTS[mail];
   S.email = mail;
-  S.role = a.role;
+  S.role = viewRole(a);
   S.verified = a.verified;
   S.trial = a.trial;
+  S.takesShifts = isOwner(a) ? !!a.takesShifts : true;
   S.signedIn = true;
-  S.screen = (NAV[a.role] || NAV.pharmacist)[0][0];
+  S.screen = navFor(S.role)[0][0];
   authError = null;
   render();
 }

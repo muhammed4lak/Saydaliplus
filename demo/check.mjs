@@ -47,6 +47,11 @@ async function open(w, h) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h } });
   const p = await ctx.newPage();
   p.on('pageerror', e => errs.push('pageerror: ' + e.message));
+  // Network noise only: the file:// page asks for Google Fonts, which this
+  // sandbox serves through a proxy. A real script error carries no ERR_ code.
+  p.on('console', m => {
+    if (m.type() === 'error' && !/ERR_(CONNECTION|NAME|INTERNET|CERT)/.test(m.text())) errs.push('console: ' + m.text());
+  });
   await p.goto(url);
   await p.waitForTimeout(400);
   return p;
@@ -103,47 +108,88 @@ for (const mail of accounts) {
   await signOut(d);
 }
 
-console.log('\nthe pharmacy owner is a pharmacist and a pharmacy');
+console.log('\nthe pharmacy owner is a pharmacist linked to a pharmacy');
 await signIn(d, 'rahma@example.com');
-ok('the account is an owner, not a bare pharmacy',
-   await d.evaluate(() => S.role === 'owner'));
-ok('and the account is a person, as the CRM also has it',
-   await d.evaluate(() => /Rahma Al-Jubouri|رحمة الجبوري/.test(t('acc.rahma'))));
-ok('with the pharmacy named beside them rather than instead of them',
-   await d.evaluate(() => /Al-Rahma Pharmacy|صيدلية الرحمة/.test(t('acc.rahmaTag'))));
-ok('the sidebar groups the two jobs under headings',
-   await d.locator('.side-group').count() === 3);
+ok('the account type is pharmacist, not a third type',
+   await d.evaluate(() => ACCOUNTS['rahma@example.com'].type === 'pharmacist'));
+ok('and ownership is a link, not a type',
+   await d.evaluate(() => !!ACCOUNTS['rahma@example.com'].pharmacy));
+ok('"owner" is derived from the link rather than stored',
+   await d.evaluate(() => {
+     const a = ACCOUNTS['rahma@example.com'];
+     const keep = a.pharmacy;
+     const was = viewRole(a);
+     a.pharmacy = null;
+     const now = viewRole(a);
+     a.pharmacy = keep;
+     return was === 'owner' && now === 'pharmacist';
+   }));
+
+console.log('\nshift-taking is off by default and opts in');
+ok('an owner starts with shift work off', await d.evaluate(() => S.takesShifts === false));
 {
-  const reachable = await d.evaluate(() =>
-    OWNER_GROUPS.flatMap(g => g.items.map(i => i[0])));
-  // Every pharmacist screen AND every pharmacy screen, from one account.
-  const wantPharmacy = ['dashboard', 'post', 'applicants', 'trainees'];
-  const wantPharmacist = ['browse', 'shifts', 'earnings', 'cv'];
-  ok('every pharmacy screen is reachable', wantPharmacy.every(x => reachable.includes(x)));
-  ok('and every pharmacist screen too', wantPharmacist.every(x => reachable.includes(x)));
+  const reach = () => d.evaluate(() =>
+    navFor('owner').map(x => x[0]).concat(ownerGroups().flatMap(g => g.items.map(x => x[0]))));
+  const off = await reach();
+  ok('with it off, Browse and My Shifts are unreachable',
+     !off.includes('browse') && !off.includes('shifts'));
+  ok('and Earnings is too', !off.includes('earnings'));
+  ok('but Billing is reachable — a pharmacy is charged either way',
+     off.includes('billing'));
+  ok('and the CV stays: it is not shift-specific', off.includes('cv'));
+  ok('the pharmacy screens all remain',
+     ['dashboard','post','applicants','trainees'].every(x => off.includes(x)));
+  ok('the bottom bar holds the pharmacy screens outright, still five',
+     await d.evaluate(() => { const n = navFor('owner'); return n.length === 5 && n[0][0] === 'dashboard'; }));
+
+  await go(d, 'profile');
+  ok('the toggle is on the profile', await d.locator('.switch').count() === 1);
+  ok('and the verified block is hidden while there is no record',
+     !(await d.locator('#app-body').innerText()).includes(await d.evaluate(() => t('pr.verifiedSection'))));
+
+  await d.locator('.switch').click();
+  await d.waitForTimeout(220);
+  const on = await reach();
+  ok('turning it on reveals the pharmacist half',
+     on.includes('browse') && on.includes('shifts') && on.includes('earnings'));
+  ok('and the bottom bar makes room via "More"',
+     await d.evaluate(() => navFor('owner').some(x => x[0] === 'more')));
+  ok('the verified block appears once they take shifts',
+     (await d.locator('#app-body').innerText()).includes(await d.evaluate(() => t('pr.verifiedSection'))));
 
   let empty = [];
-  for (const id of reachable) {
+  for (const id of on) {
     await go(d, id);
     if ((await d.locator('#app-body').innerText()).trim().length < 30) empty.push(id);
   }
-  ok(`all ${reachable.length} of them render (${empty.join(',') || 'none empty'})`, empty.length === 0);
+  ok(`all ${on.length} owner screens render (${empty.join(',') || 'none empty'})`, empty.length === 0);
+
+  // Turning it off while sitting on a pharmacist screen must not strand you.
+  await go(d, 'browse');
+  await go(d, 'profile');
+  await d.locator('.switch').click();
+  await d.waitForTimeout(220);
+  ok('turning it back off does not strand you on a hidden screen',
+     await d.evaluate(() => navFor('owner').map(x => x[0])
+       .concat(ownerGroups().flatMap(g => g.items.map(y => y[0]))).includes(S.screen)));
 }
-ok('the pharmacy half leads the bottom bar',
-   await d.evaluate(() => NAV.owner[0][0] === 'dashboard'));
-ok('and the bottom bar still holds only five',
-   await d.evaluate(() => NAV.owner.length === 5));
-await go(d, 'dashboard');
+
+console.log('\nbilling: what the pharmacy owes');
+await go(d, 'billing');
 {
   const txt = await d.locator('#app-body').innerText();
-  ok('the home page carries both halves, pharmacy first',
-     txt.indexOf(await d.evaluate(() => t('grp.pharmacy'))) >= 0
-     && txt.indexOf(await d.evaluate(() => t('grp.pharmacist'))) >
-        txt.indexOf(await d.evaluate(() => t('grp.pharmacy'))));
+  ok('billing shows a total', /\d/.test(txt));
+  ok('and is priced by the real fee engine, not a literal',
+     await d.evaluate(() => {
+       const f = calculateFees({ grossAmount:20000, pharmacyInTrial:S.trial, pharmacistInTrial:false });
+       return document.querySelector('.txn-amount').textContent.includes(fmt(f.pharmacyCharge));
+     }));
+  await d.locator('.txn').first().click();
+  await d.waitForTimeout(220);
+  ok('a charge opens its breakdown', await d.locator('.modal').isVisible());
+  await d.keyboard.press('Escape');
+  await d.waitForTimeout(150);
 }
-await go(d, 'more');
-ok('"More" lists what the bottom bar could not hold',
-   await d.locator('.row-title').count() >= 8);
 await signOut(d);
 
 console.log('\nsigning up as an owner creates both records');
