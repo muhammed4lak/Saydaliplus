@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   MINIMUM_COMMISSION_IQD,
+  PLANS,
   TRIAL_DAYS,
   calculateFees,
   isInTrial,
@@ -179,5 +180,80 @@ describe('trial window', () => {
 
     expect(isInTrial(signup, now)).toBe(false);
     expect(isInTrial(laterSignup, now)).toBe(true);
+  });
+});
+
+/* ==========================================================================
+   PLANS AND THE SHIFT ALLOWANCE (W14)
+   ========================================================================== */
+
+describe('plans', () => {
+  const shift = { grossAmount: 40_000, pharmacyInTrial: false, pharmacistInTrial: false };
+
+  it('leaves the pharmacist paying 3% on every plan', () => {
+    for (const plan of ['commission', 'basic', 'premium'] as const) {
+      const fees = calculateFees({ ...shift, plan, shiftsFilledThisMonth: 0 });
+      expect(fees.pharmacistFee).toBe(1_200);
+    }
+  });
+
+  it('covers the pharmacy fee while the allowance lasts', () => {
+    const fees = calculateFees({ ...shift, plan: 'basic', shiftsFilledThisMonth: 4 });
+    expect(fees.pharmacyFee).toBe(0);
+    expect(fees.coveredByPlan).toBe('basic');
+  });
+
+  it('charges ordinary commission once the allowance is spent', () => {
+    // Basic includes 5. The sixth shift (index 5) is chargeable.
+    const fees = calculateFees({ ...shift, plan: 'basic', shiftsFilledThisMonth: 5 });
+    expect(fees.pharmacyFee).toBe(2_800);
+    expect(fees.coveredByPlan).toBeNull();
+  });
+
+  it('gives premium the larger allowance', () => {
+    expect(calculateFees({ ...shift, plan: 'premium', shiftsFilledThisMonth: 11 }).pharmacyFee).toBe(0);
+    expect(calculateFees({ ...shift, plan: 'premium', shiftsFilledThisMonth: 12 }).pharmacyFee).toBe(2_800);
+  });
+
+  it('records why a fee was zero, so a charge row can say so', () => {
+    // Two different reasons for the same zero — a charge row has to tell them apart.
+    const byPlan = calculateFees({ ...shift, plan: 'basic', shiftsFilledThisMonth: 0 });
+    const byTrial = calculateFees({ ...shift, pharmacyInTrial: true });
+    expect(byPlan.pharmacyFee).toBe(0);
+    expect(byTrial.pharmacyFee).toBe(0);
+    expect(byPlan.coveredByPlan).toBe('basic');
+    expect(byTrial.coveredByPlan).toBeNull();
+  });
+
+  it('does not spend the allowance on a shift the trial already covered', () => {
+    const fees = calculateFees({ ...shift, pharmacyInTrial: true, plan: 'basic', shiftsFilledThisMonth: 0 });
+    expect(fees.pharmacyFee).toBe(0);
+    expect(fees.coveredByPlan).toBeNull();
+  });
+
+  it('defaults to pay-as-you-go when no plan is named', () => {
+    expect(calculateFees(shift).pharmacyFee).toBe(2_800);
+    expect(calculateFees(shift).coveredByPlan).toBeNull();
+  });
+
+  /* The arithmetic the price was chosen on. If these move, the pricing
+     conversation in BACKLOG W14 has to happen again. */
+  it('breaks even against commission where the backlog says it does', () => {
+    const perShift = calculateFees(shift).pharmacyFee;   // 2,800
+    expect(Math.round((PLANS.basic.monthlyFeeIQD / perShift) * 10) / 10).toBe(3.2);
+    expect(Math.round((PLANS.premium.monthlyFeeIQD / perShift) * 10) / 10).toBe(6.8);
+  });
+
+  it('closes the unlimited-posting hole', () => {
+    // Forty shifts on Basic: five covered, thirty-five at ordinary commission.
+    let pharmacy = PLANS.basic.monthlyFeeIQD;
+    for (let i = 0; i < 40; i++) {
+      pharmacy += calculateFees({ ...shift, plan: 'basic', shiftsFilledThisMonth: i }).pharmacyFee;
+    }
+    const onCommission = 40 * 2_800;
+    expect(pharmacy).toBe(107_000);
+    // The pharmacy still saves, and we are not giving the shifts away.
+    expect(pharmacy).toBeLessThan(onCommission);
+    expect(pharmacy).toBeGreaterThan(onCommission * 0.9);
   });
 });

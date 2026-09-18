@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0005">
+<meta name="version" content="CRM_v0.0006">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -758,7 +758,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0005';
+const VERSION = 'CRM_v0.0006';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1271,6 +1271,28 @@ const DRUGS = [
 ];
 /* DRUGS:END */
 
+/* ==========================================================================
+   PLANS AND THE BILLING LEDGER (W14)
+
+   A plan replaces the PHARMACY's 7%, never the pharmacist's 3%, and carries a
+   shift allowance with ordinary commission beyond it.
+
+   The LEDGER is the piece worth building first. Commission is computed on the
+   fly by the fee engine; if subscription charges lived somewhere else, nobody
+   could answer "what does this pharmacy owe this month" without unioning two
+   shapes, and reconciliation with the processor would break. So every charge,
+   whatever its source, is one row here — and later the listing fees from W15
+   land on the same table rather than inventing their own money plumbing.
+
+   Append-only by intention: a correction is a new row, never an edit. A ledger
+   you can rewrite is a ledger nobody can audit. */
+const PLANS = {
+  commission: { id:'commission', monthlyFeeIQD:0,     includedShifts:0  },
+  basic:      { id:'basic',      monthlyFeeIQD:9000,  includedShifts:5  },
+  premium:    { id:'premium',    monthlyFeeIQD:19000, includedShifts:12 }
+};
+const planOf = p => PLANS[(p && p.plan) || 'commission'] || PLANS.commission;
+
 const DATA = {
   /* ---------- Users: the three account types ---------- */
   users: [
@@ -1336,27 +1358,27 @@ const DATA = {
     { id:'P1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, licence:'IQ-PHM-000117',
       district:'karrada', address:{ar:'كرادة داخل، قرب ساحة الفردوس', en:'Karrada Dakhil, near Al-Firdaws roundabout'},
       user:'U5', verification:'verified', signedUp:'2026-08-14', trialDays:30, trialUsed:28,
-      orders:11, filled:10, lastOrder:'2026-09-10', commission:31500, owner:'u1' },
+      orders:11, filled:10, lastOrder:'2026-09-10', commission:31500, plan:'basic', owner:'u1' },
     { id:'P2', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'}, licence:'IQ-PHM-000232',
       district:'jadriya', address:{ar:'الجادرية، شارع الجامعة', en:'Jadriya, University Street'},
       user:'U6', verification:'verified', signedUp:'2026-07-02', trialDays:30, trialUsed:30,
-      orders:24, filled:23, lastOrder:'2026-09-09', commission:68200, owner:'u1' },
+      orders:24, filled:23, lastOrder:'2026-09-09', commission:68200, plan:'premium', owner:'u1' },
     { id:'P3', name:{ar:'صيدلية الأمل', en:'Al-Amal Pharmacy'}, licence:'IQ-PHM-000345',
       district:'zayouna', address:{ar:'زيونة، شارع الربيعي', en:'Zayouna, Rabie Street'},
       user:'U8', verification:'pending', signedUp:'2026-08-25', trialDays:30, trialUsed:17,
-      orders:0, filled:0, lastOrder:null, commission:0, owner:'u2' },
+      orders:0, filled:0, lastOrder:null, commission:0, plan:'commission', owner:'u2' },
     { id:'P4', name:{ar:'صيدلية النور', en:'Al-Noor Pharmacy'}, licence:'IQ-PHM-000401',
       district:'karrada', address:{ar:'الكرادة، قرب مستشفى الكرامة', en:'Karrada, near Al-Karama Hospital'},
       user:'U7', verification:'verified', signedUp:'2026-08-18', trialDays:30, trialUsed:24,
-      orders:0, filled:0, lastOrder:null, commission:0, owner:'u2' },
+      orders:0, filled:0, lastOrder:null, commission:0, plan:'basic', owner:'u2' },
     { id:'P5', name:{ar:'صيدلية الحكمة', en:'Al-Hikma Pharmacy'}, licence:'IQ-PHM-000418',
       district:'adhamiya', address:{ar:'الأعظمية، شارع عمر بن عبد العزيز', en:'Adhamiya, Omar bin Abdulaziz Street'},
       user:'U12', verification:'verified', signedUp:'2026-06-11', trialDays:30, trialUsed:30,
-      orders:7, filled:5, lastOrder:'2026-08-02', commission:0, owner:'u3' },
+      orders:7, filled:5, lastOrder:'2026-08-02', commission:0, plan:'commission', owner:'u3' },
     { id:'P6', name:{ar:'صيدلية المنصور', en:'Mansour Pharmacy'}, licence:'IQ-PHM-000512',
       district:'mansour', address:{ar:'المنصور، شارع الأميرات', en:'Mansour, Princesses Street'},
       user:'U13', verification:'verified', signedUp:'2026-09-04', trialDays:30, trialUsed:7,
-      orders:3, filled:3, lastOrder:'2026-09-11', commission:9800, owner:'u1' }
+      orders:3, filled:3, lastOrder:'2026-09-11', commission:9800, plan:'premium', owner:'u1' }
   ],
 
   /* ---------- Orders: the main module ----------
@@ -1595,6 +1617,12 @@ const DATA = {
     { id:'E8', kind:'users', id2:'U7', type:'call', when:'2026-09-11', owner:'u2',
       text:{ar:'موثّقة منذ 24 يوماً ولم تنشر أي طلب.', en:'Verified 24 days ago and has posted nothing.'} }
   ],
+
+  /* The billing ledger. One row per charge, whatever its source: a shift's
+     commission, a monthly subscription, and later a W15 listing fee. Every row
+     says WHY it is the amount it is, because a zero with no reason is
+     indistinguishable from a bug six months later. Seeded below. */
+  ledger: [],
 
   /* DISPENSING TALLIES — counts, never baskets.
      What the app records: one row per (pharmacy, pharmacist, day, drug) with a
@@ -1965,6 +1993,81 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
       }
     });
   }
+})();
+
+/* Seeds the billing ledger from the orders already in the fixture, so the
+   numbers a report produces reconcile with the orders a person can open. Three
+   kinds of row, and the distinction between the last two is the whole reason
+   the ledger records a reason:
+     commission   — an ordinary chargeable shift
+     subscription — the monthly fee
+     covered      — a shift the plan's allowance absorbed, charged zero ON PURPOSE */
+(function seedLedger() {
+  const COMMISSION = 0.10, PHARMACY_SHARE = 0.7, FLOOR = 2500;
+  let id = 1;
+  const row = r => DATA.ledger.push(Object.assign({ id:'L' + (id++) }, r));
+  const month = back => {
+    const d = new Date(TODAY.getFullYear(), TODAY.getMonth() - back, 1);
+    return d.toISOString().slice(0, 8);
+  };
+  const fee = total => {
+    const full = Math.max(total * COMMISSION, FLOOR);
+    return Math.round(full) - Math.round(total * COMMISSION * (1 - PHARMACY_SHARE));
+  };
+
+  /* THE CURRENT MONTH comes from the orders in this fixture, so a figure in a
+     report reconciles with an order somebody can open. */
+  const used = {};
+  DATA.orders
+    .filter(o => o.type === 'shift' && ['completed', 'in_progress', 'assigned'].includes(o.status))
+    .slice().sort((a, b) => a.date.localeCompare(b.date))
+    .forEach(o => {
+      // Looked up directly rather than through pharmacyOf(): this runs while
+      // the module is still initialising and that helper is not defined yet.
+      const p = DATA.pharmacies.find(x => x.id === o.pharmacy);
+      if (!p) return;
+      const plan = planOf(p);
+      const n = used[p.id] || 0;
+      const within = plan.monthlyFeeIQD > 0 && n < plan.includedShifts;
+      used[p.id] = n + 1;
+      row({ pharmacy:p.id, date:o.date, kind:within ? 'covered' : 'commission',
+            amount:within ? 0 : fee(o.total), reason:within ? plan.id : 'commission', order:o.id });
+    });
+
+  /* THE TWO MONTHS BEFORE are synthetic history. The fixture holds a fortnight
+     of orders, which is not enough for any pharmacy to exhaust an allowance, so
+     a ledger built only from it would never show a commission row beside a
+     covered one — and those two rows are the entire point of the design.
+     Deterministic, and not tied to any order: these months' orders are not in
+     the fixture, which is also true of a real system three months in. */
+  let seed = 20260918;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  [2, 1].forEach(back => {
+    const ym = month(back);
+    DATA.pharmacies.forEach(p => {
+      const plan = planOf(p);
+      const shifts = 2 + Math.floor(rnd() * 12);
+      for (let k = 0; k < shifts; k++) {
+        const within = plan.monthlyFeeIQD > 0 && k < plan.includedShifts;
+        const total = 20000 + Math.floor(rnd() * 5) * 8000;
+        row({ pharmacy:p.id, date:ym + String(2 + Math.floor(rnd() * 26)).padStart(2, '0'),
+              kind:within ? 'covered' : 'commission',
+              amount:within ? 0 : fee(total), reason:within ? plan.id : 'commission', order:null });
+      }
+    });
+  });
+
+  /* Subscriptions: one row per paying pharmacy per month. */
+  [2, 1, 0].forEach(back => {
+    DATA.pharmacies.forEach(p => {
+      const plan = planOf(p);
+      if (!plan.monthlyFeeIQD) return;
+      row({ pharmacy:p.id, date:month(back) + '01', kind:'subscription',
+            amount:plan.monthlyFeeIQD, reason:plan.id, order:null });
+    });
+  });
+
+  DATA.ledger.sort((a, b) => a.date.localeCompare(b.date));
 })();
 
 const SEV_RANK = { critical:3, serious:2, warning:1 };
@@ -3217,7 +3320,7 @@ function sqlTables() {
       verification:p.verification, signed_up:p.signedUp, trial_used:p.trialUsed,
       trial_left:trialLeft(p), orders:p.orders, filled:p.filled,
       fill_rate:fillRate(p), last_order:p.lastOrder, commission:p.commission,
-      owner:p.owner, user_id:p.user,
+      owner:p.owner, user_id:p.user, plan:(p.plan || 'commission'),
       dormant:isDormant(p) ? 1 : 0, at_risk:isAtRisk(p) ? 1 : 0, active:isActivePharmacy(p) ? 1 : 0
     })),
     companies: DATA.companies.map(c => ({
@@ -3244,6 +3347,14 @@ function sqlTables() {
       id:b.id, brand:b.brand, sci:b.sci, company_id:b.company,
       overrides_doses:(b.dosesOverride && b.dosesOverride.length) ? 1 : 0,
       doses:brandDoses(b).join(' | ')
+    })),
+    /* The billing ledger. One shape for every charge, which is the point: a
+       report can total what a pharmacy owes without knowing where the money
+       came from. `reason` is what separates a zero the plan absorbed from a
+       zero that is a mistake. */
+    ledger: DATA.ledger.map(r => ({
+      id:r.id, pharmacy_id:r.pharmacy, date:r.date, kind:r.kind,
+      amount:r.amount, reason:r.reason, order_id:r.order
     })),
     /* The dispensing tallies, exactly as stored. There is no patient column to
        leave out and no basket to reconstruct — a report can count what a
@@ -3542,6 +3653,12 @@ const REPORTS = [
     sql:"SELECT COUNT(*) AS drugs\nFROM drugs\nWHERE brands = 0" },
   { id:'R9', name:'Total commission this month', viz:'number',
     sql:"SELECT SUM(commission) AS iqd\nFROM pharmacies" },
+  { id:'R13', name:'Monthly recurring revenue by plan', viz:'bar',
+    sql:"SELECT reason, SUM(amount) AS iqd\nFROM ledger\nWHERE kind = 'subscription' AND date LIKE '2026-09%'\nGROUP BY reason\nORDER BY iqd DESC" },
+  { id:'R14', name:'What each pharmacy owes this month', viz:'table',
+    sql:"SELECT p.name, p.plan, SUM(l.amount) AS iqd\nFROM ledger l\nJOIN pharmacies p ON l.pharmacy_id = p.id\nWHERE l.date LIKE '2026-09%'\nGROUP BY p.name\nORDER BY iqd DESC" },
+  { id:'R15', name:'Shifts absorbed by a plan allowance', viz:'number',
+    sql:"SELECT COUNT(*) AS shifts\nFROM ledger\nWHERE kind = 'covered'" },
   { id:'R11', name:'Consumption by drug', viz:'bar',
     sql:"SELECT drug, SUM(units) AS units\nFROM dispensing\nGROUP BY drug\nORDER BY units DESC\nLIMIT 12" },
   { id:'R12', name:'Consumption by pharmacy', viz:'bar',
@@ -4370,7 +4487,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0005.html';
+const PEER_APP = '../demo/saydali-plus_v0.0006.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');

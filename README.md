@@ -19,7 +19,7 @@ npm run dev
 ```
 
 ```bash
-npm test          # 85 unit tests — the business rules
+npm test          # 94 unit tests — the business rules
 npm run typecheck
 npm run build
 npm run drugs     # re-embed data/drugs.mjs into both single-file builds
@@ -300,6 +300,33 @@ the controlled-substances register or any legally required record**, and the
 pharmacy's own consumption view exists because whoever generates the data
 should get value from it before anybody else does.
 
+### Plans and the billing ledger
+
+Two subscription tiers sit beside pay-as-you-go commission: **Basic 9,000 IQD**
+and **Premium 19,000 IQD** a month. A plan replaces the **pharmacy's 7%** and
+never the pharmacist's 3% — which keeps the one rule the supply side can hold in
+its head, and keeps per-shift revenue growing with volume even on a flat fee.
+
+**Each tier carries a shift allowance**, with ordinary commission beyond it.
+Without one, unlimited posting on the cheaper plan is a hole: at twenty shifts a
+month a subscribed pharmacy would cost us ~47,000 IQD against commission, and at
+forty, ~103,000. With it, a forty-shift pharmacy still saves and the platform
+still earns. `calculateFees()` takes the plan and the count of shifts already
+filled this month; the fee engine has no clock, so the caller owns the month
+boundary.
+
+`coveredByPlan` on the result is what lets a charge row say **why** it was zero.
+A shift absorbed by an allowance and a shift inside the free trial are both
+zero, and six months later the difference between them is the difference
+between a working system and a bug.
+
+**The ledger is one table for every charge** — a shift's commission, a monthly
+subscription, and later a listing fee. Commission is computed on the fly, so if
+subscription charges lived anywhere else nobody could answer "what does this
+pharmacy owe this month" without unioning two shapes, and reconciliation with
+the processor would break. It is append-only by intention: a correction is a new
+row, never an edit.
+
 ### Policy tests
 
 RLS is the security boundary, so it is tested against a real database rather than
@@ -539,11 +566,11 @@ npm run test:e2e       # Playwright, against the seeded database
 
 ### Verified how
 
-- 85 unit tests over the business rules (fees, overnight hours, university
+- 94 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
 - 130 policy assertions run against a real Postgres as real users.
-- 157 behavioural assertions driving the app build in a real browser
-  (`npm run check:app`), and 185 driving the CRM (`npm run check:crm`).
+- 183 behavioural assertions driving the app build in a real browser
+  (`npm run check:app`), and 198 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee

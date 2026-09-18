@@ -690,6 +690,134 @@ ok('the screen says whose data it is and who benefits first',
 await signOut(d);
 await signIn(d, 'ahmed@example.com');
 
+console.log('\nthe check got faster (W12a)');
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await go(d, 'drugs');
+await d.evaluate(() => { setLang('en'); clearBasket(); });
+await d.waitForTimeout(200);
+/* Focus was dropped on every add, so a four-drug basket cost three
+   interactions per drug instead of two. */
+await d.locator('#drug-q').fill('warf');
+await d.waitForTimeout(200);
+await d.locator('.drug-row').first().click();
+await d.waitForTimeout(200);
+ok('the cursor stays in the search box after adding a drug',
+   await d.evaluate(() => document.activeElement && document.activeElement.id === 'drug-q'));
+ok('and the box is cleared ready for the next one',
+   await d.evaluate(() => document.getElementById('drug-q').value === ''));
+await d.locator('#drug-q').fill('ibupro');
+await d.waitForTimeout(200);
+await d.locator('#drug-q').press('Enter');
+await d.waitForTimeout(200);
+ok('Enter adds the top hit — no tap at all',
+   await d.evaluate(() => S.basket.indexOf('Ibuprofen') >= 0 && S.basket.length === 2));
+ok('Enter on an empty box does nothing rather than adding something arbitrary',
+   await d.evaluate(() => {
+     const before = S.basket.length;
+     setDrugQuery('');
+     drugSearchKey({ key:'Enter', preventDefault(){} });
+     return S.basket.length === before;
+   }));
+ok('and a drug already in the basket is skipped rather than re-added',
+   await d.evaluate(() => {
+     setDrugQuery('warf');
+     drugSearchKey({ key:'Enter', preventDefault(){} });
+     return S.basket.filter(x => x === 'Warfarin').length === 1;
+   }));
+/* The tallies pay back the person who generated them: one tap, not two. */
+await d.evaluate(() => {
+  clearBasket(); setDrugQuery('');
+  S.dispensing = [
+    { pharmacy:'P2', pharmacist:'ahmed@example.com', date:TODAY_ISO, sci:'Paracetamol', n:9 },
+    { pharmacy:'P2', pharmacist:'ahmed@example.com', date:TODAY_ISO, sci:'Amoxicillin', n:4 }
+  ];
+  render();
+});
+await d.waitForTimeout(220);
+ok('the pharmacy’s most-dispensed drugs are offered as one-tap chips',
+   await d.locator('.pill-pick').count() === 2);
+ok('ordered by how often they are actually dispensed',
+   (await d.locator('.pill-pick').first().innerText()).includes('Paracetamol'));
+await d.locator('.pill-pick').first().click();
+await d.waitForTimeout(200);
+ok('tapping one adds it', await d.evaluate(() => S.basket.indexOf('Paracetamol') >= 0));
+ok('and it leaves the chip row, so nothing is offered twice',
+   await d.locator('.pill-pick').count() === 1);
+await d.evaluate(() => { S.dispensing = []; clearBasket(); });
+
+console.log('\nthe owner’s home honours their own setting (W12b)');
+await signOut(d);
+await signIn(d, 'rahma@example.com');
+await d.evaluate(() => setLang('en'));
+for (const on of [false, true]) {
+  await d.evaluate(x => { S.takesShifts = x; goto('dashboard'); }, on);
+  await d.waitForTimeout(200);
+  const txt = (await d.locator('#app-body').innerText()).toLowerCase();
+  ok(`shift-taking ${on ? 'on' : 'off'}: the pharmacist half is ${on ? 'shown' : 'hidden'}`,
+     txt.includes('my own work') === on);
+  ok(`  and the reliability figure follows it`, txt.includes('reliability') === on);
+}
+await d.evaluate(() => { S.takesShifts = false; });
+
+console.log('\nthe plan, its allowance, and what it saved (W14)');
+await go(d, 'billing');
+await d.evaluate(() => { S.trial = false; S.plan = 'basic'; render(); });
+await d.waitForTimeout(250);
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('the billing screen names the plan', /Basic/.test(txt));
+  ok('and shows the allowance as used-of-included',
+     await d.locator('.allowance-pip').count() === 5
+     && /\d+ \/ 5/.test(txt));
+  ok('a shift the allowance absorbed is labelled, not silently zero',
+     /Covered by your plan/.test(txt));
+  ok('the monthly fee is its own line, not folded into a shift',
+     /Monthly subscription/.test(txt));
+  ok('and it says what the same month would have cost on commission',
+     /saved|would have been/i.test(txt));
+}
+ok('the fee engine only spends the allowance on shifts it actually covered',
+   await d.evaluate(() => {
+     const covered = billingLedger().filter(x => x.fees.coveredByPlan).length;
+     return covered > 0 && covered <= PLANS.basic.includedShifts;
+   }));
+ok('beyond the allowance the pharmacy pays ordinary commission',
+   await d.evaluate(() => {
+     S.plan = 'commission'; render();
+     return billingLedger().every(x => x.fees.coveredByPlan === null);
+   }));
+ok('the trial still wins over a plan, and does not burn the allowance',
+   await d.evaluate(() => {
+     S.trial = true; S.plan = 'basic'; render();
+     const rows = billingLedger();
+     const r = rows.every(x => x.fees.pharmacyFee === 0 && x.fees.coveredByPlan === null);
+     S.trial = true; S.plan = 'basic';
+     return r;
+   }));
+await d.evaluate(() => { S.plan = 'basic'; S.trial = true; render(); });
+
+console.log('\ntwo screens that had nothing to press (W12d)');
+await signOut(d);
+await signIn(d, 'zainab@uobaghdad.edu.iq');
+await d.evaluate(() => { setLang('en'); goto('placement'); });
+await d.waitForTimeout(250);
+ok('the placement screen now leads with the week that is due',
+   await d.locator('.check-card').count() === 1
+   && /Week \d+ is due/.test(await d.locator('#app-body').innerText()));
+ok('and it reaches the logbook',
+   await d.evaluate(() => { document.querySelector('.check-card').click(); return S.screen === 'logbook'; }));
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => { setLang('en'); goto('shifts'); });
+await d.waitForTimeout(250);
+ok('an upcoming shift offers more than a checklist',
+   await d.locator('.shift-actions .btn-secondary').count() === 3);
+ok('including a number to call',
+   (await d.locator('.shift-actions a').first().getAttribute('href')).startsWith('tel:'));
+ok('and a calendar entry the phone can take',
+   await d.evaluate(() => typeof addShiftToCalendar === 'function'));
+
 console.log('\nevery inline handler actually parses');
 /* A value interpolated into onclick="f(...)" without escaping its own quotes
    ends the attribute early, and the browser keeps whatever is left. Nothing

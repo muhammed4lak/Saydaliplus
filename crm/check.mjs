@@ -606,6 +606,70 @@ ok('a consumption report can be pinned to the dashboard like any other',
      return added;
    }));
 
+console.log('\nthe billing ledger');
+await tab(p, 'reports');
+ok('every charge is one row, whatever its source',
+   await p.evaluate(() => DATA.ledger.length > 50
+     && ['subscription', 'commission', 'covered'].every(k => DATA.ledger.some(r => r.kind === k))));
+/* The distinction the ledger exists to record: a zero because a plan absorbed
+   the shift, versus a zero that is a mistake. */
+ok('a covered shift is zero AND says which plan absorbed it',
+   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'covered')
+     .every(r => r.amount === 0 && ['basic', 'premium'].includes(r.reason))));
+ok('a commission row carries a real amount and no plan',
+   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'commission')
+     .every(r => r.amount > 0 && r.reason === 'commission')));
+ok('a subscription row matches its plan’s published fee',
+   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription')
+     .every(r => r.amount === PLANS[r.reason].monthlyFeeIQD)));
+ok('every row points at a pharmacy that exists',
+   await p.evaluate(() => DATA.ledger.every(r => DATA.pharmacies.some(x => x.id === r.pharmacy))));
+ok('no pharmacy is charged a subscription it is not on',
+   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription')
+     .every(r => (DATA.pharmacies.find(x => x.id === r.pharmacy) || {}).plan === r.reason)));
+/* The allowance is what stops a chain subscribing to the cheapest plan and
+   posting forty shifts against it. */
+ok('no pharmacy has more shifts covered in a month than its plan allows',
+   await p.evaluate(() => {
+     const byKey = {};
+     DATA.ledger.filter(r => r.kind === 'covered').forEach(r => {
+       const k = r.pharmacy + '|' + r.date.slice(0, 7);
+       byKey[k] = (byKey[k] || 0) + 1;
+     });
+     return Object.entries(byKey).every(([k, n]) => {
+       const ph = DATA.pharmacies.find(x => x.id === k.split('|')[0]);
+       return n <= PLANS[ph.plan || 'commission'].includedShifts;
+     });
+   }));
+ok('a pay-as-you-go pharmacy never has a covered shift',
+   await p.evaluate(() => {
+     const payg = DATA.pharmacies.filter(x => (x.plan || 'commission') === 'commission').map(x => x.id);
+     return payg.length > 0 && !DATA.ledger.some(r => r.kind === 'covered' && payg.includes(r.pharmacy));
+   }));
+
+console.log('\nand it is reportable');
+ok('the SQL view exposes the ledger with its reason intact',
+   await p.evaluate(() => Object.keys(sqlTables().ledger[0]).sort().join() ===
+     'amount,date,id,kind,order_id,pharmacy_id,reason'));
+ok('a pharmacy’s plan is queryable beside its charges',
+   await p.evaluate(() => sqlTables().pharmacies.every(r => !!r.plan)));
+ok('MRR totals the subscription rows for the month',
+   await p.evaluate(() => {
+     const r = runReport(reportById('R13'));
+     const want = DATA.ledger.filter(x => x.kind === 'subscription' && x.date.startsWith('2026-09'))
+       .reduce((n, x) => n + x.amount, 0);
+     return r.ok && r.rows.reduce((n, x) => n + x.iqd, 0) === want;
+   }));
+ok('"what does this pharmacy owe" is one query over one table',
+   await p.evaluate(() => {
+     const r = runReport(reportById('R14'));
+     return r.ok && r.rows.length > 0 && r.rows.every(x => x.iqd >= 0 && !!x.plan);
+   }));
+ok('and the absorbed-shift count matches the rows it counts',
+   await p.evaluate(() =>
+     runReport(reportById('R15')).rows[0].shifts ===
+     DATA.ledger.filter(r => r.kind === 'covered').length));
+
 console.log('\nthe dashboard is built from reports');
 await tab(p, 'home');
 const tileCount = await p.evaluate(() => S.tiles.length);

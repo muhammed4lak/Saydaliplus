@@ -425,6 +425,10 @@ module inside it. They can be decided independently and in either order.
 
 ## W12. Streamlining: five measured pieces of friction
 
+**Built — App_v0.0006: W12a, W12b and W12d.** W12c (repeat a shift, pre-filled)
+and W12e (remember the account; the reference list's per-keystroke rebuild) are
+still open.
+
 **Raised:** 18 Sep 2026. **Touches:** app. Measured by walking v0.0005 and
 counting interactions, not by inspection.
 
@@ -556,6 +560,18 @@ and a student without one want completely different screens and currently get
 the same one.
 
 ## W14. The subscription, and the groundwork every revenue line needs
+
+**Built — App_v0.0006 / CRM_v0.0006: steps 1–3 and 5 of the build order below.**
+The plans and their allowances are in `src/config/fees.ts` and ported to both
+builds; `calculateFees()` takes a plan and returns `coveredByPlan`; the CRM
+holds the ledger with all three row kinds and reports off it; the app's billing
+screen shows the plan, the allowance and what the month would have cost on
+commission.
+
+**Still open: step 4 — the CRM invoice / payment / dunning flow**, which is the
+part that is not technical. Nothing collects 9,000 IQD from a pharmacy on the
+1st, and until a human workflow exists for that, the ledger records charges
+nobody chases.
 
 **Raised:** 18 Sep 2026. **Touches:** `src/config/fees.ts`, the schema, the app's
 billing screen, and a new CRM module. **Price set in discussion: 25,000 IQD per
@@ -825,16 +841,26 @@ case-by-case veto with no record is indistinguishable from no veto.
 a first job, and it costs nothing: the view is the same, the listings are the
 same.
 
-**Partners do not self-serve in v1.** Everything is operator-entered from the
-CRM: a partner emails or phones, an employee creates the listing or books the
-slot. Slower, and right for a first version — there is no partner-facing sign-up
-to build, no approval queue to staff, no abuse surface, and every listing passes
-a human before a pharmacist sees it, which is what the P1 criteria above assume.
-Self-serve is a later step and it needs: a partner sign-up and verification path,
-a submission queue with review states, and a way for a partner to see their own
-placement performance. **Do not build those until the manual version has
-customers**, because the manual version is also how you learn what a partner
-actually asks for.
+**Partners self-serve the form, then a person finishes it.** A partner signs in
+and fills a form carrying the information the listing cannot exist without;
+submitting it raises a **draft**, and an operator phones to collect the rest
+before anything goes live.
+
+This is better than either extreme. Pure operator entry makes your team a typing
+service and loses the partner's own words. Pure self-serve puts unreviewed
+commercial content in front of pharmacists, which the P1 criteria above forbid.
+The hybrid keeps the human check exactly where it has to be — between
+submission and publication — while the partner does the data entry.
+
+**What it needs:** a partner sign-in, a submission form, a **draft → in review →
+live → ended** state machine on the listing, and a CRM queue of drafts awaiting a
+call. The call is a real workflow step, so it wants a "called on / by / notes"
+field rather than living in somebody's phone.
+
+**The form asks only for what a listing cannot exist without** — role or
+placement, company, location, dates, and a contact. Everything negotiable
+(wording, artwork, slot, price) is what the call is for, which keeps the form
+short enough that a partner finishes it.
 
 ### Impression counting, without building a targeting engine
 

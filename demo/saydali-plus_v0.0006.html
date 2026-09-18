@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0005">
+<meta name="version" content="App_v0.0006">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -785,6 +785,21 @@
   .empty-check .btn-ghost{ margin-top:10px; }
   .browse-lead{ margin-bottom:16px; }
 
+  /* The plan card and its allowance. The pips are the upgrade prompt as much as
+     the entitlement — "5 of 5 used" sells Premium better than any copy does. */
+  .shift-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .shift-actions .btn-secondary{ flex:1; min-width:132px; justify-content:center; }
+  .plan-card{ padding:15px 17px; }
+  .plan-top{ display:flex; align-items:baseline; gap:10px; }
+  .plan-name{ font-size:15px; font-weight:600; }
+  html[dir="rtl"] .plan-name{ font-family:var(--font-ar); }
+  .plan-fee{ margin-inline-start:auto; font-size:13px; color:var(--ink-faint); }
+  .allowance{ margin-top:13px; }
+  .allowance-head{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink-soft); }
+  .allowance-track{ display:flex; gap:4px; margin-top:7px; }
+  .allowance-pip{ display:block; flex:1; height:7px; border-radius:100px; background:var(--border); }
+  .allowance-pip.spent{ background:var(--indigo); }
+
   /* ---------- Misc ---------- */
   .progress{ height:7px; border-radius:100px; background:var(--border); overflow:hidden; }
   .progress i{ display:block; height:100%; background:var(--palm); border-radius:100px; }
@@ -889,7 +904,21 @@ const FEES = {
   PROCESSOR_FEE_RATE: 0.02
 };
 
-function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial }) {
+/* ==========================================================================
+   PLANS (W14) — ported from src/config/fees.ts, same as calculateFees()
+
+   A plan replaces the PHARMACY's 7%, never the pharmacist's 3%. Each carries a
+   shift allowance; beyond it, ordinary commission. Without the allowance,
+   unlimited posting on the cheaper plan is a hole a chain would find in a week.
+   ========================================================================== */
+const PLANS = {
+  commission: { id:'commission', monthlyFeeIQD:0,      includedShifts:0  },
+  basic:      { id:'basic',      monthlyFeeIQD:9000,   includedShifts:5  },
+  premium:    { id:'premium',    monthlyFeeIQD:19000,  includedShifts:12 }
+};
+
+function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial,
+                         plan = 'commission', shiftsFilledThisMonth = 0 }) {
   if (!isFinite(grossAmount) || grossAmount < 0) throw new Error('Invalid gross amount');
 
   const percentage = grossAmount * FEES.TOTAL_COMMISSION_RATE;
@@ -904,7 +933,17 @@ function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial }) {
   // floor's whole excess lands here, on the pharmacy.
   const fullPharmacyFee = Math.round(chargeable) - fullPharmacistFee;
 
-  const pharmacyFee = pharmacyInTrial ? 0 : fullPharmacyFee;
+  /* A plan covers this shift only while its allowance lasts; beyond it the
+     pharmacy pays ordinary commission. The trial wins over the allowance, and
+     does NOT spend it — otherwise a pharmacy that subscribed on day one would
+     reach its second month with the allowance quietly eaten. */
+  const chosen = PLANS[plan] || PLANS.commission;
+  const withinAllowance = !pharmacyInTrial
+    && chosen.monthlyFeeIQD > 0
+    && shiftsFilledThisMonth < chosen.includedShifts;
+  const coveredByPlan = withinAllowance ? chosen.id : null;
+
+  const pharmacyFee = (pharmacyInTrial || withinAllowance) ? 0 : fullPharmacyFee;
   const pharmacistFee = pharmacistInTrial ? 0 : fullPharmacistFee;
 
   const platformGross = pharmacyFee + pharmacistFee;
@@ -916,7 +955,8 @@ function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial }) {
     pharmacyCharge: grossAmount + pharmacyFee,
     pharmacistNet, platformGross, processorFee,
     platformNet: platformGross - processorFee,
-    floorApplied: floorApplied && !(pharmacyInTrial && pharmacistInTrial)
+    floorApplied: floorApplied && !(pharmacyInTrial && pharmacistInTrial),
+    coveredByPlan
   };
 }
 
@@ -1145,6 +1185,20 @@ Object.assign(STRINGS.ar, {
   'nav.drugs':'الأدوية','common.clear':'مسح',
   'common.remove':'إزالة','nav.consumption':'الاستهلاك',
   'dx.tabReference':'المرجع','dc.tabCheck':'فحص الصرف',
+  'dc.frequent':'الأكثر صرفاً في صيدليتك',
+  'plan.commission':'بالعمولة','plan.basic':'الباقة الأساسية','plan.premium':'الباقة المميزة',
+  'bill.yourPlan':'باقتك','bill.perMonth':' / شهرياً',
+  'bill.allowance':'المناوبات المشمولة',
+  'bill.allowanceLeft':'بقيت {n} مناوبات مشمولة هذا الشهر، ثم تعود العمولة المعتادة.',
+  'bill.allowanceSpent':'انتهت المناوبات المشمولة هذا الشهر — المناوبات اللاحقة بالعمولة.',
+  'bill.onPlan':'مشمولة بالباقة','bill.monthlyFee':'اشتراك شهري',
+  'bill.ofWhichPlan':'منها {amount} اشتراك {plan}',
+  'bill.coveredBy':'مشمولة بـ{plan}',
+  'bill.saved':'وفّرت {amount} هذا الشهر مقارنةً بالعمولة.',
+  'bill.wouldHaveBeen':'بالعمولة وحدها كان المستحق {amount} هذا الشهر.',
+  'bill.lineWouldHaveBeen':'بالعمولة كانت هذه المناوبة ستكلّف {amount}.',
+  'pl.dueWeek':'الأسبوع {n} مستحق الآن','pl.openLogbook':'افتح السجل',
+  'b.callPharmacy':'اتصل بالصيدلية','b.addCalendar':'أضف إلى التقويم',
   'dc.cardSub':'افحص تداخلات وصفة كاملة قبل صرفها.',
   'dc.cardResume':'{n} من الأدوية في الفحص الحالي',
   'dc.orLookUp':'أو ابحث عن دواء واحد في المرجع',
@@ -1291,6 +1345,20 @@ Object.assign(STRINGS.en, {
   'nav.drugs':'Drugs','common.clear':'Clear',
   'common.remove':'Remove','nav.consumption':'Consumption',
   'dx.tabReference':'Reference','dc.tabCheck':'Dispensing check',
+  'dc.frequent':'Most dispensed at your pharmacy',
+  'plan.commission':'Pay as you go','plan.basic':'Basic','plan.premium':'Premium',
+  'bill.yourPlan':'Your plan','bill.perMonth':' / month',
+  'bill.allowance':'Shifts included',
+  'bill.allowanceLeft':'{n} included shifts left this month, then ordinary commission.',
+  'bill.allowanceSpent':'Included shifts used up this month — further shifts are charged commission.',
+  'bill.onPlan':'Covered by your plan','bill.monthlyFee':'Monthly subscription',
+  'bill.ofWhichPlan':'of which {amount} is the {plan} subscription',
+  'bill.coveredBy':'Covered by {plan}',
+  'bill.saved':'You saved {amount} this month against commission.',
+  'bill.wouldHaveBeen':'On commission alone this month would have been {amount}.',
+  'bill.lineWouldHaveBeen':'On commission this shift would have cost {amount}.',
+  'pl.dueWeek':'Week {n} is due now','pl.openLogbook':'Open the logbook',
+  'b.callPharmacy':'Call the pharmacy','b.addCalendar':'Add to calendar',
   'dc.cardSub':'Check a whole prescription for interactions before you hand it over.',
   'dc.cardResume':'{n} drugs in the check you started',
   'dc.orLookUp':'Or look one drug up in the reference',
@@ -1708,7 +1776,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0005';
+const VERSION = 'App_v0.0006';
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -1788,6 +1856,10 @@ const S = {
   /* Tallies, never baskets. One row per (pharmacy, pharmacist, day, drug) with
      a count — see recordDispense() for why the basket is thrown away. */
   dispensing: [],
+  /* The pharmacy's plan, and the shifts it has already had filled this billing
+     month. The fee engine has no clock, so the caller owns the month boundary. */
+  plan: 'basic',
+  shiftsThisMonth: 0,
   onShiftToday: true,       // fixture: this pharmacist is working today
   applied: {},
   accepted: {},
@@ -2167,6 +2239,27 @@ function addToBasket(sci) {
   S.drugQuery = '';
   S.drugTab = 'check';
   render();
+  /* Put the cursor back. Without this the field loses focus on every add, so
+     building a four-drug basket costs three interactions per drug instead of
+     two: tap the field, type, tap the result, tap the field again. On the most
+     used screen in the app, with somebody waiting. */
+  focusDrugSearch();
+}
+function focusDrugSearch() {
+  const el = document.getElementById('drug-q');
+  if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+
+/* Enter adds the top hit, so a prescription can be entered without the hands
+   leaving the keyboard: type, Enter, type, Enter. */
+function drugSearchKey(ev) {
+  if (ev.key !== 'Enter') return;
+  ev.preventDefault();
+  if (S.drugTab !== 'check') return;
+  const q = drugNorm(S.drugQuery);
+  if (!q) return;
+  const hit = DRUGS.filter(d => drugMatches(d, q)).filter(d => S.basket.indexOf(d.sci) < 0)[0];
+  if (hit) addToBasket(hit.sci);
 }
 function removeFromBasket(sci) { S.basket = S.basket.filter(x => x !== sci); render(); }
 function clearBasket() { S.basket = []; render(); }
@@ -2291,7 +2384,8 @@ function screenCheck() {
   const picker =
     '<div class="searchbox">' + icon('search') +
       '<input id="drug-q" type="search" autocomplete="off" value="' + esc(S.drugQuery) + '" ' +
-        'placeholder="' + esc(t('dc.addPlaceholder')) + '" oninput="setDrugQuery(this.value)">' +
+        'placeholder="' + esc(t('dc.addPlaceholder')) + '" oninput="setDrugQuery(this.value)" ' +
+        'onkeydown="drugSearchKey(event)">' +
       (S.drugQuery ? '<button class="searchbox-x" onclick="setDrugQuery(\'\')" aria-label="' +
         esc(t('common.clear')) + '">&times;</button>' : '') +
     '</div>' +
@@ -2324,8 +2418,33 @@ function screenCheck() {
         '<p class="inline-note" style="margin-top:9px;">' + esc(t('dc.myShiftNote')) + '</p></div>';
   };
 
+  /* One tap instead of type-and-tap, from the pharmacy's own tallies (W8).
+     This is the only place the dispensing log pays back the person who
+     generated it, immediately and visibly: log more, and the checks you do
+     tomorrow get faster. */
+  const frequent = () => {
+    const ph = dispensePharmacy();
+    if (!ph) return [];
+    const byDrug = new Map();
+    S.dispensing.filter(r => r.pharmacy === ph.id)
+      .forEach(r => byDrug.set(r.sci, (byDrug.get(r.sci) || 0) + r.n));
+    return [...byDrug.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(x => x[0])
+      .filter(sci => S.basket.indexOf(sci) < 0 && drugBySci(sci))
+      .slice(0, 8);
+  };
+  const frequentRow = () => {
+    const list = frequent();
+    if (!list.length) return '';
+    return '<p class="section-eyebrow" style="margin:14px 0 8px;">' + esc(t('dc.frequent')) + '</p>' +
+      '<div class="pill-tags">' + list.map(sci =>
+        '<button class="pill-pick" onclick="addToBasket(' + attr(sci) + ')">' +
+          esc(drugName(drugBySci(sci))) + '</button>').join('') + '</div>';
+  };
+
   if (!S.basket.length) {
-    return '<div class="constrain stack">' + picker +
+    return '<div class="constrain stack">' + picker + frequentRow() +
       '<div class="card card-pad empty-check">' + icon('pill') +
         '<p class="empty-check-t">' + esc(t('dc.emptyTitle')) + '</p>' +
         '<p class="empty-check-s">' + esc(t('dc.emptyBody')) + '</p>' +
@@ -2389,6 +2508,7 @@ function screenCheck() {
 
   return '<div class="constrain stack">' +
     picker +
+    frequentRow() +
     '<div class="basket">' + chips +
       '<button class="btn-ghost basket-clear" onclick="clearBasket()">' + esc(t('dc.clear')) + '</button></div>' +
     verdict +
@@ -2557,7 +2677,14 @@ function screenShifts() {
       '<div class="meta-line" style="margin-bottom:12px;">' + icon('clock') +
         esc(L(DATA.listings[1].when)) + '<span style="color:var(--ink-faint)">·</span>' +
         '<span class="figure">' + iqd(45000) + '</span></div>' +
-      '<button class="btn-secondary" onclick="goto(\'handoff\')">' + esc(t('b.viewHandoff')) + '</button>' +
+      /* The night before a shift, a locum wants the phone number and the date in
+         their calendar. Neither was reachable from here. */
+      '<div class="shift-actions">' +
+        '<button class="btn-secondary" onclick="goto(\'handoff\')">' + esc(t('b.viewHandoff')) + '</button>' +
+        '<a class="btn-secondary" href="tel:+9647700000000">' + icon('phone') + esc(t('b.callPharmacy')) + '</a>' +
+        '<button class="btn-secondary" onclick="addShiftToCalendar()">' + icon('calendar') +
+          esc(t('b.addCalendar')) + '</button>' +
+      '</div>' +
     '</div>' +
     '<p class="section-eyebrow">' + esc(t('b.completed')) + '</p>' +
     '<div class="card">' +
@@ -2658,10 +2785,14 @@ function screenDashboard() {
       stat(38, t('pr.shifts')) + stat('96%', t('pr.reliability')) + stat(iqd(38800).split(' ')[0], t('nav.earnings')) +
     '</div>';
 
+  /* W2's toggle, honoured here as it already is in the navigation. An owner
+     who has never turned shift-taking on was still being shown "my own work",
+     a shift at another pharmacy and a reliability score — the exact thing the
+     setting exists to hide, on the one screen they cannot avoid. */
   return '<div class="screen-body"><div class="constrain">' +
     (S.trial ? '<div class="banner banner-green" style="margin-bottom:16px;">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
-    pharmacyHalf + pharmacistHalf +
+    pharmacyHalf + (S.takesShifts ? pharmacistHalf : '') +
     '</div></div>';
 }
 
@@ -2671,30 +2802,64 @@ function screenDashboard() {
    with no way to see what they owe. Priced by the same fee engine, so this and
    the listing preview cannot disagree. */
 
-function screenBilling() {
-  const rows = [
+/* ---------- Billing: the plan, the allowance, and every charge ----------
+
+   Rebuilt in v0.0006 around W14. Three things an owner needs and could not see
+   before: which plan they are on, how much of its shift allowance is left, and
+   — the one that decides whether they renew — what the same month would have
+   cost on commission. A subscriber who cannot see what they saved churns at the
+   first quiet month. */
+
+function billingLedger() {
+  /* Charge rows, in the shape the real ledger will hold: one row per chargeable
+     event, each carrying WHY it cost what it did. A zero with no reason is
+     indistinguishable from a bug six months later, which is why the fee engine
+     returns `coveredByPlan` and the row keeps it. */
+  const shifts = [
     { who:DATA.listings[0].pharmacy, when:{en:'10 September', ar:'10 أيلول'}, gross:20000 },
     { who:DATA.listings[1].pharmacy, when:{en:'8 September',  ar:'8 أيلول'},  gross:45000 },
     { who:DATA.listings[2].pharmacy, when:{en:'2 September',  ar:'2 أيلول'},  gross:40000 }
   ];
-  const fees = rows.map(r => calculateFees({
-    grossAmount:r.gross, pharmacyInTrial:S.trial, pharmacistInTrial:false }));
-  const charged = fees.reduce((n, f) => n + f.pharmacyCharge, 0);
-  const commission = fees.reduce((n, f) => n + f.pharmacyFee, 0);
+  return shifts.map((r, n) => {
+    const f = calculateFees({ grossAmount:r.gross, pharmacyInTrial:S.trial, pharmacistInTrial:false,
+                              plan:S.plan, shiftsFilledThisMonth:n });
+    // What the same shift would have cost with no plan at all — the comparison
+    // the renewal decision actually turns on.
+    const asCommission = calculateFees({ grossAmount:r.gross, pharmacyInTrial:S.trial,
+                                         pharmacistInTrial:false });
+    return { kind:'shift', ref:r, fees:f, wouldHaveBeen:asCommission.pharmacyFee };
+  });
+}
 
-  const line = (i) =>
+function screenBilling() {
+  const plan = PLANS[S.plan] || PLANS.commission;
+  const ledger = billingLedger();
+  const used = ledger.filter(x => x.fees.coveredByPlan).length;
+  const left = Math.max(0, plan.includedShifts - used);
+
+  const shiftCharges = ledger.reduce((n, x) => n + x.fees.pharmacyCharge, 0);
+  const commissionPaid = ledger.reduce((n, x) => n + x.fees.pharmacyFee, 0);
+  const subscription = S.trial ? 0 : plan.monthlyFeeIQD;
+  const total = shiftCharges + subscription;
+  const wouldHaveBeen = ledger.reduce((n, x) => n + x.wouldHaveBeen, 0);
+  const saved = wouldHaveBeen - (commissionPaid + subscription);
+
+  const line = (x, i) =>
     '<button class="txn" onclick="openBillingLine(' + i + ')">' +
       '<span class="txn-icon txn-out">' + icon('wallet') + '</span>' +
-      '<span class="txn-body"><span class="txn-title">' + esc(L(rows[i].who)) + '</span>' +
-        '<span class="txn-sub">' + esc(L(rows[i].when)) + ' · ' + esc(t('bill.shiftCovered')) + '</span></span>' +
-      '<span class="txn-amount">' + iqd(fees[i].pharmacyCharge) + '</span></button>';
+      '<span class="txn-body"><span class="txn-title">' + esc(L(x.ref.who)) + '</span>' +
+        '<span class="txn-sub">' + esc(L(x.ref.when)) + ' · ' +
+          esc(x.fees.coveredByPlan ? t('bill.onPlan') : t('bill.shiftCovered')) + '</span></span>' +
+      '<span class="txn-amount">' + iqd(x.fees.pharmacyCharge) + '</span></button>';
 
   return '<div class="screen-body"><div class="constrain stack">' +
     '<div class="balance-card">' +
       '<svg class="header-pattern" style="opacity:.4"><rect width="100%" height="100%" fill="url(#starTile)"/></svg>' +
       '<div class="balance-label">' + esc(t('bill.thisMonth')) + '</div>' +
-      '<div class="balance-amount">' + esc(iqd(charged)) + '</div>' +
-      '<div class="balance-sub">' + esc(t('bill.ofWhich', { amount:iqd(commission) })) + '</div>' +
+      '<div class="balance-amount">' + esc(iqd(total)) + '</div>' +
+      '<div class="balance-sub">' + esc(plan.monthlyFeeIQD
+        ? t('bill.ofWhichPlan', { plan:t('plan.' + plan.id), amount:iqd(subscription) })
+        : t('bill.ofWhich', { amount:iqd(commissionPaid) })) + '</div>' +
     '</div>' +
 
     (S.trial
@@ -2702,16 +2867,47 @@ function screenBilling() {
         esc(t('bill.trialNote', { n:22 })) + '</p></div>'
       : '') +
 
+    /* The plan card. The allowance is the upgrade prompt as much as the
+       entitlement: "5 of 5 used" is the best Premium pitch there is. */
+    (plan.monthlyFeeIQD
+      ? '<p class="section-eyebrow">' + esc(t('bill.yourPlan')) + '</p>' +
+        '<div class="card card-pad plan-card">' +
+          '<div class="plan-top">' +
+            '<span class="plan-name">' + esc(t('plan.' + plan.id)) + '</span>' +
+            '<span class="plan-fee figure">' + esc(iqd(plan.monthlyFeeIQD)) + esc(t('bill.perMonth')) + '</span>' +
+          '</div>' +
+          '<div class="allowance">' +
+            '<div class="allowance-head"><span>' + esc(t('bill.allowance')) + '</span>' +
+              '<span class="figure">' + fmt(used) + ' / ' + fmt(plan.includedShifts) + '</span></div>' +
+            '<div class="allowance-track">' + Array.from({ length:plan.includedShifts }, (_, k) =>
+              '<span class="allowance-pip' + (k < used ? ' spent' : '') + '"></span>').join('') + '</div>' +
+            '<p class="inline-note" style="margin-top:8px;">' +
+              esc(left ? t('bill.allowanceLeft', { n:left }) : t('bill.allowanceSpent')) + '</p>' +
+          '</div>' +
+        '</div>' +
+        (saved > 0
+          ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
+            esc(t('bill.saved', { amount:iqd(saved) })) + '</p></div>'
+          : '<p class="inline-note">' + esc(t('bill.wouldHaveBeen', { amount:iqd(wouldHaveBeen) })) + '</p>')
+      : '') +
+
     '<p class="section-eyebrow">' + esc(t('bill.history')) + '</p>' +
-    '<div class="card">' + rows.map((r, i) => line(i)).join('') + '</div>' +
+    '<div class="card">' +
+      (subscription
+        ? '<div class="txn" style="cursor:default;">' +
+            '<span class="txn-icon txn-out">' + icon('badge') + '</span>' +
+            '<span class="txn-body"><span class="txn-title">' + esc(t('plan.' + plan.id)) + '</span>' +
+              '<span class="txn-sub">' + esc(t('bill.monthlyFee')) + '</span></span>' +
+            '<span class="txn-amount">' + iqd(subscription) + '</span></div>'
+        : '') +
+      ledger.map(line).join('') + '</div>' +
     '<p class="inline-note">' + esc(t('bill.explainer')) + '</p>' +
     '</div></div>';
 }
 
 function openBillingLine(i) {
-  const gross = [20000, 45000, 40000][i];
-  const f = calculateFees({ grossAmount:gross, pharmacyInTrial:S.trial, pharmacistInTrial:false });
-  S.modal = { kind:'billing', gross, f };
+  const x = billingLedger()[i];
+  S.modal = { kind:'billing', gross:x.ref.gross, f:x.fees, wouldHaveBeen:x.wouldHaveBeen };
   renderModal();
 }
 
@@ -2721,12 +2917,19 @@ function billingModal() {
     '<dl>' +
       '<div class="fee-line"><dt>' + esc(t('fee.yourRate')) + '</dt><dd>' + iqd(f.grossAmount) + '</dd></div>' +
       '<div class="fee-line"><dt>' + esc(t('bill.platformFee')) + '</dt>' +
-        '<dd' + (S.trial ? ' class="fee-trial"' : '') + '>' +
-        (S.trial ? esc(t('fee.trialActive')) : '+ ' + iqd(f.pharmacyFee)) + '</dd></div>' +
+        /* Three ways this can be zero, and they are not the same thing: the
+           trial, the plan's allowance, or an actual charge. The row says which. */
+        '<dd' + (S.trial || f.coveredByPlan ? ' class="fee-trial"' : '') + '>' +
+        (S.trial ? esc(t('fee.trialActive'))
+         : f.coveredByPlan ? esc(t('bill.coveredBy', { plan:t('plan.' + f.coveredByPlan) }))
+         : '+ ' + iqd(f.pharmacyFee)) + '</dd></div>' +
       '<div class="fee-line fee-total"><dt>' + esc(t('bill.youPay')) + '</dt>' +
         '<dd>' + iqd(f.pharmacyCharge) + '</dd></div>' +
     '</dl>' +
     (f.floorApplied ? '<p class="fee-foot">' + esc(t('fee.floorNote')) + '</p>' : '') +
+    (f.coveredByPlan
+      ? '<p class="fee-foot">' + esc(t('bill.lineWouldHaveBeen', { amount:iqd(S.modal.wouldHaveBeen) })) + '</p>'
+      : '') +
     '<div class="modal-actions"><button class="btn-secondary" onclick="closeModal()">' +
       esc(t('common.close')) + '</button></div>';
 }
@@ -3261,7 +3464,22 @@ function screenPlacement() {
     '<div class="kv">' + icon(ic) + '<div><div class="kv-label">' + esc(label) + '</div>' +
     '<div class="kv-value">' + esc(value) + '</div></div></div>';
 
+  /* This screen had nothing on it to press. A placement is twelve weeks of
+     logbook entries, so the one thing a student comes here to find out is which
+     week is due — and from here they could not get to it. */
+  const dueWeek = S.weeks.find(w => w.status === 'draft')
+    || S.weeks.find(w => w.status !== 'approved' && w.status !== 'submitted');
+
   return '<div class="screen-body"><div class="constrain stack">' +
+    (dueWeek
+      ? '<button class="check-card" onclick="goto(\'logbook\')">' +
+          '<span class="check-card-ico">' + icon('book') + '</span>' +
+          '<span class="check-card-body">' +
+            '<span class="check-card-t">' + esc(t('pl.dueWeek', { n:dueWeek.no })) + '</span>' +
+            '<span class="check-card-s">' + esc(t('pl.openLogbook')) + '</span></span>' +
+          icon('chevron', 'more-chevron') +
+        '</button>'
+      : '') +
     '<div class="card card-pad">' +
       kv('home', t('pl.host'), lang==='ar' ? 'صيدلية الرحمة' : 'Al-Rahma Pharmacy') +
       kv('pin', t('l.location'), lang==='ar' ? 'الكرادة، بغداد' : 'Karrada, Baghdad') +
@@ -3995,7 +4213,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0005.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0006.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -4036,6 +4254,28 @@ function signOut(){
   authScreen = 'signin';
   authError = null;
   render();
+}
+
+/* A calendar entry, generated in the page. No server involved: an .ics file is
+   a dozen lines of text, and a Blob URL is enough to hand it to whatever
+   calendar the phone already has. */
+function addShiftToCalendar() {
+  const l = DATA.listings[1];
+  const pad = n => String(n).padStart(2, '0');
+  const start = new Date(); start.setDate(start.getDate() + 2); start.setHours(16, 0, 0, 0);
+  const end = new Date(start); end.setHours(23, 0, 0, 0);
+  const stamp = d => d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' +
+    pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Saydali+//EN', 'BEGIN:VEVENT',
+    'UID:' + Date.now() + '@saydaliplus', 'DTSTAMP:' + stamp(new Date()),
+    'DTSTART:' + stamp(start), 'DTEND:' + stamp(end),
+    'SUMMARY:' + L(l.pharmacy), 'LOCATION:' + L(l.district), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type:'text/calendar' }));
+  a.download = 'shift.ics';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(t('b.addCalendar'));
 }
 
 function goto(s){

@@ -39,6 +39,42 @@ export const TRIAL_DAYS = 30;
  */
 export const PROCESSOR_FEE_RATE = 0.02;
 
+/* ==========================================================================
+   PLANS (W14)
+
+   A plan replaces the PHARMACY's 7%, never the pharmacist's 3%. The pharmacist
+   pays 3% whether or not their pharmacy subscribes, which keeps the one rule
+   the supply side can hold in their head and keeps per-shift revenue growing
+   with volume even on a flat fee.
+
+   Each plan includes a SHIFT ALLOWANCE, and ordinary commission applies beyond
+   it. Without the allowance, unlimited posting on the cheaper plan is a hole:
+   at twenty shifts a month a subscribed pharmacy would cost us ~47,000 IQD
+   against commission, and at forty, ~103,000 — a chain would find that in a
+   week. With it, a forty-shift pharmacy still saves and we still earn.
+
+   Break-even against commission, at a 40,000 IQD shift: 3.2 shifts on Basic,
+   6.8 on Premium. Basic is therefore cheaper than commission at the expected
+   four shifts a month and needs no argument made to a pharmacy. Premium is
+   sold on what it includes, never on price.
+   ========================================================================== */
+
+export type PlanId = 'commission' | 'basic' | 'premium';
+
+export interface Plan {
+  id: PlanId;
+  /** Monthly fee in IQD. Zero for pay-as-you-go. */
+  monthlyFeeIQD: number;
+  /** Shifts covered by the fee each month; commission applies beyond it. */
+  includedShifts: number;
+}
+
+export const PLANS: Record<PlanId, Plan> = {
+  commission: { id: 'commission', monthlyFeeIQD: 0,      includedShifts: 0 },
+  basic:      { id: 'basic',      monthlyFeeIQD: 9_000,  includedShifts: 5 },
+  premium:    { id: 'premium',    monthlyFeeIQD: 19_000, includedShifts: 12 },
+};
+
 /** IQD is transacted in whole dinars; no subunit is in practical circulation. */
 const roundIQD = (amount: number): number => Math.round(amount);
 
@@ -49,6 +85,14 @@ export interface FeeInput {
   pharmacyInTrial: boolean;
   /** Is the *pharmacist* still inside their own 30-day trial? */
   pharmacistInTrial: boolean;
+  /** The pharmacy's plan. Absent means pay-as-you-go. */
+  plan?: PlanId;
+  /**
+   * Shifts this pharmacy has already had filled in the current billing month,
+   * NOT counting this one. Only read when a plan carries an allowance — the
+   * caller owns the month boundary, because the fee engine has no clock.
+   */
+  shiftsFilledThisMonth?: number;
 }
 
 export interface FeeBreakdown {
@@ -70,6 +114,12 @@ export interface FeeBreakdown {
   platformNet: number;
   /** True when the floor raised the commission above the percentage. */
   floorApplied: boolean;
+  /**
+   * Set when a plan's allowance covered this shift, so a charge row can say
+   * WHY the pharmacy fee was zero. A zero with no reason is indistinguishable
+   * from a bug six months later.
+   */
+  coveredByPlan: PlanId | null;
 }
 
 /**
@@ -97,6 +147,8 @@ export function calculateFees({
   grossAmount,
   pharmacyInTrial,
   pharmacistInTrial,
+  plan = 'commission',
+  shiftsFilledThisMonth = 0,
 }: FeeInput): FeeBreakdown {
   if (!Number.isFinite(grossAmount) || grossAmount < 0) {
     throw new Error(`Invalid gross amount: ${grossAmount}`);
@@ -120,7 +172,20 @@ export function calculateFees({
   // whole excess lands here, on the pharmacy.
   const fullPharmacyFee = roundIQD(chargeableCommission) - fullPharmacistFee;
 
-  const pharmacyFee = pharmacyInTrial ? 0 : fullPharmacyFee;
+  // A plan covers this shift only while the allowance lasts. Beyond it the
+  // pharmacy pays ordinary commission, which is what stops a chain subscribing
+  // to the cheapest plan and posting forty shifts against it.
+  const chosen = PLANS[plan] ?? PLANS.commission;
+  // The trial wins over the allowance. A pharmacy in its first 30 days pays
+  // nothing whatever plan it holds, and the allowance is NOT spent on a shift
+  // the trial already covered — otherwise a pharmacy that subscribed on day one
+  // would reach its second month with the allowance quietly eaten.
+  const withinAllowance = !pharmacyInTrial
+    && chosen.monthlyFeeIQD > 0
+    && shiftsFilledThisMonth < chosen.includedShifts;
+  const coveredByPlan = withinAllowance ? chosen.id : null;
+
+  const pharmacyFee = (pharmacyInTrial || withinAllowance) ? 0 : fullPharmacyFee;
   const pharmacistFee = pharmacistInTrial ? 0 : fullPharmacistFee;
 
   const platformGross = pharmacyFee + pharmacistFee;
@@ -137,6 +202,7 @@ export function calculateFees({
     processorFee,
     platformNet: platformGross - processorFee,
     floorApplied: floorApplied && !(pharmacyInTrial && pharmacistInTrial),
+    coveredByPlan,
   };
 }
 
