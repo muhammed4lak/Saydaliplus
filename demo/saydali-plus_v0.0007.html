@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0006">
+<meta name="version" content="App_v0.0007">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -787,6 +787,50 @@
 
   /* The plan card and its allowance. The pips are the upgrade prompt as much as
      the entitlement — "5 of 5 used" sells Premium better than any copy does. */
+  /* W13 — the home screens prompt rather than report. */
+  .urgent-row{ display:flex; align-items:center; gap:12px; margin-top:10px; }
+  .urgent-row .ico{ width:18px; height:18px; color:var(--amber); flex:none; }
+  .urgent-t{ font-size:13.5px; font-weight:600; }
+  .urgent-s{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
+  .urgent-row .btn-ghost{ margin-inline-start:auto; flex:none; }
+  .repeat-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .repeat-chip{
+    display:inline-flex; align-items:center; gap:7px; background:var(--card);
+    border:1px solid var(--border); border-radius:12px; padding:10px 13px; font-size:13px;
+  }
+  .repeat-chip:hover{ border-color:var(--indigo); }
+  .repeat-chip .ico{ width:14px; height:14px; color:var(--indigo); }
+  .repeat-meta{ font-size:11.5px; color:var(--ink-faint); }
+  .next-shift{ display:block; width:100%; text-align:start; margin-top:10px; }
+  .next-shift-head{ display:flex; align-items:center; gap:9px; margin-bottom:7px; }
+  .next-shift-head .pharmacy-name{ flex:1; }
+
+  /* A paid placement, labelled as one. Deliberately quieter than the product
+     around it: it sits on a shift board, not inside a clinical screen. */
+  .banner-slot{
+    display:block; background:var(--card); border:1px dashed var(--border);
+    border-radius:14px; padding:13px 15px;
+  }
+  .banner-tag{
+    display:inline-block; font-size:10px; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--ink-faint); background:var(--mist);
+    padding:2px 8px; border-radius:100px; margin-bottom:7px;
+  }
+  html[dir="rtl"] .banner-tag{ text-transform:none; letter-spacing:0; }
+  .banner-t{ display:block; font-size:14px; font-weight:600; }
+  .banner-s{ display:block; font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+
+  .job-row{ align-items:flex-start; }
+  .job-body{ display:block; font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin-top:6px; }
+  .state{
+    flex:none; font-size:11px; font-weight:600; padding:3px 9px; border-radius:100px; white-space:nowrap;
+  }
+  .state-draft{ background:var(--mist); color:var(--ink-faint); }
+  .state-in_review{ background:var(--amber-tint); color:#845310; }
+  .state-live{ background:var(--palm-tint); color:#3D6136; }
+  .state-ended{ background:var(--mist); color:var(--ink-faint); }
+  .state-refused{ background:#FBE3E3; color:#9E2B2B; }
+
   .shift-actions{ display:flex; gap:8px; flex-wrap:wrap; }
   .shift-actions .btn-secondary{ flex:1; min-width:132px; justify-content:center; }
   .plan-card{ padding:15px 17px; }
@@ -903,6 +947,97 @@ const FEES = {
   TRIAL_DAYS: 30,
   PROCESSOR_FEE_RATE: 0.02
 };
+
+/* ==========================================================================
+   LISTINGS AND BANNERS (W15)
+
+   Two things a Partner buys: a job listing that pharmacists browse, and a
+   banner placement on a permitted surface.
+
+   THE STATE MACHINE IS THE POINT. A partner fills a short form carrying only
+   what a listing cannot exist without; that raises a DRAFT. An operator phones
+   to collect the rest, and only then does it go LIVE. The human check sits
+   exactly where P1 needs it — between submission and publication — while the
+   partner does the data entry.
+
+     draft → in_review → live → ended        (or refused, at any point before live)
+
+   WHERE A BANNER MAY APPEAR, and this is a commitment rather than a default:
+   the shift board, the jobs view, and the home screen below the fold. NEVER
+   inside the Dispensing Helper or the drug reference. A placement beside an
+   interaction warning is the exact thing P1 exists to prevent, and it is also
+   the highest-paying slot anyone will ever offer. */
+const LISTING_STATES = ['draft', 'in_review', 'live', 'ended', 'refused'];
+const BANNER_SURFACES = ['browse', 'jobs', 'home'];
+
+const LISTINGS = [
+  { id:'J1', kind:'job', company:'CO1', state:'live',
+    title:{ ar:'صيدلي إنتاج — سامراء', en:'Production pharmacist — Samarra' },
+    where:{ ar:'سامراء، صلاح الدين', en:'Samarra, Salah al-Din' },
+    body:{ ar:'دوام كامل في خط الإنتاج، خبرة سنتين فأكثر، مع تدريب على نظام الجودة.',
+           en:'Full time on the production line, two years or more, with quality-system training.' },
+    posted:'2026-09-08' },
+  { id:'J2', kind:'job', company:'CO4', state:'live',
+    title:{ ar:'مندوب علمي — بغداد', en:'Medical representative — Baghdad' },
+    where:{ ar:'بغداد', en:'Baghdad' },
+    body:{ ar:'زيارات صيدليات الكرادة والجادرية، سيارة وبدل وقود، خبرة ميدانية مفضّلة.',
+           en:'Pharmacy visits across Karrada and Jadriya. Car and fuel allowance; field experience preferred.' },
+    posted:'2026-09-11' },
+  { id:'J3', kind:'job', company:'CO2', state:'in_review',
+    title:{ ar:'صيدلي ضمان جودة', en:'Quality assurance pharmacist' },
+    where:{ ar:'الموصل', en:'Mosul' },
+    body:{ ar:'', en:'' },
+    posted:'2026-09-17' },
+  { id:'B1', kind:'banner', company:'CO1', state:'live', surface:'browse',
+    title:{ ar:'ساماموكس — متوفر الآن', en:'Samamox — now available' },
+    body:{ ar:'من سامراء لصناعة الأدوية', en:'From Samarra Drug Industries' },
+    from:'2026-09-14', to:'2026-09-28' },
+  /* Raised by the partner, not yet reviewed. It must not reach a single
+     pharmacist until an admin moves it to live — which is the whole point of
+     the state machine, so the check asserts its text appears nowhere. */
+  { id:'B2', kind:'banner', company:'CO4', state:'draft', surface:'jobs',
+    title:{ ar:'معرض بغداد للدواء ٢٠٢٦', en:'Baghdad Pharma Expo 2026' },
+    body:{ ar:'الوكيل العراقي للأدوية · جناح ٢٢', en:'Iraqi Drug Agency Co. · stand 22' },
+    from:'2026-10-01', to:'2026-10-14' }
+];
+
+const companyName = id => ({
+  CO1:{ ar:'سامراء لصناعة الأدوية', en:'Samarra Drug Industries' },
+  CO2:{ ar:'شركة نينوى للأدوية',    en:'Ninawa Pharmaceutical' },
+  CO4:{ ar:'الوكيل العراقي للأدوية', en:'Iraqi Drug Agency Co.' }
+}[id] || { ar:id, en:id });
+
+const liveJobs = () => LISTINGS.filter(x => x.kind === 'job' && x.state === 'live');
+const myListings = () => {
+  const a = ACCOUNTS[S.email];
+  return a && a.company ? LISTINGS.filter(x => x.company === a.company) : [];
+};
+
+/* The banner for a surface, or nothing. Called only from the three permitted
+   surfaces — the Helper and the reference never call it, which is why the rule
+   is enforced by where the function is invoked rather than by a flag somebody
+   could flip. */
+function bannerFor(surface) {
+  if (BANNER_SURFACES.indexOf(surface) < 0) return '';
+  const b = LISTINGS.find(x => x.kind === 'banner' && x.state === 'live' && x.surface === surface);
+  if (!b) return '';
+  countImpression(b.id);
+  return '<div class="banner-slot">' +
+    '<span class="banner-tag">' + esc(t('ad.paid')) + '</span>' +
+    '<span class="banner-t">' + esc(L(b.title)) + '</span>' +
+    '<span class="banner-s">' + esc(L(b.body)) + '</span>' +
+  '</div>';
+}
+
+/* Impressions are counted WITHOUT identity: a counter keyed on (placement,
+   day) and nothing more. The partner's report can say "shown 1,240 times on
+   14 September"; no query can reconstruct who saw it, because the rows to
+   reconstruct it from were never written. Same shape as the dispensing
+   tallies, for the same reason. */
+function countImpression(id) {
+  const key = id + '|' + TODAY_ISO;
+  S.impressions[key] = (S.impressions[key] || 0) + 1;
+}
 
 /* ==========================================================================
    PLANS (W14) — ported from src/config/fees.ts, same as calculateFees()
@@ -1186,6 +1321,31 @@ Object.assign(STRINGS.ar, {
   'common.remove':'إزالة','nav.consumption':'الاستهلاك',
   'dx.tabReference':'المرجع','dc.tabCheck':'فحص الصرف',
   'dc.frequent':'الأكثر صرفاً في صيدليتك',
+  'common.view':'عرض',
+  'acc.partner':'سامراء لصناعة الأدوية','acc.partnerTag':'شريك',
+  'nav.jobs':'وظائف','nav.shiftsTab':'مناوبات','nav.placements':'تدريب','nav.listings':'إعلاناتي',
+  'jobs.count':'{n} وظيفة معروضة','jobs.none':'لا توجد وظائف الآن.',
+  'jobs.note':'وظائف دائمة من شركات ومكاتب علمية — منفصلة تماماً عن مناوبات الإسناد.',
+  'ad.paid':'إعلان مدفوع',
+  'ls.job':'وظيفة','ls.banner':'إعلان','ls.draft':'مسودة','ls.in_review':'قيد المراجعة',
+  'ls.live':'منشور','ls.ended':'منتهٍ','ls.refused':'مرفوض',
+  'pt.submit':'قدّم إعلاناً','pt.submitSub':'املأ الأساسيات ونتّصل بك لإكماله.',
+  'pt.yours':'إعلاناتك ({n})','pt.none':'لم تقدّم شيئاً بعد.','pt.untitled':'بلا عنوان',
+  'pt.impressions':'مرّات الظهور',
+  'pt.impressionsNote':'عدد مرّات الظهور في اليوم فقط. لا يُسجّل مَن رآه ولا يُمكن معرفته.',
+  'pt.reviewNote':'لا يُنشر شيء قبل مراجعة موظف من صيدلي+.',
+  'pt.role':'الوظيفة','pt.campaign':'اسم الحملة','pt.where':'الموقع',
+  'pt.from':'يبدأ من','pt.contact':'رقم للتواصل','pt.send':'أرسل',
+  'pt.needFields':'العنوان والتاريخ ورقم التواصل مطلوبة.',
+  'pt.sent':'وصلت كمسودة — سنتّصل بك.',
+  'pt.callNote':'نطلب هنا ما لا يقوم الإعلان دونه فقط. الباقي — الصياغة والتصميم والسعر — نتفق عليه بالهاتف.',
+  'post.repeated':'مُعبّأة من "{from}" — راجع التاريخ والأجر قبل النشر.',
+  'd.waitingOnYou':'{n} متقدّمون ينتظرون ردّك',
+  'd.waitingSub':'كلّ يوم تأخير يقلّل احتمال تغطية المناوبة.',
+  'd.unfilledSoon':'مناوبة واحدة تبدأ قريباً ولم تُغطّى',
+  'd.unfilledSub':'السبت، 8 ص – 2 م',
+  'd.postAgain':'انشر مجدداً',
+  'pl.placedNote':'أنت في تدريب قائم — لا حاجة لتصفّح فرص أخرى.',
   'plan.commission':'بالعمولة','plan.basic':'الباقة الأساسية','plan.premium':'الباقة المميزة',
   'bill.yourPlan':'باقتك','bill.perMonth':' / شهرياً',
   'bill.allowance':'المناوبات المشمولة',
@@ -1346,6 +1506,31 @@ Object.assign(STRINGS.en, {
   'common.remove':'Remove','nav.consumption':'Consumption',
   'dx.tabReference':'Reference','dc.tabCheck':'Dispensing check',
   'dc.frequent':'Most dispensed at your pharmacy',
+  'common.view':'View',
+  'acc.partner':'Samarra Drug Industries','acc.partnerTag':'Partner',
+  'nav.jobs':'Jobs','nav.shiftsTab':'Shifts','nav.placements':'Placements','nav.listings':'My listings',
+  'jobs.count':'{n} jobs listed','jobs.none':'No jobs listed right now.',
+  'jobs.note':'Permanent roles from companies and scientific bureaux — entirely separate from relief shifts.',
+  'ad.paid':'Paid placement',
+  'ls.job':'Job','ls.banner':'Banner','ls.draft':'Draft','ls.in_review':'In review',
+  'ls.live':'Live','ls.ended':'Ended','ls.refused':'Refused',
+  'pt.submit':'Submit a listing','pt.submitSub':'Fill in the basics and we call you to finish it.',
+  'pt.yours':'Your listings ({n})','pt.none':'Nothing submitted yet.','pt.untitled':'Untitled',
+  'pt.impressions':'Times shown',
+  'pt.impressionsNote':'A count per day, and nothing more. Who saw it is not recorded and cannot be worked out.',
+  'pt.reviewNote':'Nothing goes live until somebody at Saydali+ has reviewed it.',
+  'pt.role':'Role','pt.campaign':'Campaign name','pt.where':'Location',
+  'pt.from':'Starts','pt.contact':'Contact number','pt.send':'Send',
+  'pt.needFields':'The title, the date and a contact number are needed.',
+  'pt.sent':'Received as a draft — we will call you.',
+  'pt.callNote':'We ask only for what the listing cannot exist without. The rest — wording, artwork, price — we agree on the phone.',
+  'post.repeated':'Pre-filled from "{from}" — check the date and the rate before you post.',
+  'd.waitingOnYou':'{n} people are waiting on you',
+  'd.waitingSub':'Every day you leave it, the shift is less likely to be covered.',
+  'd.unfilledSoon':'1 shift starting soon and still unfilled',
+  'd.unfilledSub':'Saturday, 8:00 AM – 2:00 PM',
+  'd.postAgain':'Post one again',
+  'pl.placedNote':'You are on a placement — no need to browse for another.',
   'plan.commission':'Pay as you go','plan.basic':'Basic','plan.premium':'Premium',
   'bill.yourPlan':'Your plan','bill.perMonth':' / month',
   'bill.allowance':'Shifts included',
@@ -1722,8 +1907,21 @@ const ACCOUNTS = {
                                  on a phone. Turned on in settings. */
                               takesShifts:false },
   'zainab@uobaghdad.edu.iq':{ type:'student',    pharmacy:null, verified:true,  nameKey:'acc.zainab', tagKey:'acc.zainabTag', initials:{ar:'زت',en:'ZT'}, trial:false },
-  'admin@saydali.example':  { type:'admin',      pharmacy:null, verified:true,  nameKey:'acc.admin',  tagKey:'acc.adminTag',  initials:{ar:'مر',en:'PR'}, trial:false }
+  'admin@saydali.example':  { type:'admin',      pharmacy:null, verified:true,  nameKey:'acc.admin',  tagKey:'acc.adminTag',  initials:{ar:'مر',en:'PR'}, trial:false },
+  'sales@sdi.example':      { type:'partner',    pharmacy:null, verified:true,  nameKey:'acc.partner',tagKey:'acc.partnerTag',initials:{ar:'سد',en:'SD'}, trial:false,
+                              /* The Externals record this account speaks for. */
+                              company:'CO1' }
 };
+
+/* PARTNER / شريك (W15) — a company account, not a clinician.
+
+   It links to an Externals record and belongs to a manufacturer, scientific
+   bureau, importer, storage house or distributor. It is NOT another clinical
+   type: there is no Syndicate roster to verify it against, so it is verified by
+   the operator team in the CRM and nobody self-serves into existence. Same
+   shape a medical representative will need (W10), which is why it is one model
+   rather than two. */
+const isPartner = a => !!(a && a.type === 'partner');
 
 const isOwner = a => !!(a && a.type === 'pharmacist' && a.pharmacy);
 /* What the interface shows. Derived, never stored — change the link and the
@@ -1776,7 +1974,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0006';
+const VERSION = 'App_v0.0007';
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -1860,6 +2058,9 @@ const S = {
      month. The fee engine has no clock, so the caller owns the month boundary. */
   plan: 'basic',
   shiftsThisMonth: 0,
+  impressions: {},
+  browseTab: 'shifts',
+  partnerForm: { kind:'job' },
   onShiftToday: true,       // fixture: this pharmacist is working today
   applied: {},
   accepted: {},
@@ -1868,6 +2069,7 @@ const S = {
   handoffConfirmedByMe: false,
   handoffConfirmedByOther: true,   // the pharmacy has already signed off
   postType: 'shift',
+  repeatedFrom: null,
   rateType: 'hourly',
   rate: 5000,
   start: '08:00',
@@ -1974,6 +2176,10 @@ function screenBrowse() {
   // A student browsing the shift board would be browsing work they cannot
   // legally take. Same screen, different listings.
   const wanted = S.role === 'student' ? 'internship' : 'shift';
+  /* W13 — a student WITH a placement and a student without one want different
+     screens and were getting the same one. Placed, the board is noise and the
+     logbook week is everything. */
+  const placed = S.role === 'student' && S.weeks.some(w => w.status === 'approved');
   const list = DATA.listings
     .filter(l => (l.kind || 'shift') === wanted)
     .filter(l => S.district === 'all' || l.key === S.district);
@@ -1986,12 +2192,60 @@ function screenBrowse() {
      660px-capped wrapper around the card made it stop lining up with them at
      any window wider than about 700px: inset on one side, flush on the other.
      The card belongs in the same box as the board it sits above. */
+  /* W13 — a locum's home screen said nothing about the thing happening
+     tomorrow. The next shift is the single most time-sensitive fact they have
+     and it lived one tap away on My Shifts. */
+  const dueWeek = S.role === 'student'
+    ? (S.weeks.find(w => w.status === 'draft') ||
+       S.weeks.find(w => w.status !== 'approved' && w.status !== 'submitted'))
+    : null;
+  const weekCard = dueWeek
+    ? '<button class="check-card" onclick="goto(\'logbook\')">' +
+        '<span class="check-card-ico">' + icon('book') + '</span>' +
+        '<span class="check-card-body">' +
+          '<span class="check-card-t">' + esc(t('pl.dueWeek', { n:dueWeek.no })) + '</span>' +
+          '<span class="check-card-s">' + esc(t('pl.weeksApproved', {
+            n:S.weeks.filter(w => w.status === 'approved').length })) + '</span></span>' +
+        icon('chevron', 'more-chevron') +
+      '</button>'
+    : '';
+
+  const nextShift = S.role === 'pharmacist'
+    ? '<button class="card card-pad next-shift" onclick="goto(\'shifts\')">' +
+        '<span class="next-shift-head">' +
+          '<span class="pharmacy-name">' + esc(L(DATA.listings[1].pharmacy)) + '</span>' +
+          '<span class="badge badge-pending">' + esc(t('b.startsIn', { n:2 })) + '</span></span>' +
+        '<span class="meta-line">' + icon('clock') + esc(L(DATA.listings[1].when)) +
+          '<span style="color:var(--ink-faint)">·</span>' +
+          '<span class="figure">' + iqd(45000) + '</span></span>' +
+      '</button>'
+    : '';
+
+  /* W15 — Jobs is a tab of Browse, not a bar item. Browse is already "find
+     work"; a permanent job is the same errand on a longer timescale, and the
+     bar has no free slot. */
+  const jobsTab = S.browseTab === 'jobs';
+  const tabs = '<div class="segbar">' +
+    ['shifts', 'jobs'].map(k =>
+      '<button class="seg' + (S.browseTab === k ? ' on' : '') + '" onclick="setBrowseTab(' + attr(k) + ')">' +
+        esc(t(k === 'jobs' ? 'nav.jobs' : (wanted === 'internship' ? 'nav.placements' : 'nav.shiftsTab'))) +
+        (k === 'jobs' && liveJobs().length
+          ? '<span class="seg-n">' + fmt(liveJobs().length) + '</span>' : '') +
+      '</button>').join('') + '</div>';
+
+  if (jobsTab) return screenJobs(tabs);
+
   return '<div class="screen-body">' +
-    '<div class="browse-lead">' + checkCard() + '</div>' +
-    '<div class="chip-row">' + chips + '</div>' +
-    '<p class="section-eyebrow">' + list.length + ' ' +
-      esc(t(wanted === 'internship' ? 'l.openPlacements' : 'l.openShifts')) + '</p>' +
-    (list.length
+    '<div class="browse-lead">' + weekCard + checkCard() + nextShift + '</div>' +
+    '<div class="constrain stack">' + tabs + '</div>' +
+    (placed ? '' : '<div class="chip-row">' + chips + '</div>') +
+    (placed
+      ? '<div class="constrain stack">' +
+          '<p class="inline-note">' + esc(t('pl.placedNote')) + '</p></div>'
+      : '<p class="section-eyebrow">' + list.length + ' ' +
+        esc(t(wanted === 'internship' ? 'l.openPlacements' : 'l.openShifts')) + '</p>') +
+    (placed ? '' : '<div class="constrain stack">' + bannerFor('browse') + '</div>') +
+    (placed ? '' : list.length
       ? '<div class="grid-cards">' + list.map(listingCard).join('') + '</div>'
       : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
         esc(t('l.none')) + '</div>') +
@@ -2366,6 +2620,137 @@ function screenReference() {
           esc(t('dx.noMatch')) + '</div>') +
       drugDisclaimer() +
     '</div>';
+}
+
+/* ---------- Jobs ----------
+   Permanent vacancies from Partner accounts. A banner may sit here, which is
+   one of the three permitted surfaces: somebody reading job adverts is not
+   making a clinical decision. */
+function screenJobs(tabs) {
+  const list = liveJobs();
+  return '<div class="screen-body">' +
+    '<div class="constrain stack">' + tabs + '</div>' +
+    '<div class="constrain stack">' +
+      bannerFor('jobs') +
+      '<p class="section-eyebrow">' + esc(t('jobs.count', { n:list.length })) + '</p>' +
+      (list.length
+        ? '<div class="card">' + list.map(j =>
+            '<div class="row job-row">' +
+              '<span class="row-body">' +
+                '<span class="row-title" style="display:block;">' + esc(L(j.title)) + '</span>' +
+                '<span class="row-sub" style="display:block;">' + esc(L(companyName(j.company))) +
+                  ' · ' + esc(L(j.where)) + '</span>' +
+                '<span class="job-body">' + esc(L(j.body)) + '</span>' +
+              '</span></div>').join('') + '</div>'
+        : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+          esc(t('jobs.none')) + '</div>') +
+      '<p class="inline-note">' + esc(t('jobs.note')) + '</p>' +
+    '</div></div>';
+}
+
+function setBrowseTab(k) { S.browseTab = k; render(); scrollTop(); }
+
+/* ==========================================================================
+   THE PARTNER'S OWN SCREENS (W15)
+
+   A partner sees their own listings and can submit a new one. They cannot
+   publish: submitting raises a DRAFT and an operator phones to finish it. The
+   partner does the typing, the human check stays where P1 needs it.
+   ========================================================================== */
+
+function screenPartner() {
+  const mine = myListings();
+  const state = x => '<span class="state state-' + x.state + '">' + esc(t('ls.' + x.state)) + '</span>';
+  const acct = ACCOUNTS[S.email];
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<button class="check-card" onclick="goto(\'partnerNew\')">' +
+      '<span class="check-card-ico">' + icon('plus') + '</span>' +
+      '<span class="check-card-body">' +
+        '<span class="check-card-t">' + esc(t('pt.submit')) + '</span>' +
+        '<span class="check-card-s">' + esc(t('pt.submitSub')) + '</span></span>' +
+      icon('chevron', 'more-chevron') +
+    '</button>' +
+
+    '<p class="section-eyebrow">' + esc(t('pt.yours', { n:mine.length })) + '</p>' +
+    (mine.length
+      ? '<div class="card">' + mine.map(x =>
+          '<div class="row">' +
+            '<span class="row-body">' +
+              '<span class="row-title" style="display:block;">' +
+                esc(L(x.title) || t('pt.untitled')) + '</span>' +
+              '<span class="row-sub" style="display:block;">' +
+                esc(t(x.kind === 'job' ? 'ls.job' : 'ls.banner')) +
+                (x.kind === 'banner' ? ' · ' + esc(x.from) + ' → ' + esc(x.to) : '') + '</span>' +
+            '</span>' + state(x) + '</div>').join('') + '</div>'
+      : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+        esc(t('pt.none')) + '</div>') +
+
+    /* Impressions, counted without identity. This is the number a partner
+       wants and the most a partner may ever have: how many times, on which
+       day. Never who. */
+    (Object.keys(S.impressions).length
+      ? '<p class="section-eyebrow">' + esc(t('pt.impressions')) + '</p>' +
+        '<div class="card card-pad"><div class="tally">' +
+          Object.entries(S.impressions).map(([k, n]) =>
+            '<div class="tally-row"><span>' + esc(k.split('|')[0]) + ' · ' + esc(k.split('|')[1]) + '</span>' +
+            '<span class="figure">' + fmt(n) + '</span></div>').join('') +
+        '</div><p class="inline-note" style="margin-top:9px;">' + esc(t('pt.impressionsNote')) + '</p></div>'
+      : '') +
+
+    '<p class="inline-note">' + esc(t('pt.reviewNote')) + '</p>' +
+  '</div></div>';
+}
+
+/* The form asks only for what a listing cannot exist without. Everything
+   negotiable — wording, artwork, slot, price — is what the call is for, which
+   keeps it short enough that a partner finishes it. */
+function screenPartnerNew() {
+  const f = S.partnerForm;
+  const field = (k, label, placeholder) =>
+    '<div class="field"><label>' + esc(label) + '</label>' +
+      '<input value="' + esc(f[k] || '') + '" placeholder="' + esc(placeholder || '') + '" ' +
+      'oninput="setPartnerField(' + attr(k) + ', this.value)"></div>';
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<button class="btn-ghost" onclick="goto(\'partner\')">' + esc(t('common.back')) + '</button>' +
+    '<div class="segmented">' +
+      ['job', 'banner'].map(k =>
+        '<button class="' + (f.kind === k ? 'active' : '') + '" onclick="setPartnerField(\'kind\', ' +
+          attr(k) + ')">' + esc(t('ls.' + k)) + '</button>').join('') + '</div>' +
+
+    field('title', t(f.kind === 'job' ? 'pt.role' : 'pt.campaign'), '') +
+    (f.kind === 'job' ? field('where', t('pt.where'), '') : '') +
+    field('from', t('pt.from'), 'YYYY-MM-DD') +
+    field('contact', t('pt.contact'), '07XX XXX XXXX') +
+
+    (f.error ? '<div class="auth-error">' + esc(t(f.error)) + '</div>' : '') +
+    '<button class="btn-primary" onclick="submitPartnerListing()">' + esc(t('pt.send')) + '</button>' +
+    '<p class="inline-note">' + esc(t('pt.callNote')) + '</p>' +
+  '</div></div>';
+}
+
+function setPartnerField(k, v) { S.partnerForm[k] = v; S.partnerForm.error = null; render(); }
+
+function submitPartnerListing() {
+  const f = S.partnerForm;
+  // Only the fields a listing cannot exist without are required here. The rest
+  // is what the phone call collects.
+  if (!f.title || !f.from || !f.contact) { f.error = 'pt.needFields'; render(); return; }
+  const acct = ACCOUNTS[S.email];
+  LISTINGS.push({
+    id:(f.kind === 'job' ? 'J' : 'B') + Date.now().toString().slice(-5),
+    kind:f.kind, company:acct.company, state:'draft',
+    title:{ ar:f.title, en:f.title },
+    where:{ ar:f.where || '', en:f.where || '' },
+    body:{ ar:'', en:'' },
+    from:f.from, to:f.from, posted:TODAY_ISO, contact:f.contact,
+    surface:f.kind === 'banner' ? 'browse' : null
+  });
+  S.partnerForm = { kind:'job' };
+  S.screen = 'partner';
+  toast(t('pt.sent'));
+  render();
 }
 
 function drugDisclaimer() {
@@ -2751,11 +3136,36 @@ function screenDashboard() {
      they open the app to do. Their own pharmacist half sits below it rather
      than on a separate screen, because an owner covering somebody else's
      counter on Friday still wants to see it without switching hats. */
+  /* W13 — a home screen should PROMPT, not report. "2 applicants" is a fact;
+     "2 people are waiting on you" is a job. These two lead because they are the
+     only things on this screen where the owner's delay costs them a filled
+     shift. */
+  const needsYou =
+    '<button class="check-card" onclick="goto(\'applicants\')">' +
+      '<span class="check-card-ico">' + icon('users') + '</span>' +
+      '<span class="check-card-body">' +
+        '<span class="check-card-t">' + esc(t('d.waitingOnYou', { n:2 })) + '</span>' +
+        '<span class="check-card-s">' + esc(t('d.waitingSub')) + '</span></span>' +
+      '<span class="check-card-n figure">2</span>' +
+    '</button>' +
+    '<div class="card card-pad urgent-row">' + icon('clock') +
+      '<div><p class="urgent-t">' + esc(t('d.unfilledSoon', { n:1 })) + '</p>' +
+      '<p class="urgent-s">' + esc(t('d.unfilledSub')) + '</p></div>' +
+      '<button class="btn-ghost" onclick="goto(\'applicants\')">' + esc(t('common.view')) + '</button></div>' +
+    /* W12c — the most repetitive task on the pharmacy side, one tap. */
+    '<p class="section-eyebrow">' + esc(t('d.postAgain')) + '</p>' +
+    '<div class="repeat-row">' + RECENT_POSTS.map((r, i) =>
+      '<button class="repeat-chip" onclick="repeatPost(' + i + ')">' +
+        icon('plus') + '<span>' + esc(L(r.label)) + '</span>' +
+        '<span class="repeat-meta figure">' + fmt(r.rate) + '/' + esc(t('l.perHour').trim()) + '</span>' +
+      '</button>').join('') + '</div>';
+
   const pharmacyHalf =
     '<div class="section-head"><p class="section-eyebrow">' +
       esc(t('grp.pharmacy') + ' · ' + t('acc.pharmacyRahma')) + '</p>' +
       '<button class="link-btn" onclick="goto(\'post\')">' + esc(t('nav.post')) + '</button></div>' +
-    '<div class="stat-grid">' + stat(2, t('p.openPosts')) + stat(6, t('p.filledMonth')) + stat(2, t('p.applicants')) + '</div>' +
+    /* The three-stat row is gone (W13): it reported what the two prompts above
+       already act on, and a number nobody presses is furniture. */
     '<div class="stack" style="margin-top:12px;">' +
       post(lang==='ar'?'تغطية السبت':'Saturday coverage',
            (lang==='ar'?'8:00 ص – 2:00 م · ':'8:00 AM – 2:00 PM · ') + fmt(30000) + ' ' + t('common.iqd'),
@@ -2792,7 +3202,7 @@ function screenDashboard() {
   return '<div class="screen-body"><div class="constrain">' +
     (S.trial ? '<div class="banner banner-green" style="margin-bottom:16px;">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
-    pharmacyHalf + (S.takesShifts ? pharmacistHalf : '') +
+    needsYou + pharmacyHalf + (S.takesShifts ? pharmacistHalf : '') +
     '</div></div>';
 }
 
@@ -2954,6 +3364,10 @@ function screenMore() {
 
 function screenPost() {
   const hours = shiftHours(S.start, S.end);
+  const repeatNote = S.repeatedFrom
+    ? '<div class="banner banner-amber">' + icon('alert') + '<p>' +
+      esc(t('post.repeated', { from:S.repeatedFrom })) + '</p></div>'
+    : '';
   const total = S.rateType === 'hourly' ? S.rate * hours : S.rate;
   const now   = calculateFees({ grossAmount: total, pharmacyInTrial: S.trial, pharmacistInTrial:false });
   const later = calculateFees({ grossAmount: total, pharmacyInTrial:false, pharmacistInTrial:false });
@@ -2985,6 +3399,7 @@ function screenPost() {
       '<button class="active" onclick="setPostType(\'shift\')">' + esc(t('post.paidShift')) + '</button>' +
       '<button onclick="setPostType(\'internship\')">' + esc(t('post.internship')) + '</button>' +
     '</div>' +
+    repeatNote +
 
     '<div class="field"><label>' + esc(t('post.date')) + '</label><input type="date"></div>' +
 
@@ -3717,6 +4132,18 @@ function screenProfileAll() {
         '</div>'
       : '') +
 
+    /* What "More" used to hold (W13). Profile is where people already look for
+       their own things, and it was one screen tall with room to spare. */
+    (profileLinks().length
+      ? '<p class="section-eyebrow">' + esc(t('grp.account')) + '</p>' +
+        '<div class="card">' + profileLinks().map(([id, ic, key]) =>
+          '<button class="row" style="width:100%;text-align:start;" onclick="goto(' + attr(id) + ')">' +
+            '<span class="role-icon" style="width:32px;height:32px;border-radius:10px;">' + icon(ic) + '</span>' +
+            '<span class="row-body"><span class="row-title" style="display:block;">' + esc(t(key)) + '</span></span>' +
+            icon('chevron', 'more-chevron') +
+          '</button>').join('') + '</div>'
+      : '') +
+
     '<p class="section-eyebrow">' + esc(t('pr.language')) + '</p>' +
     '<div class="segmented">' +
       '<button class="' + (lang==='ar'?'active':'') + '" onclick="setLang(\'ar\')">العربية</button>' +
@@ -3742,6 +4169,8 @@ const SCREENS = {
   earnings:      { eyebrow:()=>currentName(), title:()=>t('nav.earnings'), body:screenEarnings },
   cv:            { eyebrow:()=>currentName(), title:()=>t('cv.title'), body:screenCv },
   drugs:         { eyebrow:()=>currentName(), title:()=>t('nav.drugs'), body:screenDrugs },
+  partner:       { eyebrow:()=>currentName(), title:()=>t('nav.listings'), body:screenPartner },
+  partnerNew:    { eyebrow:()=>t('nav.listings'), title:()=>t('pt.submit'), body:screenPartnerNew },
   consumption:   { eyebrow:()=>currentName(), title:()=>t('nav.consumption'), body:screenConsumption },
   drug:          { eyebrow:()=>t('nav.drugs'),
                    title:()=>{ const d = drugBySci(S.openDrug); return d ? drugName(d) : t('nav.drugs'); },
@@ -3795,11 +4224,18 @@ const SCREENS = {
    that answers them. The admin is the platform's reviewer and works in the
    CRM, which has the same list with editing on top. */
 const NAV = {
+  /* W13 — "More" held CV, notifications, incidents and profile. Notifications
+     are already on every screen in the header bell and Profile was in the
+     sidebar, so More was a two-item menu wearing a five-item coat. Its
+     contents moved into Profile, which is an account screen people already
+     look in, and the bar got a slot back. */
   pharmacist: [['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],['earnings','wallet','nav.earnings'],
-               ['drugs','pill','nav.drugs'],['more','grid','nav.more']],
+               ['drugs','pill','nav.drugs'],['profile','user','nav.profile']],
   student:    [['browse','home','nav.browse'],['placement','calendar','nav.placement'],
                ['logbook','book','nav.logbook'],['drugs','pill','nav.drugs'],['profile','user','nav.profile']],
-  admin:      [['queue','badge','nav.queue'],['profile','user','nav.profile']]
+  admin:      [['queue','badge','nav.queue'],['profile','user','nav.profile']],
+  /* A partner has two things to do here and neither is clinical. */
+  partner:    [['partner','clipboard','nav.listings'],['profile','user','nav.profile']]
 };
 
 /* The owner's bottom bar. Without shift-taking, the pharmacy screens fit on
@@ -3864,14 +4300,25 @@ function moreGroups() {
                                       ['profile','user','nav.profile']] }];
 }
 
+/* What Profile now carries for a flat role, since More is gone from the bar.
+   The owner keeps More: they have two jobs and genuinely more screens than a
+   phone bar holds. */
+function profileLinks() {
+  if (S.role === 'owner' || S.role === 'admin') return [];
+  if (S.role === 'student') return [['notifications','bell','nav.notifications']];
+  return [['cv','clipboard','nav.cv'], ['notifications','bell','nav.notifications'],
+          ['incidents','alert','nav.incidents']];
+}
+
 /* Sidebar-only extras for the flat roles. */
 /* Sidebar-only extras for the flat roles. A wide screen has the room the bottom
    bar does not, so nothing hides behind More there. */
 const NAV_EXTRA = {
   pharmacist: [['cv','clipboard','nav.cv'],['notifications','bell','nav.notifications'],
-               ['incidents','alert','nav.incidents'],['profile','user','nav.profile']],
+               ['incidents','alert','nav.incidents']],
   student:    [['notifications','bell','nav.notifications']],
-  admin:      []
+  admin:      [],
+  partner:    []
 };
 
 function greeting() {
@@ -4039,7 +4486,7 @@ function renderAuth() {
       '<h1 class="auth-heading">' + esc(t('auth.signIn')) + '</h1>' +
       '<p class="auth-sub">' + esc(t('auth.welcomeBack')) + '</p>' +
       (authError ? '<div class="auth-error">' + esc(t(authError)) + '</div>' : '') +
-      authField('email', t('auth.email'), 'email', null, true, S.email || '') +
+      authField('email', t('auth.email'), 'email', null, true, S.email || lastAccount() || '') +
       authField('password', t('auth.password'), 'password') +
       '<button class="btn-primary" onclick="attemptSignIn()">' + esc(t('auth.signIn')) + '</button>' +
       '<p class="auth-foot">' + esc(t('auth.newHere')) + ' ' +
@@ -4213,10 +4660,22 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0006.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0007.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
+
+/* Remembering the last account. localStorage can throw on a file:// page in a
+   private window and comes back empty after cleared site data, so every read
+   and write is guarded and the app works without it — it is a convenience, not
+   state anything depends on. */
+const LAST_ACCOUNT_KEY = 'saydali.lastAccount';
+function rememberAccount(mail) {
+  try { localStorage.setItem(LAST_ACCOUNT_KEY, mail); } catch (e) { /* private window */ }
+}
+function lastAccount() {
+  try { return localStorage.getItem(LAST_ACCOUNT_KEY) || null; } catch (e) { return null; }
+}
 
 function useAccount(mail){
   S.email = mail;
@@ -4237,6 +4696,7 @@ function attemptSignIn(){
 
 function signInAs(mail){
   const a = ACCOUNTS[mail];
+  rememberAccount(mail);
   S.email = mail;
   S.role = viewRole(a);
   S.verified = a.verified;
@@ -4249,6 +4709,8 @@ function signInAs(mail){
 }
 
 function signOut(){
+  /* Signing out clears the session, not the memory of who it was. Coming back
+     to a filled-in email is three taps saved on the screen everyone sees most. */
   S.signedIn = false;
   S.modal = null;
   authScreen = 'signin';
@@ -4278,7 +4740,35 @@ function addShiftToCalendar() {
   toast(t('b.addCalendar'));
 }
 
+/* W12c — repeat a shift.
+
+   Posting is six inputs and pharmacies post the same patterns every week. This
+   fills the form from a previous post and stops, for the owner to confirm: the
+   rate may have moved, the date certainly has, and a shift posted by accident
+   costs a real phone call to undo. Pre-filled and waiting is the version that
+   saves the typing without spending anybody's trust. */
+const RECENT_POSTS = [
+  { label:{ en:'Thursday evening', ar:'مساء الخميس' }, rateType:'hourly', rate:6000, start:'18:00', end:'23:00', type:'shift' },
+  { label:{ en:'Saturday cover',   ar:'تغطية السبت' }, rateType:'hourly', rate:5000, start:'08:00', end:'14:00', type:'shift' }
+];
+
+function repeatPost(i) {
+  const r = RECENT_POSTS[i];
+  if (!r) return;
+  S.postType = r.type;
+  S.rateType = r.rateType;
+  S.rate     = r.rate;
+  S.start    = r.start;
+  S.end      = r.end;
+  S.screen   = 'post';
+  S.repeatedFrom = L(r.label);
+  render();
+  scrollTop();
+}
+
 function goto(s){
+  // Arriving at the form any other way is a fresh post, not a repeat.
+  if (s === 'post') S.repeatedFrom = null;
   /* Arriving at the module from anywhere lands on the check. Moving between
      its own tabs does not go through here, so a pharmacist reading the
      reference is not yanked back mid-scroll. */

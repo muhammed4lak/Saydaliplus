@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0006">
+<meta name="version" content="CRM_v0.0007">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -758,7 +758,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0006';
+const VERSION = 'CRM_v0.0007';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1022,6 +1022,28 @@ Object.assign(STRINGS, {
   'perm.reportsRO':'You can run and pin every report here. Writing new SQL is an admin action, because a query can export the whole database.',
   'perm.cannotGrant':'Your account cannot grant that role.',
   'n.badEmail':'That is not an email address.'
+});
+
+/* Listings (W15) and invoices (W14 step 4). */
+Object.assign(STRINGS, {
+  'mod.listings':'Listings','mod.invoices':'Invoices',
+  'ls.job':'Job','ls.banner':'Banner',
+  'ls.draft':'Awaiting call','ls.in_review':'In review','ls.live':'Live',
+  'ls.ended':'Ended','ls.refused':'Refused',
+  'ls.note':'A partner fills a short form, which arrives here as a draft. Somebody phones to collect the rest — wording, artwork, slot, price — and only then does it go live. The human check sits between submission and publication, which is what the placement rules assume.',
+  'v.allListings':'All listings','v.awaitingCall':'Awaiting a call','v.jobsL':'Jobs',
+  'v.bannersL':'Banners','v.liveNow':'Live now',
+  'c.listingKind':'Type','c.partner':'Partner','c.surface':'Surface','c.from':'Starts',
+  'c.calledOn':'Called on','c.price':'Price',
+  'surf.browse':'Shift board','surf.jobs':'Jobs view','surf.home':'Home screen',
+
+  'inv.note':'Nothing pulls 9,000 IQD from a pharmacy on the first of the month: no wallet by design, and low card penetration. Collection is a person — an invoice is raised, somebody phones, an employee records what arrived. The ladder below is designed rather than discovered: open, due, overdue, grace, suspended.',
+  'inv.open':'Open','inv.due':'Due','inv.overdue':'Overdue','inv.grace':'Grace period',
+  'inv.suspended':'Suspended','inv.paid':'Paid',
+  'v.allInvoices':'All invoices','v.chase':'To chase','v.overdueI':'Overdue','v.paidI':'Paid',
+  'c.invoiceNo':'Invoice','c.month':'Month','c.amount':'Amount','c.dueOn':'Due',
+  'c.collected':'Collected','c.method':'Method',
+  'pay.cash':'Cash','pay.transfer':'Bank transfer','pay.zaincash':'ZainCash'
 });
 
 /* ==========================================================================
@@ -1618,6 +1640,47 @@ const DATA = {
       text:{ar:'موثّقة منذ 24 يوماً ولم تنشر أي طلب.', en:'Verified 24 days ago and has posted nothing.'} }
   ],
 
+  /* INVOICES (W14 step 4). The part of the subscription that is not technical.
+
+     There is no rail that pulls 9,000 IQD from a pharmacy on the first of the
+     month: no wallet by principle, and low card penetration. So collection is a
+     human workflow — an invoice is raised, somebody phones, an employee records
+     what arrived. That is what this table is, and why it carries who collected
+     and when rather than a `paid` checkbox.
+
+     The dunning ladder is designed here rather than discovered later:
+       open → due → overdue → grace → suspended
+     Left undesigned, this becomes forty pharmacies three months in arrears and
+     nobody's job to chase them. */
+  invoices: [],
+
+  /* LISTINGS (W15). Jobs and banners from Partner accounts. A partner fills a
+     short form, which raises a DRAFT; an operator phones to collect the rest;
+     only then does it go live. The human check sits between submission and
+     publication, which is what the P1 criteria assume. */
+  listings: [
+    { id:'J1', kind:'job', company:'CO1', state:'live',
+      title:'Production pharmacist — Samarra', where:'Samarra', from:'2026-09-08', to:'2026-10-08',
+      contact:'07711110001', calledOn:'2026-09-07', calledBy:'u2', notes:'Rate and shift pattern confirmed.',
+      surface:null, price:0 },
+    { id:'J2', kind:'job', company:'CO4', state:'live',
+      title:'Medical representative — Baghdad', where:'Baghdad', from:'2026-09-11', to:'2026-10-11',
+      contact:'07711110004', calledOn:'2026-09-10', calledBy:'u3', notes:'Car allowance wording agreed.',
+      surface:null, price:0 },
+    { id:'J3', kind:'job', company:'CO2', state:'in_review',
+      title:'Quality assurance pharmacist', where:'Mosul', from:'2026-09-18', to:'2026-10-18',
+      contact:'07711110002', calledOn:'2026-09-17', calledBy:'u2', notes:'Waiting on the salary band.',
+      surface:null, price:0 },
+    { id:'B1', kind:'banner', company:'CO1', state:'live',
+      title:'Samamox — now available', where:null, from:'2026-09-14', to:'2026-09-28',
+      contact:'07711110001', calledOn:'2026-09-12', calledBy:'u1', notes:'Day rate agreed, artwork supplied.',
+      surface:'browse', price:180000 },
+    { id:'B2', kind:'banner', company:'CO4', state:'draft',
+      title:'Autumn campaign', where:null, from:'2026-10-01', to:'2026-10-14',
+      contact:'07711110004', calledOn:null, calledBy:null, notes:'',
+      surface:'jobs', price:0 }
+  ],
+
   /* The billing ledger. One row per charge, whatever its source: a shift's
      commission, a monthly subscription, and later a W15 listing fee. Every row
      says WHY it is the amount it is, because a zero with no reason is
@@ -2070,6 +2133,58 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
   DATA.ledger.sort((a, b) => a.date.localeCompare(b.date));
 })();
 
+/* One invoice per pharmacy per month, totalling that month's ledger rows. The
+   invoice is what a person chases; the ledger is what it is made of. States are
+   walked deliberately so the dunning queue has something in every rung. */
+(function seedInvoices() {
+  const byKey = {};
+  DATA.ledger.forEach(r => {
+    const k = r.pharmacy + '|' + r.date.slice(0, 7);
+    byKey[k] = (byKey[k] || 0) + r.amount;
+  });
+  const months = [...new Set(DATA.ledger.map(r => r.date.slice(0, 7)))].sort();
+  const current = months[months.length - 1];
+  let n = 1;
+  Object.entries(byKey).forEach(([k, amount]) => {
+    if (!amount) return;
+    const [pharmacy, month] = k.split('|');
+    const age = months.length - 1 - months.indexOf(month);
+    // Older months are settled; the current one is where the work is.
+    const state = age >= 2 ? 'paid'
+      : age === 1 ? (pharmacy === 'P4' ? 'overdue' : 'paid')
+      : (pharmacy === 'P1' ? 'paid' : pharmacy === 'P4' ? 'grace' : 'due');
+    DATA.invoices.push({
+      id:'INV-' + String(n++).padStart(4, '0'),
+      pharmacy, month, amount, state,
+      issued: month + '-01',
+      dueOn: month + '-15',
+      collectedOn: state === 'paid' ? month + '-09' : null,
+      collectedBy: state === 'paid' ? ['u1', 'u2', 'u3'][n % 3] : null,
+      method: state === 'paid' ? ['cash', 'transfer', 'zaincash'][n % 3] : null
+    });
+  });
+})();
+
+/* The two state machines this build adds, and the chips that draw them. Order
+   matters: it is what a column sorts by, so a list sorted by status walks the
+   workflow rather than the alphabet. */
+const LISTING_STATES = ['draft', 'in_review', 'live', 'ended', 'refused'];
+const INVOICE_STATES = ['open', 'due', 'overdue', 'grace', 'suspended', 'paid'];
+
+const listingStateChip = st => chip(
+  st === 'live' ? 'chip-good' : st === 'refused' ? 'chip-bad' :
+  st === 'in_review' ? 'chip-warn' : 'chip-mute',
+  st === 'live' ? 'check-circle' : st === 'refused' ? 'x' : st === 'draft' ? 'phone' : 'clock',
+  t('ls.' + st));
+
+/* The dunning ladder, drawn so a queue reads at a glance: paid is quiet, and
+   the further down the ladder a pharmacy has gone the louder it gets. */
+const invoiceStateChip = st => chip(
+  st === 'paid' ? 'chip-good' : st === 'suspended' ? 'chip-bad' :
+  st === 'grace' || st === 'overdue' ? 'chip-warn' : 'chip-mute',
+  st === 'paid' ? 'check-circle' : st === 'suspended' ? 'x' : 'clock',
+  t('inv.' + st));
+
 const SEV_RANK = { critical:3, serious:2, warning:1 };
 /* The seed is '', whose rank is undefined — and every comparison with undefined
    is false, so `rank[sev] > rank[seed]` never fired and every drug reported no
@@ -2283,6 +2398,56 @@ const MODULES = {
     ]
   },
 
+  /* ---------- Listings (W15): what Partners buy ----------
+     Segmented by listing type the way Orders is segmented by order type. The
+     view that matters operationally is `awaitingCall`: a partner submitted a
+     form and somebody has to phone them before anything goes live. */
+  listings: {
+    icon:'clipboard', data:() => DATA.listings, note:'ls.note',
+    views:{
+      all:          { label:'v.allListings',  fn:() => true },
+      awaitingCall: { label:'v.awaitingCall', fn:x => x.state === 'draft' },
+      jobs:         { label:'v.jobsL',        fn:x => x.kind === 'job' },
+      banners:      { label:'v.bannersL',     fn:x => x.kind === 'banner' },
+      liveNow:      { label:'v.liveNow',      fn:x => x.state === 'live' }
+    },
+    facets:['listingKind', 'listingState', 'listingSurface'],
+    columns:[
+      { key:'title',   label:'c.name',       main:true, get:x => x.title || '—' },
+      { key:'kind',    label:'c.listingKind', chip:x => chip(x.kind === 'job' ? 'chip-info' : 'chip-warn',
+                                                 x.kind === 'job' ? 'users' : 'flag', t('ls.' + x.kind)),
+                       sortAs:x => x.kind },
+      { key:'company', label:'c.partner',    get:x => { const c = companyOf(x.company); return c ? L(c.name) : x.company; } },
+      { key:'state',   label:'c.status',     chip:x => listingStateChip(x.state), sortAs:x => LISTING_STATES.indexOf(x.state) },
+      { key:'surface', label:'c.surface',    get:x => x.surface ? t('surf.' + x.surface) : '—' },
+      { key:'from',    label:'c.from',       get:x => fmtDate(x.from), sortAs:x => x.from },
+      { key:'called',  label:'c.calledOn',   get:x => x.calledOn ? fmtDate(x.calledOn) : '—', sortAs:x => x.calledOn || '' },
+      { key:'price',   label:'c.price',      num:true, get:x => x.price ? fmt(x.price) : '—', sortAs:x => x.price || 0 }
+    ]
+  },
+
+  /* ---------- Invoices (W14 step 4): the collection workflow ---------- */
+  invoices: {
+    icon:'wallet', data:() => DATA.invoices, note:'inv.note',
+    views:{
+      all:      { label:'v.allInvoices', fn:() => true },
+      chase:    { label:'v.chase',       fn:i => i.state !== 'paid' },
+      overdue:  { label:'v.overdueI',    fn:i => i.state === 'overdue' || i.state === 'grace' },
+      paid:     { label:'v.paidI',       fn:i => i.state === 'paid' }
+    },
+    facets:['invoiceState', 'invoiceMonth', 'invoiceMethod'],
+    columns:[
+      { key:'id',        label:'c.invoiceNo', main:true, mono:true, get:i => i.id },
+      { key:'pharmacy',  label:'c.pharmacy',  get:i => recordName('pharmacies', i.pharmacy) },
+      { key:'month',     label:'c.month',     mono:true, get:i => i.month },
+      { key:'amount',    label:'c.amount',    num:true, get:i => fmt(i.amount), sortAs:i => i.amount },
+      { key:'state',     label:'c.status',    chip:i => invoiceStateChip(i.state), sortAs:i => INVOICE_STATES.indexOf(i.state) },
+      { key:'dueOn',     label:'c.dueOn',     get:i => fmtDate(i.dueOn), sortAs:i => i.dueOn },
+      { key:'collected', label:'c.collected', get:i => i.collectedOn ? fmtDate(i.collectedOn) : '—', sortAs:i => i.collectedOn || '' },
+      { key:'method',    label:'c.method',    get:i => i.method ? t('pay.' + i.method) : '—' }
+    ]
+  },
+
   /* ---------- Syndicate roster ---------- */
   syndicate: {
     icon:'badge', data:() => DATA.syndicate, note:'sy.note', importer:'syndicate',
@@ -2338,6 +2503,12 @@ function orderWhen(o) {
 /* ---------- Facets ---------- */
 
 const FACETS = {
+  listingKind:    { label:'c.listingKind', of:x => x.kind,    name:v => t('ls.' + v) },
+  listingState:   { label:'c.status',      of:x => x.state,   name:v => t('ls.' + v) },
+  listingSurface: { label:'c.surface',     of:x => x.surface, name:v => t('surf.' + v) },
+  invoiceState:   { label:'c.status',      of:i => i.state,   name:v => t('inv.' + v) },
+  invoiceMonth:   { label:'c.month',       of:i => i.month,   name:v => v },
+  invoiceMethod:  { label:'c.method',      of:i => i.method,  name:v => t('pay.' + v) },
   owner:          { label:'f.owner',        of:r => r.owner,        name:v => L(USERS[v].name) },
   district:       { label:'f.district',     of:r => r.district,     name:v => districtName(v) },
   userType:       { label:'c.userType',     of:r => isOwner(r) ? 'owner' : r.type,
@@ -3348,6 +3519,16 @@ function sqlTables() {
       overrides_doses:(b.dosesOverride && b.dosesOverride.length) ? 1 : 0,
       doses:brandDoses(b).join(' | ')
     })),
+    invoices: DATA.invoices.map(r => ({
+      id:r.id, pharmacy_id:r.pharmacy, month:r.month, amount:r.amount, state:r.state,
+      issued:r.issued, due_on:r.dueOn, collected_on:r.collectedOn,
+      collected_by:r.collectedBy, method:r.method
+    })),
+    listings: DATA.listings.map(r => ({
+      id:r.id, kind:r.kind, company_id:r.company, state:r.state, title:r.title,
+      starts:r.from, ends:r.to, surface:r.surface, price:r.price,
+      called_on:r.calledOn, called_by:r.calledBy
+    })),
     /* The billing ledger. One shape for every charge, which is the point: a
        report can total what a pharmacy owes without knowing where the money
        came from. `reason` is what separates a zero the plan absorbed from a
@@ -3653,6 +3834,12 @@ const REPORTS = [
     sql:"SELECT COUNT(*) AS drugs\nFROM drugs\nWHERE brands = 0" },
   { id:'R9', name:'Total commission this month', viz:'number',
     sql:"SELECT SUM(commission) AS iqd\nFROM pharmacies" },
+  { id:'R16', name:'Unpaid invoices, oldest first', viz:'table',
+    sql:"SELECT p.name, i.month, i.amount, i.state\nFROM invoices i\nJOIN pharmacies p ON i.pharmacy_id = p.id\nWHERE i.state != 'paid'\nORDER BY i.month" },
+  { id:'R17', name:'Collected this month', viz:'number',
+    sql:"SELECT SUM(amount) AS iqd\nFROM invoices\nWHERE state = 'paid' AND month = '2026-09'" },
+  { id:'R18', name:'Listings by state', viz:'bar',
+    sql:"SELECT state, COUNT(*) AS listings\nFROM listings\nGROUP BY state\nORDER BY listings DESC" },
   { id:'R13', name:'Monthly recurring revenue by plan', viz:'bar',
     sql:"SELECT reason, SUM(amount) AS iqd\nFROM ledger\nWHERE kind = 'subscription' AND date LIKE '2026-09%'\nGROUP BY reason\nORDER BY iqd DESC" },
   { id:'R14', name:'What each pharmacy owes this month', viz:'table',
@@ -4385,7 +4572,7 @@ function confirmTransfer() {
    8. STATE & RENDER
    ========================================================================== */
 
-const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs', 'reports'];
+const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'listings', 'invoices', 'universities', 'syndicate', 'drugs', 'reports'];
 
 /* Team sits outside TABS on purpose: it is who may do what, not a pile of
    records the team works through. It is reached from the account menu, the
@@ -4394,12 +4581,12 @@ const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'universitie
 const S = {
   tab:'home',
   record:null,              // { mod, id }
-  view:{ orders:'all', users:'all', pharmacies:'all', companies:'all',
+  view:{ listings:'all', invoices:'all', orders:'all', users:'all', pharmacies:'all', companies:'all',
          universities:'all', syndicate:'all', drugs:'all' },
-  filters:{ orders:{}, users:{}, pharmacies:{}, companies:{},
+  filters:{ listings:{}, invoices:{}, orders:{}, users:{}, pharmacies:{}, companies:{},
             universities:{}, syndicate:{}, drugs:{} },
   sort:{},
-  picked:{ orders:[], users:[], pharmacies:[], companies:[],
+  picked:{ listings:[], invoices:[], orders:[], users:[], pharmacies:[], companies:[],
            universities:[], syndicate:[], drugs:[] },
   viewMenu:null,
 
@@ -4487,7 +4674,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0006.html';
+const PEER_APP = '../demo/saydali-plus_v0.0007.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');

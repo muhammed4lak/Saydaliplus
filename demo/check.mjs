@@ -415,13 +415,31 @@ ok('an owner reaches it from More', await d.evaluate(() =>
    ownerGroups().some(g => g.items.some(x => x[0] === 'drugs'))));
 ok('a student has it in the bar — a placement is twelve weeks of being asked',
    await d.evaluate(() => navFor('student').some(x => x[0] === 'drugs')));
-ok('the CV the bar gave up for it is still reachable from More',
-   await d.evaluate(() => moreGroups().some(g => g.items.some(x => x[0] === 'cv'))));
-ok('and so is incident reporting, which had no route on a phone before',
-   await d.evaluate(() => moreGroups().some(g => g.items.some(x => x[0] === 'incidents'))));
-await go(d, 'more');
-ok('More renders those rows rather than an empty screen',
-   await d.locator('.row').count() >= 4);
+/* W13 folded More into Profile for the flat roles and gave the bar its slot
+   back. The owner keeps More — two jobs, genuinely more screens than a phone
+   bar holds. */
+ok('the pharmacist bar no longer carries More',
+   await d.evaluate(() => !navFor('pharmacist').some(x => x[0] === 'more')));
+ok('and carries Profile instead',
+   await d.evaluate(() => navFor('pharmacist').some(x => x[0] === 'profile')));
+ok('the CV moved into Profile, where people already look',
+   await d.evaluate(() => profileLinks().some(x => x[0] === 'cv')));
+ok('and so did incident reporting',
+   await d.evaluate(() => profileLinks().some(x => x[0] === 'incidents')));
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => setLang('en'));
+await go(d, 'profile');
+ok('Profile renders those rows rather than hiding them',
+   /My CV/.test(await d.locator('#app-body').innerText()));
+await signOut(d);
+await signIn(d, 'rahma@example.com');
+await d.evaluate(() => setLang('en'));
+ok('the owner keeps More, and it still lists their groups',
+   await d.evaluate(() => S.role === 'owner' && moreGroups().length > 1));
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => setLang('en'));
 
 console.log('\nboth languages');
 await d.evaluate(() => { setLang('ar'); goto('drugs'); setDrugTab('reference'); });
@@ -817,6 +835,190 @@ ok('including a number to call',
    (await d.locator('.shift-actions a').first().getAttribute('href')).startsWith('tel:'));
 ok('and a calendar entry the phone can take',
    await d.evaluate(() => typeof addShiftToCalendar === 'function'));
+
+console.log('\njobs, banners, and the line they may not cross (W15)');
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => { setLang('en'); goto('browse'); });
+await d.waitForTimeout(250);
+ok('Jobs is a tab of Browse, not a bar item',
+   await d.locator('.segbar .seg').count() === 2
+   && !(await d.evaluate(() => navFor('pharmacist').some(x => x[0] === 'jobs'))));
+await d.evaluate(() => setBrowseTab('jobs'));
+await d.waitForTimeout(250);
+ok('it lists the live jobs and only those',
+   await d.locator('.job-row').count() === await d.evaluate(() => liveJobs().length)
+   && await d.evaluate(() => liveJobs().every(j => j.state === 'live')));
+ok('each names the company behind it',
+   /Samarra|Iraqi Drug Agency/.test(await d.locator('#app-body').innerText()));
+ok('and says these are not relief shifts',
+   /separate from relief shifts/i.test(await d.locator('#app-body').innerText()));
+
+/* THE P1 BOUNDARY. This is the assertion that matters more than any other in
+   this build: a placement may never appear beside clinical content. */
+{
+  const seen = [];
+  for (const [screen, setup] of [
+    ['browse',  () => { setBrowseTab('shifts'); goto('browse'); }],
+    ['jobs',    () => { setBrowseTab('jobs'); goto('browse'); }],
+    ['drugs (helper)',    () => { goto('drugs'); setDrugTab('check'); }],
+    ['drugs (reference)', () => { goto('drugs'); setDrugTab('reference'); }],
+    ['drug record',       () => { goto('drugs'); openDrug('Warfarin'); }],
+    ['shifts',  () => goto('shifts')],
+    ['earnings',() => goto('earnings')],
+    ['profile', () => goto('profile')]
+  ]) {
+    await d.evaluate(f => eval('(' + f + ')()'), setup.toString());
+    await d.waitForTimeout(160);
+    if (await d.locator('.banner-slot').count() > 0) seen.push(screen);
+  }
+  ok(`a paid placement appears only on permitted surfaces (found on: ${seen.join(', ') || 'none'})`,
+     seen.length > 0 && !seen.some(x => x.startsWith('drug')));
+  ok('and never anywhere near the Dispensing Helper or the reference',
+     !seen.includes('drugs (helper)') && !seen.includes('drugs (reference)') && !seen.includes('drug record'));
+}
+await d.evaluate(() => { setBrowseTab('shifts'); goto('browse'); });
+await d.waitForTimeout(200);
+ok('a placement is labelled as paid, in the reader’s language',
+   /paid placement/i.test(await d.locator('.banner-slot').innerText()));
+/* A draft banner is real content with a real company behind it. The only thing
+   keeping it off the screen is its state, so the check looks for its text on
+   the surface it was bought for, not just wherever the page happens to be. */
+ok('a banner awaiting review is not shown to anybody, on its own surface either',
+   await d.evaluate(() => {
+     const drafts = LISTINGS.filter(x => x.kind === 'banner' && x.state !== 'live');
+     if (!drafts.length) return false;
+     let clean = true;
+     for (const tab of ['shifts', 'jobs']) {
+       setBrowseTab(tab); goto('browse');
+       const shown = document.getElementById('app').innerText;
+       if (drafts.some(b => shown.indexOf(b.title.en) >= 0)) clean = false;
+     }
+     return clean;
+   }));
+
+/* Impressions: counted, but with nothing that could become targeting. */
+ok('an impression is counted per placement per day, and holds no identity',
+   await d.evaluate(() => {
+     S.impressions = {};
+     setBrowseTab('shifts'); goto('browse');
+     setBrowseTab('jobs'); goto('browse');
+     const keys = Object.keys(S.impressions);
+     return keys.length > 0
+       && keys.every(k => k.split('|').length === 2 && /^\d{4}-\d{2}-\d{2}$/.test(k.split('|')[1]));
+   }));
+ok('nothing recorded says WHO saw it',
+   await d.evaluate(() => JSON.stringify(S.impressions).indexOf('@') < 0));
+
+console.log('\nthe Partner account (W15 / W10)');
+await signOut(d);
+await signIn(d, 'sales@sdi.example');
+await d.evaluate(() => setLang('en'));
+await d.waitForTimeout(250);
+ok('a partner signs in to their own view, not a pharmacist’s',
+   await d.evaluate(() => S.role === 'partner' && S.screen === 'partner'));
+ok('and gets no clinical screens at all',
+   await d.evaluate(() => !navFor('partner').some(x => ['drugs', 'browse', 'shifts'].includes(x[0]))));
+ok('they see their own listings and nobody else’s',
+   await d.evaluate(() => {
+     const mine = myListings();
+     return mine.length > 0 && mine.every(x => x.company === ACCOUNTS[S.email].company);
+   }));
+ok('each shows the state it is in',
+   await d.locator('.state').count() > 0);
+ok('and the screen says nothing goes live without review',
+   /nothing goes live until|reviewed/i.test(await d.locator('#app-body').innerText()));
+
+await d.evaluate(() => goto('partnerNew'));
+await d.waitForTimeout(250);
+ok('the submission form asks for four things, not forty',
+   await d.locator('.field input').count() === 4);
+{
+  const before = await d.evaluate(() => LISTINGS.length);
+  await d.locator('.btn-primary').click();
+  await d.waitForTimeout(200);
+  ok('an incomplete form is refused rather than filed',
+     await d.locator('.auth-error').count() === 1
+     && await d.evaluate(() => LISTINGS.length) === before);
+  await d.evaluate(() => {
+    setPartnerField('title', 'Regulatory affairs pharmacist');
+    setPartnerField('where', 'Baghdad');
+    setPartnerField('from', '2026-10-05');
+    setPartnerField('contact', '07711110001');
+  });
+  await d.waitForTimeout(150);
+  await d.locator('.btn-primary').click();
+  await d.waitForTimeout(250);
+  ok('a complete one is accepted', await d.evaluate(() => LISTINGS.length) === before + 1);
+  /* The whole point of the hybrid: the partner types, a person publishes. */
+  ok('and it arrives as a DRAFT — a partner cannot publish',
+     await d.evaluate(() => LISTINGS[LISTINGS.length - 1].state === 'draft'));
+  ok('so it is not yet visible to any pharmacist',
+     await d.evaluate(() => !liveJobs().some(j => L(j.title) === 'Regulatory affairs pharmacist')));
+  ok('it carries the contact number the call will use',
+     await d.evaluate(() => !!LISTINGS[LISTINGS.length - 1].contact));
+  ok('and it is filed against the partner’s own company',
+     await d.evaluate(() => LISTINGS[LISTINGS.length - 1].company === ACCOUNTS[S.email].company));
+}
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => setLang('en'));
+
+console.log('\nrepeat a shift, pre-filled (W12c)');
+await signOut(d);
+await signIn(d, 'rahma@example.com');
+await d.evaluate(() => { setLang('en'); goto('dashboard'); });
+await d.waitForTimeout(250);
+ok('the dashboard offers the patterns this pharmacy already posts',
+   await d.locator('.repeat-chip').count() === 2);
+await d.locator('.repeat-chip').first().click();
+await d.waitForTimeout(250);
+ok('tapping one opens the post form',
+   await d.evaluate(() => S.screen === 'post'));
+ok('pre-filled from that pattern rather than posted outright',
+   await d.evaluate(() => S.rate === 6000 && S.start === '18:00' && S.end === '23:00'));
+ok('and it says so, so nobody posts last week’s rate blind',
+   /Pre-filled from/.test(await d.locator('#app-body').innerText()));
+ok('reaching the form any other way is a fresh post, not a repeat',
+   await d.evaluate(() => { goto('dashboard'); goto('post'); return S.repeatedFrom === null; }));
+
+console.log('\nthe home screens prompt rather than report (W13)');
+await d.evaluate(() => goto('dashboard'));
+await d.waitForTimeout(250);
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('the owner is told who is waiting on them, not given a number',
+     /people are waiting on you/.test(txt));
+  ok('and what is unfilled and starting soon', /unfilled/.test(txt));
+  ok('the three-stat reporting row is gone',
+     !/open posts/i.test(txt));
+}
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => { setLang('en'); setBrowseTab('shifts'); goto('browse'); });
+await d.waitForTimeout(250);
+ok('a locum’s home names the shift happening in two days',
+   await d.locator('.next-shift').count() === 1);
+await signOut(d);
+await signIn(d, 'zainab@uobaghdad.edu.iq');
+await d.evaluate(() => { setLang('en'); setBrowseTab('shifts'); goto('browse'); });
+await d.waitForTimeout(250);
+ok('a placed student leads with the logbook week, not a board they cannot use',
+   await d.locator('.check-card').first().innerText().then(x => /Week \d+ is due/.test(x)));
+ok('and the placement board is not shown to them at all',
+   await d.locator('.grid-cards').count() === 0);
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => setLang('en'));
+
+console.log('\nremembering the account (W12e)');
+ok('signing in remembers who it was',
+   await d.evaluate(() => lastAccount() === 'ahmed@example.com'));
+await signOut(d);
+await d.waitForTimeout(200);
+ok('and the sign-in page comes back filled in',
+   await d.locator('#email').inputValue() === 'ahmed@example.com');
+await signIn(d, 'ahmed@example.com');
 
 console.log('\nevery inline handler actually parses');
 /* A value interpolated into onclick="f(...)" without escaping its own quotes

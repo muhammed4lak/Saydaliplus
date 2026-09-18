@@ -56,7 +56,8 @@ async function open(w = 1520, h = 950) {
   return p;
 }
 const tab = async (p, k) => { await p.evaluate(x => goTab(x), k); await p.waitForTimeout(220); };
-const MODS = ['orders', 'users', 'pharmacies', 'companies', 'universities', 'syndicate', 'drugs'];
+const MODS = ['orders', 'users', 'pharmacies', 'companies', 'listings', 'invoices',
+              'universities', 'syndicate', 'drugs'];
 const TABS_ALL = [...MODS, 'reports'];
 
 const p = await open();
@@ -73,7 +74,7 @@ ok('the file states the build its name claims',
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
-ok('nine tabs: home, the seven modules, and reports', await p.locator('.tab').count() === 9);
+ok('eleven tabs: home, the nine modules, and reports', await p.locator('.tab').count() === 11);
 ok('the document is English, left to right', await p.evaluate(() =>
    document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
 ok('there is no language toggle left to press',
@@ -669,6 +670,89 @@ ok('and the absorbed-shift count matches the rows it counts',
    await p.evaluate(() =>
      runReport(reportById('R15')).rows[0].shifts ===
      DATA.ledger.filter(r => r.kind === 'covered').length));
+
+console.log('\ninvoices: the part of a subscription that is not technical');
+await tab(p, 'invoices');
+ok('an invoice totals its month of ledger rows',
+   await p.evaluate(() => DATA.invoices.every(i => {
+     const want = DATA.ledger
+       .filter(r => r.pharmacy === i.pharmacy && r.date.slice(0, 7) === i.month)
+       .reduce((n, r) => n + r.amount, 0);
+     return i.amount === want;
+   })));
+ok('no invoice is raised for a month with nothing to charge',
+   await p.evaluate(() => DATA.invoices.every(i => i.amount > 0)));
+/* The ladder is the point: designed up front, not discovered when forty
+   pharmacies are three months in arrears. */
+ok('every invoice sits on a rung of the dunning ladder',
+   await p.evaluate(() => DATA.invoices.every(i => INVOICE_STATES.includes(i.state))));
+ok('and the queue has something on more than one rung',
+   await p.evaluate(() => new Set(DATA.invoices.filter(i => i.state !== 'paid').map(i => i.state)).size > 1));
+ok('a paid invoice records who collected it, when, and how — not just a flag',
+   await p.evaluate(() => DATA.invoices.filter(i => i.state === 'paid')
+     .every(i => i.collectedOn && i.collectedBy && i.method)));
+ok('an unpaid one records none of those',
+   await p.evaluate(() => DATA.invoices.filter(i => i.state !== 'paid')
+     .every(i => !i.collectedOn && !i.collectedBy && !i.method)));
+ok('the "to chase" view is exactly the unpaid ones',
+   await p.evaluate(() => {
+     S.view.invoices = 'chase'; render();
+     const shown = visibleRows('invoices');
+     S.view.invoices = 'all'; render();
+     return shown.length === DATA.invoices.filter(i => i.state !== 'paid').length
+       && shown.every(i => i.state !== 'paid');
+   }));
+ok('and it is reportable, oldest first',
+   await p.evaluate(() => {
+     const r = runReport(reportById('R16'));
+     return r.ok && r.rows.length > 0
+       && r.rows.every((x, i) => i === 0 || r.rows[i - 1].month <= x.month);
+   }));
+
+console.log('\nlistings: a partner fills a form, a person finishes it');
+await tab(p, 'listings');
+ok('the module holds both kinds',
+   await p.evaluate(() => ['job', 'banner'].every(k => DATA.listings.some(x => x.kind === k))));
+ok('every listing sits on a state the machine defines',
+   await p.evaluate(() => DATA.listings.every(x => LISTING_STATES.includes(x.state))));
+/* The workflow claim: nothing reaches a pharmacist without a human step. */
+ok('nothing is live that nobody phoned about',
+   await p.evaluate(() => DATA.listings.filter(x => x.state === 'live')
+     .every(x => !!x.calledOn && !!x.calledBy)));
+ok('and a draft is exactly a listing awaiting that call',
+   await p.evaluate(() => DATA.listings.filter(x => x.state === 'draft')
+     .every(x => !x.calledOn)));
+ok('the operational view is the queue of drafts',
+   await p.evaluate(() => {
+     S.view.listings = 'awaitingCall'; render();
+     const shown = visibleRows('listings');
+     S.view.listings = 'all'; render();
+     return shown.every(x => x.state === 'draft') && shown.length > 0;
+   }));
+/* P1, enforced in the data rather than trusted to a screen. */
+ok('a banner names a permitted surface and never a clinical one',
+   await p.evaluate(() => DATA.listings.filter(x => x.kind === 'banner')
+     .every(x => ['browse', 'jobs', 'home'].includes(x.surface))));
+ok('a job listing books no surface at all',
+   await p.evaluate(() => DATA.listings.filter(x => x.kind === 'job').every(x => !x.surface)));
+ok('two live banners never hold the same surface on overlapping dates',
+   await p.evaluate(() => {
+     const live = DATA.listings.filter(x => x.kind === 'banner' && x.state === 'live');
+     for (let i = 0; i < live.length; i++) {
+       for (let j = i + 1; j < live.length; j++) {
+         const a = live[i], b = live[j];
+         if (a.surface === b.surface && a.from <= b.to && b.from <= a.to) return false;
+       }
+     }
+     return true;
+   }));
+ok('every listing belongs to a company on record',
+   await p.evaluate(() => DATA.listings.every(x => DATA.companies.some(c => c.id === x.company))));
+ok('and the whole lot is queryable',
+   await p.evaluate(() => {
+     const r = runReport(reportById('R18'));
+     return r.ok && r.rows.reduce((n, x) => n + x.listings, 0) === DATA.listings.length;
+   }));
 
 console.log('\nthe dashboard is built from reports');
 await tab(p, 'home');

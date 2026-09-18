@@ -11,11 +11,17 @@ Split four ways because they are read at different times:
 
 IDs are stable. Reordering does not renumber anything.
 
-**W1–W5 shipped in App_v0.0003 / CRM_v0.0003. W8's code shipped in v0.0004; its
-open questions did not** (18 Sep 2026). They are kept
-below rather than deleted, because what each one says about *why* is the part
-worth not re-deriving; each now opens with a **Built** line saying what landed
-and what was decided along the way. W6 and W7 have not been started.
+**Shipped so far** (18 Sep 2026): W1–W5 in v0.0003; W8's code in v0.0004; W12a,
+W12b, W12d in v0.0005; W14 steps 1–3 and 5 in v0.0006; **W10 (in part), W11,
+W12c, W12e (in part), W13, W14 step 4 and W15 in v0.0007**. Nothing is deleted
+when it ships, because what each entry says about *why* is the part worth not
+re-deriving; each opens with a **Built** line saying what landed and what was
+decided along the way.
+
+**Not started: W6 and W7.** **Open but not buildable without a decision:** W8's
+legal and consent questions, W9 (the app's name — nothing chosen), the human half
+of W14 step 4 (who calls, on which day, and what suspension stops), and the rep
+channel in W10 (gated on P1).
 
 Parts 2–4 are not untouched either: S8 is largely built, and S4, S5, S6 and P1
 each carry what the dispensing log changed about them. Read W8 before any of
@@ -358,6 +364,17 @@ first thing they will ask is what this is called and who it is for.
 
 **Raised:** 18 Sep 2026. **Touches:** app, CRM, and P1.
 
+**Partly built — App_v0.0007 / CRM_v0.0007.** The *company-side* account landed
+as **Partner** (W15): a person who belongs to an Externals record, verified by
+their employer rather than by the Syndicate roster, who can raise listings and
+banners and see nothing clinical. That is the account mechanism this item said
+had to be built rather than added as a row. What did **not** land is everything
+specific to a *representative*: the pharmacy directory, the visit log, and the
+channel that reaches a pharmacist directly. The wall this item asks for is, for
+now, drawn at its most conservative — `navFor('partner')` has no clinical screen
+on it at all, and a check asserts that. Consumption data (W8) remains out of
+reach, and the direct-messaging question is still open and still gated on P1.
+
 A medical rep works for a manufacturer or a scientific bureau and calls on
 pharmacies. Externals (W4) already models the companies they work for, so the
 link exists; what does not exist is a person who belongs to one.
@@ -393,6 +410,9 @@ first rep account exists.
 ## W11. Name the check "مساعد الوصفات" / "Dispensing Helper"
 
 **Raised:** 18 Sep 2026. **Touches:** app strings only. Small.
+
+**Built — App_v0.0007.** `dc.tabCheck` now reads مساعد الوصفات / Dispensing Helper in both
+language blocks, and the home card and the P1 boundary assertions name it.
 
 The module is currently called **فحص الصرف** / **Dispensing check**. Rename it to
 **مساعد الوصفات** / **Dispensing Helper**.
@@ -464,6 +484,12 @@ third longer than it needs to be. Gate it the way `navFor()` and
 
 ### W12c. Posting a shift is six inputs, every time
 
+**Built — App_v0.0007.** `RECENT_POSTS` holds the patterns this pharmacy already
+posts; `repeatPost(i)` opens the post form pre-filled and sets `S.repeatedFrom`,
+and the form carries a banner saying where the values came from, so nobody posts
+last week's rate blind. Reaching the form any other way clears `repeatedFrom` —
+a fresh post, not a repeat. Nothing posts on a single tap.
+
 Pharmacies post the same patterns weekly — *Friday evening, 6–11,
 6,000/hr*. There is no repeat affordance anywhere.
 
@@ -487,6 +513,11 @@ product.
 
 ### W12e. Smaller
 
+**Half built — App_v0.0007.** Sign-in remembers the last account:
+`rememberAccount()` / `lastAccount()` write and read one localStorage key inside
+try/catch, and the email field comes back filled. The reference-tab rebuild is
+untouched and stays untouched — see the note below.
+
 Sign-in is three taps before any content — remember the last account. And the
 reference tab rebuilds all 119 rows on every keystroke (1,303 nodes, 5.3 ms on
 a desktop, plausibly 40–60 ms on a cheap Android). The check tab caps at eight
@@ -504,6 +535,14 @@ step loses information the person needed.**
 
 **Raised:** 18 Sep 2026. **Touches:** app navigation and three screens.
 Agreed in discussion; not built.
+
+**Built — App_v0.0007.** The pharmacist's bar is now
+**Browse · My Shifts · Earnings · Drugs · Profile**, with More folded into Profile
+via `profileLinks()`. The three home screens prompt rather than report: the
+owner's dashboard leads with who is waiting on them and what is unfilled and
+starting soon (the three-stat row is gone), a locum's home names the shift
+happening in two days, and a placed student leads with the logbook week that is
+due and is not shown a placement board they cannot use.
 
 ### The navigation
 
@@ -568,10 +607,15 @@ holds the ledger with all three row kinds and reports off it; the app's billing
 screen shows the plan, the allowance and what the month would have cost on
 commission.
 
-**Still open: step 4 — the CRM invoice / payment / dunning flow**, which is the
-part that is not technical. Nothing collects 9,000 IQD from a pharmacy on the
-1st, and until a human workflow exists for that, the ledger records charges
-nobody chases.
+**Step 4 built — CRM_v0.0007.** `DATA.invoices` carries the
+`open → due → overdue → grace → suspended` ladder with `paid` as the exit at any
+rung, and every paid row records `collectedOn`, `collectedBy` and `method`,
+because in Iraq collection is a person with a phone and a receipt, not a card on
+file. The Invoices module lists them with facets per state, R16 returns what is
+unpaid and who to call, R17 what is collected this month, R18 the split between
+subscription and commission. **What is still not decided is the human half:** who
+makes the call, on which day of the ladder, and what "suspended" actually stops a
+pharmacy doing — see the open questions at the end of this entry.
 
 **Raised:** 18 Sep 2026. **Touches:** `src/config/fees.ts`, the schema, the app's
 billing screen, and a new CRM module. **Price set in discussion: 25,000 IQD per
@@ -736,6 +780,24 @@ what P1 does not yet cover (see W8).
 
 **Raised:** 18 Sep 2026. **Touches:** app (two new views), CRM (a new module),
 schema, and P1 — which this is the first thing to actually test.
+
+**Built — App_v0.0007 / CRM_v0.0007.** The Partner account signs in to its own
+view, raises listings through a four-field form, and **cannot publish**: every
+submission arrives as a `draft` and an operator walks it through
+`draft → in_review → live → ended`, or `refused`, in the CRM's Listings module.
+The pharmacist gets Jobs as a second tab of Browse, not a bar item. Banners are
+confined to three surfaces — `BANNER_SURFACES = ['browse', 'jobs', 'home']` — and
+**P1 is enforced by where `bannerFor()` is invoked** rather than by a flag
+somebody could flip: the Helper, the reference and a drug record never call it.
+A check sweeps eight screens and asserts a placement is found on the permitted
+ones and on none of the clinical ones, and a second asserts a draft banner's text
+appears nowhere on the surface it was bought for. Impressions are counted as
+`(placement, day)` counters and nothing else, so no query can reconstruct who saw
+what — the same shape, for the same reason, as the dispensing tallies in W8.
+
+**The hybrid intake is what the user chose:** the partner fills the form, then a
+person calls to collect everything the form deliberately does not ask for. The
+form holds four fields; the contact number it captures is what the call uses.
 
 **DECIDED: the account is called Partner / شريك.** It links to an Externals record (W4)
 and belongs to a company rather than a clinician: it posts permanent job
