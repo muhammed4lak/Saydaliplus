@@ -496,6 +496,194 @@ worse. Same for the handoff checklist, the logbook's 80-character gate and the
 "ask the patient" list. **The test for every item above is whether removing the
 step loses information the person needed.**
 
+## W13. Where things live, and what each home screen is for
+
+**Raised:** 18 Sep 2026. **Touches:** app navigation and three screens.
+Agreed in discussion; not built.
+
+### The navigation
+
+**Fold "More" into Profile and free a bar slot.** The pharmacist's More holds CV,
+notifications, incidents and profile. Notifications already have the header
+bell on every screen and profile is in the sidebar, so More is a two-item menu
+wearing a five-item coat. Move CV and Incidents into Profile — already an
+account screen, and only one screen tall — and drop More. The bar becomes
+**Browse · My Shifts · Earnings · Check · Profile**, with everything account-ish
+where people already look for it.
+
+**Leave the owner's grouped sidebar alone.** My pharmacy / My own work /
+Account is right: two jobs in one flat list is how both become unscannable.
+
+**Consumption is filed correctly for today and not for tomorrow.** It sits with
+Post/Applicants/Trainees, which is right while it is a staffing screen. It is
+also the seed of the procurement story (S4, S6), and those will not want to
+live in the staffing group. Not urgent — worth knowing before the second thing
+that reads tallies gets built.
+
+### The home screens
+
+**The rule:** a home screen should show what needs the person *today* and reach
+what they do *most*, without scrolling. Every one of ours currently reports
+where it should prompt. "2 applicants" is a fact; "2 people are waiting on you"
+is a job.
+
+**Pharmacist — what's next and what's owed**
+1. The dispensing check (built)
+2. **Next shift, if there is one.** Currently only on My Shifts, so a locum's
+   home screen says nothing about the thing happening tomorrow.
+3. The shift board, filtered to their district (built)
+4. One earnings line — *"38,800 pending"* — not the full breakdown
+
+**Owner — what needs a decision**
+1. **Applicants waiting.** The one thing where their delay costs a filled shift.
+2. **Shifts unfilled and starting soon.** The actual emergency.
+3. Repeat last shift (W12c)
+4. Trial days remaining (built)
+5. Billing total, one line
+
+Drop: the pharmacist half when they have turned it off (W12b), and the
+three-stat row, which reports rather than prompts.
+
+**Student — which week am I on**
+1. **The logbook week that is due**, with days remaining. This is their entire
+   relationship with the app.
+2. Progress through the twelve weeks
+3. The check
+4. The placement board — **only if they do not have a placement yet**
+
+The student home is the most broken of the three. A student with a placement
+and a student without one want completely different screens and currently get
+the same one.
+
+## W14. The subscription, and the groundwork every revenue line needs
+
+**Raised:** 18 Sep 2026. **Touches:** `src/config/fees.ts`, the schema, the app's
+billing screen, and a new CRM module. **Price set in discussion: 25,000 IQD per
+pharmacy per month.**
+
+### First, the arithmetic — because it changes the design
+
+Per 40,000 IQD shift today: pharmacy pays 2,800 (7% on top), pharmacist pays
+1,200 (3% deducted), platform grosses 4,000 and keeps **3,224** after the ~2%
+processor cut on the disbursement.
+
+If 25,000/month simply **replaces the pharmacy's 7%**, break-even is **8.9
+shifts a month**, for both sides at once — it is a zero-sum swap, so there is
+one crossing point, not two.
+
+| Shifts/month | Pharmacy pays now | On subscription | Platform net now | Platform net on sub |
+| --- | --- | --- | --- | --- |
+| 2 | 5,600 | 25,000 | 6,448 | 25,848 |
+| 4 | 11,200 | 25,000 | 12,896 | 26,696 |
+| 6 | 16,800 | 25,000 | 19,344 | 27,544 |
+| **9** | **25,200** | **25,000** | **29,016** | **28,816** |
+| 12 | 33,600 | 25,000 | 38,688 | 30,088 |
+| 20 | 56,000 | 25,000 | 64,480 | 33,480 |
+
+**The conclusion that matters: at the expected volume of four shifts a month, a
+pure commission swap asks a pharmacy to pay 25,000 instead of 11,200.** Nobody
+buys that. So 25,000 is not a swap — it is a **bundle**, and it has to be built
+and sold as one. Three ways to make the price right, not mutually exclusive:
+
+1. **Bundle beyond commission relief** — multi-branch, staff accounts, priority
+   placement, consumption analytics, the drug reference for the whole staff,
+   later a procurement discount. The comparison stops being 25,000 vs 11,200.
+2. **Sell it first to the pharmacies that post most** — 9+ shifts a month
+   (chains, 24-hour, hospital-adjacent). There it is immediately cheaper and
+   needs no argument.
+3. **Or drop the price to ~12,000–15,000** and let it be a genuine swap at
+   typical volume.
+
+**The pharmacist's 3% always remains**, subscribed or not. It keeps per-shift
+revenue growing with volume even on a flat plan (25,848 at two shifts → 33,480
+at twenty), and it preserves the one rule the supply side can hold in their
+head.
+
+### Build three primitives, not one feature
+
+The temptation is to add `subscribed: boolean` to the pharmacy. Resist it —
+every later revenue line needs the same three things, and the third is the one
+that is expensive to retrofit.
+
+1. **A plan on the account.** Not on the pharmacy specifically: on the account,
+   so an Externals company (W10, S5) or a university can hold one later.
+2. **An entitlement check.** `can(account, 'post.unlimited')`. Features ask the
+   entitlement, never the plan name — otherwise every pricing change becomes a
+   code change.
+3. **One append-only billing ledger.** Every charge, whatever its source:
+   commission, subscription, placement fee, credential export. This is the
+   expensive one. Commission is computed on the fly today; if subscription
+   charges land somewhere else, the CRM cannot answer "what does this pharmacy
+   owe this month" without unioning two shapes, and reconciliation with the
+   processor breaks.
+
+### The fee engine
+
+`calculateFees()` takes the plan as an input and returns the same shape. No
+`if (subscribed)` scattered through callers, and the app's live fee preview
+keeps working unchanged. Add `planId` to `FeeInput`; `pharmacyFee` becomes 0
+under a plan that covers it, and a new field records which plan zeroed it, so a
+charge row can say why it was zero.
+
+### Collection is the hard part, and it is not a technical problem
+
+There is **no wallet** (by principle, P-level) and low card penetration, so
+there is no rail that pulls 25,000 IQD from a pharmacy on the 1st of the month.
+Realistically: an invoice is raised, a human collects, an employee records the
+payment. That means the CRM needs a genuine **invoice → payment → receipt**
+flow, not a `paid: true` checkbox.
+
+And **dunning has to be designed before launch, not after.** What happens on
+day 35 unpaid? Proposal: grace period → posting disabled → account suspended,
+with the CRM surfacing a queue at each stage. Left undesigned, this becomes
+forty pharmacies three months in arrears and nobody's job to chase them.
+
+### What the trial becomes
+
+Everyone already gets 30 free days from signup. The clean answer: **the trial
+is 30 days of the full paid plan**, and at day 30 they choose plan or
+commission. It makes the upgrade path natural and it means every pharmacy has
+already used what they are being asked to buy.
+
+### Surfaces
+
+**App (owner), on Billing:** current plan and what it includes, next invoice
+date and amount, invoice history, and — importantly — *"on commission this
+month you would have paid X"*. A subscriber who cannot see what they saved
+churns at the first quiet month.
+
+**CRM:** a plan column on Pharmacies; an invoices/payments module; a dunning
+queue; and MRR, churn and plan mix as **saved reports**, since the Reports
+module already runs SQL over the live tables and the dashboard is built only
+from those.
+
+### How this carries the other lines
+
+Once the three primitives exist, the rest is configuration rather than
+architecture:
+
+- **S2 verified credentials** — a per-export charge on the ledger.
+- **S3 permanent placement fees** — a one-off charge triggered by a conversion
+  event, on the same ledger.
+- **S5 pharma access** — a plan on an Externals company, entitlements for
+  directory access, visit logging and messaging. Gated by P1 first.
+- **S4/S6 procurement** — a different shape (orders, margin), but the charges
+  still land on the one ledger.
+
+**One thing to settle alongside:** bundling the pharmacy's own consumption
+analytics into a paid tier is fine — it is their data. Selling it onward is
+what P1 does not yet cover (see W8).
+
+### Sequence
+
+1. The ledger, with commission charges written to it. Nothing user-visible
+   changes; the CRM gains a straight answer to "what is owed".
+2. Plans and entitlements, with one plan defined and nobody on it.
+3. The fee engine reading the plan.
+4. The CRM invoice/payment/dunning flow.
+5. The app's billing screen and the upgrade path.
+6. Only then: sell it, to the high-volume pharmacies first.
+
 ---
 
 # Part 2 — Strategy
@@ -509,7 +697,9 @@ Every market figure here is an order of magnitude to sanity-check, not research.
 Flat monthly fee per pharmacy for unlimited posting plus the management tools.
 Comparable: **Lantum**, **Locum's Nest**, **Patchwork** (UK) all moved off
 per-shift commission. Commission makes you an agency and agencies get
-disintermediated; subscription makes you infrastructure. Needs W6a.
+disintermediated; subscription makes you infrastructure. Needs W6a. **Priced
+and specified in W14** — including why 25,000 IQD/month is a bundle rather than
+a commission swap.
 
 ## S2. Verified credentials as a product
 *Near term. Half-built already.*
@@ -718,7 +908,10 @@ unbuilt half of **W8**, and the two entries that decide what this becomes:
 cheap now and expensive at every later point, and it gates the Syndicate
 conversation. **W11** is a one-string rename and can go in with anything, and
 **W12** is five measured pieces of friction, of which W12a and W12b are the
-cheapest work in this file with the highest effect.
+cheapest work in this file with the highest effect. **W13** is navigation and
+the three home screens. **W14** is the subscription — read its arithmetic
+before its architecture: the price as set does not work as a pure commission
+swap at expected volume, and that changes what gets built.
 
 W8 is the one to read first, because it is the only entry here where the code
 shipped ahead of the decisions. The dispensing check and the log are in
