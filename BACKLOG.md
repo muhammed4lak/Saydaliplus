@@ -93,43 +93,86 @@ also says "تدريب طلابي" / "Student training" in several places; the tw
 disagreeing about the same thing is the sort of inconsistency that costs trust
 in a demo. Probably both or neither.
 
-## W4. Externals: roles, not a type
+## W4. Externals: roles are licences, registration is a product fact
 
-**Raised:** 18 Sep 2026. **Touches:** CRM.
+**Raised:** 18 Sep 2026. **Settled:** 18 Sep 2026. **Touches:** CRM.
 
-Rename the Companies module to **Externals**, and replace the single-select
-company type with multi-select roles plus a representation relationship.
+Rename the Companies module to **Externals**; replace the single-select company
+type with multi-select roles; move marketing authorisation to the product.
 
 **Where it stands.** `companies` module with `type` ∈ {manufacturer, marketing,
 importer, distributor}, single-select. Brands point at one company.
 
-**Why single-select fails here.** In Iraq one legal entity is routinely a
-scientific bureau for one principal, an importer for another, and a distributor
-to pharmacies — at the same time. One value means whoever types the record picks
-the role they were thinking of, and every later query is wrong.
+**What settled it.** "Is Acino a manufacturer or a marketing authorisation
+holder?" has no answer. Acino manufactures some products and markets them,
+markets others made under contract, and may contract-manufacture for a third
+party. The role is not a property of the company — it is a property of the
+company's relationship to a *particular product*.
 
-**And a scientific bureau is defined by who it represents.** It exists to be the
-registered local face of a foreign manufacturer. "Scientific bureau" alone says
-nothing; "scientific bureau for X" is the fact worth holding. That is a
-relationship, not a type.
+That yields the rule:
 
-**What it should become:**
-- `roles` (multi): manufacturer · marketing authorisation holder · scientific
-  bureau · importer/agent · distributor.
-- `represents` — a bureau links to one or more principals.
-- A brand gains an optional `bureau` alongside its `company` (manufacturer).
-  "Who do I call about this product?" is the bureau; "who made it?" is the
-  manufacturer. One field cannot answer both.
+> **A company role = a licence that company holds.**
+> **Registration = a product licence, so it lives on the product.**
 
-**Deliberately not added:** "Pharmaceutical company" as a role. It is ambiguous
-between *makes it* and *owns the brand*, both of which already exist as
-manufacturer and marketing authorisation holder. Two ways to record one fact is
-how a reference dataset rots. Use the phrase as a UI label if wanted.
+Iraqi product registration (تسجيل المستحضر) is issued per product, not per
+company, so "marketing authorisation holder" was never a company type. It was a
+product field wearing the wrong hat, which is what made the question
+unanswerable.
+
+**Company roles — five, each a real licence, multi-select:**
+
+| Role | Licence behind it |
+|---|---|
+| Manufacturer | Drug factory licence (معمل أدوية) |
+| Scientific bureau | Bureau licence (إجازة مكتب علمي) |
+| Importer / agent | Import licence / agency |
+| Storage house | Drug warehouse licence (إجازة مخزن أدوية) |
+| Distributor | Distribution to pharmacies |
+
+Marketing authorisation holder drops off; **storage house** joins. The test for
+any role added later: does somebody hold a licence for it? If not it is a
+relationship or an attribute, not a role.
+
+**Product (brand) fields — three, each answering a different question:**
+
+| Field | Answers |
+|---|---|
+| `manufacturer` | Who made it |
+| `registration_holder` | Whose registration it is — often a foreign company |
+| `bureau` | Who to actually phone in Baghdad |
+
+Later, for batch tracing, importer and storage house belong on the *consignment*
+rather than the product.
+
+**Scientific bureau stays a role AND gains a link** (founder's call, and the
+right one). `represents` points at one or more principals. The reason it matters:
+a foreign company usually holds **no Iraqi licence at all** — it exists in the
+data as a name on products, reachable only through the bureau that holds the
+actual licence. The existing `country` field already separates those two cases.
+
+**Worked examples** — the method is settled, these two firms are not; check them
+against current arrangements before seeding data:
+
+| Entity | Iraqi roles | On products as |
+|---|---|---|
+| Pioneer (if the Sulaymaniyah manufacturer) | Manufacturer, probably Distributor | Manufacturer *and* registration holder of its own lines |
+| Acino (Swiss) | none — no Iraqi licence | Registration holder, reached via its bureau |
+| A Baghdad bureau representing Acino | Scientific bureau; usually Importer, Storage and Distributor too | The bureau on Acino's products |
+| A standalone licensed warehouse | Storage house | Only on a consignment, once batches are traced |
+
+**Deliberately not added:** "Pharmaceutical company" as a role — ambiguous
+between *makes it* and *owns the brand*, and both now exist elsewhere. Two ways
+to record one fact is how a reference dataset rots. Fine as a plain-language UI
+label.
+
+**One edge decided:** a foreign company with an Iraqi subsidiary holding its own
+bureau licence is **two records**, linked by `represents` — one record per legal
+entity. Collapsing them is tidy until a regulator asks which entity holds the
+licence.
 
 **Migration note.** Renaming the module renames the SQL table `companies`, and
-saved report R10 references it. Either keep the table name and change only the
-label — recommended — or plan the rename as a migration that rewrites saved
-queries.
+saved report R10 references it. Keep the table name and change only the label —
+recommended — or plan the rename as a migration that rewrites saved queries.
 
 ## W5. CRM accounts: owner admin, admin, employee
 
