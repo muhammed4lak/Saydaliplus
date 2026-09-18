@@ -13,6 +13,7 @@
 import { chromium } from 'playwright';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import DRUG_DATA, { DUPLICATE_RULES } from '../data/drugs.mjs';
 import { dirname, join } from 'node:path';
 
 
@@ -320,10 +321,10 @@ await signOut(d);
 await signIn(d, 'ahmed@example.com');
 ok('a pharmacist has it in the bottom bar, not buried behind More',
    await d.evaluate(() => navFor('pharmacist').some(x => x[0] === 'drugs')));
-ok('and the app and the CRM hold the same list, from the same file',
-   await d.evaluate(() => DRUGS.length) === 100);
+ok(`and the app and the CRM hold the same list, from the same file (${DRUG_DATA.length})`,
+   await d.evaluate(() => DRUGS.length) === DRUG_DATA.length);
 await go(d, 'drugs');
-ok('the module renders every drug', await d.locator('.drug-row').count() === 100);
+ok('the module renders every drug', await d.locator('.drug-row').count() === DRUG_DATA.length);
 ok('and says what kind of reference it is',
    /مرجع مساعد|A reference, not a substitute/.test(await d.locator('.inline-note').first().innerText()));
 
@@ -436,6 +437,214 @@ ok('while the scientific name stays Latin and left-to-right',
      return !!el && el.getAttribute('dir') === 'ltr';
    }));
 await d.evaluate(() => { setLang('en'); goto('browse'); });
+
+console.log('\nthe dispensing check');
+await go(d, 'drugs');
+await d.evaluate(() => { setLang('en'); setDrugTab('check'); clearBasket(); });
+await d.waitForTimeout(220);
+ok('the check is a tab of the drug screen, not a separate place',
+   await d.locator('.segbar .seg').count() === 2);
+ok('an empty basket says what to do rather than showing a blank verdict',
+   await d.locator('.empty-check').count() === 1
+   && await d.locator('.verdict').count() === 0);
+
+/* THE CORE ASSERTION. Interactions are written from one side — 149 of the
+   pairs in the reference are one-way — so a checker that reads drug A's list
+   for drug B finds a pair only when the drugs happen to be added in the order
+   the data was written. Amiodarone lists Warfarin as critical; Warfarin's own
+   record does not mention amiodarone. Both orders must find it. */
+for (const order of [['Amiodarone', 'Warfarin'], ['Warfarin', 'Amiodarone']]) {
+  await d.evaluate(o => { clearBasket(); o.forEach(addToBasket); }, order);
+  await d.waitForTimeout(200);
+  const found = await d.evaluate(() => basketInteractions(S.basket));
+  ok(`a one-way pair is found added as ${order.join(' then ')}`,
+     found.length === 1 && found[0].severity === 'critical');
+}
+ok('and the index is built once rather than scanned per lookup',
+   await d.evaluate(() => INTERACTION_INDEX.size > 100));
+ok('where the two sides disagree on severity, the worse one wins',
+   await d.evaluate(() => {
+     // Bisoprolol calls salbutamol a warning; salbutamol calls bisoprolol serious.
+     const hit = INTERACTION_INDEX.get('Bisoprolol', 'Salbutamol');
+     return !!hit && hit.severity === 'serious';
+   }));
+ok('a pair with no interaction in the reference returns nothing, not undefined',
+   await d.evaluate(() => INTERACTION_INDEX.get('Paracetamol', 'Cetirizine') === null));
+
+await d.evaluate(() => { clearBasket(); ['Warfarin', 'Ibuprofen', 'Clarithromycin', 'Simvastatin'].forEach(addToBasket); });
+await d.waitForTimeout(250);
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('every pair in the basket is checked, not just adjacent ones',
+     await d.evaluate(() => basketInteractions(S.basket).length) === 3);
+  ok('findings are ranked worst first',
+     await d.evaluate(() => {
+       const rank = { critical:3, serious:2, warning:1 };
+       const f = basketInteractions(S.basket);
+       return f.every((x, i) => i === 0 || rank[f[i - 1].severity] >= rank[x.severity]);
+     }));
+  ok('the verdict states what was checked, in drugs and in pairs',
+     /4 drugs, 6 pairs checked/.test(txt));
+  ok('and it never claims the combination is safe',
+     !/\bsafe\b/i.test(await d.locator('.verdict').innerText()));
+  ok('a drug can be taken back out of the basket',
+     await d.evaluate(() => { removeFromBasket('Simvastatin'); return S.basket.length === 3; }));
+}
+
+console.log('\nnothing found is not a green tick');
+await d.evaluate(() => { clearBasket(); ['Paracetamol', 'Cetirizine'].forEach(addToBasket); });
+await d.waitForTimeout(220);
+{
+  const v = await d.locator('.verdict').innerText();
+  ok('it says nothing was found', /Nothing found/.test(v));
+  ok('with the count of what was actually checked', /2 drugs, 1 pairs? checked/.test(v));
+  ok('and says out loud that the reference is not complete', /not a complete interaction database/.test(v));
+  ok('the clear verdict is neutral, not the success colour',
+     await d.locator('.verdict-clear').count() === 1 && await d.locator('.verdict-serious').count() === 0);
+}
+
+console.log('\ntherapeutic duplication');
+ok('two NSAIDs are flagged',
+   await d.evaluate(() => {
+     clearBasket(); ['Ibuprofen', 'Diclofenac'].forEach(addToBasket);
+     const dupes = basketDuplicates(S.basket);
+     return dupes.length === 1 && dupes[0].rule.id === 'nsaid' && dupes[0].members.length === 2;
+   }));
+ok('an ACE inhibitor with an ARB is flagged across two classes',
+   await d.evaluate(() => {
+     clearBasket(); ['Lisinopril', 'Losartan'].forEach(addToBasket);
+     return basketDuplicates(S.basket).some(x => x.rule.id === 'ras');
+   }));
+/* The rules are curated rather than derived from ATC precisely so that the
+   standard regimens do not fire. If these ever start flagging, the tool is on
+   its way to being muted. */
+for (const [pair, why] of [
+  [['Metformin', 'Gliclazide'], 'metformin plus a sulfonylurea is standard dual therapy'],
+  [['Insulin glargine', 'Insulin regular'], 'basal plus bolus insulin is how insulin is prescribed'],
+  [['Isosorbide dinitrate', 'Glyceryl trinitrate'], 'a background nitrate plus a rescue spray is normal'],
+  [['Amoxicillin', 'Azithromycin'], 'two antibiotics together is a clinical decision, not a duplicate'],
+  [['Carbamazepine', 'Sodium valproate'], 'two antiepileptics is ordinary practice']
+]) {
+  ok(`no false alarm: ${why}`,
+     await d.evaluate(x => { clearBasket(); x.forEach(addToBasket); return basketDuplicates(S.basket).length === 0; }, pair));
+}
+ok('the ones that are often deliberate say so rather than crying wolf',
+   await d.evaluate(() => {
+     clearBasket(); ['Aspirin', 'Clopidogrel'].forEach(addToBasket);
+     const x = basketDuplicates(S.basket)[0];
+     return !!x && x.rule.oftenIntended === true;
+   }));
+await d.waitForTimeout(150);
+ok('and the screen marks them', await d.locator('.drug-inter .pill-tag').count() > 0);
+
+console.log('\ncontraindications become questions');
+await d.evaluate(() => { clearBasket(); ['Warfarin', 'Ibuprofen', 'Diclofenac'].forEach(addToBasket); });
+await d.waitForTimeout(220);
+ok('one question, not one per drug, when several share it',
+   await d.evaluate(() => {
+     const q = basketQuestions(S.basket).find(x => x.text.en === 'Active peptic ulcer');
+     return !!q && q.drugs.length === 3;
+   }));
+ok('the questions touching most drugs come first',
+   await d.evaluate(() => {
+     const q = basketQuestions(S.basket);
+     return q.every((x, i) => i === 0 || q[i - 1].drugs.length >= x.drugs.length);
+   }));
+ok('each question names which drugs it is about',
+   (await d.locator('.ask-list .ask-for').first().innerText()).length > 3);
+ok('it is headed as something to ask, not as a warning',
+   /Ask the patient/i.test(await d.locator('#app-body').innerText()));
+
+console.log('\ncoverage is shown, not footnoted');
+await d.evaluate(() => { clearBasket(); addToBasket('Metformin'); });
+await d.waitForTimeout(220);
+ok('a partner outside the reference is named on screen',
+   await d.locator('.coverage').count() === 1
+   && /Contrast media/.test(await d.locator('.coverage').innerText()));
+ok('and the coverage block is a card, not small print',
+   await d.evaluate(() => {
+     const el = document.querySelector('.coverage');
+     return el && parseFloat(getComputedStyle(el.querySelector('.coverage-t')).fontSize) >= 12;
+   }));
+await d.evaluate(() => { clearBasket(); ['Paracetamol', 'Cetirizine'].forEach(addToBasket); });
+await d.waitForTimeout(200);
+ok('and it is absent when everything named could be checked',
+   await d.locator('.coverage').count() === 0);
+
+console.log('\nrecording keeps counts, never baskets');
+await d.evaluate(() => { S.dispensing = []; clearBasket(); ['Amoxicillin', 'Paracetamol'].forEach(addToBasket); });
+await d.waitForTimeout(220);
+ok('a pharmacist on a shift can record', await d.locator('.btn-primary', { hasText: /Record at/ }).count() === 1);
+ok('and the button names the pharmacy it records against',
+   /Record at .+/.test(await d.locator('.btn-primary', { hasText: /Record at/ }).innerText()));
+ok('it says on screen that this does not replace the legal register',
+   /does not replace the controlled-substances register/.test(await d.locator('#app-body').innerText()));
+await d.locator('.btn-primary', { hasText: /Record at/ }).click();
+await d.waitForTimeout(250);
+ok('recording stores one row per drug with a count',
+   await d.evaluate(() => S.dispensing.length === 2 && S.dispensing.every(r => r.n === 1)));
+ok('and stores no patient, no basket and no time of day',
+   await d.evaluate(() => S.dispensing.every(r =>
+     !('patient' in r) && !('basket' in r) && !('time' in r) &&
+     Object.keys(r).sort().join() === 'date,n,pharmacist,pharmacy,sci')));
+ok('nothing in the stored rows says these two drugs went out together',
+   await d.evaluate(() => {
+     const keys = new Set(S.dispensing.map(r => JSON.stringify([r.pharmacy, r.pharmacist, r.date])));
+     // Rows share a day, which is the point: a day is not a basket.
+     return keys.size === 1 && S.dispensing.length === 2;
+   }));
+ok('the basket is emptied once recorded', await d.evaluate(() => S.basket.length === 0));
+ok('recording the same drug again increments rather than adding a row',
+   await d.evaluate(() => {
+     clearBasket(); addToBasket('Amoxicillin'); recordDispense();
+     const row = S.dispensing.find(r => r.sci === 'Amoxicillin');
+     return S.dispensing.length === 2 && row.n === 2;
+   }));
+await d.waitForTimeout(200);
+ok('the pharmacist sees their own shift, as a tally',
+   await d.locator('.tally-row').count() === 2);
+ok('and is told it is their shift and not the pharmacy log',
+   /Your shift only/.test(await d.locator('#app-body').innerText()));
+
+console.log('\nwho may record');
+await signOut(d);
+await signIn(d, 'zainab@uobaghdad.edu.iq');
+await go(d, 'drugs');
+await d.evaluate(() => { setLang('en'); setDrugTab('check'); clearBasket(); addToBasket('Amoxicillin'); });
+await d.waitForTimeout(250);
+ok('a student gets the check', await d.locator('.verdict').count() === 1);
+ok('but cannot record — they are not the dispensing pharmacist',
+   await d.evaluate(() => canRecord() === false)
+   && await d.locator('.btn-primary', { hasText: /Record at/ }).count() === 0);
+ok('and recordDispense refuses if called directly',
+   await d.evaluate(() => { const n = S.dispensing.length; recordDispense(); return S.dispensing.length === n; }));
+
+console.log('\nthe pharmacy gets its own data first');
+await signOut(d);
+await signIn(d, 'rahma@example.com');
+await d.evaluate(() => {
+  setLang('en');
+  S.dispensing = [
+    { pharmacy:'P1', pharmacist:'rahma@example.com', date:'2026-09-18', sci:'Amoxicillin', n:7 },
+    { pharmacy:'P1', pharmacist:'other@example.com', date:'2026-09-17', sci:'Amoxicillin', n:3 },
+    { pharmacy:'P1', pharmacist:'other@example.com', date:'2026-09-17', sci:'Paracetamol', n:5 },
+    { pharmacy:'P9', pharmacist:'x@example.com',     date:'2026-09-17', sci:'Ibuprofen',   n:9 }
+  ];
+  goto('consumption');
+});
+await d.waitForTimeout(250);
+ok('the owner reaches consumption from the pharmacy group',
+   await d.evaluate(() => ownerGroups()[0].items.some(x => x[0] === 'consumption')));
+ok('it totals the pharmacy across every pharmacist who worked there',
+   (await d.locator('.stat-num').first().innerText()).trim() === '15');
+ok('and shows nothing from another pharmacy',
+   !/Ibuprofen/.test(await d.locator('#app-body').innerText()));
+ok('drugs are ranked by volume',
+   (await d.locator('.cn-name').first().innerText()).includes('Amoxicillin'));
+ok('the screen says whose data it is and who benefits first',
+   /whoever generates it gets value from it before anybody else/.test(await d.locator('#app-body').innerText()));
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
 
 console.log('\nevery inline handler actually parses');
 /* A value interpolated into onclick="f(...)" without escaping its own quotes

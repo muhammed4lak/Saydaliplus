@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0003">
+<meta name="version" content="App_v0.0004">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -682,6 +682,82 @@
   .bullets{ margin:0; padding-inline-start:18px; }
   .bullets li{ font-size:13.5px; line-height:1.8; }
 
+  /* ---------- The dispensing check ---------- */
+  .segbar{
+    display:flex; gap:4px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:4px;
+  }
+  .seg{
+    flex:1; height:36px; border-radius:9px; font-size:13px; font-weight:600; color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .seg.on{ background:var(--indigo); color:#fff; }
+  .seg-n{
+    font-family:var(--font-mono); font-size:11px; padding:1px 6px; border-radius:100px;
+    background:rgba(255,255,255,.25);
+  }
+  .seg:not(.on) .seg-n{ background:var(--indigo-tint); color:var(--indigo); }
+
+  .add-mark{
+    width:26px; height:26px; border-radius:9px; background:var(--indigo-tint); color:var(--indigo);
+    display:inline-flex; align-items:center; justify-content:center; flex:none; margin-inline-start:auto;
+  }
+  .add-mark .ico{ width:14px; height:14px; }
+  .drug-row:disabled{ opacity:.55; cursor:default; }
+  .rec-actions{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+
+  .basket{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+  .basket-chip{
+    display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border);
+    border-radius:100px; padding:5px 6px 5px 13px; font-size:12.5px; font-weight:500;
+  }
+  html[dir="rtl"] .basket-chip{ padding:5px 13px 5px 6px; }
+  .basket-chip button{
+    width:19px; height:19px; border-radius:50%; background:var(--mist); color:var(--ink-faint);
+    font-size:14px; line-height:1; display:inline-flex; align-items:center; justify-content:center; flex:none;
+  }
+  .basket-chip button:hover{ background:#F6DADA; color:#9E2B2B; }
+  .basket-clear{ margin-inline-start:auto; }
+
+  /* The verdict. "Nothing found" is deliberately NOT green-ticked as safe: the
+     system knows no pair in its table matched, which is a different statement
+     from "this is safe", and the gap between them is where a missed interaction
+     stops being a known limit and becomes a broken promise. */
+  .verdict{
+    display:flex; gap:11px; align-items:flex-start; padding:14px 16px; border-radius:14px;
+    border:1px solid transparent;
+  }
+  .verdict .ico{ width:18px; height:18px; flex:none; margin-top:1px; }
+  .verdict strong{ display:block; font-size:14px; font-weight:600; }
+  .verdict-sub{ display:block; font-size:12px; line-height:1.65; margin-top:3px; opacity:.85; }
+  .verdict-clear{ background:var(--mist); border-color:var(--border); color:var(--ink-soft); }
+  .verdict-warning{ background:#FBF0D8; border-color:#EFD9A8; color:#845310; }
+  .verdict-serious{ background:#FBE6DC; border-color:#F0CBB8; color:#9A4A26; }
+  .verdict-critical{ background:#FBE3E3; border-color:#EFC3C3; color:#9E2B2B; }
+
+  .ask-list{ margin:0; padding:0; list-style:none; }
+  .ask-list li{ padding:8px 0; border-bottom:1px solid var(--border); }
+  .ask-list li:last-child{ border-bottom:none; }
+  .ask-list li:first-child{ padding-top:0; }
+  .ask-q{ display:block; font-size:13.5px; font-weight:500; line-height:1.55; }
+  .ask-for{ display:block; font-size:11.5px; color:var(--ink-faint); margin-top:2px; }
+
+  .coverage{ display:flex; gap:11px; align-items:flex-start; background:var(--mist); }
+  .coverage .ico{ width:16px; height:16px; flex:none; margin-top:2px; color:var(--ink-faint); }
+  .coverage-t{ font-size:13px; font-weight:600; }
+  .coverage-b{ font-size:12px; color:var(--ink-soft); line-height:1.65; margin-top:3px; }
+  .register-note{ display:flex; gap:6px; align-items:flex-start; }
+  .register-note .ico{ width:13px; height:13px; flex:none; margin-top:2px; }
+
+  .tally{ display:flex; flex-direction:column; gap:7px; }
+  .tally-row{ display:flex; justify-content:space-between; gap:12px; font-size:13px; }
+
+  .cn-row{ display:flex; align-items:center; gap:10px; padding:5px 0; }
+  .cn-name{ flex:0 0 38%; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cn-track{ display:block; flex:1; height:14px; background:var(--mist); border-radius:100px; overflow:hidden; }
+  .cn-bar{ display:block; height:14px; background:var(--series, #574FA3); border-radius:100px; }
+  .cn-n{ flex:none; font-size:12px; min-width:34px; text-align:end; }
+
   /* ---------- Misc ---------- */
   .progress{ height:7px; border-radius:100px; background:var(--border); overflow:hidden; }
   .progress i{ display:block; height:100%; background:var(--palm); border-radius:100px; }
@@ -741,6 +817,7 @@
   <symbol id="i-wallet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="18" height="13" rx="2.2"/><path d="M3 10.5h18"/><circle cx="16.8" cy="14.5" r="1.3" fill="currentColor" stroke="none"/></g></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.7"/><path d="M4.3 20c0-4.3 3.5-6.9 7.7-6.9s7.7 2.6 7.7 6.9"/></g></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.3" r="3.1"/><path d="M3 19.5c0-3.6 2.6-5.7 5.5-5.7s5.5 2.1 5.5 5.7"/><circle cx="17" cy="9.2" r="2.4"/><path d="M15.3 13.9c2.3.3 3.9 2.1 4.2 4.6"/></g></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></g></symbol>
   <symbol id="i-pill" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.6" y="8.4" width="18.8" height="7.2" rx="3.6" transform="rotate(-45 12 12)"/><path d="M8.6 8.6 15.4 15.4"/></g></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.4 15.4 4.1 4.1"/></g></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></g></symbol>
@@ -1039,6 +1116,31 @@ Object.assign(STRINGS.ar, {
   /* The drug reference. Arabic first, because this is the screen used at the
      counter and the counter is Arabic. */
   'nav.drugs':'الأدوية','common.clear':'مسح',
+  'common.remove':'إزالة','nav.consumption':'الاستهلاك',
+  'dx.tabReference':'المرجع','dc.tabCheck':'فحص الصرف',
+  'dc.addPlaceholder':'أضف دواء إلى الوصفة…',
+  'dc.added':'مضاف','dc.addToCheck':'أضف إلى الفحص','dc.clear':'إفراغ',
+  'dc.emptyTitle':'أضف أدوية الوصفة',
+  'dc.emptyBody':'ابحث وأضف دواءً تلو الآخر. يُفحص كل زوج تلقائياً مع كل إضافة.',
+  'dc.found':'{n} من النتائج تستدعي الانتباه',
+  'dc.nothingFound':'لم يُعثر على شيء',
+  'dc.checkedLine':'{d} أدوية، {p} زوجاً مفحوصاً مقابل المرجع.',
+  'dc.notComplete':'هذا ليس قاعدة بيانات تداخلات كاملة — حكمك المهني ونشرة المنتج أولاً.',
+  'dc.duplication':'تكرار علاجي','dc.oftenIntended':'قد يكون مقصوداً',
+  'dc.askTitle':'اسأل المريض قبل الصرف',
+  'dc.coverageTitle':'أدوية مذكورة خارج المرجع',
+  'dc.coverageBody':'أدوية الوصفة تذكر تداخلات مع: {list}. هذه ليست في المرجع، فلم تُفحص.',
+  'dc.record':'سجّل في {pharmacy}',
+  'dc.recorded':'سُجّل {n} دواءً كعدد، دون ربطها ببعضها.',
+  'dc.recordNote':'يُحفظ عدد لكل دواء لدى الصيدلية فقط. لا اسم مريض، ولا سجل بأن هذه الأدوية صُرفت معاً.',
+  'dc.notRegister':'هذا السجل لا يحلّ محل سجل المواد الخاضعة للرقابة ولا أي سجل قانوني مطلوب.',
+  'dc.studentNote':'الفحص متاح لك للتعلّم. التسجيل للصيدلي المسؤول عن الصرف.',
+  'dc.noShiftNote':'التسجيل مرتبط بمناوبة في صيدلية. الفحص يعمل دائماً.',
+  'dc.myShift':'ما سجّلته في هذه المناوبة',
+  'dc.myShiftNote':'مناوبتك فقط. سجل الصيدلية الكامل لصاحبها.',
+  'cn.units':'وحدة مسجّلة','cn.distinct':'دواء مختلف','cn.byDrug':'الاستهلاك حسب الدواء',
+  'cn.empty':'لم يُسجّل شيء بعد.',
+  'cn.note':'بيانات صيدليتك وحدها، وهي أول شيء يُبنى منها: من ينتج البيانات ينتفع بها قبل غيره.',
   'dx.searchPlaceholder':'ابحث بالاسم العلمي أو العربي أو رمز ATC…',
   'dx.allForms':'كل الأشكال','dx.count':'{n} دواء','dx.count1':'دواء واحد',
   'dx.noMatch':'لا يوجد دواء مطابق. جرّب الاسم العلمي.',
@@ -1157,6 +1259,31 @@ Object.assign(STRINGS.en, {
   'acc.admin':'Platform reviewer','acc.adminTag':'Admin',
   'nav.notifications':'Notifications','nav.incidents':'Reports','nav.more':'More',
   'nav.drugs':'Drugs','common.clear':'Clear',
+  'common.remove':'Remove','nav.consumption':'Consumption',
+  'dx.tabReference':'Reference','dc.tabCheck':'Dispensing check',
+  'dc.addPlaceholder':'Add a drug from the prescription…',
+  'dc.added':'Added','dc.addToCheck':'Add to check','dc.clear':'Clear',
+  'dc.emptyTitle':'Add the drugs on the prescription',
+  'dc.emptyBody':'Search and add them one at a time. Every pair is checked again each time you add one.',
+  'dc.found':'{n} findings worth reading',
+  'dc.nothingFound':'Nothing found',
+  'dc.checkedLine':'{d} drugs, {p} pairs checked against the reference.',
+  'dc.notComplete':'This is not a complete interaction database — your judgement and the product literature come first.',
+  'dc.duplication':'Therapeutic duplication','dc.oftenIntended':'often deliberate',
+  'dc.askTitle':'Ask the patient before dispensing',
+  'dc.coverageTitle':'Named, but not in the reference',
+  'dc.coverageBody':'Drugs in this prescription name interactions with: {list}. Those are not in the reference, so they were not checked.',
+  'dc.record':'Record at {pharmacy}',
+  'dc.recorded':'{n} drugs recorded as counts, not linked to each other.',
+  'dc.recordNote':'A count per drug is kept for the pharmacy. No patient, and no record that these particular drugs went out together.',
+  'dc.notRegister':'This log does not replace the controlled-substances register or any legally required record.',
+  'dc.studentNote':'The check is yours to learn from. Recording belongs to the pharmacist responsible for the dispensing.',
+  'dc.noShiftNote':'Recording is tied to a shift at a pharmacy. The check works either way.',
+  'dc.myShift':'What you recorded on this shift',
+  'dc.myShiftNote':'Your shift only. The pharmacy’s full log belongs to its owner.',
+  'cn.units':'units recorded','cn.distinct':'distinct drugs','cn.byDrug':'Consumption by drug',
+  'cn.empty':'Nothing recorded yet.',
+  'cn.note':'Your pharmacy’s data, and the first thing built out of it on purpose: whoever generates it gets value from it before anybody else does.',
   'dx.searchPlaceholder':'Search by scientific name, Arabic name or ATC code…',
   'dx.allForms':'All forms','dx.count':'{n} drugs','dx.count1':'1 drug',
   'dx.noMatch':'Nothing matches. Try the scientific name.',
@@ -1273,6 +1400,18 @@ Object.assign(STRINGS.en, {
    ========================================================================== */
 /* DRUGS:BEGIN */
 const DRUG_FORMS = ["tablet","capsule","syrup","injection","cream","ointment","gel","drops","inhaler","spray","suppository","sachet","solution","patch","pessary"];
+const DUPLICATE_RULES = [
+  {"id":"nsaid","codes":["M01A"],"severity":"serious","label":{"ar":"مضادّا التهاب غير ستيرويديين","en":"Two NSAIDs"},"note":{"ar":"يضاعفان خطر القرحة والأذية الكلوية دون أن يضيفا تسكيناً.","en":"Doubles the ulcer and kidney risk without adding pain relief."}},
+  {"id":"ras","codes":["C09A","C09C"],"severity":"serious","label":{"ar":"حصار مضاعف لجملة الرينين","en":"Dual blockade of the renin system"},"note":{"ar":"مثبّط ACE مع سارتان — أو سارتانان — يرفع خطر الأذية الكلوية وفرط البوتاسيوم بلا فائدة مثبتة.","en":"An ACE inhibitor with an ARB — or two ARBs — raises kidney injury and hyperkalaemia with no proven benefit."}},
+  {"id":"betablocker","codes":["C07A"],"severity":"serious","label":{"ar":"حاصرا بيتا","en":"Two beta blockers"},"note":{"ar":"بطء قلب وهبوط ضغط مضاعفان.","en":"Compounded bradycardia and hypotension."}},
+  {"id":"statin","codes":["C10A"],"severity":"serious","label":{"ar":"ستاتينان","en":"Two statins"},"note":{"ar":"لا أثر إضافي على الشحوم، وخطر اعتلال عضلي مضاعف.","en":"No added effect on lipids, and a compounded myopathy risk."}},
+  {"id":"ccb","codes":["C08C"],"severity":"serious","label":{"ar":"حاصرا كالسيوم من الفئة نفسها","en":"Two dihydropyridine calcium blockers"},"note":{"ar":"هبوط ضغط ووذمة محيطية مضاعفان.","en":"Compounded hypotension and ankle swelling."}},
+  {"id":"benzo","codes":["N05B"],"severity":"serious","label":{"ar":"بنزوديازيبينان","en":"Two benzodiazepines"},"note":{"ar":"تثبيط تنفسي وتنويم مضاعفان، وخطر اعتماد أعلى.","en":"Compounded respiratory depression and sedation, and a higher dependence risk."}},
+  {"id":"antidepressant","codes":["N06A"],"severity":"serious","oftenIntended":true,"label":{"ar":"مضادّا اكتئاب","en":"Two antidepressants"},"note":{"ar":"خطر متلازمة السيروتونين. يُوصف أحياناً عن قصد — تأكّد أن الطبيب قصده.","en":"Serotonin syndrome risk. Sometimes prescribed deliberately — confirm the prescriber meant it."}},
+  {"id":"antithrombotic","codes":["B01A"],"severity":"serious","oftenIntended":true,"label":{"ar":"أكثر من دواء مضاد للتخثّر أو الصفيحات","en":"More than one drug affecting clotting"},"note":{"ar":"العلاج المزدوج بعد الدعامة قياسي؛ أما مضاد تخثّر مع مضاد صفيحات فيحتاج سبباً مذكوراً.","en":"Dual antiplatelet therapy after a stent is standard; an anticoagulant plus an antiplatelet needs a stated reason."}},
+  {"id":"acid","codes":["A02B"],"severity":"warning","oftenIntended":true,"label":{"ar":"أكثر من خافض للحموضة","en":"More than one acid suppressant"},"note":{"ar":"مثبّط مضخة نهاراً وحاصر H2 ليلاً نمط مشروع؛ وغالباً ما يكون تكراراً غير مقصود.","en":"A proton pump inhibitor by day and an H2 blocker at night is a legitimate pattern; more often it is an unintended duplicate."}},
+  {"id":"antihistamine","codes":["R06A"],"severity":"warning","oftenIntended":true,"label":{"ar":"مضادّا هيستامين","en":"Two antihistamines"},"note":{"ar":"غير منوّم نهاراً ومنوّم ليلاً نمط شائع ومشروع. تحقّق فقط أنه مقصود.","en":"A non-sedating one by day and a sedating one at night is common and legitimate. Just check it is intended."}}
+];
 const DRUGS = [
   {"sci":"Paracetamol","ar":"باراسيتامول","atc":"N02BE01","form":"tablet","doses":["120 mg/5 mL","250 mg/5 mL","500 mg","1 g"],"notes":{"ar":"الحد الأقصى 4 غم يومياً للبالغين. تحقّق من أدوية الزكام المركّبة — أكثرها يحتوي باراسيتامول أصلاً.","en":"Maximum 4 g daily in adults. Check combination cold remedies — most already contain paracetamol."},"interactions":[{"with":"Warfarin","severity":"warning","note":{"ar":"الاستخدام المنتظم بجرعة عالية قد يرفع INR.","en":"Regular high-dose use may raise INR."}},{"with":"Carbamazepine","severity":"warning","note":{"ar":"تحريض الإنزيمات يزيد المستقلب السام للكبد.","en":"Enzyme induction increases the hepatotoxic metabolite."}}],"contraindications":[{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
   {"sci":"Ibuprofen","ar":"إيبوبروفين","atc":"M01AE01","form":"tablet","doses":["100 mg/5 mL","200 mg","400 mg","600 mg"],"notes":{"ar":"يؤخذ مع الطعام ولأقصر مدة ممكنة. يُتجنّب في الثلث الأخير من الحمل.","en":"With food, for the shortest course that works. Avoid in the third trimester."},"interactions":[{"with":"Aspirin","severity":"serious","note":{"ar":"يمنع التأثير المضاد للصفيحات إذا أُخذ قبل الأسبرين — باعد بينهما.","en":"Blocks aspirin’s antiplatelet effect if taken first — separate the doses."}},{"with":"Warfarin","severity":"serious","note":{"ar":"خطر نزف هضمي مضاعف.","en":"Compounded GI bleeding risk."}},{"with":"Lisinopril","severity":"serious","note":{"ar":"مع مدرّ بول: ثلاثي يؤذي الكلية حاداً.","en":"With a diuretic, the \"triple whammy\" — acute kidney injury."}},{"with":"Methotrexate","severity":"serious","note":{"ar":"يقلّل طرح الميثوتريكسيت.","en":"Reduces methotrexate clearance."}}],"contraindications":[{"ar":"قرحة هضمية فعّالة","en":"Active peptic ulcer"},{"ar":"الثلث الأخير من الحمل","en":"Third trimester of pregnancy"},{"ar":"قصور قلب شديد","en":"Severe heart failure"},{"ar":"قصور كلوي (eGFR < 30)","en":"Renal impairment (eGFR < 30)"}]},
@@ -1373,7 +1512,26 @@ const DRUGS = [
   {"sci":"Ferrous sulfate","ar":"كبريتات الحديدوز","atc":"B03AA07","form":"tablet","doses":["200 mg","325 mg","60 mg/5 mL"],"notes":{"ar":"على معدة فارغة مع فيتامين C لأفضل امتصاص، ومع الطعام إذا لم يُحتمل. البراز الأسود متوقّع. بعيداً عن الشاي بساعتين.","en":"Empty stomach with vitamin C absorbs best; with food if that is not tolerated. Black stools are expected. Two hours away from tea."},"interactions":[{"with":"Levothyroxine","severity":"serious","note":{"ar":"يمنع امتصاص الليفوثيروكسين — باعد أربع ساعات.","en":"Blocks levothyroxine absorption — space by four hours."}},{"with":"Doxycycline","severity":"serious","note":{"ar":"يرتبط بالدوكسيسيكلين ويفقد الامتصاص.","en":"Chelates with doxycycline and loses absorption."}},{"with":"Ciprofloxacin","severity":"serious","note":{"ar":"يرتبط بالسيبروفلوكساسين ويفقد الامتصاص.","en":"Chelates with ciprofloxacin and loses absorption."}}],"contraindications":[{"ar":"داء ترسّب الأصبغة الدموية","en":"Haemochromatosis"},{"ar":"فقر دم غير ناجم عن عوز الحديد","en":"Anaemia not due to iron deficiency"}]},
   {"sci":"Folic acid","ar":"حمض الفوليك","atc":"B03BB01","form":"tablet","doses":["400 mcg","1 mg","5 mg"],"notes":{"ar":"400 ميكروغرام قبل الحمل بشهر وحتى الأسبوع الثاني عشر؛ 5 ملغ مع السكري أو مضادات الاختلاج أو سوابق عيب أنبوب عصبي.","en":"400 micrograms from a month before conception to week twelve; 5 mg with diabetes, an antiepileptic, or a previous neural tube defect."},"interactions":[{"with":"Methotrexate","severity":"warning","note":{"ar":"يُعطى بيوم مختلف عن الميثوتريكسيت.","en":"Given on a different day from the methotrexate."}},{"with":"Phenytoin","severity":"serious","note":{"ar":"يخفض مستوى الفينيتوين.","en":"Lowers phenytoin levels."}}],"contraindications":[{"ar":"فقر دم بعوز B12 غير معالج","en":"Untreated B12 deficiency anaemia"}]},
   {"sci":"Cholecalciferol","ar":"كولي كالسيفيرول","atc":"A11CC05","form":"capsule","doses":["1000 IU","5000 IU","50000 IU"],"notes":{"ar":"مع وجبة دسمة — ذائب في الدهن. جرعة الـ 50000 وحدة أسبوعية لا يومية؛ خطأ شائع ومؤذٍ.","en":"With a fatty meal — it is fat-soluble. The 50,000 IU capsule is weekly, not daily; the mix-up is common and harmful."},"interactions":[{"with":"Digoxin","severity":"warning","note":{"ar":"فرط الكالسيوم يزيد سميّة الديجوكسين.","en":"Hypercalcaemia raises digoxin toxicity."}},{"with":"Hydrochlorothiazide","severity":"warning","note":{"ar":"خطر فرط كالسيوم.","en":"Risk of hypercalcaemia."}}],"contraindications":[{"ar":"فرط كالسيوم الدم","en":"Hypercalcaemia"},{"ar":"حصيات كلوية كلسية","en":"Calcium renal stones"}]},
-  {"sci":"Tamsulosin","ar":"تامسولوسين","atc":"G04CA02","form":"capsule","doses":["0.4 mg"],"notes":{"ar":"بعد نفس الوجبة يومياً. الجرعة الأولى قد تسبّب دواراً انتصابياً. يجب إخبار طبيب العيون قبل جراحة الساد.","en":"After the same meal each day. The first dose can cause postural dizziness. The eye surgeon must be told before cataract surgery."},"interactions":[{"with":"Sildenafil","severity":"serious","note":{"ar":"هبوط ضغط انتصابي.","en":"Postural hypotension."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع التامسولوسين وهبوط الضغط.","en":"Raises tamsulosin and drops blood pressure."}}],"contraindications":[{"ar":"هبوط ضغط انتصابي سابق","en":"Previous postural hypotension"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]}
+  {"sci":"Tamsulosin","ar":"تامسولوسين","atc":"G04CA02","form":"capsule","doses":["0.4 mg"],"notes":{"ar":"بعد نفس الوجبة يومياً. الجرعة الأولى قد تسبّب دواراً انتصابياً. يجب إخبار طبيب العيون قبل جراحة الساد.","en":"After the same meal each day. The first dose can cause postural dizziness. The eye surgeon must be told before cataract surgery."},"interactions":[{"with":"Sildenafil","severity":"serious","note":{"ar":"هبوط ضغط انتصابي.","en":"Postural hypotension."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع التامسولوسين وهبوط الضغط.","en":"Raises tamsulosin and drops blood pressure."}}],"contraindications":[{"ar":"هبوط ضغط انتصابي سابق","en":"Previous postural hypotension"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
+  {"sci":"Methotrexate","ar":"ميثوتريكسيت","atc":"L04AX03","form":"tablet","doses":["2.5 mg","10 mg","50 mg/2 mL"],"notes":{"ar":"ONCE A WEEK — الجرعة اليومية خطأ قاتل ومسجّل. حمض الفوليك بيوم مختلف. اذكر يوم الأسبوع بصوت عالٍ عند الصرف.","en":"ONCE A WEEK. A daily dose is a documented fatal error. Folic acid on a different day. Say the day of the week out loud when you hand it over."},"interactions":[{"with":"Trimethoprim/Sulfamethoxazole","severity":"critical","note":{"ar":"تثبيط نقي شديد — ممنوع الجمع.","en":"Severe marrow suppression — the combination is contraindicated."}},{"with":"Ibuprofen","severity":"serious","note":{"ar":"يقلّل طرح الميثوتريكسيت ويزيد سميّته.","en":"Reduces methotrexate clearance, raising toxicity."}},{"with":"Amoxicillin","severity":"serious","note":{"ar":"يقلّل الطرح الكلوي.","en":"Reduces renal clearance."}},{"with":"Omeprazole","severity":"warning","note":{"ar":"يؤخّر الطرح مع الجرعات العالية.","en":"Delays clearance at high doses."}}],"contraindications":[{"ar":"الحمل والإرضاع","en":"Pregnancy and breastfeeding"},{"ar":"قصور كبدي أو كلوي شديد","en":"Severe hepatic or renal impairment"},{"ar":"تثبيط نقي العظم","en":"Bone marrow suppression"},{"ar":"إنتان فعّال","en":"Active infection"}]},
+  {"sci":"Lithium","ar":"ليثيوم","atc":"N05AN01","form":"tablet","doses":["300 mg","400 mg MR"],"notes":{"ar":"هامش علاجي ضيّق جداً. سوائل وملح ثابتان — التعرّق والإسهال والحمية قليلة الملح ترفع المستوى. الرعاش والإسهال والتخليط علامات تسمّم.","en":"A very narrow window. Steady fluid and salt — sweating, diarrhoea or a low-salt diet push levels up. Tremor, diarrhoea and confusion are toxicity."},"interactions":[{"with":"Hydrochlorothiazide","severity":"serious","note":{"ar":"يرفع الليثيوم إلى حدّ السميّة.","en":"Raises lithium to toxic levels."}},{"with":"Ibuprofen","severity":"serious","note":{"ar":"مضادات الالتهاب ترفع الليثيوم.","en":"NSAIDs raise lithium."}},{"with":"Lisinopril","severity":"serious","note":{"ar":"يرفع الليثيوم.","en":"Raises lithium."}},{"with":"Metronidazole","severity":"serious","note":{"ar":"يرفع الليثيوم.","en":"Raises lithium."}}],"contraindications":[{"ar":"قصور كلوي شديد","en":"Severe renal impairment"},{"ar":"داء أديسون","en":"Addison’s disease"},{"ar":"اضطراب توازن الصوديوم","en":"Disturbed sodium balance"}]},
+  {"sci":"Verapamil","ar":"فيراباميل","atc":"C08DA01","form":"tablet","doses":["40 mg","80 mg","120 mg","240 mg SR"],"notes":{"ar":"الإمساك أشيع أعراضه بفارق كبير. لا يُجمع مع حاصرات بيتا إلا بقرار اختصاصي.","en":"Constipation is by far its commonest side effect. Not combined with a beta blocker except on a specialist’s decision."},"interactions":[{"with":"Bisoprolol","severity":"critical","note":{"ar":"بطء قلب شديد وحصار — يُتجنّب الجمع.","en":"Severe bradycardia and heart block — avoid the combination."}},{"with":"Atenolol","severity":"critical","note":{"ar":"بطء قلب شديد وحصار.","en":"Severe bradycardia and heart block."}},{"with":"Digoxin","severity":"serious","note":{"ar":"يرفع الديجوكسين.","en":"Raises digoxin."}},{"with":"Simvastatin","severity":"serious","note":{"ar":"خطر اعتلال عضلي — يُحدّ بـ 20 ملغ.","en":"Myopathy risk — limit to 20 mg."}}],"contraindications":[{"ar":"قصور قلب غير معاوَض","en":"Decompensated heart failure"},{"ar":"حصار قلبي من الدرجة الثانية أو الثالثة","en":"Second- or third-degree heart block"},{"ar":"هبوط ضغط شديد","en":"Severe hypotension"}]},
+  {"sci":"Calcium carbonate","ar":"كربونات الكالسيوم","atc":"A02AC01","form":"tablet","doses":["500 mg","600 mg","1250 mg"],"notes":{"ar":"يُباعد عن الحديد والليفوثيروكسين والكينولونات والتتراسيكلينات — يمنع امتصاصها. جرعة واحدة لا تزيد عن 600 ملغ عنصري.","en":"Spaced away from iron, levothyroxine, quinolones and tetracyclines — it blocks all of them. No more than 600 mg elemental in one dose."},"interactions":[{"with":"Levothyroxine","severity":"serious","note":{"ar":"يمنع الامتصاص — باعد أربع ساعات.","en":"Blocks absorption — space by four hours."}},{"with":"Ciprofloxacin","severity":"serious","note":{"ar":"يرتبط به ويفقد الامتصاص.","en":"Chelates and loses absorption."}},{"with":"Doxycycline","severity":"serious","note":{"ar":"يرتبط به ويفقد الامتصاص.","en":"Chelates and loses absorption."}},{"with":"Ferrous sulfate","severity":"warning","note":{"ar":"يقلّل امتصاص الحديد — باعد ساعتين.","en":"Reduces iron absorption — space by two hours."}}],"contraindications":[{"ar":"فرط كالسيوم الدم","en":"Hypercalcaemia"},{"ar":"حصيات كلوية كلسية","en":"Calcium renal stones"}]},
+  {"sci":"Sildenafil","ar":"سيلدينافيل","atc":"G04BE03","form":"tablet","doses":["25 mg","50 mg","100 mg"],"notes":{"ar":"ممنوع تماماً مع أي نترات — اسأل عن بخاخ تحت اللسان تحديداً، فكثير من المرضى لا يعدّونه دواءً.","en":"Absolutely not with any nitrate — ask specifically about a sublingual spray, which many patients do not count as a medicine."},"interactions":[{"with":"Glyceryl trinitrate","severity":"critical","note":{"ar":"هبوط ضغط قاتل — ممنوع الجمع.","en":"Fatal hypotension — the combination is contraindicated."}},{"with":"Isosorbide dinitrate","severity":"critical","note":{"ar":"هبوط ضغط قاتل — ممنوع الجمع.","en":"Fatal hypotension — the combination is contraindicated."}},{"with":"Tamsulosin","severity":"serious","note":{"ar":"هبوط ضغط انتصابي.","en":"Postural hypotension."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع السيلدينافيل كثيراً.","en":"Substantially raises sildenafil."}}],"contraindications":[{"ar":"الاستعمال المتزامن مع النترات","en":"Concurrent nitrate use"},{"ar":"احتشاء أو سكتة حديثة","en":"Recent infarction or stroke"},{"ar":"هبوط ضغط شديد","en":"Severe hypotension"}]},
+  {"sci":"Potassium chloride","ar":"كلوريد البوتاسيوم","atc":"A12BA01","form":"tablet","doses":["600 mg MR","20 mEq sachet"],"notes":{"ar":"مع الطعام وكوب ماء كامل وبقاء منتصباً — يقرّح المريء. يُبلع كاملاً دون سحق.","en":"With food, a full glass, and sitting upright — it ulcerates the oesophagus. Swallow whole, never crushed."},"interactions":[{"with":"Spironolactone","severity":"critical","note":{"ar":"فرط بوتاسيوم مهدّد للحياة.","en":"Life-threatening hyperkalaemia."}},{"with":"Lisinopril","severity":"serious","note":{"ar":"فرط بوتاسيوم.","en":"Hyperkalaemia."}},{"with":"Losartan","severity":"serious","note":{"ar":"فرط بوتاسيوم.","en":"Hyperkalaemia."}}],"contraindications":[{"ar":"فرط بوتاسيوم الدم","en":"Hyperkalaemia"},{"ar":"قصور كلوي شديد","en":"Severe renal impairment"},{"ar":"داء أديسون غير معالج","en":"Untreated Addison’s disease"}]},
+  {"sci":"Tizanidine","ar":"تيزانيدين","atc":"M03BX02","form":"tablet","doses":["2 mg","4 mg"],"notes":{"ar":"منوّم ويخفض الضغط. يُرفع ويُخفض تدريجياً.","en":"Sedating and lowers blood pressure. Titrated up and down, never stopped at once."},"interactions":[{"with":"Ciprofloxacin","severity":"critical","note":{"ar":"هبوط ضغط شديد ونعاس — ممنوع الجمع.","en":"Severe hypotension and sedation — the combination is contraindicated."}},{"with":"Fluvoxamine","severity":"critical","note":{"ar":"ممنوع الجمع.","en":"The combination is contraindicated."}}],"contraindications":[{"ar":"الاستعمال المتزامن مع سيبروفلوكساسين","en":"Concurrent ciprofloxacin"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
+  {"sci":"Theophylline","ar":"ثيوفيلين","atc":"R03DA04","form":"tablet","doses":["200 mg MR","300 mg MR","400 mg MR"],"notes":{"ar":"هامش علاجي ضيّق. لا يُبدّل بين الشركات — الشكل الممتد يختلف في التحرّر. الغثيان والخفقان علامات تجاوز.","en":"A narrow window. Do not switch brands — modified-release profiles differ. Nausea and palpitations mean the level is too high."},"interactions":[{"with":"Ciprofloxacin","severity":"serious","note":{"ar":"يرفع الثيوفيلين إلى حدّ السميّة.","en":"Raises theophylline to toxic levels."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع الثيوفيلين.","en":"Raises theophylline."}},{"with":"Carbamazepine","severity":"warning","note":{"ar":"يخفض الثيوفيلين ويفقد السيطرة.","en":"Lowers theophylline and loses control."}}],"contraindications":[{"ar":"اضطراب نظم قلبي غير مضبوط","en":"Uncontrolled arrhythmia"},{"ar":"الصرع غير المضبوط","en":"Uncontrolled epilepsy"}]},
+  {"sci":"Isotretinoin","ar":"أيزوتريتينوين","atc":"D10BA01","form":"capsule","doses":["10 mg","20 mg"],"notes":{"ar":"مشوّه للجنين بدرجة قصوى — منع حمل موثّق قبل وأثناء وشهراً بعد العلاج. مع وجبة دسمة. لا تبرّع بالدم أثناء العلاج.","en":"Extremely teratogenic — documented contraception before, during and for a month after. With a fatty meal. No blood donation during treatment."},"interactions":[{"with":"Doxycycline","severity":"serious","note":{"ar":"ارتفاع ضغط داخل القحف — يُتجنّب الجمع.","en":"Raised intracranial pressure — avoid the combination."}},{"with":"Cholecalciferol","severity":"warning","note":{"ar":"خطر فرط الفيتامين A.","en":"Risk of hypervitaminosis A."}}],"contraindications":[{"ar":"الحمل والإرضاع","en":"Pregnancy and breastfeeding"},{"ar":"قصور كبدي","en":"Hepatic impairment"},{"ar":"فرط شحوم الدم الشديد","en":"Severe hyperlipidaemia"}]},
+  {"sci":"Erythromycin","ar":"إريثرومايسين","atc":"J01FA01","form":"tablet","doses":["125 mg/5 mL","250 mg","500 mg"],"notes":{"ar":"الاضطراب المعوي أشيع أسباب التوقف. مثبّط إنزيمي مثل الكلاريثرومايسين — راجع قائمة المريض.","en":"GI upset is the usual reason people stop. An enzyme inhibitor like clarithromycin — read the patient’s list."},"interactions":[{"with":"Simvastatin","severity":"critical","note":{"ar":"انحلال ربيدات — يُوقف الستاتين.","en":"Rhabdomyolysis — hold the statin."}},{"with":"Warfarin","severity":"serious","note":{"ar":"يرفع INR.","en":"Raises INR."}},{"with":"Amiodarone","severity":"critical","note":{"ar":"إطالة QT — يُتجنّب الجمع.","en":"QT prolongation — avoid the combination."}},{"with":"Clindamycin","severity":"warning","note":{"ar":"تضاد في آلية العمل.","en":"Antagonistic mechanisms."}}],"contraindications":[{"ar":"إطالة QT معروفة","en":"Known QT prolongation"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
+  {"sci":"Gentamicin","ar":"جنتامايسين","atc":"J01GB03","form":"injection","doses":["40 mg/mL","80 mg/2 mL","0.3% drops"],"notes":{"ar":"سميّة أذنية وكلوية تعتمد على المستوى — يستوجب قياس المستويات ووظيفة الكلية. الطنين وعدم التوازن علامات إنذار.","en":"Level-dependent ear and kidney toxicity — needs level and renal monitoring. Tinnitus and unsteadiness are the warning signs."},"interactions":[{"with":"Furosemide","severity":"serious","note":{"ar":"سميّة أذنية وكلوية مضاعفة.","en":"Compounded ear and kidney toxicity."}},{"with":"Ibuprofen","severity":"serious","note":{"ar":"خطر كلوي مضاعف.","en":"Compounded renal risk."}}],"contraindications":[{"ar":"الوهن العضلي الوبيل","en":"Myasthenia gravis"},{"ar":"الحمل","en":"Pregnancy"},{"ar":"اضطراب سمعي سابق","en":"Pre-existing hearing loss"}]},
+  {"sci":"Levodopa","ar":"ليفودوبا","atc":"N04BA01","form":"tablet","doses":["100 mg","250 mg"],"notes":{"ar":"التوقيت أهم من الجرعة — التأخير عشرين دقيقة يُحدث فرقاً ملموساً. يُباعد عن الوجبات الغنية بالبروتين.","en":"Timing matters more than dose — twenty minutes late is felt. Kept away from protein-heavy meals."},"interactions":[{"with":"Metoclopramide","severity":"serious","note":{"ar":"تضاد متبادل في الأثر.","en":"Each one blocks the other."}},{"with":"Haloperidol","severity":"serious","note":{"ar":"يلغي أثر الليفودوبا.","en":"Cancels levodopa’s effect."}},{"with":"Ferrous sulfate","severity":"warning","note":{"ar":"يقلّل الامتصاص — باعد ساعتين.","en":"Reduces absorption — space by two hours."}}],"contraindications":[{"ar":"الزرق ضيّق الزاوية","en":"Angle-closure glaucoma"},{"ar":"ميلانوما مشتبهة","en":"Suspected melanoma"},{"ar":"تناول مثبطات MAO غير الانتقائية","en":"Non-selective MAO inhibitors"}]},
+  {"sci":"Haloperidol","ar":"هالوبيريدول","atc":"N05AD01","form":"tablet","doses":["0.5 mg","5 mg","5 mg/mL"],"notes":{"ar":"أعراض خارج هرمية شائعة ومبكّرة. إطالة QT. تصلّب مع حمّى وتخليط: متلازمة خبيثة — إسعاف.","en":"Extrapyramidal effects are common and early. Prolongs QT. Rigidity with fever and confusion is neuroleptic malignant syndrome — emergency."},"interactions":[{"with":"Metoclopramide","severity":"serious","note":{"ar":"أعراض خارج هرمية مضاعفة.","en":"Compounded extrapyramidal effects."}},{"with":"Amiodarone","severity":"critical","note":{"ar":"إطالة QT — يُتجنّب الجمع.","en":"QT prolongation — avoid the combination."}},{"with":"Escitalopram","severity":"serious","note":{"ar":"إطالة QT مضاعفة.","en":"Additive QT prolongation."}}],"contraindications":[{"ar":"داء باركنسون","en":"Parkinson’s disease"},{"ar":"إطالة QT معروفة","en":"Known QT prolongation"},{"ar":"تثبيط الجهاز العصبي المركزي","en":"CNS depression"}]},
+  {"sci":"Phenobarbital","ar":"فينوباربيتال","atc":"N03AA02","form":"tablet","doses":["15 mg","30 mg","60 mg","100 mg"],"notes":{"ar":"محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. لا يُوقف فجأة — خطر حالة صرعية.","en":"A powerful enzyme inducer — it undermines the contraceptive pill and much else. Never stopped abruptly: status epilepticus."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"يخفض INR ويفقد الحماية.","en":"Lowers INR and loses the protection."}},{"with":"Montelukast","severity":"warning","note":{"ar":"يقلّل مستوى المونتيلوكاست.","en":"Lowers montelukast levels."}},{"with":"Diazepam","severity":"serious","note":{"ar":"تثبيط تنفسي مضاعف.","en":"Compounded respiratory depression."}}],"contraindications":[{"ar":"بورفيريا","en":"Porphyria"},{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
+  {"sci":"Lamotrigine","ar":"لاموتريجين","atc":"N03AX09","form":"tablet","doses":["25 mg","50 mg","100 mg","200 mg"],"notes":{"ar":"يُرفع ببطء شديد — التسريع هو سبب الطفح الخطير. أي طفح جلدي يعني التوقف والمراجعة فوراً.","en":"Titrated very slowly — going faster is what causes the serious rash. Any rash means stop and be seen the same day."},"interactions":[{"with":"Sodium valproate","severity":"critical","note":{"ar":"يضاعف اللاموتريجين وخطر الطفح الشديد — تُنصّف الجرعة.","en":"Doubles lamotrigine and the risk of a severe rash — halve the dose."}},{"with":"Carbamazepine","severity":"serious","note":{"ar":"يخفض اللاموتريجين ويفقد السيطرة.","en":"Lowers lamotrigine and loses control."}}],"contraindications":[{"ar":"طفح جلدي شديد سابق مع اللاموتريجين","en":"Previous severe rash with lamotrigine"}]},
+  {"sci":"Azathioprine","ar":"آزاثيوبرين","atc":"L04AX01","form":"tablet","doses":["25 mg","50 mg"],"notes":{"ar":"يستوجب تعداد دم منتظماً. أي حمّى أو التهاب حلق يستوجب فحص التعداد قبل أي شيء آخر.","en":"Needs regular blood counts. Any fever or sore throat means check the count before anything else."},"interactions":[{"with":"Allopurinol","severity":"critical","note":{"ar":"تثبيط نقي مهدّد للحياة — تُخفّض الجرعة إلى الربع أو يُتجنّب الجمع.","en":"Life-threatening marrow suppression — quarter the dose or avoid the combination."}},{"with":"Trimethoprim/Sulfamethoxazole","severity":"serious","note":{"ar":"تثبيط نقي مضاعف.","en":"Compounded marrow suppression."}},{"with":"Warfarin","severity":"warning","note":{"ar":"يقلّل أثر الوارفارين.","en":"Reduces warfarin’s effect."}}],"contraindications":[{"ar":"الحمل","en":"Pregnancy"},{"ar":"تثبيط نقي العظم","en":"Bone marrow suppression"},{"ar":"إنتان فعّال","en":"Active infection"}]},
+  {"sci":"Phenytoin","ar":"فينيتوين","atc":"N03AB02","form":"capsule","doses":["30 mg/5 mL","50 mg","100 mg"],"notes":{"ar":"حرائك غير خطية — زيادة صغيرة في الجرعة ترفع المستوى كثيراً. تضخّم اللثة شائع: العناية بالفم من يوم البدء.","en":"Non-linear kinetics — a small dose rise moves the level a long way. Gum overgrowth is common: mouth care from day one."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"تغيّر غير متوقّع في INR في الاتجاهين.","en":"Unpredictable INR movement in both directions."}},{"with":"Folic acid","severity":"serious","note":{"ar":"يخفض مستوى الفينيتوين.","en":"Lowers phenytoin levels."}},{"with":"Omeprazole","severity":"warning","note":{"ar":"يرفع الفينيتوين.","en":"Raises phenytoin."}},{"with":"Trimethoprim/Sulfamethoxazole","severity":"serious","note":{"ar":"يرفع الفينيتوين إلى حدّ السميّة.","en":"Raises phenytoin to toxic levels."}}],"contraindications":[{"ar":"بطء قلب جيبي أو حصار قلبي","en":"Sinus bradycardia or heart block"},{"ar":"بورفيريا","en":"Porphyria"}]},
+  {"sci":"Magnesium trisilicate","ar":"ثلاثي سيليكات المغنيسيوم","atc":"A02AA05","form":"tablet","doses":["250 mg","500 mg"],"notes":{"ar":"مضاد حموضة سريع وقصير الأثر. يُباعد ساعتين عن أي دواء آخر — يقلّل امتصاص الكثير منها.","en":"A fast, short-lived antacid. Two hours away from everything else — it reduces the absorption of a lot of things."},"interactions":[{"with":"Ciprofloxacin","severity":"serious","note":{"ar":"يمنع الامتصاص.","en":"Blocks absorption."}},{"with":"Doxycycline","severity":"serious","note":{"ar":"يمنع الامتصاص.","en":"Blocks absorption."}},{"with":"Nitrofurantoin","severity":"warning","note":{"ar":"يقلّل الامتصاص.","en":"Reduces absorption."}},{"with":"Fexofenadine","severity":"warning","note":{"ar":"يقلّل الامتصاص — باعد ساعتين.","en":"Reduces absorption — space by two hours."}}],"contraindications":[{"ar":"قصور كلوي شديد","en":"Severe renal impairment"}]},
+  {"sci":"Calcium gluconate","ar":"غلوكونات الكالسيوم","atc":"A12AA03","form":"injection","doses":["10% 10 mL"],"notes":{"ar":"وريدي بطيء. لا يُمزج مع السيفترياكسون أبداً. التسرّب خارج الوريد يسبّب نخراً نسيجياً.","en":"Slow IV. Never mixed with ceftriaxone. Extravasation causes tissue necrosis."},"interactions":[{"with":"Ceftriaxone","severity":"critical","note":{"ar":"ترسّب في الرئة والكلية — ممنوع الجمع وريدياً.","en":"Precipitates in lung and kidney — the IV combination is contraindicated."}},{"with":"Digoxin","severity":"serious","note":{"ar":"الكالسيوم الوريدي مع الديجوكسين يسبّب اضطراب نظم.","en":"IV calcium with digoxin causes arrhythmia."}}],"contraindications":[{"ar":"فرط كالسيوم الدم","en":"Hypercalcaemia"},{"ar":"الاستعمال الوريدي المتزامن مع السيفترياكسون","en":"Concurrent IV ceftriaxone"}]}
 ];
 /* DRUGS:END */
 
@@ -1429,6 +1587,9 @@ const DATA = {
 };
 
 const L = o => (o && (o[lang] !== undefined ? o[lang] : o.en)) || '';
+/* Today, as the tallies key on it. One constant so a check written at 23:59
+   and read at 00:01 does not land on two different days mid-session. */
+const TODAY_ISO = new Date().toISOString().slice(0, 10);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* A string going into a JS ARGUMENT that sits inside an HTML attribute —
    onclick="f(" + attr(x) + ")". It supplies its own quotes and then escapes
@@ -1514,7 +1675,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0003';
+const VERSION = 'App_v0.0004';
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -1585,6 +1746,12 @@ const S = {
   drugQuery: '',
   drugForm: 'all',
   openDrug: null,
+  drugTab: 'reference',
+  basket: [],
+  /* Tallies, never baskets. One row per (pharmacy, pharmacist, day, drug) with
+     a count — see recordDispense() for why the basket is thrown away. */
+  dispensing: [],
+  onShiftToday: true,       // fixture: this pharmacist is working today
   applied: {},
   accepted: {},
   reviewed: {},
@@ -1815,7 +1982,192 @@ function drugMatches(d, q) {
   return hay.includes(q);
 }
 
+/* ==========================================================================
+   THE DISPENSING CHECK
+
+   The reference answers "tell me about this drug". This answers the question a
+   pharmacist actually has, which is "can they take these together" — and it
+   answers it without being asked twice.
+
+   Three findings, in the order they matter:
+     1. interactions between any two drugs in the basket
+     2. therapeutic duplication, from the curated rules rather than the codes
+     3. the contraindications, turned into questions to ask the patient
+
+   And one thing that is not a finding and is shown as loudly as if it were:
+   how much of the basket could be checked at all.
+   ========================================================================== */
+
+/* THE BIDIRECTIONAL INDEX, and the reason it exists.
+
+   Interactions in the reference are written from one side. Warfarin's record
+   lists ibuprofen; ibuprofen's record happens to list warfarin too, but most
+   pairs are written once — 109 of the 138 internal pairs, when this was built.
+   So the obvious check, "does drug A's list contain drug B", finds the pair
+   only if the pharmacist happens to add the two drugs in the order the data
+   was written. Same two boxes, opposite order, silence.
+
+   That failure is invisible: no error, no empty state, just a check that
+   quietly passes. So the pairs are normalised ONCE into an undirected index
+   keyed on the two names sorted, and every lookup reads from that.
+
+   Where a pair is written from both sides and the two disagree on severity —
+   bisoprolol and salbutamol do — the worse one wins. A checker that downgrades
+   a warning depending on which box was scanned first is worse than none. */
+const INTERACTION_INDEX = (() => {
+  const ix = new Map();
+  const key = (a, b) => [a, b].sort().join('\u0000');
+  const known = new Set(DRUGS.map(d => d.sci));
+  DRUGS.forEach(d => (d.interactions || []).forEach(i => {
+    if (!known.has(i.with)) return;      // partners outside the reference are coverage, not pairs
+    const k = key(d.sci, i.with);
+    const prev = ix.get(k);
+    if (!prev || (SEVERITY_ORDER[i.severity] || 0) > (SEVERITY_ORDER[prev.severity] || 0)) {
+      ix.set(k, { a:d.sci, b:i.with, severity:i.severity, note:i.note });
+    }
+  }));
+  return { size:ix.size, get:(a, b) => ix.get(key(a, b)) || null };
+})();
+
+/* Every unordered pair in the basket, worst first. */
+function basketInteractions(scis) {
+  const out = [];
+  for (let i = 0; i < scis.length; i++) {
+    for (let j = i + 1; j < scis.length; j++) {
+      const hit = INTERACTION_INDEX.get(scis[i], scis[j]);
+      if (hit) out.push({ a:scis[i], b:scis[j], severity:hit.severity, note:hit.note });
+    }
+  }
+  return out.sort((x, y) => (SEVERITY_ORDER[y.severity] || 0) - (SEVERITY_ORDER[x.severity] || 0));
+}
+
+function basketDuplicates(scis) {
+  const drugs = scis.map(drugBySci).filter(Boolean);
+  return DUPLICATE_RULES
+    .map(r => ({ rule:r, members:drugs.filter(d => r.codes.some(c => d.atc.startsWith(c))).map(d => d.sci) }))
+    .filter(x => x.members.length > 1)
+    .sort((x, y) => (SEVERITY_ORDER[y.rule.severity] || 0) - (SEVERITY_ORDER[x.rule.severity] || 0));
+}
+
+/* Contraindications become ONE list of questions rather than one list per drug.
+   Three drugs contraindicated in pregnancy is one question, not three, and a
+   pharmacist who has to read the same line three times stops reading. Matched
+   on the exact text, which merges the identical ones and leaves near misses
+   ("Pregnancy" / "Pregnancy and breastfeeding") separate — the safe way round,
+   since merging two things that are not the same would drop a drug from the
+   list of what the question is about. */
+function basketQuestions(scis) {
+  const byText = new Map();
+  scis.map(drugBySci).filter(Boolean).forEach(d => {
+    (d.contraindications || []).forEach(c => {
+      if (!byText.has(c.en)) byText.set(c.en, { text:c, drugs:[] });
+      byText.get(c.en).drugs.push(d.sci);
+    });
+  });
+  // The ones touching several drugs first: those are the questions worth asking.
+  return [...byText.values()].sort((a, b) => b.drugs.length - a.drugs.length);
+}
+
+/* What could NOT be checked. Partners named by a drug in the basket but absent
+   from the reference are the honest limit of the tool — contrast media is named
+   by metformin and will never be in any formulary — and the screen carries them
+   with the same weight as a finding rather than in a footnote. */
+function basketCoverage(scis) {
+  const known = new Set(DRUGS.map(d => d.sci));
+  const missing = [];
+  scis.map(drugBySci).filter(Boolean).forEach(d =>
+    (d.interactions || []).forEach(i => {
+      if (!known.has(i.with) && missing.indexOf(i.with) < 0) missing.push(i.with);
+    }));
+  const n = scis.length;
+  return { drugs:n, pairs:(n * (n - 1)) / 2, namedOutside:missing };
+}
+
+/* ---------- Who may record, and against which pharmacy ---------- */
+
+function dispensePharmacy() {
+  const acct = ACCOUNTS[S.email];
+  if (!acct) return null;
+  // An owner records against their own pharmacy; a relief pharmacist against
+  // the pharmacy whose shift they are working. No shift, no pharmacy: the log
+  // belongs to a business, and a pharmacist not standing in one has nowhere to
+  // put it.
+  if (acct.pharmacy) return { id:acct.pharmacy, name:t('acc.pharmacyRahma') };
+  if (acct.type === 'pharmacist' && S.onShiftToday) return { id:'P2', name:L(DATA.listings[1].pharmacy) };
+  return null;
+}
+/* A student on placement does not dispense, so a student does not record — but
+   they get the check itself, which is the half that teaches. */
+const canRecord = () => S.role !== 'student' && !!dispensePharmacy();
+
+function addToBasket(sci) {
+  if (S.basket.indexOf(sci) < 0) S.basket.push(sci);
+  S.drugQuery = '';
+  S.drugTab = 'check';
+  render();
+}
+function removeFromBasket(sci) { S.basket = S.basket.filter(x => x !== sci); render(); }
+function clearBasket() { S.basket = []; render(); }
+function setDrugTab(k) { S.drugTab = k; S.drugQuery = ''; render(); }
+
+/* Recording keeps COUNTS, never the basket.
+
+   This is the decision that makes a log defensible at all. Each drug increments
+   its own tally for (pharmacy, pharmacist, day) and the basket is thrown away.
+   No patient, no name, and no record that these particular drugs went out
+   together — because a basket is a fingerprint. In a small district there may
+   be one person on methotrexate, and "methotrexate + folic acid at 14:20"
+   identifies them to anyone who knows the neighbourhood, with no name stored
+   anywhere. A day's tally does not: a pharmacy dispenses enough in a day to
+   dissolve the co-occurrence.
+
+   Which is also why the day is the finest grain kept. An hour would put the
+   basket back together. */
+function recordDispense() {
+  if (!canRecord()) return;
+  const ph = dispensePharmacy();
+  S.basket.forEach(sci => {
+    const row = S.dispensing.find(r => r.pharmacy === ph.id && r.pharmacist === S.email &&
+                                       r.date === TODAY_ISO && r.sci === sci);
+    if (row) row.n++;
+    else S.dispensing.push({ pharmacy:ph.id, pharmacist:S.email, date:TODAY_ISO, sci, n:1 });
+  });
+  const n = S.basket.length;
+  S.basket = [];
+  toast(t('dc.recorded', { n }));
+  render();
+}
+
+/* The pharmacist's own shift window: what THEY recorded, at THIS pharmacy,
+   today. Not the pharmacy's history — a locum who worked one Thursday has no
+   business reading two years of somebody else's dispensing. */
+function myShiftTallies() {
+  const ph = dispensePharmacy();
+  if (!ph) return [];
+  return S.dispensing
+    .filter(r => r.pharmacy === ph.id && r.pharmacist === S.email && r.date === TODAY_ISO)
+    .sort((a, b) => b.n - a.n || a.sci.localeCompare(b.sci));
+}
+
+/* Reference and check are two tabs of one screen rather than two places. They
+   are the same hundred rows doing two jobs, and a pharmacist who has just
+   looked something up is one tap from putting it in a basket. */
+function drugTabs() {
+  const tab = (k, label) => '<button class="seg' + (S.drugTab === k ? ' on' : '') + '" onclick="setDrugTab(' +
+    attr(k) + ')">' + esc(label) +
+    (k === 'check' && S.basket.length ? '<span class="seg-n">' + fmt(S.basket.length) + '</span>' : '') +
+    '</button>';
+  return '<div class="segbar">' + tab('reference', t('dx.tabReference')) + tab('check', t('dc.tabCheck')) + '</div>';
+}
+
 function screenDrugs() {
+  return '<div class="screen-body">' +
+    '<div class="constrain stack">' + drugTabs() + '</div>' +
+    (S.drugTab === 'check' ? screenCheck() : screenReference()) +
+  '</div>';
+}
+
+function screenReference() {
   const q = drugNorm(S.drugQuery);
   /* Only the forms actually present, so the chip row never offers a filter
      that returns nothing. */
@@ -1829,7 +2181,7 @@ function screenDrugs() {
     '<button class="chip' + (S.drugForm === f ? ' active' : '') + '" onclick="setDrugForm(' + attr(f) + ')">' +
     esc(f === 'all' ? t('dx.allForms') : t('df.' + f)) + '</button>').join('');
 
-  return '<div class="screen-body">' +
+  return '' +
     '<div class="constrain stack">' +
       '<div class="searchbox">' + icon('search') +
         '<input id="drug-q" type="search" autocomplete="off" value="' + esc(S.drugQuery) + '" ' +
@@ -1858,11 +2210,202 @@ function screenDrugs() {
         : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
           esc(t('dx.noMatch')) + '</div>') +
       drugDisclaimer() +
-    '</div></div>';
+    '</div>';
 }
 
 function drugDisclaimer() {
   return '<p class="inline-note" style="margin-top:4px;">' + esc(t('dx.disclaimer')) + '</p>';
+}
+
+/* ---------- The check ---------- */
+
+function screenCheck() {
+  const q = drugNorm(S.drugQuery);
+  const inBasket = sci => S.basket.indexOf(sci) >= 0;
+  const results = q
+    ? DRUGS.filter(d => drugMatches(d, q)).slice(0, 8)
+    : [];
+
+  const picker =
+    '<div class="searchbox">' + icon('search') +
+      '<input id="drug-q" type="search" autocomplete="off" value="' + esc(S.drugQuery) + '" ' +
+        'placeholder="' + esc(t('dc.addPlaceholder')) + '" oninput="setDrugQuery(this.value)">' +
+      (S.drugQuery ? '<button class="searchbox-x" onclick="setDrugQuery(\'\')" aria-label="' +
+        esc(t('common.clear')) + '">&times;</button>' : '') +
+    '</div>' +
+    (q && !results.length
+      ? '<p class="inline-note">' + esc(t('dx.noMatch')) + '</p>'
+      : results.length
+        ? '<div class="card">' + results.map(d =>
+            '<button class="row drug-row" onclick="addToBasket(' + attr(d.sci) + ')"' +
+              (inBasket(d.sci) ? ' disabled' : '') + '>' +
+              '<span class="row-body">' +
+                '<span class="row-title" style="display:block;">' + esc(drugName(d)) + '</span>' +
+                '<span class="row-sub" style="display:block;" dir="' + (lang === 'ar' ? 'ltr' : 'rtl') + '">' +
+                  esc(drugSub(d)) + '</span></span>' +
+              (inBasket(d.sci)
+                ? '<span class="pill-tag">' + esc(t('dc.added')) + '</span>'
+                : '<span class="add-mark">' + icon('plus') + '</span>') +
+            '</button>').join('') + '</div>'
+        : '');
+
+  /* Shown in BOTH states. Recording empties the basket, and that is exactly
+     the moment somebody looks for what they just recorded — the empty state
+     used to swallow it. */
+  const shiftPanel = () => {
+    const mine = myShiftTallies();
+    if (!mine.length) return '';
+    return '<p class="section-eyebrow">' + esc(t('dc.myShift')) + '</p>' +
+      '<div class="card card-pad"><div class="tally">' + mine.map(r =>
+        '<div class="tally-row"><span>' + esc((drugBySci(r.sci) && drugName(drugBySci(r.sci))) || r.sci) + '</span>' +
+        '<span class="figure">' + fmt(r.n) + '</span></div>').join('') + '</div>' +
+        '<p class="inline-note" style="margin-top:9px;">' + esc(t('dc.myShiftNote')) + '</p></div>';
+  };
+
+  if (!S.basket.length) {
+    return '<div class="constrain stack">' + picker +
+      '<div class="card card-pad empty-check">' + icon('pill') +
+        '<p class="empty-check-t">' + esc(t('dc.emptyTitle')) + '</p>' +
+        '<p class="empty-check-s">' + esc(t('dc.emptyBody')) + '</p></div>' +
+      shiftPanel() +
+      drugDisclaimer() +
+    '</div>';
+  }
+
+  const inter = basketInteractions(S.basket);
+  const dupes = basketDuplicates(S.basket);
+  const questions = basketQuestions(S.basket);
+  const cov = basketCoverage(S.basket);
+  const worst = inter.concat(dupes.map(d => ({ severity:d.rule.severity })))
+    .reduce((w, x) => ((SEVERITY_ORDER[x.severity] || 0) > (SEVERITY_ORDER[w] || 0) ? x.severity : w), '');
+
+  const chips = S.basket.map(sci => {
+    const d = drugBySci(sci);
+    return '<span class="basket-chip">' + esc(d ? drugName(d) : sci) +
+      '<button onclick="removeFromBasket(' + attr(sci) + ')" aria-label="' + esc(t('common.remove')) + '">&times;</button></span>';
+  }).join('');
+
+  /* The verdict line. It reports WHAT WAS CHECKED and never claims safety:
+     the system knows that no pair in its table matched, which is not the same
+     statement as "this combination is safe", and the gap between those two is
+     exactly where a missed interaction stops being a limitation of a reference
+     and starts being a promise that was broken. */
+  const verdict = (inter.length || dupes.length)
+    ? '<div class="verdict verdict-' + (worst || 'warning') + '">' + icon('alert') +
+        '<span><strong>' + esc(t('dc.found', { n:inter.length + dupes.length })) + '</strong>' +
+        '<span class="verdict-sub">' + esc(t('dc.checkedLine', { d:fmt(cov.drugs), p:fmt(cov.pairs) })) + '</span></span></div>'
+    : '<div class="verdict verdict-clear">' + icon('check') +
+        '<span><strong>' + esc(t('dc.nothingFound')) + '</strong>' +
+        '<span class="verdict-sub">' + esc(t('dc.checkedLine', { d:fmt(cov.drugs), p:fmt(cov.pairs) })) + ' ' +
+          esc(t('dc.notComplete')) + '</span></span></div>';
+
+  const pairRow = i => {
+    const A = drugBySci(i.a), B = drugBySci(i.b);
+    return '<div class="row drug-inter">' +
+      '<span class="row-body">' +
+        '<span class="drug-inter-h">' + sevChip(i.severity) +
+          '<span class="drug-inter-w">' + esc(drugName(A)) + '  +  ' + esc(drugName(B)) + '</span></span>' +
+        '<span class="row-sub" style="display:block;">' + esc(L(i.note)) + '</span>' +
+      '</span></div>';
+  };
+
+  const dupeRow = x =>
+    '<div class="row drug-inter">' +
+      '<span class="row-body">' +
+        '<span class="drug-inter-h">' + sevChip(x.rule.severity) +
+          '<span class="drug-inter-w">' + esc(L(x.rule.label)) + '</span>' +
+          (x.rule.oftenIntended ? '<span class="pill-tag">' + esc(t('dc.oftenIntended')) + '</span>' : '') +
+        '</span>' +
+        '<span class="row-sub" style="display:block;">' +
+          esc(x.members.map(m => drugName(drugBySci(m))).join('  +  ')) + ' — ' + esc(L(x.rule.note)) +
+        '</span>' +
+      '</span></div>';
+
+  const ph = dispensePharmacy();
+
+  return '<div class="constrain stack">' +
+    picker +
+    '<div class="basket">' + chips +
+      '<button class="btn-ghost basket-clear" onclick="clearBasket()">' + esc(t('dc.clear')) + '</button></div>' +
+    verdict +
+
+    (inter.length
+      ? '<p class="section-eyebrow">' + esc(t('dx.interactions')) + ' (' + fmt(inter.length) + ')</p>' +
+        '<div class="card">' + inter.map(pairRow).join('') + '</div>'
+      : '') +
+
+    (dupes.length
+      ? '<p class="section-eyebrow">' + esc(t('dc.duplication')) + ' (' + fmt(dupes.length) + ')</p>' +
+        '<div class="card">' + dupes.map(dupeRow).join('') + '</div>'
+      : '') +
+
+    /* Not warnings. The app does not know the patient, so a contraindication
+       list is a list of things to ASK — and asking is the part that turns a
+       screen into a conversation. */
+    (questions.length
+      ? '<p class="section-eyebrow">' + esc(t('dc.askTitle')) + '</p>' +
+        '<div class="card card-pad"><ul class="ask-list">' + questions.map(qn =>
+          '<li><span class="ask-q">' + esc(L(qn.text)) + '</span>' +
+          '<span class="ask-for">' + esc(qn.drugs.map(m => drugName(drugBySci(m))).join(', ')) + '</span></li>').join('') +
+        '</ul></div>'
+      : '') +
+
+    /* Coverage, at the same size as everything else. */
+    (cov.namedOutside.length
+      ? '<div class="card card-pad coverage">' + icon('alert') +
+        '<div><p class="coverage-t">' + esc(t('dc.coverageTitle')) + '</p>' +
+        '<p class="coverage-b">' + esc(t('dc.coverageBody', { list:cov.namedOutside.join(', ') })) + '</p></div></div>'
+      : '') +
+
+    /* Recording. Counts only — see recordDispense(). */
+    (canRecord()
+      ? '<button class="btn-primary" onclick="recordDispense()">' +
+          esc(t('dc.record', { pharmacy:ph.name })) + '</button>' +
+        '<p class="inline-note">' + esc(t('dc.recordNote')) + '</p>' +
+        '<p class="inline-note register-note">' + icon('alert') + ' ' + esc(t('dc.notRegister')) + '</p>'
+      : '<p class="inline-note">' + esc(t(S.role === 'student' ? 'dc.studentNote' : 'dc.noShiftNote')) + '</p>') +
+
+    shiftPanel() +
+
+    drugDisclaimer() +
+  '</div>';
+}
+
+/* ---------- The owner's consumption view ----------
+   The pharmacy's own analytics, and the first thing built out of this data on
+   purpose: whoever generates it should get value from it before anybody else
+   does. */
+function screenConsumption() {
+  const acct = ACCOUNTS[S.email];
+  const rows = S.dispensing.filter(r => r.pharmacy === (acct && acct.pharmacy));
+  const byDrug = new Map();
+  rows.forEach(r => byDrug.set(r.sci, (byDrug.get(r.sci) || 0) + r.n));
+  const list = [...byDrug.entries()].sort((a, b) => b[1] - a[1]);
+  const total = list.reduce((n, x) => n + x[1], 0);
+  const max = Math.max(1, ...list.map(x => x[1]));
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="stat-grid">' +
+      '<div class="stat-card"><span class="stat-num">' + fmt(total) + '</span>' +
+        '<span class="stat-label">' + esc(t('cn.units')) + '</span></div>' +
+      '<div class="stat-card"><span class="stat-num">' + fmt(list.length) + '</span>' +
+        '<span class="stat-label">' + esc(t('cn.distinct')) + '</span></div>' +
+    '</div>' +
+    (list.length
+      ? '<p class="section-eyebrow">' + esc(t('cn.byDrug')) + '</p>' +
+        '<div class="card card-pad">' + list.map(([sci, n]) => {
+          const d = drugBySci(sci);
+          return '<div class="cn-row">' +
+            '<span class="cn-name">' + esc(d ? drugName(d) : sci) + '</span>' +
+            '<span class="cn-track"><span class="cn-bar" style="width:' +
+              Math.max(3, n / max * 100) + '%;"></span></span>' +
+            '<span class="cn-n figure">' + fmt(n) + '</span></div>';
+        }).join('') + '</div>'
+      : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+        esc(t('cn.empty')) + '</div>') +
+    '<p class="inline-note">' + esc(t('cn.note')) + '</p>' +
+    '<p class="inline-note register-note">' + icon('alert') + ' ' + esc(t('dc.notRegister')) + '</p>' +
+  '</div></div>';
 }
 
 function screenDrug() {
@@ -1879,7 +2422,13 @@ function screenDrug() {
     .sort((a, b) => (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0));
 
   return '<div class="screen-body"><div class="constrain stack">' +
-    '<button class="btn-ghost" onclick="goto(\'drugs\')">' + esc(t('common.back')) + '</button>' +
+    '<div class="rec-actions">' +
+      '<button class="btn-ghost" onclick="goto(\'drugs\')">' + esc(t('common.back')) + '</button>' +
+      (S.basket.indexOf(d.sci) >= 0
+        ? '<span class="pill-tag">' + esc(t('dc.added')) + '</span>'
+        : '<button class="btn-secondary" onclick="addToBasket(' + attr(d.sci) + ')">' +
+          icon('plus') + esc(t('dc.addToCheck')) + '</button>') +
+    '</div>' +
 
     /* The counselling line leads. It is the sentence a pharmacist says while
        handing the box over, which is the reason this screen gets opened. */
@@ -2911,6 +3460,7 @@ const SCREENS = {
   earnings:      { eyebrow:()=>currentName(), title:()=>t('nav.earnings'), body:screenEarnings },
   cv:            { eyebrow:()=>currentName(), title:()=>t('cv.title'), body:screenCv },
   drugs:         { eyebrow:()=>currentName(), title:()=>t('nav.drugs'), body:screenDrugs },
+  consumption:   { eyebrow:()=>currentName(), title:()=>t('nav.consumption'), body:screenConsumption },
   drug:          { eyebrow:()=>t('nav.drugs'),
                    title:()=>{ const d = drugBySci(S.openDrug); return d ? drugName(d) : t('nav.drugs'); },
                    body:screenDrug },
@@ -2992,6 +3542,10 @@ function ownerGroups() {
   const groups = [
     { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['post','plus','nav.post'],
                                  ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
+                                 /* The pharmacy's own consumption. Commercial, not
+                                    clinical — which is why it sits here and the
+                                    check itself sits under Drugs. */
+                                 ['consumption','chart','nav.consumption'],
                                  ['billing','wallet','nav.billing']] }
   ];
   if (S.takesShifts) {
@@ -3377,7 +3931,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0003.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0004.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

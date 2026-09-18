@@ -16,7 +16,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import DRUGS, { FORM_KEYS } from '../data/drugs.mjs';
+import DRUGS, { FORM_KEYS, DUPLICATE_RULES } from '../data/drugs.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BEGIN = '/* DRUGS:BEGIN */';
@@ -42,6 +42,16 @@ for (const d of DRUGS) {
     if (!c.ar || !c.en) problems.push(`${d.sci}: contraindication needs both languages`);
   }
 }
+for (const r of DUPLICATE_RULES) {
+  if (!r.id || !r.codes || !r.codes.length) problems.push(`duplicate rule ${r.id}: no codes`);
+  if (!['warning', 'serious', 'critical'].includes(r.severity)) problems.push(`duplicate rule ${r.id}: bad severity`);
+  if (!r.label || !r.label.ar || !r.label.en) problems.push(`duplicate rule ${r.id}: label needs both languages`);
+  if (!r.note || !r.note.ar || !r.note.en) problems.push(`duplicate rule ${r.id}: note needs both languages`);
+  // A rule no drug can satisfy is dead weight that reads as coverage.
+  if (DRUGS.filter(d => r.codes.some(c => d.atc.startsWith(c))).length < 2)
+    problems.push(`duplicate rule ${r.id}: fewer than two drugs can ever match it`);
+}
+
 if (problems.length) {
   console.error('data/drugs.mjs did not validate:\n  ' + problems.join('\n  '));
   process.exit(1);
@@ -51,6 +61,9 @@ if (problems.length) {
    single 60 KB line is not readable by either. */
 const block = BEGIN + '\n' +
   'const DRUG_FORMS = ' + JSON.stringify(FORM_KEYS) + ';\n' +
+  'const DUPLICATE_RULES = [\n' +
+  DUPLICATE_RULES.map(r => '  ' + JSON.stringify(r)).join(',\n') +
+  '\n];\n' +
   'const DRUGS = [\n' +
   DRUGS.map(d => '  ' + JSON.stringify(d)).join(',\n') +
   '\n];\n' + END;

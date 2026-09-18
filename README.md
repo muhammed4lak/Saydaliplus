@@ -182,9 +182,12 @@ npm run check:crm     # drives it in a real browser
 
 ### The drug reference
 
-`data/drugs.mjs` holds a hundred molecules — the ones an Iraqi community
-pharmacy actually turns over — and `npm run drugs` writes them into both
-single-file builds between `DRUGS:BEGIN` / `DRUGS:END` markers. **One list, two
+`data/drugs.mjs` holds 119 molecules — the hundred an Iraqi community pharmacy
+actually turns over, plus the nineteen the first hundred *named* as the other
+half of an interaction without being in the list themselves. A checker that
+warns about methotrexate eight times and then cannot be shown methotrexate is
+incoherent. `npm run drugs` writes them into both single-file builds between
+`DRUGS:BEGIN` / `DRUGS:END` markers. **One list, two
 readers.** The CRM has it as a module with editing, CSV import and brand links
 on top; the app has it as a lookup a pharmacist opens at the counter. Two copies
 of the same reference drift, and the copy that drifts is the one somebody is
@@ -192,8 +195,8 @@ reading with a patient in front of them.
 
 Each molecule carries its scientific and Arabic names, ATC code, main dosage
 form, the strengths actually marketed, a counselling line, the interactions
-worth stopping a sale for with a severity, and its contraindications. 209
-interaction pairs and 219 contraindications in total. The script validates
+worth stopping a sale for with a severity, and its contraindications. The
+interaction pairs and contraindications run into the hundreds. The script validates
 before it writes — a duplicate scientific name, an unknown form or a severity
 outside warning/serious/critical fails the run rather than rendering as a blank
 chip later.
@@ -215,6 +218,83 @@ waiting. What it displaced is the CV, opened a handful of times a year, which
 moved to More along with incident reporting. Search matches either script and
 the ATC code, and flattens diacritics, hamza and ta-marbuta on both sides,
 because a pharmacist keying a name in a hurry writes ا for أ and ه for ة.
+
+### The dispensing check
+
+The reference answers "tell me about this drug". The check answers the question
+a pharmacist actually has — *can they take these together* — and it is a second
+tab of the same screen rather than a second place. Add the drugs on a
+prescription and it reports, worst first:
+
+1. **Interactions** between any two drugs in the basket, every pair, not just
+   adjacent ones.
+2. **Therapeutic duplication**, from a curated list of classes rather than from
+   the ATC codes (see below).
+3. **The contraindications, turned into questions.** The app does not know the
+   patient, so a contraindication is not a warning — it is something to ask.
+   They are deduplicated across the basket, so three drugs contraindicated in
+   pregnancy is one question rather than three.
+
+**The bidirectional index is the part that matters.** Interactions in the
+reference are written from one side: 149 of the pairs are one-way. Amiodarone
+lists warfarin as critical; warfarin's own record does not mention amiodarone.
+So the obvious check — does drug A's list contain drug B — finds a pair only
+when the two drugs happen to be added in the order the data was written. Same
+two boxes, opposite order, silence, and no error to show for it. The pairs are
+therefore normalised once into an undirected index, and where the two sides
+disagree on severity the worse one wins. Both orders are asserted in the check
+suite.
+
+**Duplication is curated, not computed.** The obvious implementation is "two
+drugs sharing an ATC class", and it is wrong: run it over this list and it
+fires on metformin + gliclazide, on basal + bolus insulin, on aspirin +
+clopidogrel after a stent, and on two antiepileptics — every one a standard
+regimen. Alert fatigue is the documented way these tools fail, not missing
+data. So `DUPLICATE_RULES` in `data/drugs.mjs` names the ten classes where a
+second drug is a real problem, each with its own wording, and the ones that are
+often deliberate say so. The check suite asserts that the standard combinations
+stay silent.
+
+**Nothing found is never a green tick.** The system knows that no pair in its
+table matched; it does not know that a combination is safe, and the gap between
+those two statements is where a missed interaction stops being a known limit
+and becomes a broken promise. So the verdict reports what was checked — *"4
+drugs, 6 pairs checked against the reference"* — and says the reference is not
+complete. Coverage gets the same treatment: a partner named by a drug in the
+basket but absent from the reference (contrast media is named by metformin and
+will never be in any formulary) is shown as a card, not a footnote.
+
+### The dispensing log: tallies, never baskets
+
+Recording keeps a **count per drug**, for a pharmacy, a pharmacist and a day.
+The basket is thrown away.
+
+That is the decision that makes a log defensible at all. There is no patient
+anywhere in it, and — just as important — no record that these particular drugs
+went out *together*, because a basket is a fingerprint. In a small district
+there may be one person on methotrexate, and "methotrexate + folic acid at
+14:20" identifies them to anyone who knows the neighbourhood with no name
+stored anywhere. A day's tally does not: a pharmacy dispenses enough in a day
+to dissolve the co-occurrence. The day is also the finest grain kept, because
+an hour would put the basket back together.
+
+Who sees what:
+
+| | Sees |
+|---|---|
+| **Pharmacist** | What they recorded, at that pharmacy, on that shift. A locum who worked one Thursday has no business reading two years of somebody else's dispensing. |
+| **Pharmacy owner** | The whole log for their own pharmacy, as consumption by drug. |
+| **Operator (CRM)** | Every tally, as a `dispensing` table in the SQL view, with two seeded reports. |
+
+A student on placement gets the check — it is the half that teaches — and
+cannot record, because they are not the dispensing pharmacist. A pharmacist not
+working a shift can check but has nowhere to record to: the log belongs to a
+pharmacy.
+
+Two things are said on screen rather than buried: **this log does not replace
+the controlled-substances register or any legally required record**, and the
+pharmacy's own consumption view exists because whoever generates the data
+should get value from it before anybody else does.
 
 ### Policy tests
 
@@ -458,8 +538,8 @@ npm run test:e2e       # Playwright, against the seeded database
 - 85 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
 - 130 policy assertions run against a real Postgres as real users.
-- 96 behavioural assertions driving the app build in a real browser
-  (`npm run check:app`), and 174 driving the CRM (`npm run check:crm`).
+- 146 behavioural assertions driving the app build in a real browser
+  (`npm run check:app`), and 185 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee

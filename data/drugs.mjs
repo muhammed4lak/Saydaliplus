@@ -1322,4 +1322,362 @@ export default [
     {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
   ] },
 
+/* ---------- Named interaction partners ----------
+   These nineteen were already named by the hundred above as the other half of
+   an interaction, without being in the reference themselves. A checker that
+   warns about methotrexate eight times and then cannot be shown methotrexate
+   is incoherent, so they are here.
+
+   Contrast media stays out deliberately, and is the best argument for the
+   coverage line: it is named by metformin, it is not a dispensed medicine, and
+   no formulary will ever contain it. The screen has to be able to say "checked
+   4 of 5" rather than pretend. */
+
+{ sci:'Methotrexate', ar:'ميثوتريكسيت', atc:'L04AX03', form:'tablet',
+  doses:['2.5 mg','10 mg','50 mg/2 mL'],
+  notes:{ar:'ONCE A WEEK — الجرعة اليومية خطأ قاتل ومسجّل. حمض الفوليك بيوم مختلف. اذكر يوم الأسبوع بصوت عالٍ عند الصرف.',
+         en:'ONCE A WEEK. A daily dose is a documented fatal error. Folic acid on a different day. Say the day of the week out loud when you hand it over.'},
+  interactions:[
+    { with:'Trimethoprim/Sulfamethoxazole', severity:'critical', note:{ar:'تثبيط نقي شديد — ممنوع الجمع.', en:'Severe marrow suppression — the combination is contraindicated.'} },
+    { with:'Ibuprofen', severity:'serious', note:{ar:'يقلّل طرح الميثوتريكسيت ويزيد سميّته.', en:'Reduces methotrexate clearance, raising toxicity.'} },
+    { with:'Amoxicillin', severity:'serious', note:{ar:'يقلّل الطرح الكلوي.', en:'Reduces renal clearance.'} },
+    { with:'Omeprazole', severity:'warning', note:{ar:'يؤخّر الطرح مع الجرعات العالية.', en:'Delays clearance at high doses.'} }
+  ],
+  contraindications:[
+    {ar:'الحمل والإرضاع', en:'Pregnancy and breastfeeding'},
+    {ar:'قصور كبدي أو كلوي شديد', en:'Severe hepatic or renal impairment'},
+    {ar:'تثبيط نقي العظم', en:'Bone marrow suppression'},
+    {ar:'إنتان فعّال', en:'Active infection'}
+  ] },
+
+{ sci:'Lithium', ar:'ليثيوم', atc:'N05AN01', form:'tablet',
+  doses:['300 mg','400 mg MR'],
+  notes:{ar:'هامش علاجي ضيّق جداً. سوائل وملح ثابتان — التعرّق والإسهال والحمية قليلة الملح ترفع المستوى. الرعاش والإسهال والتخليط علامات تسمّم.',
+         en:'A very narrow window. Steady fluid and salt — sweating, diarrhoea or a low-salt diet push levels up. Tremor, diarrhoea and confusion are toxicity.'},
+  interactions:[
+    { with:'Hydrochlorothiazide', severity:'serious', note:{ar:'يرفع الليثيوم إلى حدّ السميّة.', en:'Raises lithium to toxic levels.'} },
+    { with:'Ibuprofen', severity:'serious', note:{ar:'مضادات الالتهاب ترفع الليثيوم.', en:'NSAIDs raise lithium.'} },
+    { with:'Lisinopril', severity:'serious', note:{ar:'يرفع الليثيوم.', en:'Raises lithium.'} },
+    { with:'Metronidazole', severity:'serious', note:{ar:'يرفع الليثيوم.', en:'Raises lithium.'} }
+  ],
+  contraindications:[
+    {ar:'قصور كلوي شديد', en:'Severe renal impairment'},
+    {ar:'داء أديسون', en:'Addison’s disease'},
+    {ar:'اضطراب توازن الصوديوم', en:'Disturbed sodium balance'}
+  ] },
+
+{ sci:'Verapamil', ar:'فيراباميل', atc:'C08DA01', form:'tablet',
+  doses:['40 mg','80 mg','120 mg','240 mg SR'],
+  notes:{ar:'الإمساك أشيع أعراضه بفارق كبير. لا يُجمع مع حاصرات بيتا إلا بقرار اختصاصي.',
+         en:'Constipation is by far its commonest side effect. Not combined with a beta blocker except on a specialist’s decision.'},
+  interactions:[
+    { with:'Bisoprolol', severity:'critical', note:{ar:'بطء قلب شديد وحصار — يُتجنّب الجمع.', en:'Severe bradycardia and heart block — avoid the combination.'} },
+    { with:'Atenolol', severity:'critical', note:{ar:'بطء قلب شديد وحصار.', en:'Severe bradycardia and heart block.'} },
+    { with:'Digoxin', severity:'serious', note:{ar:'يرفع الديجوكسين.', en:'Raises digoxin.'} },
+    { with:'Simvastatin', severity:'serious', note:{ar:'خطر اعتلال عضلي — يُحدّ بـ 20 ملغ.', en:'Myopathy risk — limit to 20 mg.'} }
+  ],
+  contraindications:[
+    {ar:'قصور قلب غير معاوَض', en:'Decompensated heart failure'},
+    {ar:'حصار قلبي من الدرجة الثانية أو الثالثة', en:'Second- or third-degree heart block'},
+    {ar:'هبوط ضغط شديد', en:'Severe hypotension'}
+  ] },
+
+{ sci:'Calcium carbonate', ar:'كربونات الكالسيوم', atc:'A02AC01', form:'tablet',
+  doses:['500 mg','600 mg','1250 mg'],
+  notes:{ar:'يُباعد عن الحديد والليفوثيروكسين والكينولونات والتتراسيكلينات — يمنع امتصاصها. جرعة واحدة لا تزيد عن 600 ملغ عنصري.',
+         en:'Spaced away from iron, levothyroxine, quinolones and tetracyclines — it blocks all of them. No more than 600 mg elemental in one dose.'},
+  interactions:[
+    { with:'Levothyroxine', severity:'serious', note:{ar:'يمنع الامتصاص — باعد أربع ساعات.', en:'Blocks absorption — space by four hours.'} },
+    { with:'Ciprofloxacin', severity:'serious', note:{ar:'يرتبط به ويفقد الامتصاص.', en:'Chelates and loses absorption.'} },
+    { with:'Doxycycline', severity:'serious', note:{ar:'يرتبط به ويفقد الامتصاص.', en:'Chelates and loses absorption.'} },
+    { with:'Ferrous sulfate', severity:'warning', note:{ar:'يقلّل امتصاص الحديد — باعد ساعتين.', en:'Reduces iron absorption — space by two hours.'} }
+  ],
+  contraindications:[
+    {ar:'فرط كالسيوم الدم', en:'Hypercalcaemia'},
+    {ar:'حصيات كلوية كلسية', en:'Calcium renal stones'}
+  ] },
+
+{ sci:'Sildenafil', ar:'سيلدينافيل', atc:'G04BE03', form:'tablet',
+  doses:['25 mg','50 mg','100 mg'],
+  notes:{ar:'ممنوع تماماً مع أي نترات — اسأل عن بخاخ تحت اللسان تحديداً، فكثير من المرضى لا يعدّونه دواءً.',
+         en:'Absolutely not with any nitrate — ask specifically about a sublingual spray, which many patients do not count as a medicine.'},
+  interactions:[
+    { with:'Glyceryl trinitrate', severity:'critical', note:{ar:'هبوط ضغط قاتل — ممنوع الجمع.', en:'Fatal hypotension — the combination is contraindicated.'} },
+    { with:'Isosorbide dinitrate', severity:'critical', note:{ar:'هبوط ضغط قاتل — ممنوع الجمع.', en:'Fatal hypotension — the combination is contraindicated.'} },
+    { with:'Tamsulosin', severity:'serious', note:{ar:'هبوط ضغط انتصابي.', en:'Postural hypotension.'} },
+    { with:'Clarithromycin', severity:'serious', note:{ar:'يرفع السيلدينافيل كثيراً.', en:'Substantially raises sildenafil.'} }
+  ],
+  contraindications:[
+    {ar:'الاستعمال المتزامن مع النترات', en:'Concurrent nitrate use'},
+    {ar:'احتشاء أو سكتة حديثة', en:'Recent infarction or stroke'},
+    {ar:'هبوط ضغط شديد', en:'Severe hypotension'}
+  ] },
+
+{ sci:'Potassium chloride', ar:'كلوريد البوتاسيوم', atc:'A12BA01', form:'tablet',
+  doses:['600 mg MR','20 mEq sachet'],
+  notes:{ar:'مع الطعام وكوب ماء كامل وبقاء منتصباً — يقرّح المريء. يُبلع كاملاً دون سحق.',
+         en:'With food, a full glass, and sitting upright — it ulcerates the oesophagus. Swallow whole, never crushed.'},
+  interactions:[
+    { with:'Spironolactone', severity:'critical', note:{ar:'فرط بوتاسيوم مهدّد للحياة.', en:'Life-threatening hyperkalaemia.'} },
+    { with:'Lisinopril', severity:'serious', note:{ar:'فرط بوتاسيوم.', en:'Hyperkalaemia.'} },
+    { with:'Losartan', severity:'serious', note:{ar:'فرط بوتاسيوم.', en:'Hyperkalaemia.'} }
+  ],
+  contraindications:[
+    {ar:'فرط بوتاسيوم الدم', en:'Hyperkalaemia'},
+    {ar:'قصور كلوي شديد', en:'Severe renal impairment'},
+    {ar:'داء أديسون غير معالج', en:'Untreated Addison’s disease'}
+  ] },
+
+{ sci:'Tizanidine', ar:'تيزانيدين', atc:'M03BX02', form:'tablet',
+  doses:['2 mg','4 mg'],
+  notes:{ar:'منوّم ويخفض الضغط. يُرفع ويُخفض تدريجياً.', en:'Sedating and lowers blood pressure. Titrated up and down, never stopped at once.'},
+  interactions:[
+    { with:'Ciprofloxacin', severity:'critical', note:{ar:'هبوط ضغط شديد ونعاس — ممنوع الجمع.', en:'Severe hypotension and sedation — the combination is contraindicated.'} },
+    { with:'Fluvoxamine', severity:'critical', note:{ar:'ممنوع الجمع.', en:'The combination is contraindicated.'} }
+  ],
+  contraindications:[
+    {ar:'الاستعمال المتزامن مع سيبروفلوكساسين', en:'Concurrent ciprofloxacin'},
+    {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
+  ] },
+
+{ sci:'Theophylline', ar:'ثيوفيلين', atc:'R03DA04', form:'tablet',
+  doses:['200 mg MR','300 mg MR','400 mg MR'],
+  notes:{ar:'هامش علاجي ضيّق. لا يُبدّل بين الشركات — الشكل الممتد يختلف في التحرّر. الغثيان والخفقان علامات تجاوز.',
+         en:'A narrow window. Do not switch brands — modified-release profiles differ. Nausea and palpitations mean the level is too high.'},
+  interactions:[
+    { with:'Ciprofloxacin', severity:'serious', note:{ar:'يرفع الثيوفيلين إلى حدّ السميّة.', en:'Raises theophylline to toxic levels.'} },
+    { with:'Clarithromycin', severity:'serious', note:{ar:'يرفع الثيوفيلين.', en:'Raises theophylline.'} },
+    { with:'Carbamazepine', severity:'warning', note:{ar:'يخفض الثيوفيلين ويفقد السيطرة.', en:'Lowers theophylline and loses control.'} }
+  ],
+  contraindications:[
+    {ar:'اضطراب نظم قلبي غير مضبوط', en:'Uncontrolled arrhythmia'},
+    {ar:'الصرع غير المضبوط', en:'Uncontrolled epilepsy'}
+  ] },
+
+{ sci:'Isotretinoin', ar:'أيزوتريتينوين', atc:'D10BA01', form:'capsule',
+  doses:['10 mg','20 mg'],
+  notes:{ar:'مشوّه للجنين بدرجة قصوى — منع حمل موثّق قبل وأثناء وشهراً بعد العلاج. مع وجبة دسمة. لا تبرّع بالدم أثناء العلاج.',
+         en:'Extremely teratogenic — documented contraception before, during and for a month after. With a fatty meal. No blood donation during treatment.'},
+  interactions:[
+    { with:'Doxycycline', severity:'serious', note:{ar:'ارتفاع ضغط داخل القحف — يُتجنّب الجمع.', en:'Raised intracranial pressure — avoid the combination.'} },
+    { with:'Cholecalciferol', severity:'warning', note:{ar:'خطر فرط الفيتامين A.', en:'Risk of hypervitaminosis A.'} }
+  ],
+  contraindications:[
+    {ar:'الحمل والإرضاع', en:'Pregnancy and breastfeeding'},
+    {ar:'قصور كبدي', en:'Hepatic impairment'},
+    {ar:'فرط شحوم الدم الشديد', en:'Severe hyperlipidaemia'}
+  ] },
+
+{ sci:'Erythromycin', ar:'إريثرومايسين', atc:'J01FA01', form:'tablet',
+  doses:['125 mg/5 mL','250 mg','500 mg'],
+  notes:{ar:'الاضطراب المعوي أشيع أسباب التوقف. مثبّط إنزيمي مثل الكلاريثرومايسين — راجع قائمة المريض.',
+         en:'GI upset is the usual reason people stop. An enzyme inhibitor like clarithromycin — read the patient’s list.'},
+  interactions:[
+    { with:'Simvastatin', severity:'critical', note:{ar:'انحلال ربيدات — يُوقف الستاتين.', en:'Rhabdomyolysis — hold the statin.'} },
+    { with:'Warfarin', severity:'serious', note:{ar:'يرفع INR.', en:'Raises INR.'} },
+    { with:'Amiodarone', severity:'critical', note:{ar:'إطالة QT — يُتجنّب الجمع.', en:'QT prolongation — avoid the combination.'} },
+    { with:'Clindamycin', severity:'warning', note:{ar:'تضاد في آلية العمل.', en:'Antagonistic mechanisms.'} }
+  ],
+  contraindications:[
+    {ar:'إطالة QT معروفة', en:'Known QT prolongation'},
+    {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
+  ] },
+
+{ sci:'Gentamicin', ar:'جنتامايسين', atc:'J01GB03', form:'injection',
+  doses:['40 mg/mL','80 mg/2 mL','0.3% drops'],
+  notes:{ar:'سميّة أذنية وكلوية تعتمد على المستوى — يستوجب قياس المستويات ووظيفة الكلية. الطنين وعدم التوازن علامات إنذار.',
+         en:'Level-dependent ear and kidney toxicity — needs level and renal monitoring. Tinnitus and unsteadiness are the warning signs.'},
+  interactions:[
+    { with:'Furosemide', severity:'serious', note:{ar:'سميّة أذنية وكلوية مضاعفة.', en:'Compounded ear and kidney toxicity.'} },
+    { with:'Ibuprofen', severity:'serious', note:{ar:'خطر كلوي مضاعف.', en:'Compounded renal risk.'} }
+  ],
+  contraindications:[
+    {ar:'الوهن العضلي الوبيل', en:'Myasthenia gravis'},
+    {ar:'الحمل', en:'Pregnancy'},
+    {ar:'اضطراب سمعي سابق', en:'Pre-existing hearing loss'}
+  ] },
+
+{ sci:'Levodopa', ar:'ليفودوبا', atc:'N04BA01', form:'tablet',
+  doses:['100 mg','250 mg'],
+  notes:{ar:'التوقيت أهم من الجرعة — التأخير عشرين دقيقة يُحدث فرقاً ملموساً. يُباعد عن الوجبات الغنية بالبروتين.',
+         en:'Timing matters more than dose — twenty minutes late is felt. Kept away from protein-heavy meals.'},
+  interactions:[
+    { with:'Metoclopramide', severity:'serious', note:{ar:'تضاد متبادل في الأثر.', en:'Each one blocks the other.'} },
+    { with:'Haloperidol', severity:'serious', note:{ar:'يلغي أثر الليفودوبا.', en:'Cancels levodopa’s effect.'} },
+    { with:'Ferrous sulfate', severity:'warning', note:{ar:'يقلّل الامتصاص — باعد ساعتين.', en:'Reduces absorption — space by two hours.'} }
+  ],
+  contraindications:[
+    {ar:'الزرق ضيّق الزاوية', en:'Angle-closure glaucoma'},
+    {ar:'ميلانوما مشتبهة', en:'Suspected melanoma'},
+    {ar:'تناول مثبطات MAO غير الانتقائية', en:'Non-selective MAO inhibitors'}
+  ] },
+
+{ sci:'Haloperidol', ar:'هالوبيريدول', atc:'N05AD01', form:'tablet',
+  doses:['0.5 mg','5 mg','5 mg/mL'],
+  notes:{ar:'أعراض خارج هرمية شائعة ومبكّرة. إطالة QT. تصلّب مع حمّى وتخليط: متلازمة خبيثة — إسعاف.',
+         en:'Extrapyramidal effects are common and early. Prolongs QT. Rigidity with fever and confusion is neuroleptic malignant syndrome — emergency.'},
+  interactions:[
+    { with:'Metoclopramide', severity:'serious', note:{ar:'أعراض خارج هرمية مضاعفة.', en:'Compounded extrapyramidal effects.'} },
+    { with:'Amiodarone', severity:'critical', note:{ar:'إطالة QT — يُتجنّب الجمع.', en:'QT prolongation — avoid the combination.'} },
+    { with:'Escitalopram', severity:'serious', note:{ar:'إطالة QT مضاعفة.', en:'Additive QT prolongation.'} }
+  ],
+  contraindications:[
+    {ar:'داء باركنسون', en:'Parkinson’s disease'},
+    {ar:'إطالة QT معروفة', en:'Known QT prolongation'},
+    {ar:'تثبيط الجهاز العصبي المركزي', en:'CNS depression'}
+  ] },
+
+{ sci:'Phenobarbital', ar:'فينوباربيتال', atc:'N03AA02', form:'tablet',
+  doses:['15 mg','30 mg','60 mg','100 mg'],
+  notes:{ar:'محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. لا يُوقف فجأة — خطر حالة صرعية.',
+         en:'A powerful enzyme inducer — it undermines the contraceptive pill and much else. Never stopped abruptly: status epilepticus.'},
+  interactions:[
+    { with:'Warfarin', severity:'serious', note:{ar:'يخفض INR ويفقد الحماية.', en:'Lowers INR and loses the protection.'} },
+    { with:'Montelukast', severity:'warning', note:{ar:'يقلّل مستوى المونتيلوكاست.', en:'Lowers montelukast levels.'} },
+    { with:'Diazepam', severity:'serious', note:{ar:'تثبيط تنفسي مضاعف.', en:'Compounded respiratory depression.'} }
+  ],
+  contraindications:[
+    {ar:'بورفيريا', en:'Porphyria'},
+    {ar:'قصور تنفسي شديد', en:'Severe respiratory insufficiency'},
+    {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
+  ] },
+
+{ sci:'Lamotrigine', ar:'لاموتريجين', atc:'N03AX09', form:'tablet',
+  doses:['25 mg','50 mg','100 mg','200 mg'],
+  notes:{ar:'يُرفع ببطء شديد — التسريع هو سبب الطفح الخطير. أي طفح جلدي يعني التوقف والمراجعة فوراً.',
+         en:'Titrated very slowly — going faster is what causes the serious rash. Any rash means stop and be seen the same day.'},
+  interactions:[
+    { with:'Sodium valproate', severity:'critical', note:{ar:'يضاعف اللاموتريجين وخطر الطفح الشديد — تُنصّف الجرعة.', en:'Doubles lamotrigine and the risk of a severe rash — halve the dose.'} },
+    { with:'Carbamazepine', severity:'serious', note:{ar:'يخفض اللاموتريجين ويفقد السيطرة.', en:'Lowers lamotrigine and loses control.'} }
+  ],
+  contraindications:[{ar:'طفح جلدي شديد سابق مع اللاموتريجين', en:'Previous severe rash with lamotrigine'}] },
+
+{ sci:'Azathioprine', ar:'آزاثيوبرين', atc:'L04AX01', form:'tablet',
+  doses:['25 mg','50 mg'],
+  notes:{ar:'يستوجب تعداد دم منتظماً. أي حمّى أو التهاب حلق يستوجب فحص التعداد قبل أي شيء آخر.',
+         en:'Needs regular blood counts. Any fever or sore throat means check the count before anything else.'},
+  interactions:[
+    { with:'Allopurinol', severity:'critical', note:{ar:'تثبيط نقي مهدّد للحياة — تُخفّض الجرعة إلى الربع أو يُتجنّب الجمع.', en:'Life-threatening marrow suppression — quarter the dose or avoid the combination.'} },
+    { with:'Trimethoprim/Sulfamethoxazole', severity:'serious', note:{ar:'تثبيط نقي مضاعف.', en:'Compounded marrow suppression.'} },
+    { with:'Warfarin', severity:'warning', note:{ar:'يقلّل أثر الوارفارين.', en:'Reduces warfarin’s effect.'} }
+  ],
+  contraindications:[
+    {ar:'الحمل', en:'Pregnancy'},
+    {ar:'تثبيط نقي العظم', en:'Bone marrow suppression'},
+    {ar:'إنتان فعّال', en:'Active infection'}
+  ] },
+
+{ sci:'Phenytoin', ar:'فينيتوين', atc:'N03AB02', form:'capsule',
+  doses:['30 mg/5 mL','50 mg','100 mg'],
+  notes:{ar:'حرائك غير خطية — زيادة صغيرة في الجرعة ترفع المستوى كثيراً. تضخّم اللثة شائع: العناية بالفم من يوم البدء.',
+         en:'Non-linear kinetics — a small dose rise moves the level a long way. Gum overgrowth is common: mouth care from day one.'},
+  interactions:[
+    { with:'Warfarin', severity:'serious', note:{ar:'تغيّر غير متوقّع في INR في الاتجاهين.', en:'Unpredictable INR movement in both directions.'} },
+    { with:'Folic acid', severity:'serious', note:{ar:'يخفض مستوى الفينيتوين.', en:'Lowers phenytoin levels.'} },
+    { with:'Omeprazole', severity:'warning', note:{ar:'يرفع الفينيتوين.', en:'Raises phenytoin.'} },
+    { with:'Trimethoprim/Sulfamethoxazole', severity:'serious', note:{ar:'يرفع الفينيتوين إلى حدّ السميّة.', en:'Raises phenytoin to toxic levels.'} }
+  ],
+  contraindications:[
+    {ar:'بطء قلب جيبي أو حصار قلبي', en:'Sinus bradycardia or heart block'},
+    {ar:'بورفيريا', en:'Porphyria'}
+  ] },
+
+{ sci:'Magnesium trisilicate', ar:'ثلاثي سيليكات المغنيسيوم', atc:'A02AA05', form:'tablet',
+  doses:['250 mg','500 mg'],
+  notes:{ar:'مضاد حموضة سريع وقصير الأثر. يُباعد ساعتين عن أي دواء آخر — يقلّل امتصاص الكثير منها.',
+         en:'A fast, short-lived antacid. Two hours away from everything else — it reduces the absorption of a lot of things.'},
+  interactions:[
+    { with:'Ciprofloxacin', severity:'serious', note:{ar:'يمنع الامتصاص.', en:'Blocks absorption.'} },
+    { with:'Doxycycline', severity:'serious', note:{ar:'يمنع الامتصاص.', en:'Blocks absorption.'} },
+    { with:'Nitrofurantoin', severity:'warning', note:{ar:'يقلّل الامتصاص.', en:'Reduces absorption.'} },
+    { with:'Fexofenadine', severity:'warning', note:{ar:'يقلّل الامتصاص — باعد ساعتين.', en:'Reduces absorption — space by two hours.'} }
+  ],
+  contraindications:[{ar:'قصور كلوي شديد', en:'Severe renal impairment'}] },
+
+{ sci:'Calcium gluconate', ar:'غلوكونات الكالسيوم', atc:'A12AA03', form:'injection',
+  doses:['10% 10 mL'],
+  notes:{ar:'وريدي بطيء. لا يُمزج مع السيفترياكسون أبداً. التسرّب خارج الوريد يسبّب نخراً نسيجياً.',
+         en:'Slow IV. Never mixed with ceftriaxone. Extravasation causes tissue necrosis.'},
+  interactions:[
+    { with:'Ceftriaxone', severity:'critical', note:{ar:'ترسّب في الرئة والكلية — ممنوع الجمع وريدياً.', en:'Precipitates in lung and kidney — the IV combination is contraindicated.'} },
+    { with:'Digoxin', severity:'serious', note:{ar:'الكالسيوم الوريدي مع الديجوكسين يسبّب اضطراب نظم.', en:'IV calcium with digoxin causes arrhythmia.'} }
+  ],
+  contraindications:[
+    {ar:'فرط كالسيوم الدم', en:'Hypercalcaemia'},
+    {ar:'الاستعمال الوريدي المتزامن مع السيفترياكسون', en:'Concurrent IV ceftriaxone'}
+  ] },
+
+];
+
+/* ==========================================================================
+   THERAPEUTIC DUPLICATION
+
+   The obvious implementation is "two drugs sharing an ATC class", and it is
+   wrong. Run it over this list and it fires on metformin + gliclazide, on
+   basal + bolus insulin, on aspirin + clopidogrel after a stent, on a
+   background nitrate plus a rescue spray, and on two antiepileptics — every
+   one of them a standard regimen. A checker that shouts at the most ordinary
+   prescriptions in the pharmacy gets muted inside a week, and then it is
+   silent for the one that mattered. Alert fatigue is the documented way these
+   tools fail, not missing data.
+
+   So duplication is a CURATED list of classes where a second drug is a real
+   problem, not a rule derived from the codes. Each carries its own wording,
+   and the ones that are often deliberate say so rather than crying wolf.
+
+   Deliberately absent, because combining them is normal practice: antibiotics
+   (J01), oral antidiabetics (A10B), insulins (A10A), nitrates (C01D), and
+   antiepileptics (N03A).
+   ========================================================================== */
+
+export const DUPLICATE_RULES = [
+  { id:'nsaid', codes:['M01A'], severity:'serious',
+    label:{ar:'مضادّا التهاب غير ستيرويديين', en:'Two NSAIDs'},
+    note:{ar:'يضاعفان خطر القرحة والأذية الكلوية دون أن يضيفا تسكيناً.',
+          en:'Doubles the ulcer and kidney risk without adding pain relief.'} },
+
+  { id:'ras', codes:['C09A','C09C'], severity:'serious',
+    label:{ar:'حصار مضاعف لجملة الرينين', en:'Dual blockade of the renin system'},
+    note:{ar:'مثبّط ACE مع سارتان — أو سارتانان — يرفع خطر الأذية الكلوية وفرط البوتاسيوم بلا فائدة مثبتة.',
+          en:'An ACE inhibitor with an ARB — or two ARBs — raises kidney injury and hyperkalaemia with no proven benefit.'} },
+
+  { id:'betablocker', codes:['C07A'], severity:'serious',
+    label:{ar:'حاصرا بيتا', en:'Two beta blockers'},
+    note:{ar:'بطء قلب وهبوط ضغط مضاعفان.', en:'Compounded bradycardia and hypotension.'} },
+
+  { id:'statin', codes:['C10A'], severity:'serious',
+    label:{ar:'ستاتينان', en:'Two statins'},
+    note:{ar:'لا أثر إضافي على الشحوم، وخطر اعتلال عضلي مضاعف.',
+          en:'No added effect on lipids, and a compounded myopathy risk.'} },
+
+  { id:'ccb', codes:['C08C'], severity:'serious',
+    label:{ar:'حاصرا كالسيوم من الفئة نفسها', en:'Two dihydropyridine calcium blockers'},
+    note:{ar:'هبوط ضغط ووذمة محيطية مضاعفان.', en:'Compounded hypotension and ankle swelling.'} },
+
+  { id:'benzo', codes:['N05B'], severity:'serious',
+    label:{ar:'بنزوديازيبينان', en:'Two benzodiazepines'},
+    note:{ar:'تثبيط تنفسي وتنويم مضاعفان، وخطر اعتماد أعلى.',
+          en:'Compounded respiratory depression and sedation, and a higher dependence risk.'} },
+
+  /* Real, and sometimes deliberate. The wording has to carry both, or a
+     pharmacist who has seen it prescribed on purpose stops reading the rest. */
+  { id:'antidepressant', codes:['N06A'], severity:'serious', oftenIntended:true,
+    label:{ar:'مضادّا اكتئاب', en:'Two antidepressants'},
+    note:{ar:'خطر متلازمة السيروتونين. يُوصف أحياناً عن قصد — تأكّد أن الطبيب قصده.',
+          en:'Serotonin syndrome risk. Sometimes prescribed deliberately — confirm the prescriber meant it.'} },
+
+  { id:'antithrombotic', codes:['B01A'], severity:'serious', oftenIntended:true,
+    label:{ar:'أكثر من دواء مضاد للتخثّر أو الصفيحات', en:'More than one drug affecting clotting'},
+    note:{ar:'العلاج المزدوج بعد الدعامة قياسي؛ أما مضاد تخثّر مع مضاد صفيحات فيحتاج سبباً مذكوراً.',
+          en:'Dual antiplatelet therapy after a stent is standard; an anticoagulant plus an antiplatelet needs a stated reason.'} },
+
+  { id:'acid', codes:['A02B'], severity:'warning', oftenIntended:true,
+    label:{ar:'أكثر من خافض للحموضة', en:'More than one acid suppressant'},
+    note:{ar:'مثبّط مضخة نهاراً وحاصر H2 ليلاً نمط مشروع؛ وغالباً ما يكون تكراراً غير مقصود.',
+          en:'A proton pump inhibitor by day and an H2 blocker at night is a legitimate pattern; more often it is an unintended duplicate.'} },
+
+  { id:'antihistamine', codes:['R06A'], severity:'warning', oftenIntended:true,
+    label:{ar:'مضادّا هيستامين', en:'Two antihistamines'},
+    note:{ar:'غير منوّم نهاراً ومنوّم ليلاً نمط شائع ومشروع. تحقّق فقط أنه مقصود.',
+          en:'A non-sedating one by day and a sedating one at night is common and legitimate. Just check it is intended.'} }
 ];

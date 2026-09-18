@@ -12,6 +12,9 @@
 import { chromium } from 'playwright';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+/* The reference is read from its source rather than a number typed here, so
+   adding a drug never means editing a test to match. */
+import DRUG_DATA, { DUPLICATE_RULES } from '../data/drugs.mjs';
 import { dirname, join } from 'node:path';
 
 
@@ -263,9 +266,9 @@ ok('and "who is the manufacturer" has no single answer for a company, only per p
 
 console.log('\nthe drug reference: one list, both builds');
 await tab(p, 'drugs');
-ok('the module holds the hundred from data/drugs.mjs',
-   await p.evaluate(() => DATA.drugs.length) === 100);
-ok('and the app build holds the same hundred, from the same file', (() => {
+ok(`the module holds every drug in data/drugs.mjs (${DRUG_DATA.length})`,
+   await p.evaluate(() => DATA.drugs.length) === DRUG_DATA.length);
+ok('and the app build holds the same list, from the same file', (() => {
   const app = readFileSync(join(here, (readFileSync(file, 'utf8').match(/const PEER_APP = '([^']+)'/) || [])[1]), 'utf8');
   const one = (src) => (src.match(/\/\* DRUGS:BEGIN \*\/[\s\S]*?\/\* DRUGS:END \*\//) || [''])[0];
   return one(app).length > 1000 && one(app) === one(readFileSync(file, 'utf8'));
@@ -539,6 +542,69 @@ for (const [q, why] of [
   }, q);
   ok(`refused rather than half-run: ${why}`, !!err);
 }
+
+console.log('\ndispensing tallies reach the operator side');
+await tab(p, 'reports');
+ok('the CRM holds the tallies the app records',
+   await p.evaluate(() => DATA.dispensing.length > 100));
+/* The privacy decision, asserted rather than trusted to a comment: there is no
+   patient column to leak and no basket to reconstruct. A row is a count. */
+ok('a row is a count — no patient, no basket, no time of day',
+   await p.evaluate(() => DATA.dispensing.every(r =>
+     Object.keys(r).sort().join() === 'date,id,n,pharmacist,pharmacy,sci')));
+ok('and the SQL view exposes exactly those columns',
+   await p.evaluate(() => {
+     const one = sqlTables().dispensing[0];
+     return Object.keys(one).sort().join() === 'date,drug,id,pharmacist,pharmacy_id,units';
+   }));
+ok('every tally names a drug that is in the reference',
+   await p.evaluate(() => DATA.dispensing.every(r => DATA.drugs.some(d => d.sci === r.sci))));
+ok('and a pharmacy that exists',
+   await p.evaluate(() => DATA.dispensing.every(r => DATA.pharmacies.some(x => x.id === r.pharmacy))));
+
+ok('consumption by drug reports off it',
+   await p.evaluate(() => {
+     const res = runReport(reportById('R11'));
+     if (!res.ok || !res.rows.length) return false;
+     const total = DATA.dispensing.reduce((n, r) => n + r.n, 0);
+     // LIMIT 12, so the report is a subset — every row must still be real.
+     return res.rows.every(row => row.units > 0 && row.units <= total);
+   }));
+ok('and the arithmetic matches the underlying rows',
+   await p.evaluate(() => {
+     const res = runSQL("SELECT drug, SUM(units) AS units FROM dispensing GROUP BY drug");
+     const byDrug = {};
+     DATA.dispensing.forEach(r => { byDrug[r.sci] = (byDrug[r.sci] || 0) + r.n; });
+     return res.rows.length === Object.keys(byDrug).length
+       && res.rows.every(row => row.units === byDrug[row.drug]);
+   }));
+ok('consumption by pharmacy joins through to the pharmacy name',
+   await p.evaluate(() => {
+     const res = runReport(reportById('R12'));
+     return res.ok && res.rows.length === new Set(DATA.dispensing.map(r => r.pharmacy)).size
+       && res.rows.every(row => DATA.pharmacies.some(x => L(x.name) === row.name));
+   }));
+ok('the whole of it totals to the rows it came from',
+   await p.evaluate(() =>
+     runSQL("SELECT SUM(units) AS n FROM dispensing").rows[0].n ===
+     DATA.dispensing.reduce((n, r) => n + r.n, 0)));
+/* The thing that must NOT be possible. The tallies were collected to answer
+   "what does this pharmacy consume" and nothing else; if a query could put a
+   basket back together, the whole privacy argument for keeping them collapses. */
+ok('no query can reconstruct which drugs went out together',
+   await p.evaluate(() => {
+     const cols = Object.keys(sqlTables().dispensing[0]);
+     return !cols.some(c => /basket|patient|prescription|time/i.test(c));
+   }));
+ok('a consumption report can be pinned to the dashboard like any other',
+   await p.evaluate(() => {
+     const before = S.tiles.length;
+     pinReport('R11');
+     const added = S.tiles.length === before + 1 && S.tiles[S.tiles.length - 1].report === 'R11';
+     S.tiles = DEFAULT_TILES.map(x => Object.assign({}, x));
+     render();
+     return added;
+   }));
 
 console.log('\nthe dashboard is built from reports');
 await tab(p, 'home');
