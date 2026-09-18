@@ -371,6 +371,19 @@ entire career. Needs W6b and W6c.
   us be your digital infrastructure.
 
 ## S8. Drug reference as a daily-use tool
+
+**Partly built — App_v0.0003 / CRM_v0.0003.** `data/drugs.mjs` holds a hundred
+molecules, embedded into both builds by `npm run drugs`, and the app has it as a
+screen in the pharmacist's and the student's bottom bar. What is built is the
+*reference*: names in both scripts, ATC, main form, marketed strengths, a
+counselling line, interactions with a severity, contraindications.
+
+What this entry still wants is the part that makes it a habit rather than a
+lookup: an interaction checker that takes a patient's whole list at once instead
+of one molecule at a time, availability ("which pharmacy near me has this"), and
+whatever the Syndicate or the Ministry will confirm as authoritative. The first
+of those is cheap now that the pairs are structured; the second needs stock data
+the platform does not have; the third is a conversation, not a build.
 *Highest-leverage feature on the list.*
 
 Arabic interaction and contraindication checking. Shift-hunting is episodic; a

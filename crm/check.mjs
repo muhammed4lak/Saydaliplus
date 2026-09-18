@@ -261,6 +261,46 @@ ok('and "who is the manufacturer" has no single answer for a company, only per p
      return bs.some(b => b.company === c.id) || bs.some(b => b.registrationHolder === c.id) || bs.some(b => b.bureau === c.id);
    }));
 
+console.log('\nthe drug reference: one list, both builds');
+await tab(p, 'drugs');
+ok('the module holds the hundred from data/drugs.mjs',
+   await p.evaluate(() => DATA.drugs.length) === 100);
+ok('and the app build holds the same hundred, from the same file', (() => {
+  const app = readFileSync(join(here, (readFileSync(file, 'utf8').match(/const PEER_APP = '([^']+)'/) || [])[1]), 'utf8');
+  const one = (src) => (src.match(/\/\* DRUGS:BEGIN \*\/[\s\S]*?\/\* DRUGS:END \*\//) || [''])[0];
+  return one(app).length > 1000 && one(app) === one(readFileSync(file, 'utf8'));
+})());
+ok('every scientific name is unique — it is the identifier',
+   await p.evaluate(() => new Set(DATA.drugs.map(d => d.sci)).size === DATA.drugs.length));
+ok('every row carries an ATC code, a form and at least one strength',
+   await p.evaluate(() => DATA.drugs.every(d => d.atc && d.form && d.doses.length)));
+ok('every row carries both scripts, in the data rather than the interface',
+   await p.evaluate(() => DATA.drugs.every(d => /[؀-ۿ]/.test(d.ar) && /^[\x20-\x7E]+$/.test(d.sci))));
+ok('the forms offered by the create form are the ones the reference recognises',
+   await p.evaluate(() => {
+     const used = new Set(DATA.drugs.map(d => d.form));
+     return [...used].every(f => DRUG_FORMS.includes(f)) && DRUG_FORMS.length >= used.size;
+   }));
+ok('and every form in use has a label rather than falling through as its key',
+   await p.evaluate(() => [...new Set(DATA.drugs.map(d => d.form))]
+     .every(f => t('df.' + f) !== 'df.' + f.toUpperCase() && !t('df.' + f).includes('.'))));
+ok('the form facet segments the list and adds back up to the whole',
+   await p.evaluate(() => {
+     const forms = [...new Set(DATA.drugs.map(d => d.form))];
+     return forms.reduce((n, f) => n + DATA.drugs.filter(d => d.form === f).length, 0) === DATA.drugs.length;
+   }));
+ok('interactions name a real severity and carry a note in both scripts',
+   await p.evaluate(() => DATA.drugs.every(d => (d.interactions || []).every(i =>
+     ['warning', 'serious', 'critical'].includes(i.severity) && i.with && i.note.ar && i.note.en))));
+{
+  const n = await p.evaluate(() => DATA.drugs.reduce((a, d) => a + d.interactions.length, 0));
+  ok(`the reference carries real interaction content (${n} pairs)`, n > 150);
+}
+ok('a brand can still only point at a drug that exists',
+   await p.evaluate(() => DATA.brands.every(b => DATA.drugs.some(d => d.sci === b.sci))));
+ok('and at a company that exists',
+   await p.evaluate(() => DATA.brands.every(b => DATA.companies.some(c => c.id === b.company))));
+
 console.log('\ndrugs, brands, and the dose override');
 await tab(p, 'drugs');
 await p.evaluate(() => openRecord('drugs', 'Amoxicillin'));
@@ -319,12 +359,15 @@ await p.waitForTimeout(220);
 ok('a file without the key column is refused outright', await p.locator('.imp-fatal').count() > 0);
 
 // a good file with one bad row and one duplicate
+// Nystatin is deliberately NOT one of the hundred in data/drugs.mjs, so this
+// row is genuinely new. A drug already in the reference would test the update
+// path twice and the insert path not at all.
 const csv = [
   'scientific_name,arabic_name,atc,form,doses,notes,interactions,contraindications',
-  'Ibuprofen,إيبوبروفين,M01AE01,tablet,200 mg|400 mg,"Take with food, not on an empty stomach.",Warfarin:warning:Raises bleeding risk,Active peptic ulcer|Third trimester',
+  'Nystatin,نيستاتين,A07AA02,syrup,100000 IU/mL,"Swish and hold, not swallowed straight down.",Warfarin:warning:May raise INR,Hypersensitivity|Systemic infection',
   'Amoxicillin,أموكسيسيلين,J01CA04,capsule,250 mg|500 mg,Updated note,,',
   ',Missing key,,tablet,,,,',
-  'Ibuprofen,مكرر,M01AE01,tablet,200 mg,,,'
+  'Nystatin,مكرر,A07AA02,syrup,100000 IU/mL,,,'
 ].join('\n');
 await p.locator('#imp-text').fill(csv);
 await p.locator('.modal .btn', { hasText: /Check|تحقّق/ }).click();
@@ -337,7 +380,7 @@ ok('a quoted field containing a comma survives parsing',
 ok('interactions parse into structured rows',
    await p.evaluate(() => S.modal.parsed.items[0].rec.interactions[0].severity === 'warning'));
 ok('nothing is written before Apply',
-   await p.evaluate(() => !DATA.drugs.some(d => d.sci === 'Ibuprofen')));
+   await p.evaluate(() => !DATA.drugs.some(d => d.sci === 'Nystatin')));
 const drugsBefore = await p.evaluate(() => DATA.drugs.length);
 await p.locator('.modal .btn.primary').click();
 await p.waitForTimeout(280);
@@ -745,6 +788,32 @@ ok('and openRole refuses to demote it',
   await p.waitForTimeout(200);
   ok('and it transfers back the same way',
      await p.evaluate(x => staffById(x).role === 'owner_admin' && ME === x, from));
+}
+
+console.log('\nevery inline handler actually parses');
+/* Same sweep as the app's. A value interpolated into onclick="f(...)" without
+   escaping its own quotes ends the attribute early and the button silently
+   does nothing — invisible in the source and invisible on screen. Here the
+   interpolated values are record ids and drug names, some of which contain a
+   slash or an apostrophe. */
+{
+  const broken = [];
+  const scan = () => p.evaluate(() => [...document.querySelectorAll('[onclick]')]
+    .map(el => el.getAttribute('onclick'))
+    .filter(h => { try { new Function(h); return false; } catch (e) { return true; } }));
+  for (const k of ['home', ...MODS, 'reports', 'team']) {
+    await tab(p, k);
+    (await scan()).forEach(h => broken.push(`${k}: ${h.slice(0, 60)}`));
+  }
+  for (const [mod, id] of [['drugs', 'Amoxicillin/Clavulanic acid'], ['drugs', 'Trimethoprim/Sulfamethoxazole'],
+                           ['companies', 'CO4'], ['users', 'U1']]) {
+    await p.evaluate(a => openRecord(a[0], a[1]), [mod, id]);
+    await p.waitForTimeout(160);
+    (await scan()).forEach(h => broken.push(`${mod} ${id}: ${h.slice(0, 60)}`));
+  }
+  await p.evaluate(() => closeRecord());
+  ok('no broken inline handler on any module or record', broken.length === 0);
+  broken.slice(0, 6).forEach(x => console.log('        ' + x));
 }
 
 console.log('\nsearch');

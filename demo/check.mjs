@@ -315,6 +315,163 @@ await go(d, 'placement');
 ok('the certificate stays locked until every month is approved',
    /Unlocks|تُفتح/.test(await d.locator('#app-body').innerText()));
 
+console.log('\nthe drug reference');
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+ok('a pharmacist has it in the bottom bar, not buried behind More',
+   await d.evaluate(() => navFor('pharmacist').some(x => x[0] === 'drugs')));
+ok('and the app and the CRM hold the same list, from the same file',
+   await d.evaluate(() => DRUGS.length) === 100);
+await go(d, 'drugs');
+ok('the module renders every drug', await d.locator('.drug-row').count() === 100);
+ok('and says what kind of reference it is',
+   /مرجع مساعد|A reference, not a substitute/.test(await d.locator('.inline-note').first().innerText()));
+
+/* Search has to work the way a pharmacist types: either script, and without
+   the diacritics or the alif hamza that nobody keys in a hurry. */
+await d.evaluate(() => setDrugQuery('amox'));
+await d.waitForTimeout(200);
+ok('a Latin fragment finds the molecule',
+   await d.locator('.drug-row').count() === 2
+   && (await d.locator('.drug-row').first().innerText()).includes('Amox'));
+await d.evaluate(() => setDrugQuery('اموكسيسيلين'));   // no hamza on the alif
+await d.waitForTimeout(200);
+ok('an Arabic query without the hamza still finds أموكسيسيلين',
+   await d.locator('.drug-row').count() >= 1);
+await d.evaluate(() => setDrugQuery('J01CA04'));
+await d.waitForTimeout(200);
+ok('and so does the ATC code', await d.locator('.drug-row').count() === 1);
+await d.evaluate(() => setDrugQuery('zzzz'));
+await d.waitForTimeout(200);
+ok('a query that matches nothing says so rather than showing an empty page',
+   await d.locator('.drug-row').count() === 0
+   && /لا يوجد دواء|Nothing matches/.test(await d.locator('#app-body').innerText()));
+await d.evaluate(() => setDrugQuery(''));
+ok('the search box keeps the caret after a keystroke',
+   await d.evaluate(() => document.activeElement && document.activeElement.id === 'drug-q'));
+
+await d.evaluate(() => { S.drugForm = 'inhaler'; render(); });
+await d.waitForTimeout(200);
+ok('a form filter narrows to that form and nothing else',
+   await d.evaluate(() => DRUGS.filter(x => x.form === 'inhaler').length) === await d.locator('.drug-row').count()
+   && await d.locator('.drug-row').count() > 0);
+await d.evaluate(() => { S.drugForm = 'all'; render(); });
+
+console.log('\na drug record');
+await d.evaluate(() => openDrug('Clarithromycin'));
+await d.waitForTimeout(250);
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('the counselling line leads the record', /CYP3A4|مثبّط قوي/.test(await d.locator('.drug-note-v').innerText()));
+  ok('it carries the ATC code and every strength', txt.includes('J01FA09') && txt.includes('500 mg'));
+  ok('interactions are ranked worst first, not in the order they were typed',
+     await d.evaluate(() => {
+       const rank = { critical:3, serious:2, warning:1 };
+       const shown = [...document.querySelectorAll('.drug-inter .sev')]
+         .map(e => [...e.classList].find(c => c.startsWith('sev-')).slice(4));
+       return shown.length > 1 && shown.every((s, i) => i === 0 || rank[shown[i - 1]] >= rank[s]);
+     }));
+  ok('a critical interaction is shown with a word and an icon, not colour alone',
+     await d.locator('.sev-critical .ico').count() > 0
+     && /Critical|حرج/.test(await d.locator('.sev-critical').first().innerText()));
+  ok('contraindications are listed', /Simvastatin|سيمفاستاتين/.test(txt) && txt.includes('QT'));
+}
+ok('an interaction partner that is in the reference is a link to it',
+   await d.evaluate(() => {
+     const b = [...document.querySelectorAll('.drug-inter .link-inline')][0];
+     if (!b) return false;
+     b.click();
+     return S.screen === 'drug' && S.openDrug !== 'Clarithromycin';
+   }));
+ok('and one that is not stays plain text rather than a dead link',
+   await d.evaluate(() => {
+     openDrug('Metformin');
+     const inter = DRUGS.find(x => x.sci === 'Metformin').interactions;
+     const outside = inter.find(i => !DRUGS.some(x => x.sci === i.with));
+     return !!outside && document.querySelectorAll('.drug-inter-w').length > 0;
+   }));
+
+/* The worst-interaction chip is computed, and the seed value is the classic
+   way to get it wrong: a reduce seeded with '' compares against undefined and
+   reports every drug as clean. */
+ok('the worst interaction is reported rather than swallowed',
+   await d.evaluate(() =>
+     drugWorst(DRUGS.find(x => x.sci === 'Clarithromycin')) === 'critical'
+     && drugWorst(DRUGS.find(x => x.sci === 'Paracetamol')) === 'warning'
+     && drugWorst({ interactions: [] }) === ''));
+ok('and the list shows it on more rows than not',
+   await d.evaluate(() => {
+     goto('drugs');
+     return document.querySelectorAll('.drug-row .sev').length > 50;
+   }));
+
+console.log('\nwho gets the reference');
+ok('an owner reaches it from More', await d.evaluate(() =>
+   ownerGroups().some(g => g.items.some(x => x[0] === 'drugs'))));
+ok('a student has it in the bar — a placement is twelve weeks of being asked',
+   await d.evaluate(() => navFor('student').some(x => x[0] === 'drugs')));
+ok('the CV the bar gave up for it is still reachable from More',
+   await d.evaluate(() => moreGroups().some(g => g.items.some(x => x[0] === 'cv'))));
+ok('and so is incident reporting, which had no route on a phone before',
+   await d.evaluate(() => moreGroups().some(g => g.items.some(x => x[0] === 'incidents'))));
+await go(d, 'more');
+ok('More renders those rows rather than an empty screen',
+   await d.locator('.row').count() >= 4);
+
+console.log('\nboth languages');
+await d.evaluate(() => { setLang('ar'); goto('drugs'); });
+await d.waitForTimeout(250);
+ok('the Arabic list leads with the Arabic name',
+   await d.evaluate(() => {
+     const first = document.querySelector('.drug-row .row-title');
+     return /[؀-ۿ]/.test(first.textContent);
+   }));
+await d.evaluate(() => openDrug('Metformin'));
+await d.waitForTimeout(200);
+ok('and an Arabic record carries Arabic interaction notes',
+   /[؀-ۿ]/.test(await d.locator('.drug-inter .row-sub').first().innerText()));
+ok('while the scientific name stays Latin and left-to-right',
+   await d.evaluate(() => {
+     const el = [...document.querySelectorAll('.kv-value span')].find(x => x.textContent === 'Metformin');
+     return !!el && el.getAttribute('dir') === 'ltr';
+   }));
+await d.evaluate(() => { setLang('en'); goto('browse'); });
+
+console.log('\nevery inline handler actually parses');
+/* A value interpolated into onclick="f(...)" without escaping its own quotes
+   ends the attribute early, and the browser keeps whatever is left. Nothing
+   looks wrong — the markup reads correctly in the source and the button simply
+   does nothing when pressed. It cost the More screen its entire contents once,
+   so it is swept for rather than tested one button at a time. */
+{
+  const broken = [];
+  for (const [mail, screens] of [
+    ['ahmed@example.com', ['browse', 'shifts', 'earnings', 'drugs', 'more', 'cv', 'profile', 'incidents', 'notifications']],
+    ['rahma@example.com', ['dashboard', 'post', 'applicants', 'trainees', 'billing', 'more', 'cv', 'profile']],
+    ['zainab@uobaghdad.edu.iq', ['browse', 'placement', 'logbook', 'drugs', 'profile']]
+  ]) {
+    await signOut(d);
+    await signIn(d, mail);
+    for (const sc of screens) {
+      await go(d, sc);
+      const bad = await d.evaluate(() => [...document.querySelectorAll('[onclick]')]
+        .map(el => el.getAttribute('onclick'))
+        .filter(h => { try { new Function(h); return false; } catch (e) { return true; } }));
+      bad.forEach(h => broken.push(`${mail} / ${sc}: ${h.slice(0, 60)}`));
+    }
+  }
+  // And one record page, where the interpolated value is a drug name.
+  await go(d, 'drugs');
+  await d.evaluate(() => openDrug('Amoxicillin/Clavulanic acid'));   // a name with a slash in it
+  await d.waitForTimeout(200);
+  const bad = await d.evaluate(() => [...document.querySelectorAll('[onclick]')]
+    .map(el => el.getAttribute('onclick'))
+    .filter(h => { try { new Function(h); return false; } catch (e) { return true; } }));
+  bad.forEach(h => broken.push('drug record: ' + h.slice(0, 60)));
+  ok(`no broken inline handler on any screen of any account`, broken.length === 0);
+  broken.slice(0, 6).forEach(x => console.log('        ' + x));
+}
+
 console.log('\nlayout');
 ok('the sidebar carries navigation at 1440px', await d.locator('.sidebar').isVisible());
 ok('the bottom bar does not', await d.locator('.bottom-nav').isHidden());

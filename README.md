@@ -22,6 +22,7 @@ npm run dev
 npm test          # 85 unit tests — the business rules
 npm run typecheck
 npm run build
+npm run drugs     # re-embed data/drugs.mjs into both single-file builds
 ```
 
 ### Database
@@ -178,6 +179,42 @@ job is how a customer stops being called.
 ```bash
 npm run check:crm     # drives it in a real browser
 ```
+
+### The drug reference
+
+`data/drugs.mjs` holds a hundred molecules — the ones an Iraqi community
+pharmacy actually turns over — and `npm run drugs` writes them into both
+single-file builds between `DRUGS:BEGIN` / `DRUGS:END` markers. **One list, two
+readers.** The CRM has it as a module with editing, CSV import and brand links
+on top; the app has it as a lookup a pharmacist opens at the counter. Two copies
+of the same reference drift, and the copy that drifts is the one somebody is
+reading with a patient in front of them.
+
+Each molecule carries its scientific and Arabic names, ATC code, main dosage
+form, the strengths actually marketed, a counselling line, the interactions
+worth stopping a sale for with a severity, and its contraindications. 209
+interaction pairs and 219 contraindications in total. The script validates
+before it writes — a duplicate scientific name, an unknown form or a severity
+outside warning/serious/critical fails the run rather than rendering as a blank
+chip later.
+
+**What is reference content and what is a fixture.** The molecule data is real:
+the codes, the strengths, the interactions. The brand rows in the CRM are
+invented, because who holds an Iraqi registration for what changes with every
+renewal and cannot be verified from here — and a plausible-looking wrong
+registration in front of an operator is worse than an obviously invented one.
+Both screens say which is which.
+
+**It is a reference, not a prescriber**, and every screen that shows it says so.
+The interactions listed are the ones that change what a pharmacist does at the
+counter, not the complete set; a drug with none listed is not a drug with none.
+
+In the app it sits in the bottom bar rather than behind "More", because it is
+the one screen used *during* the work — several times a shift, with someone
+waiting. What it displaced is the CV, opened a handful of times a year, which
+moved to More along with incident reporting. Search matches either script and
+the ATC code, and flattens diacritics, hamza and ta-marbuta on both sides,
+because a pharmacist keying a name in a hurry writes ا for أ and ه for ة.
 
 ### Policy tests
 
@@ -421,8 +458,8 @@ npm run test:e2e       # Playwright, against the seeded database
 - 85 unit tests over the business rules (fees, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
 - 130 policy assertions run against a real Postgres as real users.
-- 68 behavioural assertions driving the app build in a real browser
-  (`npm run check:app`), and 161 driving the CRM (`npm run check:crm`).
+- 96 behavioural assertions driving the app build in a real browser
+  (`npm run check:app`), and 174 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee
