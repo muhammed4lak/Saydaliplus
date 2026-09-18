@@ -423,6 +423,79 @@ over.
 **Not the same as W9.** That entry renames the *platform*; this renames one
 module inside it. They can be decided independently and in either order.
 
+## W12. Streamlining: five measured pieces of friction
+
+**Raised:** 18 Sep 2026. **Touches:** app. Measured by walking v0.0005 and
+counting interactions, not by inspection.
+
+### W12a. The check costs three interactions per drug — make it one
+
+Adding a drug is **tap the field → type → tap the result**, and focus is
+dropped after each add (`activeElement` becomes `BODY`), so the field must be
+tapped again for the next one. A four-drug prescription is **13 interactions**,
+on the app's most-used screen, with a patient waiting.
+
+Three fixes, ascending in value:
+
+1. **Keep focus after adding.** One line — `setDrugQuery()` already restores
+   focus and the caret; `addToBasket()` does not. Removes four taps from the
+   example above.
+2. **Enter adds the top hit.** There is no keydown handler on `#drug-q` at all.
+   Type, Enter, type, Enter — no taps after the first.
+3. **One-tap chips for the pharmacy's most-dispensed drugs**, from the W8
+   tallies. Makes the common prescription almost tap-free, and closes a loop
+   worth having: log more → checks get faster → log more. It is also the only
+   place where the data W8 collects pays back the person who generated it
+   *immediately*, which is the argument W8's trust problem needs.
+
+### W12b. The owner's dashboard ignores their own setting
+
+`screenDashboard()` renders `pharmacistHalf` unconditionally. An owner who has
+never turned shift-taking on still sees "My own work", a browse link, an
+upcoming shift at another pharmacy, and "38 shifts completed · 96%
+reliability". The navigation honours `S.takesShifts`; the home screen does not.
+This is the thing W2 existed to prevent, and it makes their landing screen a
+third longer than it needs to be. Gate it the way `navFor()` and
+`ownerGroups()` already do.
+
+### W12c. Posting a shift is six inputs, every time
+
+Pharmacies post the same patterns weekly — *Friday evening, 6–11,
+6,000/hr*. There is no repeat affordance anywhere.
+
+**Decided:** a repeat opens the post form **pre-filled**, for the owner to
+confirm, rather than posting silently. The rate may have changed, the date
+certainly has, and a shift posted by accident costs a real phone call to undo.
+Entry points: a "post this again" on a filled or completed shift, and a repeat
+of the most recent post on the dashboard.
+
+Weight this heavily. The brief's premise is that pharmacy demand is the scarce
+side, so friction on the pharmacy side is the most expensive friction in the
+product.
+
+### W12d. Two screens are dead ends
+
+- **Student placement: zero buttons.** Nothing to do on it. It should at least
+  push to the logbook week that is due.
+- **Pharmacist shifts: one button.** A shift starting in two days offers only
+  "view handoff checklist" — no directions, no way to call the pharmacy, no
+  add-to-calendar. Those are what a locum wants the night before.
+
+### W12e. Smaller
+
+Sign-in is three taps before any content — remember the last account. And the
+reference tab rebuilds all 119 rows on every keystroke (1,303 nodes, 5.3 ms on
+a desktop, plausibly 40–60 ms on a cheap Android). The check tab caps at eight
+results and is fine. Watch it; do not pre-optimise it.
+
+### What must NOT be streamlined
+
+Applying to a shift is two taps and stays two: the intermediate screen is where
+the fee breakdown lives, and applying without seeing the pay would be faster and
+worse. Same for the handoff checklist, the logbook's 80-character gate and the
+"ask the patient" list. **The test for every item above is whether removing the
+step loses information the person needed.**
+
 ---
 
 # Part 2 — Strategy
@@ -643,7 +716,9 @@ Part 2 is chosen), **W7** (chain and multi-branch accounts, which is large), the
 unbuilt half of **W8**, and the two entries that decide what this becomes:
 **W9** (a name that is not "pharmacist") and **W10** (medical reps). W9 is
 cheap now and expensive at every later point, and it gates the Syndicate
-conversation. **W11** is a one-string rename and can go in with anything.
+conversation. **W11** is a one-string rename and can go in with anything, and
+**W12** is five measured pieces of friction, of which W12a and W12b are the
+cheapest work in this file with the highest effect.
 
 W8 is the one to read first, because it is the only entry here where the code
 shipped ahead of the decisions. The dispensing check and the log are in
