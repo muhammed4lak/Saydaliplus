@@ -1020,6 +1020,144 @@ ok('and the sign-in page comes back filled in',
    await d.locator('#email').inputValue() === 'ahmed@example.com');
 await signIn(d, 'ahmed@example.com');
 
+console.log('\ndisclosure is a field, not a sentence (W6d)');
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => { setLang('en'); setBrowseTab('shifts'); goto('browse'); });
+await d.waitForTimeout(250);
+ok('a paid placement names who paid for it, from the field rather than the copy',
+   /paid placement \u2014 samarra/i.test(await d.locator('.banner-slot').innerText()));
+ok('and deleting the sentence would not delete the disclosure',
+   await d.evaluate(() => {
+     const html = disclosure({ sponsor:'CO1' });
+     return html.includes('Samarra') && disclosure({}) === '';
+   }));
+/* The one that matters: the clinical surfaces refuse sponsored content by
+   FILTERING it, so putting a paid item in front of a dispensing decision means
+   defeating a filter rather than forgetting a rule. Proved by planting one. */
+{
+  const planted = await d.evaluate(() => {
+    const victim = DRUGS.find(x => x.sci === 'Warfarin');
+    victim.sponsor = 'CO1';
+    const inReference = clinicalOnly(DRUGS).some(x => x.sci === 'Warfarin');
+    setDrugTab('reference'); goto('drugs');
+    const onScreen = document.getElementById('app-body').innerText.includes('Warfarin');
+    delete victim.sponsor;
+    return { inReference, onScreen };
+  });
+  ok('a sponsored entry is dropped from the reference rather than shown with a label',
+     planted.inReference === false && planted.onScreen === false);
+}
+ok('and the Helper will not even let one be added to a check',
+   await d.evaluate(() => {
+     const victim = DRUGS.find(x => x.sci === 'Warfarin');
+     victim.sponsor = 'CO1';
+     setDrugTab('check'); goto('drugs');
+     S.basket = [];
+     setDrugQuery('Warfarin');
+     const found = clinicalOnly(DRUGS).filter(x => drugMatches(x, drugNorm('Warfarin'))).length;
+     delete victim.sponsor;
+     S.drugQuery = '';
+     return found === 0;
+   }));
+ok('with nothing sponsored, the reference is whole again',
+   await d.evaluate(() => clinicalOnly(DRUGS).length === DRUGS.length));
+
+console.log('\nthe name on the check (W11)');
+await signOut(d);
+await signIn(d, 'ahmed@example.com');
+await d.evaluate(() => { setLang('en'); goto('drugs'); });
+await d.waitForTimeout(250);
+ok('the module is called Dispensing Helper, not Dispensing check',
+   await d.evaluate(() => t('dc.tabCheck') === 'Dispensing Helper'));
+ok('and \u0645\u0633\u0627\u0639\u062f \u0627\u0644\u0648\u0635\u0641\u0627\u062a in Arabic',
+   await d.evaluate(() => { setLang('ar'); const x = t('dc.tabCheck'); setLang('en'); return x; })
+     === '\u0645\u0633\u0627\u0639\u062f \u0627\u0644\u0648\u0635\u0641\u0627\u062a');
+ok('both the tab and the home card carry the new name',
+   (await d.locator('#app-body').innerText()).toLowerCase().includes('dispensing helper'));
+
+console.log('\nchains: a group of branches, one bill (W7)');
+await signOut(d);
+await signIn(d, 'layla@rahmagroup.example');
+await d.evaluate(() => setLang('en'));
+await d.waitForTimeout(250);
+ok('a chain manager is a pharmacist with a GROUP link, not a new account type',
+   await d.evaluate(() => ACCOUNTS[S.email].type === 'pharmacist' && !!ACCOUNTS[S.email].manages));
+ok('and the view follows the link rather than a stored role',
+   await d.evaluate(() => S.role === 'manager' && viewRole({ type:'pharmacist', manages:'G1' }) === 'manager'));
+/* W1's rule is the one this build could most easily have broken. */
+ok('every branch still keeps its own licence and its own responsible pharmacist',
+   await d.evaluate(() => myBranches().every(b => 'responsible' in b)
+     && Object.values(PHARMACIES).filter(x => x.responsible)
+          .every(x => typeof x.responsible === 'object')));
+ok('a manager lands on the group, not on one branch',
+   await d.evaluate(() => S.screen === 'group' && S.branch === null));
+
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('the board says how many branches are short, not how many exist',
+     /branches need cover/.test(txt));
+  ok('and lists every branch in the group',
+     await d.locator('.branch-row').count() === await d.evaluate(() => myBranches().length));
+  ok('the branch that cannot legally open sorts first',
+     await d.evaluate(() => branchBoard()[0].responsible === null));
+  ok('and says so in the one colour nothing else on the board uses',
+     await d.locator('.branch-row').first().locator('.badge-alert').count() === 1);
+  ok('a covered branch sorts last and is marked as needing nothing',
+     await d.evaluate(() => { const b = branchBoard(); return b[b.length - 1].uncovered === 0; }));
+  ok('the screen states that the group does not replace a branch licence',
+     /licence/i.test(txt) && /replaces neither|does not replace/i.test(txt));
+}
+
+await d.evaluate(() => setBranch('P9'));
+await d.waitForTimeout(250);
+ok('tapping a branch scopes the screen to it',
+   await d.evaluate(() => S.screen === 'branch' && S.branch === 'P9'));
+ok('and names the branch, not the group',
+   (await d.locator('#app-body').innerText()).includes('Mansour'));
+await d.locator('.branch-scope').click();
+await d.waitForTimeout(250);
+ok('and there is a way back to all of them',
+   await d.evaluate(() => S.screen === 'group' && S.branch === null));
+
+console.log('\nwhat a chain is charged');
+await d.evaluate(() => goto('billing'));
+await d.waitForTimeout(250);
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('priced per branch, so one subscription cannot cover twelve of them',
+     await d.evaluate(() => myPlan().monthlyFeeIQD === PLANS[S.plan].monthlyFeeIQD * myBranches().length));
+  ok('and the bill says so in words as well as arithmetic',
+     /per branch/i.test(txt) && /one invoice/i.test(txt));
+  ok('the allowance is pooled across the group',
+     await d.evaluate(() => myPlan().includedShifts === PLANS[S.plan].includedShifts * myBranches().length));
+  ok('and the screen says it is spendable at any branch',
+     /pooled|any of them/i.test(txt));
+  ok('an independent pharmacy is charged exactly the plan, unchanged',
+     await d.evaluate(() => {
+       const c = subscriptionCharge('basic', 1);
+       return c.monthlyFeeIQD === PLANS.basic.monthlyFeeIQD
+           && c.includedShifts === PLANS.basic.includedShifts;
+     }));
+  ok('a group with no branches is never billed as zero branches',
+     await d.evaluate(() => [0, -2, NaN].every(n => subscriptionCharge('basic', n).branches === 1)));
+  ok('the pooled allowance runs out where the arithmetic says it does',
+     await d.evaluate(() => {
+       const n = myBranches().length;
+       const within = calculateFees({ grossAmount:40000, pharmacyInTrial:false, pharmacistInTrial:false,
+                                      plan:'basic', branches:n, shiftsFilledThisMonth:(5 * n) - 1 });
+       const beyond = calculateFees({ grossAmount:40000, pharmacyInTrial:false, pharmacistInTrial:false,
+                                      plan:'basic', branches:n, shiftsFilledThisMonth:5 * n });
+       return within.coveredByPlan === 'basic' && within.pharmacyFee === 0
+           && beyond.coveredByPlan === null && beyond.pharmacyFee === 2800;
+     }));
+}
+
+ok('a manager gets no pharmacist half \u2014 nothing about their day is a shift they work',
+   await d.evaluate(() => !navFor('manager').some(x => ['browse', 'shifts', 'earnings'].includes(x[0]))));
+ok('but the reference is still theirs, in the account group',
+   await d.evaluate(() => managerGroups().some(g => g.items.some(x => x[0] === 'drugs'))));
+
 console.log('\nevery inline handler actually parses');
 /* A value interpolated into onclick="f(...)" without escaping its own quotes
    ends the attribute early, and the browser keeps whatever is left. Nothing
@@ -1031,7 +1169,10 @@ console.log('\nevery inline handler actually parses');
   for (const [mail, screens] of [
     ['ahmed@example.com', ['browse', 'shifts', 'earnings', 'drugs', 'more', 'cv', 'profile', 'incidents', 'notifications']],
     ['rahma@example.com', ['dashboard', 'post', 'applicants', 'trainees', 'billing', 'more', 'cv', 'profile']],
-    ['zainab@uobaghdad.edu.iq', ['browse', 'placement', 'logbook', 'drugs', 'profile']]
+    ['zainab@uobaghdad.edu.iq', ['browse', 'placement', 'logbook', 'drugs', 'profile']],
+    ['sales@sdi.example', ['partner', 'partnerNew', 'profile']],
+    ['layla@rahmagroup.example', ['group', 'branch', 'post', 'applicants', 'billing',
+                                  'consumption', 'drugs', 'cv', 'notifications', 'profile']]
   ]) {
     await signOut(d);
     await signIn(d, mail);
@@ -1103,6 +1244,27 @@ for (const s of ['browse', 'shifts', 'earnings', 'cv', 'profile']) {
   await go(narrow, s);
   ok(`${s} does not scroll sideways at 320px`,
      await narrow.evaluate(() => document.body.scrollWidth) <= 320);
+}
+/* The branch board is the widest thing in the build — a name, a responsible
+   pharmacist and up to three badges on one row — so it gets the narrow
+   treatment in both directions. A chain manager on a cheap Android is the
+   person most likely to be standing in one of the branches. */
+{
+  await narrow.evaluate(() => signOut());
+  await signIn(narrow, 'layla@rahmagroup.example');
+  for (const dir of ['ar', 'en']) {
+    await narrow.evaluate(x => setLang(x), dir);
+    for (const s of ['group', 'billing']) {
+      await narrow.evaluate(x => { if (x === 'group') setBranch(null); goto(x); }, s);
+      await narrow.waitForTimeout(150);
+      ok(`${s} does not scroll sideways at 320px (${dir})`,
+         await narrow.evaluate(() => document.body.scrollWidth) <= 320);
+    }
+    await narrow.evaluate(() => setBranch('P9'));
+    await narrow.waitForTimeout(150);
+    ok(`a branch does not scroll sideways at 320px (${dir})`,
+       await narrow.evaluate(() => document.body.scrollWidth) <= 320);
+  }
 }
 
 await browser.close();

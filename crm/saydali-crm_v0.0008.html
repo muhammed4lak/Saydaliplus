@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0007">
+<meta name="version" content="CRM_v0.0008">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -758,7 +758,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0007';
+const VERSION = 'CRM_v0.0008';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1041,6 +1041,9 @@ Object.assign(STRINGS, {
   'inv.open':'Open','inv.due':'Due','inv.overdue':'Overdue','inv.grace':'Grace period',
   'inv.suspended':'Suspended','inv.paid':'Paid',
   'v.allInvoices':'All invoices','v.chase':'To chase','v.overdueI':'Overdue','v.paidI':'Paid',
+  /* W7 — chains */
+  'v.chains':'Chain branches','c.chain':'Chain','c.billedTo':'Billed to',
+  'payer.chain':'Chain','payer.single':'Single pharmacy',
   'c.invoiceNo':'Invoice','c.month':'Month','c.amount':'Amount','c.dueOn':'Due',
   'c.collected':'Collected','c.method':'Method',
   'pay.cash':'Cash','pay.transfer':'Bank transfer','pay.zaincash':'ZainCash'
@@ -1315,6 +1318,19 @@ const PLANS = {
 };
 const planOf = p => PLANS[(p && p.plan) || 'commission'] || PLANS.commission;
 
+/* W7 — chains. A group is billed per branch with a POOLED allowance, which is
+   the same arithmetic as src/config/fees.ts subscriptionCharge(). The branch
+   rows are untouched: a branch is a pharmacy with a licence, and the group is a
+   column on it. */
+const billableBranches = n => (isFinite(n) && n > 1) ? Math.floor(n) : 1;
+function subscriptionCharge(plan, branches) {
+  const chosen = PLANS[plan] || PLANS.commission;
+  const n = billableBranches(branches);
+  return { plan:chosen.id, branches:n, perBranchIQD:chosen.monthlyFeeIQD,
+           monthlyFeeIQD:chosen.monthlyFeeIQD * n,
+           includedShifts:chosen.includedShifts * n };
+}
+
 const DATA = {
   /* ---------- Users: the three account types ---------- */
   users: [
@@ -1377,10 +1393,10 @@ const DATA = {
 
   /* ---------- Pharmacies: the business, separate from its account ---------- */
   pharmacies: [
-    { id:'P1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, licence:'IQ-PHM-000117',
+    { id:'P1', name:{ar:'صيدلية الرحمة — الكرادة', en:'Al-Rahma — Karrada'}, licence:'IQ-PHM-000117',
       district:'karrada', address:{ar:'كرادة داخل، قرب ساحة الفردوس', en:'Karrada Dakhil, near Al-Firdaws roundabout'},
       user:'U5', verification:'verified', signedUp:'2026-08-14', trialDays:30, trialUsed:28,
-      orders:11, filled:10, lastOrder:'2026-09-10', commission:31500, plan:'basic', owner:'u1' },
+      orders:11, filled:10, lastOrder:'2026-09-10', commission:31500, plan:'basic', owner:'u1', group:'G1' },
     { id:'P2', name:{ar:'صيدلية الفرات', en:'Al-Furat Pharmacy'}, licence:'IQ-PHM-000232',
       district:'jadriya', address:{ar:'الجادرية، شارع الجامعة', en:'Jadriya, University Street'},
       user:'U6', verification:'verified', signedUp:'2026-07-02', trialDays:30, trialUsed:30,
@@ -1400,7 +1416,34 @@ const DATA = {
     { id:'P6', name:{ar:'صيدلية المنصور', en:'Mansour Pharmacy'}, licence:'IQ-PHM-000512',
       district:'mansour', address:{ar:'المنصور، شارع الأميرات', en:'Mansour, Princesses Street'},
       user:'U13', verification:'verified', signedUp:'2026-09-04', trialDays:30, trialUsed:7,
-      orders:3, filled:3, lastOrder:'2026-09-11', commission:9800, plan:'premium', owner:'u1' }
+      orders:3, filled:3, lastOrder:'2026-09-11', commission:9800, plan:'premium', owner:'u1' },
+    /* W7 — the other three branches of Al-Rahma Group. Each one is a pharmacy
+       row like any other: its own licence, its own responsible pharmacist, its
+       own district. The group is a column on them, not a replacement for them. */
+    { id:'P7', name:{ar:'صيدلية الرحمة — الجادرية', en:'Al-Rahma — Jadriya'}, licence:'IQ-PHM-000633',
+      district:'jadriya', address:{ar:'الجادرية، شارع الجامعة', en:'Jadriya, University Street'},
+      user:'U6', verification:'verified', signedUp:'2026-08-14', trialDays:30, trialUsed:30,
+      orders:6, filled:6, lastOrder:'2026-09-12', commission:0, plan:'basic', owner:'u1', group:'G1' },
+    { id:'P8', name:{ar:'صيدلية الرحمة — زيونة', en:'Al-Rahma — Zayouna'}, licence:'IQ-PHM-000641',
+      district:'zayouna', address:{ar:'زيونة، شارع الربيعي', en:'Zayouna, Rabie Street'},
+      user:'U8', verification:'verified', signedUp:'2026-08-14', trialDays:30, trialUsed:30,
+      orders:9, filled:7, lastOrder:'2026-09-13', commission:0, plan:'basic', owner:'u1', group:'G1' },
+    /* Between responsible pharmacists, so it cannot legally open. The CRM shows
+       it as a pharmacy in trouble because that is what it is. */
+    { id:'P9', name:{ar:'صيدلية الرحمة — المنصور', en:'Al-Rahma — Mansour'}, licence:'IQ-PHM-000658',
+      district:'mansour', address:{ar:'المنصور، شارع الأميرات', en:'Mansour, Princesses Street'},
+      user:'U13', verification:'verified', signedUp:'2026-08-14', trialDays:30, trialUsed:30,
+      orders:4, filled:1, lastOrder:'2026-09-02', commission:0, plan:'basic', owner:'u1', group:'G1' }
+  ],
+
+  /* ---------- Chains (W7) ----------
+     A group over pharmacies. It is billed and it is managed; it does not hold a
+     licence and it is not a pharmacy. Every branch below is a full row in
+     `pharmacies` with its own licence — that is the whole model. */
+  groups: [
+    { id:'G1', name:{ar:'مجموعة الرحمة', en:'Al-Rahma Group'}, plan:'basic',
+      manager:{ar:'ليلى عبد الكريم', en:'Layla Abdulkarim'},
+      contact:'07701234567', signedUp:'2026-08-14', owner:'u1' }
   ],
 
   /* ---------- Orders: the main module ----------
@@ -1408,6 +1451,24 @@ const DATA = {
      what the whole business runs on: an order nobody takes is a pharmacy we
      are about to lose. */
   orders: [
+    /* W7 — the chain's other branches post like any pharmacy does. They are here
+       so the roll-up report has more than one branch in it and the pooled
+       allowance is visibly spent unevenly, which is the case it exists for. */
+    { id:'O-1047', type:'shift', pharmacy:'P8', district:'zayouna',
+      date:'2026-09-14', start:'16:00', end:'23:00', hours:7, rateType:'hourly', rate:5500,
+      total:38500, status:'completed', assignee:'U3', applicants:2, controlled:false, owner:'u1' },
+    { id:'O-1046', type:'shift', pharmacy:'P8', district:'zayouna',
+      date:'2026-09-13', start:'08:00', end:'16:00', hours:8, rateType:'hourly', rate:5000,
+      total:40000, status:'completed', assignee:'U1', applicants:1, controlled:false, owner:'u1' },
+    { id:'O-1045', type:'shift', pharmacy:'P7', district:'jadriya',
+      date:'2026-09-13', start:'09:00', end:'15:00', hours:6, rateType:'hourly', rate:5000,
+      total:30000, status:'completed', assignee:'U3', applicants:3, controlled:false, owner:'u1' },
+    { id:'O-1044', type:'shift', pharmacy:'P9', district:'mansour',
+      date:'2026-09-14', start:'08:00', end:'16:00', hours:8, rateType:'hourly', rate:6000,
+      total:48000, status:'open', assignee:null, applicants:0, controlled:true, owner:'u1' },
+    { id:'O-1043', type:'shift', pharmacy:'P7', district:'jadriya',
+      date:'2026-09-12', start:'16:00', end:'22:00', hours:6, rateType:'hourly', rate:5500,
+      total:33000, status:'assigned', assignee:'U1', applicants:2, controlled:false, owner:'u1' },
     { id:'O-1042', type:'shift', pharmacy:'P1', district:'karrada',
       date:'2026-09-12', start:'08:00', end:'16:00', hours:8, rateType:'hourly', rate:5000,
       total:40000, status:'open', assignee:null, applicants:2, controlled:false, owner:'u1' },
@@ -2067,6 +2128,21 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
      covered      — a shift the plan's allowance absorbed, charged zero ON PURPOSE */
 (function seedLedger() {
   const COMMISSION = 0.10, PHARMACY_SHARE = 0.7, FLOOR = 2500;
+  /* W7 — who actually pays. Commission arises at a branch and stays there; the
+     subscription belongs to whoever bought the plan, which for a chain is the
+     group. Rolling commission up too would lose which branch generated it,
+     which is the one number a chain manager argues about. */
+  const branchesOf = g => DATA.pharmacies.filter(x => x.group === g.id);
+  /* The plan a branch actually sits under, and the pot its covered shifts come
+     out of. Both are the GROUP's when it belongs to one, which is what makes
+     the allowance pooled rather than five-per-branch. */
+  const planFor = p => {
+    if (!p.group) return planOf(p);
+    const g = DATA.groups.find(x => x.id === p.group);
+    if (!g) return planOf(p);
+    return subscriptionCharge(g.plan, branchesOf(g).length);
+  };
+  const potOf = p => p.group || p.id;
   let id = 1;
   const row = r => DATA.ledger.push(Object.assign({ id:'L' + (id++) }, r));
   const month = back => {
@@ -2089,12 +2165,15 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
       // the module is still initialising and that helper is not defined yet.
       const p = DATA.pharmacies.find(x => x.id === o.pharmacy);
       if (!p) return;
-      const plan = planOf(p);
-      const n = used[p.id] || 0;
+      const plan = planFor(p);
+      const pot = potOf(p);
+      const n = used[pot] || 0;
       const within = plan.monthlyFeeIQD > 0 && n < plan.includedShifts;
-      used[p.id] = n + 1;
-      row({ pharmacy:p.id, date:o.date, kind:within ? 'covered' : 'commission',
-            amount:within ? 0 : fee(o.total), reason:within ? plan.id : 'commission', order:o.id });
+      used[pot] = n + 1;
+      row({ pharmacy:p.id, group:p.group || null, date:o.date,
+            kind:within ? 'covered' : 'commission',
+            amount:within ? 0 : fee(o.total),
+            reason:within ? (plan.id || plan.plan) : 'commission', order:o.id });
     });
 
   /* THE TWO MONTHS BEFORE are synthetic history. The fixture holds a fortnight
@@ -2107,26 +2186,41 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
   const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   [2, 1].forEach(back => {
     const ym = month(back);
+    const spent = {};
     DATA.pharmacies.forEach(p => {
-      const plan = planOf(p);
+      const plan = planFor(p);
+      const pot = potOf(p);
       const shifts = 2 + Math.floor(rnd() * 12);
       for (let k = 0; k < shifts; k++) {
-        const within = plan.monthlyFeeIQD > 0 && k < plan.includedShifts;
+        const n = spent[pot] || 0;
+        const within = plan.monthlyFeeIQD > 0 && n < plan.includedShifts;
+        spent[pot] = n + 1;
         const total = 20000 + Math.floor(rnd() * 5) * 8000;
-        row({ pharmacy:p.id, date:ym + String(2 + Math.floor(rnd() * 26)).padStart(2, '0'),
+        row({ pharmacy:p.id, group:p.group || null,
+              date:ym + String(2 + Math.floor(rnd() * 26)).padStart(2, '0'),
               kind:within ? 'covered' : 'commission',
-              amount:within ? 0 : fee(total), reason:within ? plan.id : 'commission', order:null });
+              amount:within ? 0 : fee(total),
+              reason:within ? (plan.id || plan.plan) : 'commission', order:null });
       }
     });
   });
 
-  /* Subscriptions: one row per paying pharmacy per month. */
+  /* Subscriptions: one row per paying BILL-PAYER per month — a pharmacy that
+     stands alone, or a group, never both. A branch inside a chain raises no
+     subscription row of its own: its fee is inside the group's. */
   [2, 1, 0].forEach(back => {
     DATA.pharmacies.forEach(p => {
+      if (p.group) return;
       const plan = planOf(p);
       if (!plan.monthlyFeeIQD) return;
-      row({ pharmacy:p.id, date:month(back) + '01', kind:'subscription',
+      row({ pharmacy:p.id, group:null, date:month(back) + '01', kind:'subscription',
             amount:plan.monthlyFeeIQD, reason:plan.id, order:null });
+    });
+    DATA.groups.forEach(g => {
+      const charge = subscriptionCharge(g.plan, branchesOf(g).length);
+      if (!charge.monthlyFeeIQD) return;
+      row({ pharmacy:null, group:g.id, date:month(back) + '01', kind:'subscription',
+            amount:charge.monthlyFeeIQD, reason:charge.plan, order:null });
     });
   });
 
@@ -2137,9 +2231,15 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
    invoice is what a person chases; the ledger is what it is made of. States are
    walked deliberately so the dunning queue has something in every rung. */
 (function seedInvoices() {
+  /* W7 — one invoice per BILL-PAYER per month. A chain gets one invoice
+     covering its branches, not one per branch: nine invoices for one company is
+     the thing a chain complains about before it complains about the price. The
+     branch-level ledger rows underneath are untouched, so "which branch cost
+     what" is still answerable. */
   const byKey = {};
   DATA.ledger.forEach(r => {
-    const k = r.pharmacy + '|' + r.date.slice(0, 7);
+    const payer = r.group || r.pharmacy;
+    const k = payer + '|' + r.date.slice(0, 7);
     byKey[k] = (byKey[k] || 0) + r.amount;
   });
   const months = [...new Set(DATA.ledger.map(r => r.date.slice(0, 7)))].sort();
@@ -2147,15 +2247,18 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
   let n = 1;
   Object.entries(byKey).forEach(([k, amount]) => {
     if (!amount) return;
-    const [pharmacy, month] = k.split('|');
+    const [payer, month] = k.split('|');
+    const isGroup = payer.charAt(0) === 'G';
     const age = months.length - 1 - months.indexOf(month);
     // Older months are settled; the current one is where the work is.
     const state = age >= 2 ? 'paid'
-      : age === 1 ? (pharmacy === 'P4' ? 'overdue' : 'paid')
-      : (pharmacy === 'P1' ? 'paid' : pharmacy === 'P4' ? 'grace' : 'due');
+      : age === 1 ? (payer === 'P4' ? 'overdue' : 'paid')
+      : (payer === 'G1' ? 'paid' : payer === 'P4' ? 'grace' : 'due');
     DATA.invoices.push({
       id:'INV-' + String(n++).padStart(4, '0'),
-      pharmacy, month, amount, state,
+      pharmacy: isGroup ? null : payer,
+      group: isGroup ? payer : null,
+      month, amount, state,
       issued: month + '-01',
       dueOn: month + '-15',
       collectedOn: state === 'paid' ? month + '-09' : null,
@@ -2170,6 +2273,12 @@ const brandDoses = b => (b.dosesOverride && b.dosesOverride.length) ? b.dosesOve
    workflow rather than the alphabet. */
 const LISTING_STATES = ['draft', 'in_review', 'live', 'ended', 'refused'];
 const INVOICE_STATES = ['open', 'due', 'overdue', 'grace', 'suspended', 'paid'];
+
+/* W7 — an invoice is addressed to a pharmacy or to a chain, never to both. */
+const groupOf   = p => p && p.group ? DATA.groups.find(g => g.id === p.group) || null : null;
+const branchesIn = gid => DATA.pharmacies.filter(p => p.group === gid);
+const groupName = gid => { const g = DATA.groups.find(x => x.id === gid); return g ? L(g.name) : gid; };
+const billedTo  = i => i.group ? groupName(i.group) : recordName('pharmacies', i.pharmacy);
 
 const listingStateChip = st => chip(
   st === 'live' ? 'chip-good' : st === 'refused' ? 'chip-bad' :
@@ -2325,11 +2434,12 @@ const MODULES = {
     icon:'building', data:() => DATA.pharmacies,
     views:{
       all:        { label:'v.allAccounts', fn:() => true },
+      chains:     { label:'v.chains',      fn:p => !!p.group },
       trialEnding:{ label:'v.trialEnding', fn:isTrialEnding },
       dormant:    { label:'v.dormant',     fn:isDormant },
       atRisk:     { label:'v.atRisk',      fn:isAtRisk }
     },
-    facets:['owner','district','pharmacyHealth'],
+    facets:['owner','district','pharmacyHealth','chain'],
     columns:[
       { key:'name',      label:'c.name',       main:true },
       { key:'licence',   label:'c.licence',    mono:true },
@@ -2341,6 +2451,8 @@ const MODULES = {
       { key:'fillRate',  label:'c.fillRate',   num:true, get:p => fillRate(p) === null ? '—' : pct(fillRate(p)),
                                                sortAs:p => fillRate(p) === null ? -1 : fillRate(p) },
       { key:'commission',label:'c.commission', num:true, get:p => fmt(p.commission), sortAs:p => p.commission },
+      { key:'group',     label:'c.chain',      get:p => p.group ? groupName(p.group) : '\u2014',
+                                               sortAs:p => p.group || '' },
       { key:'owner',     label:'c.owner',      get:p => L(USERS[p.owner].name) }
     ]
   },
@@ -2435,10 +2547,10 @@ const MODULES = {
       overdue:  { label:'v.overdueI',    fn:i => i.state === 'overdue' || i.state === 'grace' },
       paid:     { label:'v.paidI',       fn:i => i.state === 'paid' }
     },
-    facets:['invoiceState', 'invoiceMonth', 'invoiceMethod'],
+    facets:['invoiceState', 'invoiceMonth', 'invoiceMethod', 'invoicePayer'],
     columns:[
       { key:'id',        label:'c.invoiceNo', main:true, mono:true, get:i => i.id },
-      { key:'pharmacy',  label:'c.pharmacy',  get:i => recordName('pharmacies', i.pharmacy) },
+      { key:'pharmacy',  label:'c.billedTo',  get:i => billedTo(i) },
       { key:'month',     label:'c.month',     mono:true, get:i => i.month },
       { key:'amount',    label:'c.amount',    num:true, get:i => fmt(i.amount), sortAs:i => i.amount },
       { key:'state',     label:'c.status',    chip:i => invoiceStateChip(i.state), sortAs:i => INVOICE_STATES.indexOf(i.state) },
@@ -2509,6 +2621,11 @@ const FACETS = {
   invoiceState:   { label:'c.status',      of:i => i.state,   name:v => t('inv.' + v) },
   invoiceMonth:   { label:'c.month',       of:i => i.month,   name:v => v },
   invoiceMethod:  { label:'c.method',      of:i => i.method,  name:v => t('pay.' + v) },
+  /* W7 — who the bill is addressed to. A chain and a single pharmacy are two
+     different collection conversations, so they are two different filters. */
+  invoicePayer:   { label:'c.billedTo',    of:i => i.group ? 'chain' : 'single',
+                    name:v => t('payer.' + v) },
+  chain:          { label:'c.chain',       of:p => p.group || null, name:v => groupName(v) },
   owner:          { label:'f.owner',        of:r => r.owner,        name:v => L(USERS[v].name) },
   district:       { label:'f.district',     of:r => r.district,     name:v => districtName(v) },
   userType:       { label:'c.userType',     of:r => isOwner(r) ? 'owner' : r.type,
@@ -3491,7 +3608,7 @@ function sqlTables() {
       verification:p.verification, signed_up:p.signedUp, trial_used:p.trialUsed,
       trial_left:trialLeft(p), orders:p.orders, filled:p.filled,
       fill_rate:fillRate(p), last_order:p.lastOrder, commission:p.commission,
-      owner:p.owner, user_id:p.user, plan:(p.plan || 'commission'),
+      owner:p.owner, user_id:p.user, plan:(p.plan || 'commission'), group_id:(p.group || null),
       dormant:isDormant(p) ? 1 : 0, at_risk:isAtRisk(p) ? 1 : 0, active:isActivePharmacy(p) ? 1 : 0
     })),
     companies: DATA.companies.map(c => ({
@@ -3519,8 +3636,16 @@ function sqlTables() {
       overrides_doses:(b.dosesOverride && b.dosesOverride.length) ? 1 : 0,
       doses:brandDoses(b).join(' | ')
     })),
+    /* W7 — a chain. It is billed and managed; it holds no licence, which is why
+       it is its own table and not a kind of pharmacy. */
+    groups: DATA.groups.map(g => ({
+      id:g.id, name:g.name.en, plan:g.plan, branches:branchesIn(g.id).length,
+      manager:g.manager.en, contact:g.contact, signed_up:g.signedUp, owner_id:g.owner
+    })),
+    /* Exactly one of pharmacy_id and group_id is set on every invoice. */
     invoices: DATA.invoices.map(r => ({
-      id:r.id, pharmacy_id:r.pharmacy, month:r.month, amount:r.amount, state:r.state,
+      id:r.id, pharmacy_id:r.pharmacy, group_id:r.group, month:r.month,
+      amount:r.amount, state:r.state,
       issued:r.issued, due_on:r.dueOn, collected_on:r.collectedOn,
       collected_by:r.collectedBy, method:r.method
     })),
@@ -3534,7 +3659,7 @@ function sqlTables() {
        came from. `reason` is what separates a zero the plan absorbed from a
        zero that is a mistake. */
     ledger: DATA.ledger.map(r => ({
-      id:r.id, pharmacy_id:r.pharmacy, date:r.date, kind:r.kind,
+      id:r.id, pharmacy_id:r.pharmacy, group_id:r.group || null, date:r.date, kind:r.kind,
       amount:r.amount, reason:r.reason, order_id:r.order
     })),
     /* The dispensing tallies, exactly as stored. There is no patient column to
@@ -3838,6 +3963,10 @@ const REPORTS = [
     sql:"SELECT p.name, i.month, i.amount, i.state\nFROM invoices i\nJOIN pharmacies p ON i.pharmacy_id = p.id\nWHERE i.state != 'paid'\nORDER BY i.month" },
   { id:'R17', name:'Collected this month', viz:'number',
     sql:"SELECT SUM(amount) AS iqd\nFROM invoices\nWHERE state = 'paid' AND month = '2026-09'" },
+  /* The pooling argument, as a report: branches spend the group's allowance very
+     unevenly, and a per-branch allowance would strand it at the quiet ones. */
+  { id:'R19', name:'Chains: how each branch spends the group allowance', viz:'table',
+    sql:"SELECT g.name AS chain, p.name AS branch, COUNT(*) AS shifts, SUM(l.amount) AS iqd\nFROM ledger l\nJOIN pharmacies p ON l.pharmacy_id = p.id\nJOIN groups g ON p.group_id = g.id\nWHERE l.date LIKE '2026-09%'\nGROUP BY g.name, p.name\nORDER BY shifts DESC" },
   { id:'R18', name:'Listings by state', viz:'bar',
     sql:"SELECT state, COUNT(*) AS listings\nFROM listings\nGROUP BY state\nORDER BY listings DESC" },
   { id:'R13', name:'Monthly recurring revenue by plan', viz:'bar',
@@ -4674,7 +4803,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0007.html';
+const PEER_APP = '../demo/saydali-plus_v0.0008.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');

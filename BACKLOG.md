@@ -11,17 +11,25 @@ Split four ways because they are read at different times:
 
 IDs are stable. Reordering does not renumber anything.
 
-**Shipped so far** (18 Sep 2026): W1–W5 in v0.0003; W8's code in v0.0004; W12a,
-W12b, W12d in v0.0005; W14 steps 1–3 and 5 in v0.0006; **W10 (in part), W11,
-W12c, W12e (in part), W13, W14 step 4 and W15 in v0.0007**. Nothing is deleted
-when it ships, because what each entry says about *why* is the part worth not
-re-deriving; each opens with a **Built** line saying what landed and what was
+**Shipped so far**: W1–W5 in v0.0003; W8's code in v0.0004; W12a, W12b, W12d in
+v0.0005; W14 steps 1–3 and 5 in v0.0006; W10 (in part), W12c, W12e (in part),
+W13, W14 step 4 and W15 in v0.0007; **W6d, W7 and W11 in v0.0008**. Nothing is
+deleted when it ships, because what each entry says about *why* is the part worth
+not re-deriving; each opens with a **Built** line saying what landed and what was
 decided along the way.
 
-**Not started: W6 and W7.** **Open but not buildable without a decision:** W8's
-legal and consent questions, W9 (the app's name — nothing chosen), the human half
-of W14 step 4 (who calls, on which day, and what suspension stops), and the rep
-channel in W10 (gated on P1).
+**W11 was reported as shipped in v0.0007 and was not** — the string was never
+changed. It shipped in v0.0008, and the check now asserts the name in both
+languages so the claim cannot be made again without the file backing it.
+
+**Not built on purpose:** W6b and W6c, which are groundwork for S7 and cannot
+take a shape until S7 is chosen.
+
+**Open but not buildable without a decision:** W8's legal and consent questions,
+W9 (the app's name — nothing chosen), the human half of W14 step 4 (who calls, on
+which day, and what suspension stops), the rep channel in W10 (gated on P1), and
+W7's three leftovers (the discount ladder, whether a chain manager must be a
+pharmacist, and what a manager may see of W8's tallies).
 
 Parts 2–4 are not untouched either: S8 is largely built, and S4, S5, S6 and P1
 each carry what the dispensing log changed about them. Read W8 before any of
@@ -279,26 +287,107 @@ being anybody's job.
 **Raised:** 18 Sep 2026. Small, individually. Grouped because none justifies its
 own entry and all become expensive once there is real data.
 
+**W6a built in v0.0006, W6d built in v0.0008. W6b and W6c deliberately not
+built** — see the note under each. W6e was always covered by W4.
+
 - **W6a. Subscription in the fee config.** A plan alongside the commission
   constants in `src/config/fees.ts`. Required by S1.
 - **W6b. CPD credit ledger on the user.** Append-only; provider, topic, hours,
   date, evidence. Same principle as the verified CV stats — issued or computed,
   never editable by the holder. Required by S7.
+  **Not built, on purpose.** "Cheap now" is the argument for it, but its shape
+  is decided by S7, and S7 is not chosen. Building an append-only ledger before
+  anyone has decided what a credit IS produces a migration either way — the
+  difference is that one of them is also a screen nobody asked for. Revisit the
+  moment S7 moves, not before.
 - **W6c. Provider as a first-class entity.** A university, a clinical society,
   the Syndicate. The Universities and Externals modules are most of it.
+  **Not built, same reason as W6b:** it exists to carry CPD credits, and nothing
+  issues one yet. The two modules that are most of it already exist.
 - **W6d. Sponsorship field on a module, separate from its content.** So
   disclosure is structural rather than something someone remembers to type.
   Required by P1.
+
+  **Built — App_v0.0008.** Anything paid for carries `sponsor`, the id of the
+  Externals record behind it, and two things follow from the field alone. Its
+  disclosure is **derived** — `disclosure(o)` builds the label from `sponsor`,
+  so deleting the sentence does not delete the disclosure and nobody can forget
+  to type it. And every clinical surface **filters it out** — `clinicalOnly()`
+  drops anything carrying a sponsor, so the reference, the Helper's search and
+  the Helper's add-by-Enter all refuse it. Putting paid content in front of a
+  dispensing decision now means defeating a filter rather than forgetting a
+  rule. The check proves it by planting a sponsor on Warfarin and watching it
+  leave both screens.
 - **W6e. Model the real supply chain in Externals.** Covered by W4; listed here
   because it is also what a procurement product (S4) later runs on.
 
 ## W7. Chain and multi-branch accounts
+
+**Built — App_v0.0008 / CRM_v0.0008.**
+
+**The modelling decision, which is the load-bearing part.** A chain is *not* one
+account owning many pharmacies. Every branch keeps its own licence and its own
+responsible pharmacist, because that is how pharmacy ownership works here — so
+W1's one-pharmacist-one-pharmacy link is untouched by this entire build.
+What a chain adds is a **group over branches** and a **manager link** on an
+account. Modelling it the other way round would have collided with the licensing
+rule on the first real customer, and it is a migration nobody wants to run
+against live data.
+
+That gives the same shape one level up: `isOwner` is a pharmacist with a
+pharmacy link, `isManager` is a pharmacist with a group link, and `viewRole()`
+derives both. Neither is an account type and neither is stored.
+
+**The app.** A manager signs in to a **branch board** rather than a dashboard:
+one row per branch, sorted worst-first — a branch that cannot legally open, then
+by uncovered shifts, then by applicants waiting. A branch that is fine sorts to
+the bottom and can be ignored, which is the whole point. Tapping one scopes the
+screen to it; there is always a way back to all of them. The manager's
+navigation carries no pharmacist half at all: nothing about their day is a shift
+they work. The board states on screen that the group does not replace a branch
+licence, because a manager who believes otherwise makes a decision no software
+can walk back.
+
+**The pricing, and the two decisions inside it.** Both are in
+`src/config/fees.ts` as `subscriptionCharge()`, with unit tests:
+
+1. **Priced per branch.** The cost driver is branches, not companies. A flat
+   chain price is the W14 allowance hole one level up — one Basic subscription
+   covering twelve branches would cost roughly 100,000 IQD a month against
+   commission.
+2. **Allowance pooled.** The shifts a chain is owed are the sum of its branches',
+   spendable anywhere. This costs us nothing — the total is identical — and it
+   is the reason a chain buys: branches are uneven, and an allowance stranded at
+   a quiet branch while a busy one pays commission is a bill argued about every
+   month. R19 shows exactly that unevenness.
+
+**Volume discounts are deliberately not in the code.** A rate card belongs in
+code; a discount negotiated with a particular chain belongs in the CRM as data
+on that chain, where an operator can see who was given what and why.
+
+**The CRM.** Branches are ordinary pharmacy rows with a `group` column, a saved
+view and a facet. Commission stays at the branch that generated it; the
+subscription belongs to the group; **the invoice is one per bill-payer**, so a
+chain gets one invoice a month and its branches get none — nine invoices for one
+company is what a chain complains about before it complains about the price.
+Groups are their own SQL table with no licence column, which is the model
+restated where a query can see it.
 
 **Raised:** 18 Sep 2026. **Touches:** app + CRM.
 
 Excluded from v1 by the brief. Worth revisiting sooner than that implies: the
 first customer willing to pay a real subscription (S1) is a chain with several
 branches and a staffing headache, and the exclusion blocks exactly that sale.
+
+**Still open, and needing your judgement rather than more code:**
+- **The discount ladder.** At what branch count does a chain get a discount, and
+  how much? Linear pricing is what shipped; a twelve-branch chain will ask.
+- **Who the manager is, legally.** The fixture makes them a pharmacist. If a
+  chain's manager is a businessman rather than a clinician, the account is no
+  longer "a pharmacist with a group link" and the model needs a second shape.
+- **What a manager may see of W8's tallies.** It is the branches' own data and
+  the group is what owns them, so probably yes — but per branch and labelled as
+  such, never pooled into one number that hides which branch it came from.
 
 ## W8. The dispensing log: what v0.0004 settled, and what it did not
 

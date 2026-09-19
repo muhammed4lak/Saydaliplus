@@ -91,8 +91,18 @@ export interface FeeInput {
    * Shifts this pharmacy has already had filled in the current billing month,
    * NOT counting this one. Only read when a plan carries an allowance — the
    * caller owns the month boundary, because the fee engine has no clock.
+   *
+   * For a chain this is the count across the WHOLE GROUP, because the allowance
+   * is pooled. See `subscriptionCharge`.
    */
   shiftsFilledThisMonth?: number;
+  /**
+   * How many branches the plan is bought for (W7). One for an independent
+   * pharmacy, which is the default. The allowance scales with it, so a
+   * four-branch chain on Basic gets twenty shifts to spend wherever it likes
+   * rather than five per branch.
+   */
+  branches?: number;
 }
 
 export interface FeeBreakdown {
@@ -149,6 +159,7 @@ export function calculateFees({
   pharmacistInTrial,
   plan = 'commission',
   shiftsFilledThisMonth = 0,
+  branches = 1,
 }: FeeInput): FeeBreakdown {
   if (!Number.isFinite(grossAmount) || grossAmount < 0) {
     throw new Error(`Invalid gross amount: ${grossAmount}`);
@@ -182,7 +193,7 @@ export function calculateFees({
   // would reach its second month with the allowance quietly eaten.
   const withinAllowance = !pharmacyInTrial
     && chosen.monthlyFeeIQD > 0
-    && shiftsFilledThisMonth < chosen.includedShifts;
+    && shiftsFilledThisMonth < chosen.includedShifts * billableBranches(branches);
   const coveredByPlan = withinAllowance ? chosen.id : null;
 
   const pharmacyFee = (pharmacyInTrial || withinAllowance) ? 0 : fullPharmacyFee;
@@ -203,6 +214,70 @@ export function calculateFees({
     platformNet: platformGross - processorFee,
     floorApplied: floorApplied && !(pharmacyInTrial && pharmacistInTrial),
     coveredByPlan,
+  };
+}
+
+/* ==========================================================================
+   CHAINS (W7)
+
+   A chain is not a bigger pharmacy, it is several pharmacies. Each branch holds
+   its own licence and its own responsible pharmacist — that is Iraqi law and it
+   is why the one-pharmacist-one-pharmacy link from W1 is untouched here. What a
+   chain adds is a GROUP over branches and one bill instead of nine.
+
+   Two decisions are baked in below, and both are load-bearing:
+
+   1. **Price per branch.** The cost driver is branches, not companies: nine
+      branches post nine branches' worth of shifts and take nine branches' worth
+      of support. A flat chain price is the same hole the shift allowance closed
+      in W14, one level up — one Basic subscription covering twelve branches
+      would cost us roughly 100,000 IQD a month against commission.
+
+   2. **Pool the allowance.** The shifts a chain is owed are the sum of its
+      branches', spendable anywhere. This costs nothing against per-branch
+      allowances — the total is identical — and it is the whole reason a chain
+      buys: branches are uneven, and an allowance stranded at a quiet branch
+      while a busy one pays commission is a bill they will argue about monthly.
+
+   Volume discounts are deliberately NOT here. A rate card belongs in code; a
+   negotiated discount for a particular chain belongs in the CRM as data on that
+   chain, where an operator can see who was given what and why.
+   ========================================================================== */
+
+/** At least one. A group with no branches is a data error, not a free plan. */
+const billableBranches = (branches: number): number =>
+  Number.isFinite(branches) && branches > 1 ? Math.floor(branches) : 1;
+
+export interface SubscriptionCharge {
+  plan: PlanId;
+  /** Branches actually charged for. */
+  branches: number;
+  /** Fee per branch per month. */
+  perBranchIQD: number;
+  /** What the chain is invoiced monthly — one invoice, not one per branch. */
+  monthlyFeeIQD: number;
+  /** Shifts the fee covers across the whole group, spendable at any branch. */
+  includedShifts: number;
+}
+
+/**
+ * What a pharmacy or a chain is charged monthly, and what that buys.
+ *
+ * Called with no `branches` for an independent pharmacy, which is the ordinary
+ * case and returns exactly the plan's own numbers.
+ */
+export function subscriptionCharge(
+  plan: PlanId = 'commission',
+  branches = 1,
+): SubscriptionCharge {
+  const chosen = PLANS[plan] ?? PLANS.commission;
+  const n = billableBranches(branches);
+  return {
+    plan: chosen.id,
+    branches: n,
+    perBranchIQD: chosen.monthlyFeeIQD,
+    monthlyFeeIQD: chosen.monthlyFeeIQD * n,
+    includedShifts: chosen.includedShifts * n,
   };
 }
 

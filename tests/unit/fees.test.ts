@@ -5,6 +5,7 @@ import {
   TRIAL_DAYS,
   calculateFees,
   isInTrial,
+  subscriptionCharge,
   trialDaysRemaining,
 } from '@/config/fees';
 
@@ -255,5 +256,82 @@ describe('plans', () => {
     // The pharmacy still saves, and we are not giving the shifts away.
     expect(pharmacy).toBeLessThan(onCommission);
     expect(pharmacy).toBeGreaterThan(onCommission * 0.9);
+  });
+});
+
+/* ==========================================================================
+   CHAINS (W7)
+
+   Two rules, and both exist because of a hole. Price per branch, or one Basic
+   covers twelve branches. Pool the allowance, or a chain argues every month
+   about the five shifts stranded at its quiet branch.
+   ========================================================================== */
+describe('subscriptionCharge', () => {
+  it('charges an independent pharmacy exactly the plan', () => {
+    const c = subscriptionCharge('basic');
+    expect(c.monthlyFeeIQD).toBe(9_000);
+    expect(c.includedShifts).toBe(5);
+    expect(c.branches).toBe(1);
+  });
+
+  it('charges a chain per branch, on one invoice', () => {
+    const c = subscriptionCharge('basic', 4);
+    expect(c.perBranchIQD).toBe(9_000);
+    expect(c.monthlyFeeIQD).toBe(36_000);
+    expect(c.includedShifts).toBe(20);
+  });
+
+  it('never bills less than one branch', () => {
+    for (const n of [0, -3, Number.NaN, 0.4]) {
+      expect(subscriptionCharge('premium', n).branches).toBe(1);
+    }
+  });
+
+  it('pays-as-you-go for free, however many branches', () => {
+    expect(subscriptionCharge('commission', 9).monthlyFeeIQD).toBe(0);
+    expect(subscriptionCharge('commission', 9).includedShifts).toBe(0);
+  });
+});
+
+describe('a chain\u2019s pooled allowance', () => {
+  const shift = { grossAmount: 40_000, pharmacyInTrial: false, pharmacistInTrial: false };
+
+  it('spends the whole group\u2019s allowance at one busy branch', () => {
+    // Four branches on Basic: twenty covered shifts, wherever they happen.
+    const nineteenth = calculateFees({ ...shift, plan: 'basic', branches: 4, shiftsFilledThisMonth: 19 });
+    const twentyfirst = calculateFees({ ...shift, plan: 'basic', branches: 4, shiftsFilledThisMonth: 20 });
+    expect(nineteenth.coveredByPlan).toBe('basic');
+    expect(nineteenth.pharmacyFee).toBe(0);
+    expect(twentyfirst.coveredByPlan).toBeNull();
+    expect(twentyfirst.pharmacyFee).toBe(2_800);
+  });
+
+  it('costs us the same as per-branch allowances would', () => {
+    // The point of pooling is that it is free to us: same total, spendable
+    // anywhere. Four branches averaging five shifts each, all twenty covered.
+    let pooled = subscriptionCharge('basic', 4).monthlyFeeIQD;
+    for (let i = 0; i < 20; i++) {
+      pooled += calculateFees({ ...shift, plan: 'basic', branches: 4, shiftsFilledThisMonth: i }).pharmacyFee;
+    }
+    expect(pooled).toBe(36_000);
+  });
+
+  it('closes the hole one flat chain price would open', () => {
+    // Twelve branches, sixty shifts. Per-branch pricing keeps us above what a
+    // single 9,000 subscription would have left us with.
+    const branches = 12;
+    let charged = subscriptionCharge('basic', branches).monthlyFeeIQD;
+    for (let i = 0; i < 60; i++) {
+      charged += calculateFees({ ...shift, plan: 'basic', branches, shiftsFilledThisMonth: i }).pharmacyFee;
+    }
+    expect(charged).toBe(108_000);
+    expect(charged).toBeLessThan(60 * 2_800);       // the chain still saves
+    expect(charged).toBeGreaterThan(9_000 + 2_800); // and we are not giving it away
+  });
+
+  it('still lets the trial win, for every branch', () => {
+    const fees = calculateFees({ ...shift, pharmacyInTrial: true, plan: 'basic', branches: 6, shiftsFilledThisMonth: 0 });
+    expect(fees.pharmacyFee).toBe(0);
+    expect(fees.coveredByPlan).toBeNull();
   });
 });

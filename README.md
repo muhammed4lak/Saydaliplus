@@ -566,11 +566,11 @@ npm run test:e2e       # Playwright, against the seeded database
 
 ### Verified how
 
-- 94 unit tests over the business rules (fees, overnight hours, university
+- 102 unit tests over the business rules (fees, chain pricing, overnight hours, university
   email, logbook transitions, reliability, AI response parsing, Arabic script).
 - 130 policy assertions run against a real Postgres as real users.
-- 222 behavioural assertions driving the app build in a real browser
-  (`npm run check:app`), and 220 driving the CRM (`npm run check:crm`).
+- 259 behavioural assertions driving the app build in a real browser
+  (`npm run check:app`), and 236 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee

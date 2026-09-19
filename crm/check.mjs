@@ -620,25 +620,42 @@ ok('a covered shift is zero AND says which plan absorbed it',
 ok('a commission row carries a real amount and no plan',
    await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'commission')
      .every(r => r.amount > 0 && r.reason === 'commission')));
-ok('a subscription row matches its plan’s published fee',
+/* W7 — a subscription belongs to whoever bought the plan: a pharmacy standing
+   alone, or a chain. The branch rows underneath keep their own commission, so
+   "which branch cost what" survives the roll-up. */
+ok('a subscription row matches its plan’s published fee, per branch',
+   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription').every(r => {
+     if (!r.group) return r.amount === PLANS[r.reason].monthlyFeeIQD;
+     return r.amount === PLANS[r.reason].monthlyFeeIQD * branchesIn(r.group).length;
+   })));
+ok('every row points at a pharmacy or a chain that exists',
+   await p.evaluate(() => DATA.ledger.every(r =>
+     (r.pharmacy && DATA.pharmacies.some(x => x.id === r.pharmacy)) ||
+     (r.group && DATA.groups.some(x => x.id === r.group)))));
+ok('nobody is charged a subscription they are not on',
+   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription').every(r =>
+     r.group
+       ? (DATA.groups.find(x => x.id === r.group) || {}).plan === r.reason
+       : (DATA.pharmacies.find(x => x.id === r.pharmacy) || {}).plan === r.reason)));
+ok('a branch inside a chain raises no subscription of its own',
    await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription')
-     .every(r => r.amount === PLANS[r.reason].monthlyFeeIQD)));
-ok('every row points at a pharmacy that exists',
-   await p.evaluate(() => DATA.ledger.every(r => DATA.pharmacies.some(x => x.id === r.pharmacy))));
-ok('no pharmacy is charged a subscription it is not on',
-   await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription')
-     .every(r => (DATA.pharmacies.find(x => x.id === r.pharmacy) || {}).plan === r.reason)));
+     .every(r => !(r.pharmacy && (DATA.pharmacies.find(x => x.id === r.pharmacy) || {}).group))));
 /* The allowance is what stops a chain subscribing to the cheapest plan and
-   posting forty shifts against it. */
-ok('no pharmacy has more shifts covered in a month than its plan allows',
+   posting forty shifts against it. Pooled across a group — which is the same
+   total, just spendable anywhere. */
+ok('nobody has more shifts covered in a month than their plan allows',
    await p.evaluate(() => {
      const byKey = {};
      DATA.ledger.filter(r => r.kind === 'covered').forEach(r => {
-       const k = r.pharmacy + '|' + r.date.slice(0, 7);
+       const ph = DATA.pharmacies.find(x => x.id === r.pharmacy);
+       const k = ((ph && ph.group) || r.pharmacy) + '|' + r.date.slice(0, 7);
        byKey[k] = (byKey[k] || 0) + 1;
      });
      return Object.entries(byKey).every(([k, n]) => {
-       const ph = DATA.pharmacies.find(x => x.id === k.split('|')[0]);
+       const payer = k.split('|')[0];
+       const g = DATA.groups.find(x => x.id === payer);
+       if (g) return n <= PLANS[g.plan || 'commission'].includedShifts * branchesIn(g.id).length;
+       const ph = DATA.pharmacies.find(x => x.id === payer);
        return n <= PLANS[ph.plan || 'commission'].includedShifts;
      });
    }));
@@ -651,9 +668,25 @@ ok('a pay-as-you-go pharmacy never has a covered shift',
 console.log('\nand it is reportable');
 ok('the SQL view exposes the ledger with its reason intact',
    await p.evaluate(() => Object.keys(sqlTables().ledger[0]).sort().join() ===
-     'amount,date,id,kind,order_id,pharmacy_id,reason'));
+     'amount,date,group_id,id,kind,order_id,pharmacy_id,reason'));
 ok('a pharmacy’s plan is queryable beside its charges',
    await p.evaluate(() => sqlTables().pharmacies.every(r => !!r.plan)));
+/* W7 — a chain has to be queryable as a thing, or the roll-up is a screen
+   nobody can reproduce from the data. */
+ok('a chain is its own table, not a kind of pharmacy',
+   await p.evaluate(() => sqlTables().groups.length === DATA.groups.length
+     && sqlTables().groups.every(g => g.branches > 0)
+     && !('licence' in sqlTables().groups[0])));
+ok('and a branch carries the chain it belongs to',
+   await p.evaluate(() => sqlTables().pharmacies.filter(r => r.group_id).length
+     === DATA.pharmacies.filter(p2 => p2.group).length));
+ok('the chain roll-up reports per branch, not just per chain',
+   await p.evaluate(() => {
+     const r = runReport(reportById('R19'));
+     return r.ok && r.rows.length > 1 && r.rows.length === branchesIn('G1').filter(b =>
+       DATA.ledger.some(l => l.pharmacy === b.id && l.date.startsWith('2026-09'))).length
+       && r.rows.every(x => x.chain === 'Al-Rahma Group');
+   }));
 ok('MRR totals the subscription rows for the month',
    await p.evaluate(() => {
      const r = runReport(reportById('R13'));
@@ -673,13 +706,29 @@ ok('and the absorbed-shift count matches the rows it counts',
 
 console.log('\ninvoices: the part of a subscription that is not technical');
 await tab(p, 'invoices');
-ok('an invoice totals its month of ledger rows',
+ok('an invoice totals its month of ledger rows, for whoever it is addressed to',
    await p.evaluate(() => DATA.invoices.every(i => {
      const want = DATA.ledger
-       .filter(r => r.pharmacy === i.pharmacy && r.date.slice(0, 7) === i.month)
+       .filter(r => (i.group ? r.group === i.group : (r.pharmacy === i.pharmacy && !r.group))
+                 && r.date.slice(0, 7) === i.month)
        .reduce((n, r) => n + r.amount, 0);
      return i.amount === want;
    })));
+/* W7 — one invoice for the chain. Nine invoices for one company is the thing
+   a chain complains about before it complains about the price. */
+ok('a chain gets ONE invoice a month, not one per branch',
+   await p.evaluate(() => {
+     const months = [...new Set(DATA.invoices.map(i => i.month))];
+     return DATA.groups.every(g => months.every(m =>
+       DATA.invoices.filter(i => i.group === g.id && i.month === m).length <= 1));
+   }));
+ok('and no branch of a chain is invoiced separately',
+   await p.evaluate(() => DATA.invoices.every(i =>
+     !i.pharmacy || !(DATA.pharmacies.find(x => x.id === i.pharmacy) || {}).group)));
+ok('every invoice is addressed to exactly one payer',
+   await p.evaluate(() => DATA.invoices.every(i => !!i.pharmacy !== !!i.group)));
+ok('and the list says who that is',
+   await p.evaluate(() => DATA.invoices.every(i => !!billedTo(i))));
 ok('no invoice is raised for a month with nothing to charge',
    await p.evaluate(() => DATA.invoices.every(i => i.amount > 0)));
 /* The ladder is the point: designed up front, not discovered when forty
@@ -708,6 +757,49 @@ ok('and it is reportable, oldest first',
      return r.ok && r.rows.length > 0
        && r.rows.every((x, i) => i === 0 || r.rows[i - 1].month <= x.month);
    }));
+
+console.log('\nchains: a group over branches, billed once (W7)');
+await tab(p, 'pharmacies');
+/* The rule W1 set and this build could most easily have broken. */
+ok('a branch is a pharmacy row with its own licence, not a row on the chain',
+   await p.evaluate(() => branchesIn('G1').length > 1
+     && branchesIn('G1').every(b => !!b.licence)
+     && new Set(branchesIn('G1').map(b => b.licence)).size === branchesIn('G1').length));
+ok('and the chain holds no licence of its own',
+   await p.evaluate(() => DATA.groups.every(g => !('licence' in g))));
+ok('the chain is a column on the branch, so it sorts and filters like one',
+   await p.evaluate(() => MODULES.pharmacies.columns.some(c => c.key === 'group')));
+ok('there is a saved view for the branches that belong to one',
+   await p.evaluate(() => {
+     S.view.pharmacies = 'chains'; render();
+     const shown = visibleRows('pharmacies');
+     S.view.pharmacies = 'all'; render();
+     return shown.length > 0 && shown.every(x => !!x.group);
+   }));
+ok('an independent pharmacy is not swept into it',
+   await p.evaluate(() => DATA.pharmacies.some(x => !x.group)));
+
+await tab(p, 'invoices');
+ok('a chain is billed once a month and its branches are not billed at all',
+   await p.evaluate(() => {
+     const sept = DATA.invoices.filter(i => i.month === '2026-09');
+     return sept.filter(i => i.group === 'G1').length === 1
+       && !sept.some(i => branchesIn('G1').some(b => b.id === i.pharmacy));
+   }));
+ok('that one invoice is the plan per branch, plus whatever the allowance did not cover',
+   await p.evaluate(() => {
+     const inv = DATA.invoices.find(i => i.group === 'G1' && i.month === '2026-09');
+     const g = DATA.groups.find(x => x.id === 'G1');
+     const sub = PLANS[g.plan].monthlyFeeIQD * branchesIn('G1').length;
+     const commission = DATA.ledger
+       .filter(r => r.group === 'G1' && r.date.startsWith('2026-09') && r.kind !== 'subscription')
+       .reduce((n, r) => n + r.amount, 0);
+     return inv.amount === sub + commission;
+   }));
+ok('and the list can be filtered down to the chains',
+   await p.evaluate(() => !!FACETS.invoicePayer
+     && DATA.invoices.some(i => FACETS.invoicePayer.of(i) === 'chain')
+     && DATA.invoices.some(i => FACETS.invoicePayer.of(i) === 'single')));
 
 console.log('\nlistings: a partner fills a form, a person finishes it');
 await tab(p, 'listings');
@@ -1089,7 +1181,8 @@ leaks.forEach(x => console.log('        ' + x));
 ok('Arabic data is still held, and still shown where it is the record',
    await p.evaluate(() => {
      const d = drugOf('Amoxicillin');
-     return d.ar === 'أموكسيسيلين' && AR(DATA.pharmacies[0].name) === 'صيدلية الرحمة';
+     return d.ar === 'أموكسيسيلين'
+       && AR(DATA.pharmacies[0].name).startsWith('صيدلية الرحمة');
    }));
 
 console.log('\nnarrow viewport');
