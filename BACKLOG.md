@@ -27,9 +27,10 @@ take a shape until S7 is chosen.
 
 **Open but not buildable without a decision:** W8's legal and consent questions,
 W9 (the app's name — nothing chosen), the human half of W14 step 4 (who calls, on
-which day, and what suspension stops), the rep channel in W10 (gated on P1), and
+which day, and what suspension stops), the rep channel in W10 (gated on P1),
 W7's three leftovers (the discount ladder, whether a chain manager must be a
-pharmacist, and what a manager may see of W8's tallies).
+pharmacist, and what a manager may see of W8's tallies), and W16 (which needs a
+yes or no on a pharmacist-side subscription before half its table is real).
 
 Parts 2–4 are not untouched either: S8 is largely built, and S4, S5, S6 and P1
 each carry what the dispensing log changed about them. Read W8 before any of
@@ -1035,6 +1036,136 @@ from were never written. Same shape as W8's tallies, for the same reason.
 from the start so there are real numbers to show a partner; impression-based
 *pricing* only once there are months of counts to price against. Quoting a CPM
 before you know typical volumes is quoting a number you cannot defend.
+
+## W16. The order's accounting tab, and an overridable Company Share
+
+**Raised:** 19 Sep 2026. **Touches:** the CRM's order record, `src/config/fees.ts`,
+the ledger. **Not built.**
+
+**Where it stands.** An order record shows the rate, the hours and the total — the
+three numbers the *pharmacy* cares about — and says nothing whatever about what
+Saydali+ earned on it. The money exists: `calculateFees()` computes all of it and
+the ledger holds a row per chargeable event. But it lives a module away, so the
+one question an operator asks while looking at a disputed shift — "what did we
+make on this, and why that much?" — cannot be answered on the screen they are
+already on. The order is where the fee arose and the order is where the answer
+belongs.
+
+### The accounting tab
+
+The order record becomes tabbed — **Details / Accounting / Timeline** — and
+Accounting shows the whole per-order breakdown, line by line, each line saying
+*why* it is what it is:
+
+| Line | Where it comes from |
+| --- | --- |
+| Shift value | `order.total` — what the two sides agreed |
+| Pharmacy fee | `pharmacyFee`, added on top, with its rate or its waiver reason |
+| Pharmacist fee | `pharmacistFee`, deducted, always 3% of shift value |
+| Floor applied | `floorApplied` — shown only when it bit, with what it added |
+| Covered by plan | `coveredByPlan` — the plan id, never a bare zero |
+| **Company Share (gross)** | `platformGross` |
+| Processor fee | `processorFee`, out of our share, not the pharmacist's payout |
+| **Company Share (net)** | `platformNet` |
+| Adjustments | any override rows, each with its author and reason |
+| **Company Share (final)** | net plus adjustments |
+
+Granular on purpose. A single "commission: 4,000" tells an operator nothing when
+a pharmacy rings up to argue, and every line above has been the subject of a real
+decision recorded in this backlog — the 70/30 asymmetry, the floor landing
+entirely on the pharmacy, the processor cut coming out of our share. The tab is
+where those decisions become visible to the person who has to defend them.
+
+### Company Share, and what "overridable" has to mean
+
+Company Share is **derived** — it is `platformNet` out of the fee engine, and the
+standing rule in this codebase is that a derived value is never stored as an
+editable column. So the override is **not an edit to the field**. It is an
+**adjustment row on the ledger**, carrying an amount, a reason and the operator
+who made it, and the tab renders `derived + adjustments` with the derived figure
+still on screen above it.
+
+Three properties fall out of doing it that way, and all three are the point:
+
+1. **The original number survives.** "We charged 4,000 and credited 1,500 because
+   the locum arrived an hour late" is a different record from "we charged 2,500",
+   and only the first one can be audited or reversed.
+2. **The ledger stays append-only.** A correction is a new row, never a rewrite.
+3. **It cannot touch the other two sides.** An override adjusts *our* share and
+   nothing else. What the pharmacy was charged and what the pharmacist was paid
+   are settled transactions with a counterparty; a CRM field that silently
+   changed either would be a way to alter somebody else's money from an internal
+   screen. If a pharmacy is genuinely owed money back, that is a credit note on
+   an invoice (W14 step 4), not an override here.
+
+Real reasons to override, which is why it is wanted: a goodwill credit on a shift
+that went wrong, a disputed booking, a rate negotiated with a chain ahead of the
+discount ladder existing (W7), an early-customer arrangement nobody wants to
+encode in `PLANS`.
+
+### How it reads under each subscription state
+
+This is the part that needs your decision before any of it is built, because
+**one of the four states does not exist yet.**
+
+Worked on a 40,000 IQD shift, which is the example every other entry uses:
+
+| State | Pharmacy fee | Pharmacist fee | Share (gross) | Processor | **Share (net)** |
+| --- | --- | --- | --- | --- | --- |
+| Neither subscribed | 2,800 | 1,200 | 4,000 | 776 | **3,224** |
+| **Owner subscribed** (within allowance) | 0 — *covered by plan* | 1,200 | 1,200 | 776 | **424** |
+| **Pharmacist subscribed** only | 2,800 | 0 — *covered by plan* | 2,800 | 800 | **2,000** |
+| **Both subscribed** | 0 | 0 | 0 | 800 | **−800** |
+
+Two things that table says out loud, which is the argument for building it:
+
+- **A subscribed pharmacy's order is nearly break-even on its own.** 424 dinars,
+  and the month's 9,000 is what actually pays. That is the design working as
+  intended — but it means order-level margin is a misleading number to read
+  alone, and the tab has to say so rather than let somebody conclude the shift
+  was unprofitable.
+- **With both sides subscribed, every filled shift is a small loss at the order
+  level.** The processor still takes its cut of a payout we now earn no
+  commission on. Nothing is wrong with that if the two subscriptions cover it,
+  but it is a fact that should be discovered on this screen before it is
+  discovered in a monthly total.
+
+**The decision this request forces.** *There is no pharmacist-side subscription.*
+W14 priced a plan for the pharmacy only, and made "**the pharmacist pays 3%,
+always**" a deliberately load-bearing rule — one sentence the oversupplied side
+can hold in their head, worth more than the dinars it costs us. A pharmacist plan
+breaks that sentence. It may still be right — a pharmacist taking fifteen shifts
+a month is paying us 18,000 and would buy a cap in a heartbeat — but it is a
+pricing decision, not a reporting one, and it belongs in W14 or a new strategy
+entry rather than being invented by a CRM column.
+
+So the tab should be built to read **four** states from day one, while only two
+of them are reachable. The other two render from the same `coveredByPlan`
+mechanism the moment a pharmacist plan exists, and until then the pharmacist row
+always reads 3%.
+
+**Needs deciding:**
+- **Is there a pharmacist-side subscription at all?** If yes, what does it cost,
+  what does it cap, and what happens to the one-sentence rule? If no, two rows of
+  that table are permanently theoretical and the tab should say so rather than
+  imply a product that is not coming.
+- **Does the subscription get apportioned across the month's orders?** The
+  recommendation is **no**: dividing 9,000 by however many shifts happened
+  invents a per-order number that changes every time another shift is booked, and
+  a figure that moves retroactively is a figure nobody can quote. Show the order's
+  own cash and show the plan absorption as its own line; apportionment, if it is
+  ever wanted, belongs in a margin *report* where the month is the unit.
+- **Who may override, and above what amount does it need a second pair of eyes?**
+  W5 built owner-admin / admin / employee — this is the first thing in the CRM
+  where those three should mean different powers.
+- **Does an override change the invoice?** An adjustment raised before the month
+  closes should land on that month's invoice; one raised after a paid invoice is a
+  credit carried to the next. That is a rule, and it should be written down before
+  the first operator has to guess.
+- **For a chain (W7), which entity does the adjustment belong to?** The commission
+  arose at a branch and the invoice is the group's. The adjustment should follow
+  the money — branch-level, rolling into the group invoice like every other row —
+  so the roll-up report keeps saying which branch cost what.
 
 ---
 
