@@ -1,7 +1,9 @@
 # Backlog
 
-Split four ways because they are read at different times:
+Split five ways because they are read at different times:
 
+- **Direction** — what was decided, and the version plan it produces. Read
+  first; everything else is now in its service.
 - **Work** — things to build. Each says where the code stands, what it should
   become, and what needs deciding first.
 - **Strategy** — revenue routes and features that follow from them. Not work
@@ -10,6 +12,10 @@ Split four ways because they are read at different times:
 - **Context** — findings worth not re-deriving.
 
 IDs are stable. Reordering does not renumber anything.
+
+**The direction changed on 20 Sep 2026** — owner-first, with a point-of-sale
+system and a staff-management system ahead of the marketplace. Part 0 records the
+decision and the version plan; W17–W21, P6–P9 and C6 are new with it.
 
 **Shipped so far**: W1–W5 in v0.0003; W8's code in v0.0004; W12a, W12b, W12d in
 v0.0005; W14 steps 1–3 and 5 in v0.0006; W10 (in part), W12c, W12e (in part),
@@ -35,6 +41,216 @@ yes or no on a pharmacist-side subscription before half its table is real).
 Parts 2–4 are not untouched either: S8 is largely built, and S4, S5, S6 and P1
 each carry what the dispensing log changed about them. Read W8 before any of
 those four.
+
+---
+
+# Part 0 — Direction and roadmap
+
+*Recorded 25 Sep 2026, from the business meeting. This part is read first: it
+says what the rest of the file is now in service of.*
+
+## The decision
+
+**Owner-first.** The product is sold to pharmacy owners first, because they are
+the side with a budget and the side that is scarce. Pharmacists follow once
+there is an installed base of pharmacies behind them.
+
+**Two systems, not three:**
+
+- **System 1 — the till.** Point of sale, inventory and purchasing as one build,
+  with the Dispensing Helper running inside the cart. It sells on its own:
+  existing pharmacy systems are dated, and a pharmacy with no staff gets full
+  value from it. One database behind a phone app and a web page, so a pharmacy
+  with no laptop scans with its phone and prints to a Bluetooth receipt printer.
+  **W17.**
+- **System 2 — the pharmacy's people.** Check-in/check-out, tasks and
+  performance, for the owner who is not always in the building. Seen working at
+  Salim. Worth nothing to a one-person pharmacy and a great deal to a ten-person
+  one, and priced accordingly. **W18.**
+
+**The sequence after that:**
+
+1. The installed base grows, district by district.
+2. The pharmacist side opens with three things only: check-in/out, tasks, and
+   the CV.
+3. The Syndicate is offered an accredited assessment that sorts pharmacists into
+   specialty categories. **W20.**
+4. Pharmacies are given subsidised shift credits — the Trojan horse — and the
+   marketplace switches on in districts dense enough to match. **W21.**
+5. Jobs, company listings, pharma advertising on the owner's app, and area-level
+   (never pharmacy-level) consumption data for companies. **P6, W15, P1.**
+
+**Not re-litigated here.** An earlier analysis argued for shipping the
+marketplace first. That argument lost at the meeting and is not repeated; its
+useful parts (catalogue risk, capacity, the clinical curator) are carried into
+the entries below as conditions rather than objections.
+
+### What this changes about what is already built
+
+- **The marketplace stays in the code, dark.** Listings, handoff, fees, chains,
+  partner accounts, invoices: all kept, behind a flag, and still checked by the
+  suites every build. Nothing is deleted. It is the product for step 4.
+- **The Helper moves into the till.** The standalone tab stays for a pharmacist
+  without a till; inside a till the basket *is* the cart.
+- **W8's tallies become a derived view of sales** wherever a till exists. The
+  separate "record this" step disappears there.
+- **W14's ledger, invoices and dunning ladder carry the new subscriptions.** The
+  Basic 9,000 / Premium 19,000 plans were priced for shift posting and need
+  re-scoping once the price of the two systems is set.
+- **W8's privacy-by-shape decision is revised, for the till only** — see P8.
+- **W9 (the name) is more urgent, not less.** The buyer is now the pharmacy.
+- **F8** (three customers with diverging interests) is **parked** by decision,
+  to be picked up before step 5.
+
+## Two tracks
+
+**The spec track** is the prototype: `App_v…` and `CRM_v…`, one file each, no
+backend. Each version below is one step. It is cheap, it is fast, and it is what
+gets put in front of pharmacy owners, pharmacists and the team.
+
+**The production track** is the Next.js + Supabase build. It does **not** start
+on System 1 until three gates are passed, because each is the kind of mistake
+that costs a rewrite rather than a fix:
+
+1. **The offline model is decided** — movements, not levels (W17).
+2. **The catalogue go/no-go is answered** — ten hours on a hundred real SKUs
+   (W17), not a year of mapping on faith.
+3. **The clinical curator is named** (W19).
+
+System 2 carries none of those risks and can start in production as soon as its
+spec versions are settled.
+
+## The versions
+
+| Version | Theme | Entries |
+| --- | --- | --- |
+| **v0.0009** | The switch, and the catalogue underneath the till | flags; W17 catalogue |
+| **v0.0010** | The till | W17 sell |
+| **v0.0011** | Stock and purchasing | W17 inventory |
+| **v0.0012** | Cash, and the offline model | W17 cash, offline |
+| **v0.0013** | Clinical governance | W19; P8; W17 helper tiers |
+| **v0.0014** | Attendance | W18 roster, check-in/out |
+| **v0.0015** | Tasks, performance, and the absent owner's day | W18; P7 |
+| **v0.0016** | Paying for it | pricing — *blocked on a decision* |
+| later | Assessment, then shift credits, then the ecosystem | W20, W21, P6 |
+
+System 1 is complete at v0.0013, System 2 at v0.0015.
+
+**v0.0009 — the switch, and the catalogue.**
+A feature flag per surface, with the marketplace off by default and switchable
+per district later (W21 needs exactly that). The pharmacist's bar becomes
+Check-in · Tasks · Drugs · CV · Profile, with Tasks and Check-in as honest
+"coming in this build series" placeholders until v0.0014. The product layer
+beneath the existing molecule layer: barcode, AR/EN name, form, strength, pack,
+price, molecule links, and a **mapping confidence** (verified / auto-mapped /
+unmapped). A **Catalogue** module in the CRM with the mapping queue: an unknown
+barcode scanned anywhere becomes a task there.
+*The check asserts:* the marketplace is unreachable with the flag off and fully
+green with it on; every product either maps to molecules or says it does not.
+
+**v0.0010 — the till.**
+Scan (camera, wedge scanner, or typed), cart, quantities, cash with change due,
+receipt preview rendered as an image, void and refund with a reason. The price is
+written **onto the sale line** at the moment of sale. The Helper checks the
+basket as one consolidated check, not per item, and states coverage per basket:
+"3 of 4 items checked; 1 not in the reference." Tiers render as Note and Warn;
+the Stop list ships **empty** (P9). Phone and desktop layouts, both directions.
+*The check asserts:* a price change never alters a past sale; an unmapped item is
+announced rather than silently passed; nothing in the cart can open a banner.
+
+**v0.0011 — stock and purchasing.**
+Stock as a **ledger of movements** — sale, receipt, adjustment, return, expiry
+write-off — with levels always derived, never stored. Purchase orders from
+suppliers, who are already Externals (distributors and storage houses, W4):
+draft → sent → received, with partial receipt. Batches and expiry dates;
+near-expiry and low-stock prompts on the owner's home. The controlled-substance
+register falls out of dispensing as a derived view of movements for controlled
+items, not a separate log.
+*The check asserts:* no stock level is ever written directly; the register
+reconciles to movements exactly.
+
+**v0.0012 — cash, and the offline model.**
+Till sessions opened and closed per person. **Blind count**: the drawer total is
+entered before the expected figure is shown. Every variance carries a note and
+an owner sign-off. Voids, refunds, discounts and no-sale drawer opens are all
+on an audit trail. Nothing ever deducts from anyone's pay. And the offline
+model made demonstrable: a simulated offline switch, sales queued as movements
+on the device, a sync that replays them, and two devices selling the last box
+of the same product while offline — reconciling to the right level.
+*The check asserts:* the expected total is not in the page before the count is
+entered; two offline devices reconcile correctly.
+
+**v0.0013 — clinical governance.**
+A **Rules** module in the CRM — `proposed → under review → approved (tier) →
+retired` — with a named approver and date on every transition, and a rule that
+was never approved never fires. Every released rule set is versioned and
+archived. The override report: every Warn and Stop overridden, per rule, with
+anything above one in five flagged for demotion. The Stop tier becomes live but
+stays empty until the curator fills it. And the pharmacy's own patient history
+(P8): a sale may be attached to a patient the pharmacy keeps, which enables
+per-patient alert suppression inside that pharmacy and nowhere else.
+*The check asserts:* no CRM role can read a patient row; a retired rule stops
+firing; a rule set from any past date can be reproduced.
+
+**v0.0014 — attendance.**
+The roster: an employment record per person with start and end dates and a role
+(pharmacist or assistant), invitations for staff without accounts, deactivation
+that keeps history. Check-in is tied to opening a till session. A missed
+check-out closes automatically at the **scheduled** end plus a grace period —
+not at midnight, because overnight shifts exist — and is marked `auto_closed`.
+On the next check-in the person is asked when they actually left; the claim and
+the owner's approval are stored as two facts, editable for seven days, and the
+last till transaction is shown beside the claim as evidence.
+*The check asserts:* an auto-closed shift never counts as clean; approval never
+overwrites the claim.
+
+**v0.0015 — tasks, performance, and the absent owner's day.**
+Tasks with due dates and recurrence — the daily fridge-temperature check is the
+case to design for — and completion. Performance derived from what people must
+do anyway (attendance, till activity) rather than from self-reported ticks.
+Sales per pharmacist, segmented by ATC class, with antibiotics and controlled
+substances flagged **relative** to the pharmacy's own average and the
+district's, shown to the owner as a question — never as a leaderboard (P7). The
+owner's home becomes "what happened today while you were not here". The
+pharmacist side opens its three things: check-in, tasks, CV.
+*The check asserts:* no screen ranks pharmacists by sales; a flag names its
+comparison.
+
+**v0.0016 — paying for it.**
+Subscriptions for the two systems on the W14 ledger, seat-aware so a one-person
+pharmacy is not charged for staff it does not have. **Blocked** until the price
+is set — see the open decisions below.
+
+**Later, in this order:** W20 (the assessment, runnable as unaccredited
+self-assessment from its first build), then W21 (shift credits and the
+marketplace switching on district by district), then P6's area data and the
+pharma-facing products.
+
+## The non-code track
+
+These are yours, and several gate the production track. None is a coding task.
+
+1. **Name the clinical curator** (W19) — before v0.0013 leaves the prototype.
+2. **The catalogue go/no-go** (W17) — ten hours, a hundred real SKUs seeded from
+   Kimadia / MoH registration lists, mapped to molecules. Count how many map
+   cleanly. Before any production work on System 1.
+3. **Certify the hardware** (W17) — buy one or two Bluetooth thermal printers
+   and a wedge scanner and test Arabic bitmap receipts on them. Before v0.0010's
+   receipt is shown to a customer.
+4. **Five owner conversations** with v0.0010–v0.0012 in hand.
+5. **Price the two systems** — gates v0.0016.
+6. **Choose the name** (W9) — before the first sale.
+7. **Word the moonlighting clause** (W21) — before the first shift credit.
+
+## Open decisions
+
+- **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
+  survive as they are once the marketplace is dark.
+- **A pharmacist-side subscription** — still needed before half of W16 is real.
+- **The name** (W9).
+- **W8's legal read**, now extended to patient history kept by the pharmacy (P8).
+- **W7's three leftovers.**
+- **F8**, parked by decision until before the ecosystem step.
 
 ---
 
@@ -1167,6 +1383,215 @@ always reads 3%.
   the money — branch-level, rolling into the group invoice like every other row —
   so the roll-up report keeps saying which branch cost what.
 
+## W17. System 1 — the till: point of sale, inventory, purchasing, and the Helper in the cart
+
+**Raised:** 20 Sep 2026. **Touches:** everything. **Not built.** Versions
+v0.0009–v0.0013 in Part 0.
+
+One build, not three. A till that decrements stock as it sells *is* the
+inventory system, and a controlled-substance register that falls out of
+dispensing is more reliable than one somebody has to remember to keep.
+
+### Decided
+
+**Phone and web, one database.** A pharmacy with no laptop scans with its phone
+camera and prints to a Bluetooth receipt printer; a busy counter adds a wedge
+scanner, because camera scanning is slower at volume. Same records either way.
+
+**Offline: sync movements, never levels.** Sales are append-only events and sync
+whenever the connection allows. Stock levels are *derived* from movements —
+sale, receipt, adjustment, return, write-off — and never written directly.
+Otherwise two devices selling the last box offline both write "9" and the
+truth is 8. The price is written onto the sale line at the moment of sale, so a
+later price change cannot rewrite yesterday's takings. Selling, printing and
+taking cash work offline; reports, price updates and catalogue refreshes wait.
+Retrofitting this later is close to a rewrite, which is why it is a gate on the
+production track rather than a feature.
+
+**Hardware is a short certified list.** One or two printer models, one or two
+scanners, nothing else supported at launch. Arabic receipts are rendered as an
+image and printed as a bitmap — the same technique that makes Arabic CVs export
+correctly — rather than fighting printer code pages.
+
+**The catalogue has two layers, and completeness costs no app weight.** The
+clinical rules are keyed on *molecules* (a few hundred to fifteen hundred in
+community practice; 119 exist today) and stay small forever. The product layer
+is a lookup — barcode → product → molecules and strengths — that grows to tens
+of thousands of rows at roughly 150–250 bytes each: one download at setup,
+daily deltas of a few kilobytes after that, stored on the device. Every product
+carries a **mapping confidence** (verified / auto-mapped / unmapped), so a product
+can be sold before it is clinically mapped, and the Helper states it: "3 of 4
+items checked; 1 not in the reference." An unknown barcode scanned anywhere
+becomes a mapping task in the CRM, so the fleet fills the catalogue. **Launch
+coverage does not have to be complete; it has to be honest.** The failure to
+design against is not missing data but silent partial coverage presented as a
+clean check.
+
+**Cash: record, never accuse.** A till that says the drawer should hold 847,000
+when it holds 831,000 has created an accusation, and if its number is wrong the
+accusation is against an innocent person. So: a **blind count** (the total is
+entered before the expected figure is shown — without this the feature is
+decorative); a note and an owner sign-off on every variance; an audit trail of
+voids, refunds, discounts and no-sale drawer opens, which is where shrinkage
+actually shows; and **no automatic deduction from anyone's pay, ever.**
+
+**Suppliers are Externals.** Distributors and storage houses already exist as
+Externals records (W4); purchase orders are raised against them.
+
+### Needs deciding
+
+- The catalogue go/no-go (Part 0, non-code track item 2).
+- The certified hardware list (item 3).
+- What a dispensing tally (W8) means for a pharmacy that has a till *and* a
+  pharmacist on a relief shift — probably nothing new, because the sale is the
+  record, but confirm before W21.
+
+## W18. System 2 — the pharmacy's people: check-in/out, tasks, performance
+
+**Raised:** 20 Sep 2026. **Touches:** app + CRM. **Not built.** Versions
+v0.0014–v0.0015.
+
+For the owner who is not always in the building. Seen working at Salim.
+
+### Decided
+
+**Worth it at ten staff, invisible at one.** A one-person pharmacy never sees
+this system and is not charged for seats it does not have.
+
+**Make the valuable data a byproduct of work people must do anyway.** Staff
+comply with what the workflow enforces and quietly ignore what it does not.
+Check-in is tied to opening a till session; performance is derived from
+attendance and till activity; self-reported task ticks are kept for things that
+genuinely need a human, and treated as softer data.
+
+**A missed check-out** closes automatically at the **scheduled end plus a grace
+period** — not at 23:59, because overnight shifts exist and the fee engine
+already handles them — and is marked `auto_closed`, visibly distinct from a
+clean shift. On the next check-in the person is asked when they left. **The
+claim and the owner's approval are stored as two facts**; approval never
+overwrites the claim. Editable for seven days, no further. The last till
+transaction is shown beside the claim as evidence. Repeated auto-closes are
+themselves worth showing the owner.
+
+**Sales per pharmacist is in, under P7.**
+
+**Tasks** have due dates and recurrence from the start: the daily
+fridge-temperature check is the design case, and recurrence is where task
+systems get expensive if added later.
+
+### Needs deciding
+
+- Whether scheduling (a rota) is in System 2 at all. It is not in the decided
+  scope, but W21's moonlighting rule needs availability, so something minimal
+  will be needed before the marketplace switches on.
+
+## W19. The clinical curator, and the rule-governance module
+
+**Raised:** 20 Sep 2026. **Touches:** CRM, the Helper. **Not built.** Version
+v0.0013; the person is on the non-code track.
+
+Once the Helper sits in a till influencing what is dispensed, somebody must be
+accountable for a rule being wrong or missing. "The software said so" is not a
+defence.
+
+**The person.** A named, practising community or clinical pharmacist — ideally
+with some hospital or academic standing — part-time, plus a second reviewer.
+Paid, by retainer or equity, so a turnaround can be held to. Not the founder,
+who is conflicted on shipping speed, and not a developer, who is not qualified.
+
+**What they own.** The rule list: every interaction pair, contraindication and
+duplication rule, and the tier on each. Nothing enters or changes tier without
+their sign-off.
+
+**The mechanism** is a shape built twice already (the verification queue and the
+listings machine): a Rules module in the CRM, `proposed → under review →
+approved (tier) → retired`, a name and date on every transition, and a rule never
+approved never fires. Every released rule set is **versioned and archived**, so a
+dispensing decision questioned two years later can be shown against the exact
+rules live that day and who approved them. That archive is the most valuable
+thing the role produces.
+
+**Their rhythm.** Monthly, two to four hours: new rules proposed (literature, a
+pharmacy's report, a new mapping); the override report, demoting anything
+overridden more than roughly one time in five; and unmapped products needing a
+clinical call. Batched and asynchronous — not support, not on call.
+
+**Before launch, once:** review the 119 molecules and ten duplication rules
+already built, sign off the initial tiers, agree the promotion criteria. Ten to
+fifteen hours.
+
+**Commercially,** a named clinical owner is the first question the Syndicate will
+ask and the first question a pharma partner's compliance team will ask.
+
+## W20. The Syndicate assessment, and specialty categories
+
+**Raised:** 20 Sep 2026. **Touches:** app, CRM, the CV. **Not built.** After
+v0.0016.
+
+An accredited test that scores pharmacists and sorts them into specialty
+categories — dermatological, OTC, cardiovascular and so on — which they present
+when applying for shifts or jobs. The Syndicate gains revenue and an answer to
+its unemployment problem; pharmacists gain a credential; the platform gains a
+verified, categorised supply side, and the matching problem the marketplace
+never answered ("is this stranger any good?") gets one.
+
+### Decided
+
+- **Sat in invigilated halls** the Syndicate provides, on the candidate's phone,
+  with session credentials issued at the hall. **The invigilator is the control.**
+  In-app lockdown and focus detection are layered on top but are not relied on:
+  a second phone, a watch or a paper crib sheet defeats them.
+- **Validity comes from the item bank**, not the software: a large bank with
+  randomised selection per candidate so no two papers match, randomised option
+  order, rotation between sittings, and post-hoc item statistics (an item
+  everyone gets right has leaked). Items written and reviewed by a panel of
+  practising pharmacists against a blueprint agreed with the Syndicate.
+- **Written down before the first sitting:** the pass standard, the appeals
+  process and the retake policy.
+- **Sitting fee 25,000–50,000 IQD**, framed as Syndicate accreditation delivered
+  through the app — not as an app fee to apply for work. Pharmacy-paid verified
+  lookups are a possible **second** line once there is a pool worth looking up,
+  not a replacement.
+- **Non-exclusive** (P2). The agreement states who owns the **item bank** and the
+  **score records** if it ends; whoever owns the items owns the test.
+- **Works unaccredited first.** The module runs as a self-assessment from its
+  first build, and accreditation is an upgrade rather than a gate, so an
+  institutional delay costs nothing.
+- **Accredited hours.** Check-in/out records (W18) submitted for Syndicate
+  verification become a second credential at almost no marginal cost.
+
+Respects P4 throughout: with Syndicate backing the platform delivers the
+credential; it does not become the credentialing authority.
+
+## W21. Shift credits — the Trojan horse — and switching the marketplace on
+
+**Raised:** 20 Sep 2026. **Touches:** fees, ledger, app. **Not built.** After
+W20.
+
+### Decided
+
+- **A subsidy, not a discount.** The pharmacist's rate is unchanged — 40,000
+  stays 40,000 — and the platform pays part of the pharmacy's cost (8,000 IQD on
+  a 40,000 shift, for example). The labour price is never anchored low.
+- **Shown explicitly and finitely**: "your subscription covered 8,000 of this."
+  The anchor that is at risk is the pharmacy's sense of the *fee*; showing the
+  subsidy is what makes its end legible.
+- **Moved through the ledger, not a new payout path.** The commission is waived
+  and a credit is posted against the pharmacy's invoice as an adjustment row —
+  the W16 shape. No money is disbursed outside the existing flow, which keeps
+  clear of the no-wallet rule.
+- **Budgeted as customer acquisition**, capped per pharmacy per month.
+- **District by district**, by density, never by total count. The flag from
+  v0.0009 switches it on per district.
+- **Moonlighting — availability conflict only.** When an owner's employee takes
+  a relief shift elsewhere, the owner sees that the person is unavailable, never
+  where or for whom. Written into the terms both sides accept at sign-up.
+- **Disintermediation: the record is the product.** A shift booked and paid
+  through the platform feeds the verified CV, the reliability score and the
+  accredited hours; a shift arranged directly counts toward none of them. Phone
+  numbers are not exposed before acceptance. The handoff record stays the
+  evidentiary backbone. (C2.)
+
 ---
 
 # Part 2 — Strategy
@@ -1541,6 +1966,12 @@ riding on any of them, which is the only time criteria are easy to write.
 **Still open:** how far up S5's ladder to go. Rungs 1–3 are a different question
 from rungs 4–5; see S5.
 
+**Extended 20 Sep 2026, for the till (W17).** The cart and every other
+dispensing surface join the Helper and the reference on the forbidden list, and
+are kept off it the same way: `bannerFor()` is simply never called from them, so
+there is no flag to flip. Paid placements go to the **owner's app** — a
+commercial surface — and never to the counter.
+
 ## P2. Non-exclusivity with the Syndicate
 
 Do not ask a professional body to lock out competitors. It is how you get
@@ -1627,6 +2058,79 @@ there are ten thousand scores computed under rules nobody wrote down.
 **Needs your judgement:** all five. The one I would not compromise on is the
 first — a pharmacist should be able to see everything the platform says about
 them.
+
+## P6. Area data: a published minimum, and a dominance rule
+*Settle before the first data product is sold. Decided 20 Sep 2026.*
+
+What is sold to companies is **area-level aggregates**, never a pharmacy's own
+row, and the rule protecting that is public:
+
+- **Minimum N = 5.** No area figure is reported unless at least five pharmacies
+  contributed to it. In a district with three, "this area dispenses a lot of X"
+  is one pharmacy's data, and anybody who knows the district can name it.
+- **Dominance: 40%.** A figure is suppressed if one pharmacy contributes more than
+  roughly 40% of it, even when N is met — otherwise a large pharmacy in a small
+  district stays identifiable.
+- **The pharmacy sees its own analytics first** (W8), and **opts in** to its
+  data contributing to aggregates.
+
+Selling to companies rather than to reps does not change the pharmacy's
+question — the company deploys the reps. The answer is *what* is sold, not *to
+whom*. Publishing the rule is what makes it a promise rather than a setting.
+
+## P7. A sales figure is a risk signal, never a target
+*Decided 20 Sep 2026. Governs W18.*
+
+Sales per pharmacist is tracked, as a safeguard rather than a scoreboard:
+
+- **Segmented by ATC class** — antibiotics (J01), controlled substances, and any
+  other class the curator designates — not a two-way split.
+- **Flagged relatively:** a pharmacist's share against the pharmacy's own average
+  and the district's, so whoever works the winter evening shift is not
+  punished by an absolute threshold. Every flag names its comparison.
+- **Shown to the owner as a question**, the same pattern as contraindications.
+- **Never ranked.** No leaderboard, no "top seller", no sales goal. A number on
+  display becomes a target; the risk is not that the system creates
+  over-dispensing but that it amplifies it.
+
+## P8. Patient history stays inside the pharmacy
+*Decided 20 Sep 2026. Revises W8's privacy-by-shape decision, for the till only.*
+
+W8 kept patient identity out entirely because a shift app had no clinical need
+for it. A till does — per-patient alert suppression is the clinical case. So a
+pharmacy may keep its patients' purchase history, and the pharmacist may use it
+where it is ethical to. But **"we don't look" is policy and "we can't look" is
+architecture**, and only the second is held:
+
+- Patient rows carry **no RLS grant to any operator or CRM role**, and no CRM
+  view or SQL export includes them.
+- Patient identity is **per pharmacy**. The same person at two pharmacies is two
+  unrelated rows with no shared key.
+- **There is never a cross-pharmacy patient identity.** That would be a national
+  dispensing record — a different regulatory animal entirely.
+- Area aggregates (P6) are computed from separately written, de-identified
+  counters, never by joining patient rows.
+- Stated on screen and in the contract, alongside "does not replace the legal
+  register".
+
+W8's legal read, which is still open, now covers this too.
+
+## P9. The till never refuses a licensed professional
+*Decided 20 Sep 2026. Governs W17 and W19.*
+
+Everything built so far *advises*. A tier that blocks a sale is a different risk
+class: a wrong block stops a legitimate sale in front of a customer; the
+workaround (ringing the item as something else) corrupts the inventory and
+dispensing data the whole plan depends on; and a tool that blocks implies that
+anything not blocked was checked and approved.
+
+- The tiers are **Note, Warn and Stop**; new rules default to Note.
+- **The Stop list ships empty**, and only the curator (W19) promotes into it.
+- A Stop requires a **typed reason** — and then lets the pharmacist proceed. The
+  till never refuses outright. The pharmacist's judgement governs, and the record
+  shows it was exercised.
+- **Override rate is instrumented from day one.** A rule overridden more than
+  roughly one time in five is miscalibrated and is demoted.
 
 ---
 
@@ -1730,9 +2234,34 @@ with time, and least on the things that can be built any time. Shipping the
 shift board faster wins little; starting the Syndicate conversation and the
 verified history earlier wins a lot.
 
+## C6. Capacity is the binding constraint
+
+Recorded 19 Sep 2026, because the estimate that prompted it will be made again.
+
+Part-time alongside a full-time role buys roughly **110–150 hours a quarter**.
+The real implementation's own measurements say what features cost here: 9,380
+lines of TypeScript and **4,120 lines of SQL** — a third of the codebase is RLS
+and policy — plus 130 policy assertions, bilingual RTL throughout, two layouts,
+and a CRM counterpart for every module. Estimates that list features as bullets
+miss all of that.
+
+Two consequences worth keeping. **Work that is independent is not therefore
+parallel**: the catalogue, the conversations and the build all draw on the same
+evenings. And **point of sale is larger than everything built so far combined**,
+which is why Part 0 puts it behind three gates on the production track and does
+its thinking on the spec track first, where a version costs days rather than
+months.
+
 ---
 
 ## Picking these up
+
+**Start with Part 0.** Since 20 Sep 2026 the order of work is the version plan
+there, not the order of the Work entries: W17 and W18 are the next eight
+versions, W19 is what makes W17 safe to sell, and W20–W21 come after. The
+entries below that predate it remain accurate about *why* things are built the
+way they are, and the marketplace they describe is still in the code, dark,
+waiting for W21.
 
 Each Work entry names the files and identifiers involved, so nothing needs
 re-deriving. **Parts 2–4 were expanded on 18 Sep 2026**, and P5 and C4–C5 are
