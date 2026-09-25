@@ -1312,13 +1312,16 @@ await signOut(dk);
 await signIn(dk, 'rahma@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('an owner’s bar is their home, products, trainees, the Helper and their profile',
-   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,products,trainees,drugs,profile'));
+ok('an owner’s bar is their home, the till, products, the Helper and their profile',
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,till,products,drugs,profile'));
 {
   const txt = await dk.locator('#app-body').innerText();
   ok('their home stops prompting about applicants and unfilled shifts',
      !/waiting on you|unfilled/i.test(txt) && await dk.locator('.repeat-chip').count() === 0);
-  ok('and says what arrives next instead', /point of sale/i.test(txt) && await dk.locator('.soon-tag').count() === 1);
+  /* v0.0012: what used to be "coming" is here — the till is a link now, not
+     a promise. */
+  ok('and leads to the till instead, which is no longer “coming”',
+     /Till/.test(txt) && !/on its way/i.test(txt) && await dk.locator('.soon-tag').count() === 0);
   ok('it counts the catalogue, and how much of it the Helper cannot fully check',
      await dk.evaluate(t => { const s = catalogueSummary(); return t.includes(s.total + ' products') && t.includes(s.uncheckable + ' of them'); }, txt));
   ok('and still leads to the trainee waiting on a decision', /Zainab/.test(txt));
@@ -1339,8 +1342,9 @@ ok('an owner of several sees, on All, the one thing still true without the marke
    && await dk.locator('.branch-row .badge-pending, .branch-row .badge-stage').count() === 0);
 await dk.evaluate(() => setPharmacy('P9'));
 await dk.waitForTimeout(200);
-ok('and a pharmacy’s own tab offers no shift to post, only what is coming',
-   !/post a shift/i.test(await dk.locator('#app-body').innerText()) && await dk.locator('.soon-tag').count() === 1);
+ok('and a pharmacy’s own tab offers no shift to post, only its till',
+   !/post a shift/i.test(await dk.locator('#app-body').innerText()) &&
+   await dk.evaluate(() => [...document.querySelectorAll('#app-body [onclick]')].some(el => /goto\('till'\)/.test(el.getAttribute('onclick')))));
 
 await signOut(dk);
 await signIn(dk, 'zainab@uobaghdad.edu.iq');
@@ -1540,8 +1544,8 @@ ok('the filters count what they hold',
   const broken = [];
   for (const [mail, screens] of [
     ['ahmed@example.com', ['checkin', 'tasks', 'drugs', 'cv', 'products', 'profile']],
-    ['rahma@example.com', ['dashboard', 'products', 'trainees', 'post', 'billing', 'profile']],
-    ['layla@example.com', ['dashboard', 'products', 'trainees', 'billing', 'profile']]
+    ['rahma@example.com', ['dashboard', 'till', 'products', 'trainees', 'post', 'billing', 'profile']],
+    ['layla@example.com', ['dashboard', 'till', 'products', 'trainees', 'billing', 'profile']]
   ]) {
     await dk.evaluate(m => { signOut(); signInAs(m); }, mail);
     for (const sc of screens) {
@@ -1551,14 +1555,240 @@ ok('the filters count what they hold',
   }
   await dk.evaluate(() => openProduct(PRODUCTS[1].barcode));
   (await parses(dk)).forEach(h => broken.push('product: ' + h.slice(0, 60)));
+  /* The till with everything on it at once: lines, open instructions, a
+     finding, the discount form, an unknown item, and then the receipt. */
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); goto('till');
+    tillScan('5000000001224'); tillScan('4000000001065'); tillToggleLine(0); tillOpenDiscount(); tillScan('6291234567894'); });
+  (await parses(dk)).forEach(h => broken.push('till: ' + h.slice(0, 60)));
+  await dk.evaluate(() => { S.till.given = '1000000'; completeSale(); });
+  (await parses(dk)).forEach(h => broken.push('receipt: ' + h.slice(0, 60)));
   ok('no broken inline handler on any screen of the switched-off build', broken.length === 0);
   broken.slice(0, 6).forEach(x => console.log('        ' + x));
 }
+/* ---------------------------------------------------------------------------
+   v0.0012 — THE TILL. Every rule decided before it was built is asserted here:
+   each pharmacy's own price, the average only from five pharmacies and only for
+   the owner, prices written onto the sale, the exact sum, tenders recorded not
+   processed, discounts owner-only with a reason, voids and refunds on the
+   record, the Helper on the whole basket without ever stopping a sale, and no
+   banner anywhere near it.
+   --------------------------------------------------------------------------- */
+console.log('\nthe till (v0.0012)');
+{
+  /* Coverage worked out here from the data files, independently of the page. */
+  const refSci = new Set(DRUG_DATA.map(d => d.sci));
+  const covOf = p => p.mapping === 'nondrug' ? 'nondrug'
+    : (p.mapping === 'unmapped' || !p.molecules.length) ? 'none'
+    : p.molecules.every(x => x.ref !== false && refSci.has(x.sci)) ? 'full'
+    : p.molecules.some(x => x.ref !== false && refSci.has(x.sci)) ? 'partial' : 'none';
+  const pick = k => PRODUCT_DATA.find(p => covOf(p) === k).barcode;
+  const mixed = [pick('full'), pick('partial'), pick('none'), pick('nondrug')];
+
+  await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('till'); });
+  ok('a pharmacist without a pharmacy has no till — it is the owner’s until permissions (v0.0017)',
+     await dk.evaluate(() => !screenAllowed('till') && S.screen !== 'till' && !navFor(S.role).some(x => x[0] === 'till')));
+  await dk.evaluate(() => { goto('products'); openProduct(PRODUCTS[0].barcode); });
+  ok('…and sees no price on the catalogue: what a pharmacy charges is the owner’s business',
+     await dk.evaluate(() => !document.querySelector('.price-card, .market-avg') &&
+       (goto('products'), !/IQD/.test(document.getElementById('app-body').innerText))));
+
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
+  ok('the owner’s dashboard carries the till card, and a banner slot (so the next check is not vacuous)',
+     await dk.evaluate(() => /Till/.test(document.getElementById('app-body').innerText) &&
+       document.querySelectorAll('.banner-slot').length > 0));
+  await dk.evaluate(() => goto('till'));
+  ok('the till opens on the owner’s pharmacy, named, with who is dispensing',
+     await dk.evaluate(() => S.screen === 'till' && /Al-Rahma/.test(document.querySelector('.till-ph').innerText) &&
+       /Rahma/.test(document.querySelector('.till-by').innerText)));
+
+  const avgCode = await dk.evaluate(() => PRODUCTS.find(p => marketAverage(p.barcode) != null && p.mapping !== 'nondrug').barcode);
+  const thinCode = await dk.evaluate(() => (PRODUCTS.find(p => marketPrices(p.barcode).length && marketAverage(p.barcode) == null) || {}).barcode);
+  ok('the fixture has products on both sides of the five-pharmacy floor', !!avgCode && !!thinCode);
+  /* The floor itself, stated with the literal 5 rather than read back from
+     the page's own constant. */
+  ok('an average exists exactly when five or more pharmacies price the product (P6)',
+     await dk.evaluate(() => PRODUCTS.every(p => (marketAverage(p.barcode) != null) === (marketPrices(p.barcode).length >= 5))));
+
+  ok('scanning the same barcode twice is one line with a quantity of two, at the market average by default',
+     await dk.evaluate(c => { tillScan(c); tillScan(c);
+       return S.till.lines.length === 1 && S.till.lines[0].qty === 2 && S.till.lines[0].unit === marketAverage(c); }, avgCode));
+  ok('a product under the floor, with no price of its own, is not guessed: the owner is asked to price it',
+     await dk.evaluate(c => { tillScan(c);
+       return S.till.lines.length === 1 && S.till.needPrice === c && !!document.querySelector('.till-needprice #till-price'); }, thinCode));
+  ok('…and once priced it is added at that price, and it is the pharmacy’s price from then on',
+     await dk.evaluate(c => { document.getElementById('till-price').value = '5125'; tillSetPriceAndAdd(c);
+       const l = S.till.lines.find(x => x.barcode === c);
+       return l && l.unit === 5125 && S.prices.P1[c] === 5125 && pharmacyPrice('P1', c) === 5125; }, thinCode));
+  ok('a price change is on the record, with what it was before',
+     await dk.evaluate(c => S.tillLog.some(x => x.kind === 'price' && x.code === c && x.to === 5125 && x.pharmacy === 'P1'), thinCode));
+
+  ok('the total is the exact sum — no rounding to 250 or to anything else',
+     await dk.evaluate(c => { setPrice('P1', c, 1234); S.till = tillReset(); tillScan(c); tillQty(0, 1); tillQty(0, 1);
+       render(); return tillTotals().total === 3702 && /3,702/.test(document.getElementById('till-total').innerText); }, avgCode));
+  ok('cash short of the total is refused and nothing is sold',
+     await dk.evaluate(() => { const n = S.sales.length; S.till.given = '3700'; completeSale();
+       return S.sales.length === n && S.till.note && S.till.note.kind === 'shortCash' && !!document.querySelector('.till-note'); }));
+  ok('cash covering it completes the sale, with the exact change',
+     await dk.evaluate(() => { S.till.given = '5000'; completeSale(); const s = S.sales[0];
+       return s.total === 3702 && s.given === 5000 && s.change === 1298 && s.tender === 'cash' && s.pharmacy === 'P1'; }));
+  ok('the price is written onto the sale: changing it afterwards leaves the past sale as it was',
+     await dk.evaluate(c => { const id = S.sales[0].id; setPrice('P1', c, 9999);
+       const s = S.sales.find(x => x.id === id);
+       return s.lines[0].unit === 1234 && s.lines[0].total === 3702 && s.total === 3702 && pharmacyPrice('P1', c) === 9999; }, avgCode));
+
+  ok('the receipt follows the sale, drawn 384 dots wide for a 58 mm printer',
+     await dk.evaluate(() => { const img = document.querySelector('.receipt-img');
+       return !!img && img.getAttribute('width') === '384' && img.src.startsWith('data:image/png') && img.dataset.lang === 'ar'; }));
+  ok('it carries the pharmacy, licence, date, items, total, tender and the dispensing pharmacist — in Arabic by default',
+     await dk.evaluate(() => { const s = S.sales[0]; const txt = receiptLines(s, 'ar').map(l => l.text + ' ' + (l.amount || '')).join('\n');
+       return txt.includes(PHARMACIES.P1.name.ar) && txt.includes(PHARMACIES.P1.licence) && txt.includes(TODAY_ISO) &&
+         txt.includes(s.lines[0].name.ar) && txt.includes('3,702') && txt.includes('نقداً') && txt.includes('1,298') &&
+         txt.includes('رحمة'); }));
+  ok('one press turns it English',
+     await dk.evaluate(() => { toggleReceiptLang(); const img = document.querySelector('.receipt-img');
+       const txt = receiptLines(S.sales[0], 'en').map(l => l.text).join('\n');
+       return img.dataset.lang === 'en' && txt.includes(PHARMACIES.P1.name.en) && txt.includes('Rahma') && /Change/.test(receiptLines(S.sales[0], 'en').map(l => l.text).join()); }));
+  ok('an owner-uploaded logo goes at the top of the receipt',
+     await dk.evaluate(async () => { const c = document.createElement('canvas'); c.width = 60; c.height = 30;
+       const g = c.getContext('2d'); g.fillRect(0, 0, 60, 30); setLogo('P1', c.toDataURL('image/png'));
+       await new Promise(r => setTimeout(r, 100));
+       const a = renderReceipt(S.sales[0], 'ar'), b = (delete LOGO_IMG.P1, renderReceipt(S.sales[0], 'ar'));
+       return a.hasLogo && !b.hasLogo && a.height > b.height && a.width === 384; }));
+  ok('a refund needs a reason and is the owner’s',
+     await dk.evaluate(() => { const id = S.sales[0].id; openReceipt(id); refundSale(id);
+       const refused = !S.sales[0].refunded && S.till.note.kind === 'needReason';
+       if (!refused) return false;
+       document.getElementById('refund-reason').value = 'Wrong strength'; refundSale(id);
+       return refused && S.sales[0].refunded.reason === 'Wrong strength' &&
+         S.tillLog.some(x => x.kind === 'refund' && x.sale === id && x.reason === 'Wrong strength'); }));
+
+  await dk.evaluate(() => { closeReceipt(); S.till = tillReset(); });
+  ok('Marevan with Aspirin is a Warn on the basket, acknowledgeable in one tap, never a stop',
+     await dk.evaluate(() => { setPrice('P1', '5000000001224', 6000); setPrice('P1', '4000000001065', 3500);
+       tillScan('5000000001224'); tillScan('4000000001065');
+       const warn = document.querySelector('.till-finding.tier-warn .till-ack');
+       return !!warn && !document.querySelector('.modal-back') && !!document.querySelector('.till-complete'); }));
+  ok('completing without acknowledging still sells — and records that it was not acknowledged',
+     await dk.evaluate(() => { S.till.given = '10000'; completeSale(); const f = S.sales[0].findings.find(x => x.a && x.b);
+       return S.sales[0].total === 9500 && f && f.tier === 'warn' && f.acknowledged === false; }));
+  ok('acknowledged, it is recorded as acknowledged',
+     await dk.evaluate(() => { closeReceipt(); tillScan('5000000001224'); tillScan('4000000001065');
+       document.querySelector('.till-finding.tier-warn .till-ack').click();
+       const shown = /Acknowledged/.test(document.querySelector('.till-helper').innerText);
+       S.till.tender = 'zaincash'; S.till.ref = 'ZC-7781'; completeSale();
+       const s = S.sales[0];
+       return shown && s.findings.find(x => x.a && x.b).acknowledged === true &&
+         s.tender === 'zaincash' && s.ref === 'ZC-7781' && s.given === null && s.change === null; }));
+  ok('ZainCash and Qi Card are recorded, never processed — the screen says so',
+     await dk.evaluate(() => { closeReceipt(); tillScan('4000000001065'); tillTender('qicard');
+       const said = /no money passes through/i.test(document.querySelector('.till-pay').innerText);
+       completeSale(); return said && S.sales[0].tender === 'qicard' && S.sales[0].ref === null; }));
+
+  await dk.evaluate(() => { closeReceipt(); S.till = tillReset(); });
+  ok('a mixed basket says how much of it was checked, the same way these data files do',
+     await dk.evaluate(codes => { codes.forEach(c => { if (pharmacyPrice('P1', c) == null) setPrice('P1', c, 1000); tillScan(c); });
+       const c = tillCoverage(S.till.lines);
+       return S.till.lines.length === 4 && c.full === 1 && c.partial === 1 && c.unchecked === 1 && c.nondrug === 1 && c.medicines === 3; }, mixed));
+  ok('…in one sentence at the top of the Helper, not a footnote',
+     await dk.evaluate(() => /1 of 3 medicines checked.*1 in part.*1 not checked.*1 not a medicine/
+       .test(document.querySelector('.till-helper .till-cov').innerText)));
+  ok('the unchecked line is marked on the cart itself',
+     await dk.evaluate(() => [...document.querySelectorAll('.till-line')].filter(x => /Not checked/i.test(x.innerText)).length === 1));
+  ok('nothing on the till opens a banner — it is a dispensing surface (P1)',
+     await dk.evaluate(() => !document.querySelector('#app-body .banner-slot') && !/SAYDALI\+ ·/i.test(document.getElementById('app-body').innerText)));
+
+  ok('default instructions say how to take it, never the dose',
+     await dk.evaluate(() => { const l = S.till.lines.find(x => x.form === 'tablet');
+       return l && l.dose === '' && /Swallow/.test(l.usage.en); }));
+  ok('a dose typed by the pharmacist reaches the receipt beside the instruction',
+     await dk.evaluate(() => { const i = S.till.lines.findIndex(x => x.form === 'tablet');
+       tillToggleLine(i); document.querySelector('.till-instr input').value = '1 tablet twice daily';
+       document.querySelector('.till-instr input').dispatchEvent(new Event('input'));
+       S.till.given = '100000'; completeSale();
+       return receiptLines(S.sales[0], 'en').some(l => l.kind === 'instr' && /1 tablet twice daily — Swallow/.test(l.text)); }));
+  ok('a non-medicine carries no instruction',
+     await dk.evaluate(() => { const s = S.sales[0]; const nd = s.lines.find(l => l.mapping === 'nondrug');
+       const lines = receiptLines(s, 'en'); const at = lines.findIndex(l => l.text === nd.name.en);
+       return nd.usage === null && (lines[at + 1] || {}).kind !== 'instr'; }));
+
+  await dk.evaluate(() => { closeReceipt(); S.till = tillReset(); });
+  ok('a misread is refused and nothing is added',
+     await dk.evaluate(() => { tillScan('1234567890123');
+       return !S.till.lines.length && S.till.note.kind === 'misread' && !!document.querySelector('.till-note'); }));
+  ok('an unknown barcode can still be sold by name and price, and goes for mapping',
+     await dk.evaluate(() => { const code = '6291234567894'; if (!ean13Valid(code)) return false;
+       tillScan(code); const asked = !!document.querySelector('.till-unknown');
+       document.getElementById('unk-name').value = 'Local herbal tea'; document.getElementById('unk-price').value = '1750'; tillAddUnknown();
+       const l = S.till.lines[0];
+       return asked && l && l.mapping === 'unmapped' && l.unit === 1750 && S.mappingRequests.some(r => r.barcode === code) &&
+         /1 not checked/.test(document.querySelector('.till-cov').innerText); }));
+  ok('removing a line is a void, and a void is on the record',
+     await dk.evaluate(() => { const n = S.tillLog.filter(x => x.kind === 'void').length; tillVoid(0);
+       return !S.till.lines.length && S.tillLog.filter(x => x.kind === 'void').length === n + 1; }));
+  ok('a discount needs a reason; with one it comes off the exact total and is logged',
+     await dk.evaluate(() => { tillScan('4000000001065'); tillScan('4000000001065'); tillOpenDiscount();
+       document.getElementById('disc-amount').value = '500'; tillApplyDiscount();
+       const refused = S.till.discount === 0 && S.till.note.kind === 'badDiscount';
+       const kept = document.getElementById('disc-amount').value === '500';
+       document.getElementById('disc-reason').value = 'Regular patient';
+       tillApplyDiscount();
+       return refused && kept && tillTotals().total === 6500 && S.tillLog.some(x => x.kind === 'discount' && x.reason === 'Regular patient'); }));
+  ok('a discount larger than the basket is refused',
+     await dk.evaluate(() => { const T = S.till; T.discount = 0; tillOpenDiscount();
+       document.getElementById('disc-amount').value = '8000'; document.getElementById('disc-reason').value = 'x'; tillApplyDiscount();
+       return T.discount === 0; }));
+  ok('discounts and refunds are the owner’s alone (until permissions)',
+     await dk.evaluate(() => { const keep = S.role; S.role = 'pharmacist';
+       const r = !canDiscount() && !canRefund() && !canSetPrices() && !canSeeMarket() && !setPrice('P1', '4000000001065', 1);
+       S.role = keep; return r; }));
+  ok('with no barcode detector, the camera button is not offered at all',
+     await dk.evaluate(() => { delete window.BarcodeDetector; render(); return !cameraAvailable() && !document.querySelector('.till-cam'); }));
+  ok('with one, it is',
+     await dk.evaluate(() => { window.BarcodeDetector = function () {}; render();
+       const shown = !!document.querySelector('.till-cam'); delete window.BarcodeDetector; render(); return shown; }));
+
+  await dk.evaluate(() => { S.till = tillReset(); goto('products'); openProduct(PRODUCTS.find(p => marketAverage(p.barcode) != null).barcode); });
+  ok('the owner sees their price and the average market price, from five pharmacies up',
+     await dk.evaluate(() => /Average market price: [\d,]+ IQD — from \d+ pharmacies/.test(document.querySelector('.market-avg').innerText)));
+  await dk.evaluate(c => openProduct(c), thinCode);
+  ok('below five, no average is shown — fewer is somebody’s price',
+     await dk.evaluate(() => /fewer than 5 pharmacies/i.test(document.querySelector('.market-avg').innerText) &&
+       !/Average market price/.test(document.getElementById('app-body').innerText)));
+
+  /* An owner of several: the till belongs to the pharmacy on screen. */
+  await dk.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); goto('till'); });
+  ok('an owner of several on All is asked which pharmacy to sell from',
+     await dk.evaluate(() => S.screen === 'till' && /Which pharmacy/i.test(document.getElementById('app-body').innerText) && !document.getElementById('till-q')));
+  ok('picking one opens that pharmacy’s till, not the dashboard',
+     await dk.evaluate(() => { setPharmacy('P7'); return S.screen === 'till' && !!document.getElementById('till-q') &&
+       document.querySelector('.till-ph').innerText.includes(L(PHARMACIES.P7.name)); }));
+  ok('prices are each pharmacy’s own: setting one at P7 leaves P8 alone',
+     await dk.evaluate(c => { setPrice('P7', c, 4321); return pharmacyPrice('P7', c) === 4321 && pharmacyPrice('P8', c) === marketAverage(c); }, avgCode));
+  ok('switching pharmacy with a cart open sets the cart aside, on the record',
+     await dk.evaluate(c => { tillScan(c); const had = S.till.lines.length === 1; setPharmacy('P8');
+       return had && !S.till.lines.length && S.tillLog.some(x => x.kind === 'cleared' && x.pharmacy === 'P7'); }, avgCode));
+  ok('a sale is recorded against the pharmacy it was made in, and listed only there',
+     await dk.evaluate(c => { tillScan(c); S.till.given = '100000'; completeSale(); const id = S.sales[0].id;
+       closeReceipt(); const atP8 = document.getElementById('app-body').innerText.includes(id);
+       setPharmacy('P7'); const atP7 = document.getElementById('app-body').innerText.includes(id);
+       return S.sales[0].pharmacy === 'P8' && atP8 && !atP7; }, avgCode));
+  ok('a pharmacy with no responsible pharmacist cannot sell',
+     await dk.evaluate(() => { setPharmacy('P9'); return !!document.querySelector('.till-blocked') && !document.getElementById('till-q') &&
+       (tillAdd(PRODUCTS[0].barcode), !S.till.lines.length); }));
+  ok('nor can one still under review',
+     await dk.evaluate(() => { PHARMACIES.P8.verification = 'pending'; setPharmacy('P8');
+       const r = !!document.querySelector('.till-blocked') && !document.getElementById('till-q');
+       PHARMACIES.P8.verification = 'verified'; return r; }));
+  ok('the owner can upload a receipt logo from each pharmacy’s card on their profile',
+     await dk.evaluate(() => { goto('profile');
+       return document.querySelectorAll('.logo-input').length === myPharmacies().length; }));
+}
+
 await dk.setViewportSize({ width: 320, height: 700 });
 {
   const wide = [];
   for (const [mail, screens] of [['ahmed@example.com', ['checkin', 'tasks', 'products']],
-                                 ['rahma@example.com', ['dashboard', 'products']]]) {
+                                 ['rahma@example.com', ['dashboard', 'products', 'till']]]) {
     await dk.evaluate(m => { signOut(); signInAs(m); }, mail);
     for (const dir of ['ar', 'en']) {
       await dk.evaluate(x => setLang(x), dir);
@@ -1568,6 +1798,16 @@ await dk.setViewportSize({ width: 320, height: 700 });
       }
       await dk.evaluate(() => openProduct(PRODUCTS[2].barcode));
       if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`product (${dir})`);
+      if (await dk.evaluate(() => S.role === 'owner')) {
+        /* A full till — long names, a finding, the discount form, an unknown
+           item — and then its receipt. */
+        await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('5000000001224'); tillScan('4000000001065');
+          tillScan('5000000001286'); tillToggleLine(0); tillOpenDiscount(); tillScan('6291234567894'); });
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`till (${dir})`);
+        await dk.evaluate(() => { S.till.given = '1000000'; completeSale(); });
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`receipt (${dir})`);
+        await dk.evaluate(() => closeReceipt());
+      }
     }
   }
   ok(`the new screens do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`,

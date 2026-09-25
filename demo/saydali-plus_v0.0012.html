@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0011">
+<meta name="version" content="App_v0.0012">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -924,6 +924,56 @@
     body,.app-body{ overflow:visible !important; background:#fff !important; }
     .screen-body{ padding:0 !important; }
   }
+
+  /* ---------- The till (v0.0012) ---------- */
+  .till-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .till-ph{ font-family:var(--font-display); font-weight:600; font-size:16px; color:var(--indigo-dark); }
+  .till-by{ font-size:12px; color:var(--ink-faint); }
+  .till-empty{ font-size:13px; color:var(--ink-faint); text-align:center; }
+  .till-line{ padding:12px 14px; border-bottom:1px solid var(--border); }
+  .till-line:last-child{ border-bottom:none; }
+  .till-line-top{ display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+  .till-line-name{ font-size:14px; font-weight:600; min-width:0; overflow-wrap:anywhere; }
+  .till-line-total{ font-weight:600; flex:none; }
+  .till-line-bottom{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:8px; }
+  .till-line-unit{ font-size:12.5px; color:var(--ink-soft); }
+  .till-void{ color:var(--clay); margin-inline-start:auto; }
+  .qty{ display:inline-flex; align-items:center; border:1.4px solid var(--border); border-radius:10px; }
+  .qty-btn{ width:34px; height:32px; font-size:18px; font-weight:600; color:var(--indigo); }
+  .qty-n{ min-width:26px; text-align:center; font-weight:600; }
+  .till-instr{ margin-top:10px; display:grid; gap:6px; }
+  .till-instr label{ font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .till-instr input, .till-inline input{
+    width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card);
+  }
+  .till-inline{ display:flex; gap:8px; flex-wrap:wrap; }
+  .till-inline input{ flex:1 1 120px; }
+  .till-helper-t{ display:flex; align-items:center; gap:7px; font-family:var(--font-display); font-weight:600; font-size:14px; margin-bottom:6px; }
+  .till-helper-t svg{ width:17px; height:17px; color:var(--indigo); }
+  .till-cov{ font-size:13px; font-weight:600; color:var(--indigo-dark); background:var(--mist); border-radius:10px; padding:8px 10px; margin-bottom:10px; }
+  .till-finding{ border:1px solid var(--border); border-radius:11px; padding:10px 12px; margin-bottom:8px; }
+  .till-finding.tier-warn{ border-color:#E3CE9E; background:var(--amber-tint); }
+  .till-finding.tier-warn.acked{ background:var(--card); }
+  .till-finding-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .till-finding-t{ font-size:13px; font-weight:600; flex:1; min-width:0; }
+  .till-finding-s{ font-size:12.5px; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+  .till-acked{ font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .till-notes summary{ font-size:12.5px; font-weight:600; color:var(--indigo); cursor:pointer; padding:6px 0; }
+  .till-notes ul{ padding-inline-start:18px; font-size:12.5px; color:var(--ink-soft); line-height:1.6; }
+  .till-none{ font-size:13px; color:var(--ink-soft); }
+  .till-sum{ display:flex; justify-content:space-between; gap:10px; font-size:13.5px; padding:4px 0; }
+  .till-sum span:first-child{ min-width:0; overflow-wrap:anywhere; }
+  .till-total{ font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--indigo-dark); border-top:1px solid var(--border); margin-top:4px; padding-top:8px; }
+  .till-tenders{ margin-top:12px; }
+  .till-complete{ margin-top:4px; }
+  .till-receipt-bar{ display:flex; gap:10px; }
+  .receipt-wrap{ background:var(--mist); border-radius:14px; padding:14px; display:flex; justify-content:center; }
+  .receipt-img{ max-width:100%; height:auto; background:#fff; box-shadow:0 1px 4px rgba(20,30,28,.15); }
+  .cam-video{ width:100%; border-radius:12px; background:#000; }
+  .market-avg{ font-size:12.5px; color:var(--ink-soft); background:var(--mist); border-radius:10px; padding:8px 10px; margin-top:8px; }
+  .logo-field{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; }
+  .logo-thumb{ height:36px; width:auto; border-radius:6px; background:#fff; border:1px solid var(--border); }
+  .logo-btn{ cursor:pointer; }
 </style>
 </head>
 <body>
@@ -1000,6 +1050,8 @@
   <symbol id="i-edit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19.2 8.8a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4Z"/><path d="M14.5 6.5 17.5 9.5"/></g></symbol>
   <symbol id="i-barcode" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M4 6v12M10 6v12M17 6v12" stroke-width="1.9"/><path d="M7 6v12M13 6v12M15 6v12M20 6v12" stroke-width="1.1"/></g></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-till" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5 11h14v8H5z"/><path d="M7 11V5h10v6"/><path d="M9 8h6M8 15h2M12 15h4"/></g></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></g></symbol>
 </defs></svg>
 
 <script>
@@ -1062,9 +1114,9 @@ const LISTINGS = [
   /* v0.0011 — the platform's own announcement, in the same slot a paid
      placement would use. No sponsor: nobody paid for it. */
   { id:'A1', kind:'announcement', company:null, state:'live', surface:'home',
-    title:{ ar:'نقطة البيع قادمة', en:'Point of sale is on its way' },
-    body:{ ar:'دليل منتجاتك جاهز الآن — امسح أي علبة لترى ما يستطيع مساعد الوصفات فحصه.',
-           en:'Your product catalogue is ready — scan any box to see what the Dispensing Helper can check.' },
+    title:{ ar:'الكاشير وصل', en:'The till is here' },
+    body:{ ar:'بِع من صيدليتك بأسعارك، ومساعد الوصفات يفحص السلّة كاملة وأنت تمسح.',
+           en:'Sell at your own prices, with the Dispensing Helper checking the whole basket as you scan.' },
     from:'2026-09-25', to:'2026-10-31' },
   { id:'B1', kind:'banner', company:'CO1', sponsor:'CO1', state:'live', surface:'browse',
     title:{ ar:'ساماموكس — متوفر الآن', en:'Samamox — now available' },
@@ -1434,6 +1486,94 @@ const STRINGS = {
 };
 
 let lang = 'ar';
+/* v0.0012 — the till. */
+Object.assign(STRINGS.ar, {
+  'nav.till':'الكاشير','till.receipt':'الوصل',
+  'till.choose':'أيّ صيدلية تبيع منها؟','till.by':'يصرف: {name}',
+  'till.blocked.pendingT':'الصيدلية قيد المراجعة.','till.blocked.pendingS':'يُفتح الكاشير عند توثيقها.',
+  'till.blocked.noResponsibleT':'لا صيدلي مسؤول لهذه الصيدلية.','till.blocked.noResponsibleS':'لا يُصرف دواء من صيدلية لا يوقّع عنها صيدلي مسؤول. أضِفه أولاً.',
+  'till.scan':'امسح الباركود أو اكتب الاسم','till.camera':'المسح بالكاميرا','till.cameraFailed':'تعذّر فتح الكاميرا. استعمل الماسح أو اكتب الرقم.',
+  'till.empty':'امسح أول مادة لتبدأ البيع.',
+  'till.note.misread':'الرقم {code} ليس باركوداً صحيحاً — غالباً قراءة خاطئة. امسح مرة أخرى.',
+  'till.note.badPrice':'أدخل سعراً صحيحاً بالدينار.',
+  'till.note.unknownIncomplete':'اكتب الاسم والسعر لإضافة المادة.',
+  'till.note.badDiscount':'الخصم يحتاج مبلغاً لا يتجاوز المجموع، وسبباً.',
+  'till.note.shortCash':'المبلغ المستلم أقل من المجموع ({total}).',
+  'till.note.needReason':'اكتب سبب الإرجاع.',
+  'till.needPrice':'لم تسعّر صيدليتك هذه المادة بعد، ولا يوجد متوسط سوقي كافٍ. حدّد سعرها.',
+  'till.needPriceStaff':'لم تُسعَّر هذه المادة بعد. اطلب من المالك تسعيرها.',
+  'till.priceIQD':'السعر (د.ع)','till.setAndAdd':'اعتمد وأضِف',
+  'till.unknownT':'الباركود {code} غير موجود في الكتالوج','till.unknownS':'يُباع باسمه وسعره، ولن يفحصه المساعد. أُرسل للربط.',
+  'till.unknownName':'اسم المادة','till.add':'أضِف',
+  'till.notChecked':'غير مفحوص','till.partChecked':'مفحوص جزئياً','till.instructions':'الإرشادات','till.remove':'احذف',
+  'till.dose':'الجرعة (يكتبها الصيدلي)','till.dosePh':'مثلاً: قرص مرتين يومياً','till.usage':'طريقة الاستعمال',
+  'till.usageNote':'إرشاد افتراضي حسب الشكل الدوائي، يمكنك تعديله. الجرعة لا تُملأ تلقائياً أبداً.',
+  'till.cov':'فُحص {n} من {total} دواء','till.covPartial':'{n} جزئياً','till.covNone':'{n} غير مفحوص','till.covNondrug':'{n} ليس دواءً',
+  'till.ack':'اطّلعت','till.acked':'تمّ الاطلاع','till.notes':'ملاحظات ({n})','till.questions':'أسئلة للمريض ({n})',
+  'till.noneFound':'لم يجد المساعد تداخلاً بين ما فُحص.',
+  'till.subtotal':'المجموع الفرعي','till.discount':'خصم','till.total':'المجموع',
+  'till.addDiscount':'أضِف خصماً','till.discountReason':'سبب الخصم','till.apply':'طبّق',
+  'tender.cash':'نقداً','tender.zaincash':'زين كاش','tender.qicard':'كي كارد',
+  'till.given':'المبلغ المستلم (د.ع)','till.ref':'رقم العملية (اختياري)',
+  'till.recordedOnly':'يُسجَّل طريقة الدفع فقط — لا تمرّ الأموال عبر صيدلي+.',
+  'till.complete':'إتمام البيع · {total}','till.today':'مبيعات اليوم ({n})','till.refunded':'مُرجَع',
+  'till.newSale':'بيع جديد','till.printNote':'هذا ما سيُرسل إلى الطابعة الحرارية (58 ملم). الطباعة تصل مع الطابعات المعتمدة.',
+  'till.refundT':'إرجاع هذا البيع','till.refundReason':'السبب','till.refund':'أرجِع','till.refundedOn':'أُرجع هذا البيع. السبب: {reason}',
+  'rc.licence':'رقم الإجازة:','rc.discount':'خصم','rc.total':'المجموع','rc.paid':'الدفع:','rc.change':'الباقي',
+  'rc.pharmacist':'الصيدلي:','rc.refunded':'— مُرجَع —',
+  'rc.logoUpload':'ارفع شعار الوصل','rc.logoReplace':'بدّل الشعار','rc.logoNote':'يُطبع بالأسود أعلى الوصل. PNG أو JPG، حتى 300 ك.ب.',
+  'rc.logoTooBig':'الشعار أكبر من 300 ك.ب.',
+  'pd.noPrice':'بلا سعر','pd.byAverage':'(متوسط السوق)','pd.pickForPrice':'اختر صيدلية لرؤية سعرها وتعديله.',
+  'pd.priceAt':'السعر في {ph}','pd.savePrice':'احفظ','pd.priceSaved':'حُفظ السعر. يسري على البيع القادم، لا على ما سبق.',
+  'pd.ownPrice':'هذا سعر صيدليتك.','pd.defaultAverage':'لم تحدّد سعراً، فيُباع بمتوسط السوق حتى تحدّده.',
+  'pd.mustSet':'لا سعر ولا متوسط سوقي — حدّد سعراً قبل بيعه.',
+  'pd.marketAvg':'متوسط سعر السوق: {price} — من {n} صيدليات.','pd.marketThin':'لا يُعرض متوسط: تسعّرها أقل من {min} صيدليات.',
+  'd.tillT':'الكاشير','d.tillPick':'اختر صيدلية للبيع منها.','d.tillToday':'اليوم: {n} عمليات بيع · {total}','d.tillNone':'لا مبيعات اليوم بعد.'
+});
+Object.assign(STRINGS.en, {
+  'nav.till':'Till','till.receipt':'Receipt',
+  'till.choose':'Which pharmacy are you selling from?','till.by':'Dispensing: {name}',
+  'till.blocked.pendingT':'This pharmacy is under review.','till.blocked.pendingS':'The till opens once it is verified.',
+  'till.blocked.noResponsibleT':'This pharmacy has no responsible pharmacist.','till.blocked.noResponsibleS':'Nothing can be dispensed from a pharmacy nobody signs for. Add one first.',
+  'till.scan':'Scan a barcode or type a name','till.camera':'Scan with the camera','till.cameraFailed':'The camera could not open. Use the scanner or type the number.',
+  'till.empty':'Scan the first item to start a sale.',
+  'till.note.misread':'{code} is not a valid barcode — most likely a misread. Scan again.',
+  'till.note.badPrice':'Enter a valid price in dinars.',
+  'till.note.unknownIncomplete':'Type a name and a price to add the item.',
+  'till.note.badDiscount':'A discount needs an amount no larger than the total, and a reason.',
+  'till.note.shortCash':'The amount received is less than the total ({total}).',
+  'till.note.needReason':'Write the reason for the refund.',
+  'till.needPrice':'Your pharmacy has not priced this, and there is no market average to fall back on. Set its price.',
+  'till.needPriceStaff':'This has not been priced yet. Ask the owner to price it.',
+  'till.priceIQD':'Price (IQD)','till.setAndAdd':'Set and add',
+  'till.unknownT':'Barcode {code} is not in the catalogue','till.unknownS':'It can be sold by name and price; the Helper will not check it. Sent for mapping.',
+  'till.unknownName':'Item name','till.add':'Add',
+  'till.notChecked':'Not checked','till.partChecked':'Checked in part','till.instructions':'Instructions','till.remove':'Remove',
+  'till.dose':'Dose (typed by the pharmacist)','till.dosePh':'e.g. one tablet twice a day','till.usage':'How to use',
+  'till.usageNote':'A default by dosage form; change it if you need to. The dose is never filled in for you.',
+  'till.cov':'{n} of {total} medicines checked','till.covPartial':'{n} in part','till.covNone':'{n} not checked','till.covNondrug':'{n} not a medicine',
+  'till.ack':'Acknowledge','till.acked':'Acknowledged','till.notes':'Notes ({n})','till.questions':'Questions for the patient ({n})',
+  'till.noneFound':'The Helper found no interaction among what it checked.',
+  'till.subtotal':'Subtotal','till.discount':'Discount','till.total':'Total',
+  'till.addDiscount':'Add a discount','till.discountReason':'Reason for the discount','till.apply':'Apply',
+  'tender.cash':'Cash','tender.zaincash':'ZainCash','tender.qicard':'Qi Card',
+  'till.given':'Amount received (IQD)','till.ref':'Transaction reference (optional)',
+  'till.recordedOnly':'Only the method is recorded — no money passes through Saydali+.',
+  'till.complete':'Complete sale · {total}','till.today':"Today's sales ({n})",'till.refunded':'Refunded',
+  'till.newSale':'New sale','till.printNote':'This is exactly what will go to a 58 mm thermal printer. Printing arrives with the certified printers.',
+  'till.refundT':'Refund this sale','till.refundReason':'Reason','till.refund':'Refund','till.refundedOn':'This sale was refunded. Reason: {reason}',
+  'rc.licence':'Licence no.','rc.discount':'Discount','rc.total':'Total','rc.paid':'Paid by','rc.change':'Change',
+  'rc.pharmacist':'Pharmacist:','rc.refunded':'— REFUNDED —',
+  'rc.logoUpload':'Upload a receipt logo','rc.logoReplace':'Replace the logo','rc.logoNote':'Printed in black at the top of the receipt. PNG or JPG, up to 300 KB.',
+  'rc.logoTooBig':'The logo is larger than 300 KB.',
+  'pd.noPrice':'No price','pd.byAverage':'(market average)','pd.pickForPrice':'Pick a pharmacy to see and set its price.',
+  'pd.priceAt':'Price at {ph}','pd.savePrice':'Save','pd.priceSaved':'Price saved. It applies to the next sale, never to a past one.',
+  'pd.ownPrice':'This is your pharmacy\'s price.','pd.defaultAverage':'You have not set a price, so it sells at the market average until you do.',
+  'pd.mustSet':'No price and no market average — set a price before selling it.',
+  'pd.marketAvg':'Average market price: {price} — from {n} pharmacies.','pd.marketThin':'No average shown: fewer than {min} pharmacies price this.',
+  'd.tillT':'Till','d.tillPick':'Pick a pharmacy to sell from.','d.tillToday':'Today: {n} sales · {total}','d.tillNone':'No sales yet today.'
+});
+
 const t = (key, vars) => {
   let s = (STRINGS[lang] && STRINGS[lang][key]) || STRINGS.en[key] || key;
   if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
@@ -2390,7 +2530,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0011';
+const VERSION = 'App_v0.0012';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -2452,6 +2592,10 @@ function screenAllowed(screen, role) {
   /* Adding a pharmacy is how a pharmacist becomes an owner, and how an owner
      becomes an owner of several. */
   if (screen === 'addPharmacy') return role === 'owner' || role === 'pharmacist';
+  /* The till is the owner's until permissions arrive (W23, v0.0017): an
+     employed pharmacist sells when the owner lets them, and that grant does
+     not exist yet. Not a marketplace screen — it is on with everything off. */
+  if (screen === 'till') return role === 'owner';
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -2565,6 +2709,16 @@ const S = {
      them, which is where they start, because the question they open the app
      with is which pharmacy needs them. */
   pharmacyTab: null,
+  /* v0.0012 — the till. The cart being rung up, the sales made, each
+     pharmacy's own prices, and the record of everything done at the till
+     (voids, discounts, refunds, price changes). */
+  till: { lines:[], discount:0, discountReason:'', discountOpen:false, tender:'cash',
+          given:'', ref:'', ack:{}, unknown:null, needPrice:null, note:null, query:'' },
+  sales: [],
+  prices: {},
+  tillLog: [],
+  receiptFor: null,
+  receiptLang: 'ar',
   /* v0.0011 — the add-a-pharmacy form, kept while it is being filled in. */
   addPh: { nameAr:'', nameEn:'', licence:'', district:'', address:'', responsible:'', doc:'', errors:{} },
   impressions: {},
@@ -3751,7 +3905,18 @@ function pharmacyBoard() {
       : (a.responsible ? 1 : -1)));
 }
 
-function setPharmacy(id) { S.pharmacyTab = id || null; S.screen = 'dashboard'; S.modal = null; render(); scrollTop(); }
+function setPharmacy(id) {
+  /* A cart belongs to the pharmacy it was rung up in. Switching tabs does not
+     carry it to another pharmacy's till; it is set aside, and that is recorded. */
+  if ((id || null) !== S.pharmacyTab && S.till.lines.length) {
+    tillLog('cleared', { lines:S.till.lines.length });
+    S.till = tillReset();
+  }
+  S.pharmacyTab = id || null;
+  S.receiptFor = null;
+  S.screen = S.screen === 'till' ? 'till' : 'dashboard';
+  S.modal = null; render(); scrollTop();
+}
 
 /* The tab strip. It scrolls sideways inside itself rather than widening the
    page, so four pharmacy names still fit a 320px phone. A pharmacy nobody can
@@ -4056,6 +4221,762 @@ function scanProduct(raw) {
   render();
 }
 
+/* ==========================================================================
+   THE TILL (v0.0012, W17)
+
+   Scan, sell, print. Every rule below was decided before a line of it was
+   written, and each one is here because getting it wrong costs money or trust
+   at a counter:
+
+   - Each PHARMACY sets its own price. The reference is the average market
+     price, derived from what pharmacies charge and never typed in. It is the
+     default for a product the pharmacy has not priced, and it is only ever
+     SHOWN to an owner (or, from v0.0017, staff they allow), and only from five
+     pharmacies up (P6) — fewer, and an "average" is somebody's price.
+   - The price is written onto the SALE LINE when it is sold. Changing a price
+     afterwards changes the next sale, never a past one.
+   - The total is the exact sum. No rounding, in either direction.
+   - Tenders — cash, ZainCash, Qi Card — are RECORDED, not processed. The
+     platform holds no money (no wallet, by principle).
+   - Discounts are the owner's alone until permissions arrive (v0.0017), need a
+     reason, and are on the record.
+   - The Dispensing Helper checks the WHOLE BASKET as it fills, says how much of
+     it it could check, and never stops a sale (P9). A warning is one tap to
+     acknowledge; whether it was is recorded.
+   - Nothing on this screen can show a banner. It is a dispensing surface, so
+     it never calls bannerFor() (P1).
+   ========================================================================== */
+
+const tillReset = () => ({ lines:[], discount:0, discountReason:'', discountOpen:false, tender:'cash',
+  given:'', ref:'', ack:{}, unknown:null, needPrice:null, note:null, query:'' });
+
+/* ---------- Prices ---------- */
+
+/* What other pharmacies charge. In production this is computed from real
+   sales; here it is a deterministic fixture, spread around the catalogue's
+   illustrative price, with a different number of pharmacies per product so
+   the five-pharmacy floor is visible in both directions. */
+function marketPrices(code) {
+  const p = productByCode(code);
+  if (!p || !p.price) return [];
+  let h = 0;
+  for (const c of code) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const n = 3 + (h % 7);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    h = (h * 1103515245 + 12345) >>> 0;
+    out.push(Math.round(p.price * (0.9 + ((h % 1000) / 1000) * 0.2) / 250) * 250);
+  }
+  return out;
+}
+const MARKET_FLOOR = 5;
+/* The average, or null below the floor. Rounded to 250 IQD because it becomes a
+   price somebody charges; a sale's TOTAL is never rounded. */
+function marketAverage(code) {
+  const xs = marketPrices(code);
+  if (xs.length < MARKET_FLOOR) return null;
+  return Math.round(xs.reduce((a, b) => a + b, 0) / xs.length / 250) * 250;
+}
+/* The pharmacy's own price, or the market reference as its default, or null —
+   in which case somebody who may set prices has to set one. */
+function pharmacyPrice(phId, code) {
+  const own = (S.prices[phId] || {})[code];
+  if (own != null) return own;
+  return marketAverage(code);
+}
+const canSetPrices = () => S.role === 'owner';
+const canSeeMarket = () => S.role === 'owner';
+const canDiscount  = () => S.role === 'owner';
+const canRefund    = () => S.role === 'owner';
+
+/* The record every later version builds on: who did what, where, when. The
+   shift timeline (W23) reads it; the CRM never does. */
+function tillLog(kind, detail) {
+  S.tillLog.push(Object.assign({ kind, at:new Date().toISOString(), by:S.email,
+    pharmacy:(currentPharmacy() || {}).id || null }, detail || {}));
+}
+
+function setPrice(phId, code, v) {
+  if (!canSetPrices()) return false;
+  const price = Math.round(Number(v));
+  if (!isFinite(price) || price <= 0) return false;
+  const from = pharmacyPrice(phId, code);
+  (S.prices[phId] = S.prices[phId] || {})[code] = price;
+  S.tillLog.push({ kind:'price', at:new Date().toISOString(), by:S.email, pharmacy:phId, code, from, to:price });
+  return true;
+}
+
+/* ---------- Which pharmacy's till ---------- */
+
+/* A till belongs to one pharmacy: the one on screen. An owner of several on
+   All is asked which. A pharmacy under review, or with nobody to sign for it,
+   cannot sell — the second is the law, not the software being cautious. */
+function tillPharmacy() { return currentPharmacy(); }
+function tillBlock(ph) {
+  if (!ph) return 'choose';
+  if (ph.verification !== 'verified') return 'pending';
+  if (!ph.responsible) return 'noResponsible';
+  return null;
+}
+
+/* ---------- Lines ---------- */
+
+function tillLineFromProduct(p, price) {
+  return { barcode:p.barcode, name:p.name, qty:1, unit:price, mapping:p.mapping,
+           molecules:p.molecules.map(m => Object.assign({}, m)), form:p.form,
+           dose:'', usage:p.mapping === 'nondrug' ? null : defaultUsage(p.form), open:false };
+}
+
+function tillAdd(code) {
+  const ph = tillPharmacy();
+  if (tillBlock(ph)) return;
+  const T = S.till;
+  const line = T.lines.find(l => l.barcode === code);
+  if (line) { line.qty++; render(); return; }
+  const p = productByCode(code);
+  if (!p) return;
+  const price = pharmacyPrice(ph.id, code);
+  /* No price and no reference: the till does not guess. Somebody who may set
+     prices sets one, and it is the pharmacy's price from then on. */
+  if (price == null) { T.needPrice = code; render(); return; }
+  T.lines.push(tillLineFromProduct(p, price));
+  T.needPrice = null; T.note = null;
+  render();
+}
+
+function tillSetPriceAndAdd(code) {
+  const ph = tillPharmacy();
+  const el = document.getElementById('till-price');
+  if (!ph || !el || !setPrice(ph.id, code, el.value)) { S.till.note = { kind:'badPrice' }; render(); return; }
+  S.till.needPrice = null;
+  tillAdd(code);
+}
+
+/* The scan box: digits then Enter (a wedge scanner), or a name to search. */
+function tillKey(ev) {
+  if (ev.key !== 'Enter') return;
+  ev.preventDefault();
+  tillScan(ev.target.value);
+}
+function tillScan(raw) {
+  const T = S.till;
+  const code = String(raw || '').replace(/[\s-]/g, '');
+  if (!/^\d+$/.test(code)) return;
+  T.query = '';
+  if (!ean13Valid(code)) { T.note = { kind:'misread', code }; render(); return; }
+  if (productByCode(code)) { tillAdd(code); return; }
+  /* Unknown: still sellable, by name and price, and sent for mapping. */
+  const known = S.mappingRequests.find(r => r.barcode === code);
+  if (known) known.times++; else S.mappingRequests.push({ barcode:code, times:1, first:TODAY_ISO });
+  T.unknown = code; T.note = null;
+  render();
+}
+function tillQuery(v) {
+  S.till.query = v;
+  render();
+  const el = document.getElementById('till-q');
+  if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+function tillAddUnknown() {
+  const T = S.till;
+  const name = (document.getElementById('unk-name') || {}).value || '';
+  const price = Math.round(Number((document.getElementById('unk-price') || {}).value));
+  if (!name.trim() || !isFinite(price) || price <= 0) { T.note = { kind:'unknownIncomplete' }; render(); return; }
+  T.lines.push({ barcode:T.unknown, name:{ ar:name.trim(), en:name.trim() }, qty:1, unit:price, mapping:'unmapped',
+                 molecules:[], form:null, dose:'', usage:null, open:false, unknown:true });
+  T.unknown = null; T.note = null;
+  render();
+}
+
+function tillQty(i, d) {
+  const l = S.till.lines[i];
+  if (!l) return;
+  if (l.qty + d < 1) return tillVoid(i);
+  l.qty += d;
+  render();
+}
+/* Taking a line off is a void, and a void is on the record — voids are where
+   shrinkage shows (W17), and a record kept only of the ones that mattered is
+   not a record. */
+function tillVoid(i) {
+  const l = S.till.lines[i];
+  if (!l) return;
+  tillLog('void', { code:l.barcode, qty:l.qty, unit:l.unit });
+  S.till.lines.splice(i, 1);
+  render();
+}
+function tillToggleLine(i) { const l = S.till.lines[i]; if (l) { l.open = !l.open; render(); } }
+function tillSetDose(i, v) { const l = S.till.lines[i]; if (l) l.dose = v; }
+function tillSetUsage(i, v) { const l = S.till.lines[i]; if (l) l.usage = { ar:v, en:v, edited:true }; }
+
+/* ---------- Instructions ---------- */
+
+/* Default instructions say HOW to take a medicine and never the dose — the dose
+   is typed by the pharmacist, every time. These are placeholders by form until
+   the clinical curator writes the real ones (W19). */
+const USAGE_BY_FORM = {
+  tablet:    { ar:'يُبلع مع الماء', en:'Swallow with water' },
+  capsule:   { ar:'تُبلع كاملة مع الماء', en:'Swallow whole with water' },
+  syrup:     { ar:'رُجّ الزجاجة قبل الاستعمال', en:'Shake the bottle before use' },
+  sachet:    { ar:'يُذاب في الماء قبل الشرب', en:'Dissolve in water before drinking' },
+  cream:     { ar:'للاستعمال الخارجي فقط', en:'For external use only' },
+  ointment:  { ar:'للاستعمال الخارجي فقط', en:'For external use only' },
+  gel:       { ar:'للاستعمال الخارجي فقط', en:'For external use only' },
+  inhaler:   { ar:'رُجّ البخاخ قبل الاستعمال', en:'Shake the inhaler before use' },
+  injection: { ar:'للحقن فقط', en:'For injection only' }
+};
+const defaultUsage = form => Object.assign({}, USAGE_BY_FORM[form] || { ar:'حسب الإرشاد', en:'Use as directed' });
+
+/* ---------- The Helper, on the basket ---------- */
+
+/* The molecules the Helper can check: linked, and in the reference. */
+function tillScis(lines) {
+  const out = [];
+  lines.forEach(l => l.molecules.forEach(m => {
+    if (m.ref !== false && drugBySci(m.sci) && out.indexOf(m.sci) < 0) out.push(m.sci);
+  }));
+  return out;
+}
+
+/* Two tiers render, as P9 set them: WARN (serious or critical — shown on the
+   basket, one tap to acknowledge) and NOTE (the rest — there if looked for).
+   The Stop tier exists and is empty until the curator fills it (v0.0015). */
+const tierOf = sev => (sev === 'critical' || sev === 'serious') ? 'warn' : 'note';
+
+function tillFindings(lines) {
+  const scis = tillScis(lines);
+  const pairs = basketInteractions(scis).map(x => ({ key:[x.a, x.b].sort().join('|'), kind:'interaction',
+    a:x.a, b:x.b, severity:x.severity, tier:tierOf(x.severity), note:x.note }));
+  const dupes = basketDuplicates(scis).map(x => ({ key:'dup|' + x.rule.id, kind:'duplicate',
+    members:x.members, severity:x.rule.severity, tier:tierOf(x.rule.severity), label:x.rule.label }));
+  return { findings:pairs.concat(dupes), questions:basketQuestions(scis) };
+}
+
+/* How much of the basket was checked. A line is checked in full, in part, or
+   not at all, and a non-medicine is not counted as a medicine. */
+function lineCoverage(l) {
+  if (l.mapping === 'nondrug') return 'nondrug';
+  if (l.mapping === 'unmapped' || !l.molecules.length) return 'none';
+  const inside = l.molecules.filter(m => m.ref !== false && drugBySci(m.sci)).length;
+  return inside === l.molecules.length ? 'full' : inside ? 'partial' : 'none';
+}
+function tillCoverage(lines) {
+  const c = { medicines:0, full:0, partial:0, unchecked:0, nondrug:0 };
+  lines.forEach(l => {
+    const k = lineCoverage(l);
+    if (k === 'nondrug') { c.nondrug++; return; }
+    c.medicines++;
+    c[k === 'none' ? 'unchecked' : k]++;
+  });
+  return c;
+}
+function coverageSentence(c) {
+  const parts = [t('till.cov', { n:c.full, total:c.medicines })];
+  if (c.partial) parts.push(t('till.covPartial', { n:c.partial }));
+  if (c.unchecked) parts.push(t('till.covNone', { n:c.unchecked }));
+  if (c.nondrug) parts.push(t('till.covNondrug', { n:c.nondrug }));
+  return parts.join(' · ');
+}
+
+function tillAck(key) { S.till.ack[key] = true; render(); }
+
+/* ---------- Totals, discount, tender ---------- */
+
+/* Integers in, integers out: IQD has no subunit, and the total is the exact
+   sum of what was sold minus any discount. Nothing here rounds. */
+function tillTotals() {
+  const T = S.till;
+  const subtotal = T.lines.reduce((n, l) => n + l.qty * l.unit, 0);
+  const discount = Math.min(T.discount || 0, subtotal);
+  return { subtotal, discount, total:subtotal - discount };
+}
+
+function tillOpenDiscount() { if (canDiscount()) { S.till.discountOpen = !S.till.discountOpen; render(); } }
+function tillApplyDiscount() {
+  if (!canDiscount()) return;
+  const T = S.till;
+  const amount = Math.round(Number((document.getElementById('disc-amount') || {}).value));
+  const reason = ((document.getElementById('disc-reason') || {}).value || '').trim();
+  /* Kept, so a refusal does not throw away what was typed. */
+  T.discDraft = { amount:(document.getElementById('disc-amount') || {}).value || '', reason };
+  const { subtotal } = tillTotals();
+  if (!isFinite(amount) || amount <= 0 || amount > subtotal || !reason) { T.note = { kind:'badDiscount' }; render(); return; }
+  T.discount = amount; T.discountReason = reason; T.discountOpen = false; T.note = null; T.discDraft = null;
+  tillLog('discount', { amount, reason });
+  render();
+}
+function tillTender(k) { S.till.tender = k; S.till.note = null; render(); }
+function tillGiven(v) { S.till.given = v; }
+function tillRef(v) { S.till.ref = v; }
+
+/* ---------- Completing, and after ---------- */
+
+function completeSale() {
+  const T = S.till;
+  const ph = tillPharmacy();
+  if (tillBlock(ph) || !T.lines.length) return;
+  const { subtotal, discount, total } = tillTotals();
+  let given = null, change = null;
+  if (T.tender === 'cash') {
+    given = Math.round(Number(T.given));
+    if (!isFinite(given) || given < total) { T.note = { kind:'shortCash', total }; render(); return; }
+    change = given - total;
+  }
+  const f = tillFindings(T.lines);
+  const sale = {
+    id:'S' + String(S.sales.length + 1).padStart(4, '0'), pharmacy:ph.id, at:new Date().toISOString(),
+    by:S.email, lines:T.lines.map(l => ({ barcode:l.barcode, name:l.name, qty:l.qty, unit:l.unit,
+      total:l.qty * l.unit, mapping:l.mapping, molecules:l.molecules, form:l.form,
+      dose:l.dose, usage:l.usage, unknown:!!l.unknown })),
+    subtotal, discount, discountReason:T.discountReason || null, total,
+    tender:T.tender, given, change, ref:T.tender === 'cash' ? null : (T.ref || null),
+    /* Every warning shown, and whether it was acknowledged. The sale went
+       ahead either way — the till never refuses a pharmacist (P9) — and the
+       record is what the curator's override report is built from. */
+    findings:f.findings.map(x => ({ kind:x.kind, a:x.a, b:x.b, members:x.members, severity:x.severity,
+      tier:x.tier, acknowledged:!!T.ack[x.key] })),
+    coverage:tillCoverage(T.lines), refunded:null
+  };
+  S.sales.unshift(sale);
+  tillLog('sale', { sale:sale.id, total });
+  S.till = tillReset();
+  S.receiptFor = sale.id;
+  S.receiptLang = 'ar';
+  render();
+  scrollTop();
+}
+
+function refundSale(id) {
+  if (!canRefund()) return;
+  const sale = S.sales.find(x => x.id === id);
+  const reason = ((document.getElementById('refund-reason') || {}).value || '').trim();
+  if (!sale || sale.refunded) return;
+  if (!reason) { S.till.note = { kind:'needReason' }; render(); return; }
+  sale.refunded = { at:new Date().toISOString(), by:S.email, reason };
+  tillLog('refund', { sale:id, total:sale.total, reason });
+  render();
+}
+function openReceipt(id) { S.receiptFor = id; S.receiptLang = 'ar'; render(); scrollTop(); }
+function closeReceipt() { S.receiptFor = null; render(); }
+/* One press: Arabic by default, English on request, per receipt. */
+function toggleReceiptLang() { S.receiptLang = S.receiptLang === 'ar' ? 'en' : 'ar'; render(); }
+
+/* ---------- The receipt ---------- */
+
+/* What goes on it, in the receipt's own language — which is not necessarily the
+   pharmacist's interface language. A list of lines first, so the content can
+   be checked; then drawn. */
+function receiptLines(sale, rl) {
+  const ph = PHARMACIES[sale.pharmacy];
+  const T = (k, v) => { const keep = lang; lang = rl; const s = t(k, v); lang = keep; return s; };
+  const LL = o => (o && (o[rl] || o.en)) || '';
+  const money = n => fmt(n) + ' ' + (rl === 'ar' ? 'د.ع' : 'IQD');
+  const d = new Date(sale.at);
+  const pad = n => String(n).padStart(2, '0');
+  const when = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '  ' +
+               pad(d.getHours()) + ':' + pad(d.getMinutes());
+  const out = [];
+  out.push({ kind:'title', text:LL(ph.name) });
+  out.push({ kind:'small', text:T('rc.licence') + ' ' + ph.licence });
+  out.push({ kind:'small', text:when + '  ·  ' + sale.id });
+  out.push({ kind:'rule' });
+  sale.lines.forEach(l => {
+    out.push({ kind:'item', text:LL(l.name), amount:l.qty + ' × ' + fmt(l.unit) + ' = ' + fmt(l.total) });
+    if (l.mapping !== 'nondrug') {
+      const bits = [];
+      if (l.dose) bits.push(l.dose);
+      if (l.usage) bits.push(LL(l.usage));
+      if (bits.length) out.push({ kind:'instr', text:bits.join(' — ') });
+    }
+  });
+  out.push({ kind:'rule' });
+  if (sale.discount) out.push({ kind:'line', text:T('rc.discount'), amount:'− ' + money(sale.discount) });
+  out.push({ kind:'total', text:T('rc.total'), amount:money(sale.total) });
+  out.push({ kind:'line', text:T('rc.paid') + ' ' + T('tender.' + sale.tender),
+             amount:sale.tender === 'cash' ? money(sale.given) : (sale.ref || '') });
+  if (sale.tender === 'cash') out.push({ kind:'line', text:T('rc.change'), amount:money(sale.change) });
+  out.push({ kind:'rule' });
+  out.push({ kind:'small', text:T('rc.pharmacist') + ' ' + LL(accountName(sale.by)) });
+  if (sale.refunded) out.push({ kind:'title', text:T('rc.refunded') });
+  return out;
+}
+const accountName = mail => { const a = ACCOUNTS[mail]; if (!a) return { ar:mail, en:mail };
+  const keep = lang; lang = 'ar'; const ar = t(a.nameKey); lang = 'en'; const en = t(a.nameKey); lang = keep; return { ar, en }; };
+
+/* Drawn to a bitmap 384 dots wide — a 58 mm thermal printer at 203 dpi — so
+   Arabic prints shaped and joined, which printer code pages do not manage.
+   Printing itself arrives with the certified printers; this is exactly what
+   will be sent to one. */
+const RECEIPT_WIDTH = 384;
+const LOGO_IMG = {};
+function renderReceipt(sale, rl) {
+  const lines = receiptLines(sale, rl);
+  const ph = PHARMACIES[sale.pharmacy];
+  const logo = LOGO_IMG[ph.id];
+  const rtl = rl === 'ar';
+  const font = rtl ? "'Noto Kufi Arabic', 'IBM Plex Sans', sans-serif" : "'IBM Plex Sans', sans-serif";
+  const H = { title:34, small:20, rule:14, item:24, instr:20, line:24, total:32 };
+  const logoH = logo ? Math.min(90, Math.round(logo.height * Math.min(1, 200 / logo.width))) + 14 : 0;
+  const height = 24 + logoH + lines.reduce((n, l) => n + H[l.kind], 0) + 20;
+  const c = document.createElement('canvas');
+  c.width = RECEIPT_WIDTH; c.height = height;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = '#000';
+  g.direction = rtl ? 'rtl' : 'ltr';
+  let y = 16;
+  if (logo) {
+    const w = Math.min(200, logo.width), h = Math.round(logo.height * (w / logo.width));
+    g.filter = 'grayscale(1)';
+    g.drawImage(logo, (c.width - w) / 2, y, w, Math.min(90, h));
+    g.filter = 'none';
+    y += logoH;
+  }
+  const start = rtl ? c.width - 14 : 14, end = rtl ? 14 : c.width - 14;
+  lines.forEach(l => {
+    const h = H[l.kind];
+    if (l.kind === 'rule') {
+      g.fillRect(14, y + h / 2, c.width - 28, 1);
+    } else if (l.kind === 'title') {
+      g.font = '600 20px ' + font; g.textAlign = 'center'; g.fillText(l.text, c.width / 2, y + 24);
+    } else {
+      const size = l.kind === 'total' ? 19 : l.kind === 'small' || l.kind === 'instr' ? 13 : 15;
+      const weight = l.kind === 'total' || l.kind === 'item' ? '600 ' : '400 ';
+      g.font = weight + size + 'px ' + font;
+      g.textAlign = rtl ? 'right' : 'left';
+      g.fillText(l.kind === 'instr' ? '   ' + l.text : l.text, start, y + h - 7, l.amount ? 220 : c.width - 28);
+      /* Figures read left to right in both languages; drawn RTL, "2 × 3,500 =
+         7,000" comes out backwards. */
+      if (l.amount) { g.direction = 'ltr'; g.textAlign = rtl ? 'left' : 'right'; g.fillText(l.amount, end, y + h - 7);
+                      g.direction = rtl ? 'rtl' : 'ltr'; }
+    }
+    y += h;
+  });
+  return { url:c.toDataURL('image/png'), width:c.width, height:c.height, lines, hasLogo:!!logo };
+}
+
+/* The logo, uploaded from the owner's view, per pharmacy. Kept small — it is
+   printed in black on a 58 mm roll — and remembered on this device. */
+function setLogo(phId, dataUrl) {
+  if (!canSetPrices() || !PHARMACIES[phId]) return;
+  const img = new Image();
+  img.onload = () => { LOGO_IMG[phId] = img; PHARMACIES[phId].logo = true; render(); };
+  img.src = dataUrl;
+  try { localStorage.setItem('saydali.logo.' + phId, dataUrl); } catch (e) { /* too big or blocked: kept for this session */ }
+  tillLog('logo', { pharmacy:phId });
+}
+function uploadLogo(phId, input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  if (f.size > 300 * 1024) { toast(t('rc.logoTooBig')); return; }
+  const r = new FileReader();
+  r.onload = () => setLogo(phId, r.result);
+  r.readAsDataURL(f);
+}
+function restoreLogos() {
+  Object.keys(PHARMACIES).forEach(id => {
+    try {
+      const u = localStorage.getItem('saydali.logo.' + id);
+      if (u) { const img = new Image(); img.onload = () => { LOGO_IMG[id] = img; PHARMACIES[id].logo = true; }; img.src = u; }
+    } catch (e) { /* none remembered */ }
+  });
+}
+
+/* ---------- Camera scanning ---------- */
+
+/* Where the browser has a barcode detector, a phone camera scans; where it has
+   none, the button is simply not offered and the wedge scanner or the keyboard
+   does the job. Nothing pretends. */
+const cameraAvailable = () => typeof window.BarcodeDetector === 'function' &&
+  !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+async function cameraScan() {
+  if (!cameraAvailable()) return;
+  try {
+    const det = new window.BarcodeDetector({ formats:['ean_13'] });
+    const stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' } });
+    S.modal = { kind:'camera' }; renderModal();
+    const v = document.getElementById('cam');
+    v.srcObject = stream; await v.play();
+    const stop = () => stream.getTracks().forEach(x => x.stop());
+    const tick = async () => {
+      if (!S.modal || S.modal.kind !== 'camera') { stop(); return; }
+      const found = await det.detect(v).catch(() => []);
+      if (found.length) { stop(); S.modal = null; renderModal(); tillScan(found[0].rawValue); return; }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  } catch (e) { S.modal = null; renderModal(); toast(t('till.cameraFailed')); }
+}
+
+/* ---------- The screen ---------- */
+
+function screenTill() {
+  const ph = tillPharmacy();
+  const tabs = pharmacyTabs();
+  const block = tillBlock(ph);
+  const T = S.till;
+
+  if (S.receiptFor) return tillReceiptScreen(tabs);
+
+  if (block) {
+    const mine = myPharmacies();
+    return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+      (block === 'choose'
+        ? '<p class="section-eyebrow">' + esc(t('till.choose')) + '</p><div class="card">' +
+          mine.map(p => '<button class="row" style="width:100%;text-align:start;" onclick="setPharmacy(' + attr(p.id) + ')">' +
+            '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
+            '<span class="row-sub" style="display:block;">' + esc(L(p.district)) + '</span></span>' +
+            icon('chevron', 'more-chevron') + '</button>').join('') + '</div>'
+        : '<div class="banner banner-amber till-blocked">' + icon(block === 'pending' ? 'hourglass' : 'alert') +
+          '<p><strong>' + esc(t('till.blocked.' + block + 'T')) + '</strong> ' + esc(t('till.blocked.' + block + 'S')) + '</p></div>') +
+      '</div></div>';
+  }
+
+  const { subtotal, discount, total } = tillTotals();
+  const f = tillFindings(T.lines);
+  const cov = tillCoverage(T.lines);
+  const q = drugNorm(T.query);
+  const hits = q && !/^\d+$/.test(T.query.trim())
+    ? PRODUCTS.filter(p => drugNorm([p.name.en, p.name.ar].join(' ')).includes(q)).slice(0, 6) : [];
+
+  const note = !T.note ? '' :
+    '<div class="banner banner-amber till-note">' + icon('alert') + '<p>' +
+      esc(t('till.note.' + T.note.kind, { code:T.note.code || '', total:iqd(T.note.total || 0) })) + '</p></div>';
+
+  const needPrice = T.needPrice
+    ? '<div class="card card-pad till-needprice"><p class="urgent-t">' + esc(L(productByCode(T.needPrice).name)) + '</p>' +
+        '<p class="urgent-s" style="margin-bottom:10px;">' + esc(t(canSetPrices() ? 'till.needPrice' : 'till.needPriceStaff')) + '</p>' +
+        (canSetPrices()
+          ? '<div class="till-inline"><input id="till-price" type="number" inputmode="numeric" dir="ltr" placeholder="' +
+              esc(t('till.priceIQD')) + '"><button class="btn-small" onclick="tillSetPriceAndAdd(' + attr(T.needPrice) + ')">' +
+              esc(t('till.setAndAdd')) + '</button></div>'
+          : '') + '</div>'
+    : '';
+
+  const unknown = T.unknown
+    ? '<div class="card card-pad till-unknown"><p class="urgent-t">' + esc(t('till.unknownT', { code:T.unknown })) + '</p>' +
+        '<p class="urgent-s" style="margin-bottom:10px;">' + esc(t('till.unknownS')) + '</p>' +
+        '<div class="till-inline"><input id="unk-name" placeholder="' + esc(t('till.unknownName')) + '">' +
+        '<input id="unk-price" type="number" inputmode="numeric" dir="ltr" placeholder="' + esc(t('till.priceIQD')) + '">' +
+        '<button class="btn-small" onclick="tillAddUnknown()">' + esc(t('till.add')) + '</button></div></div>'
+    : '';
+
+  const lineRow = (l, i) =>
+    '<div class="till-line">' +
+      '<div class="till-line-top">' +
+        '<span class="till-line-name">' + esc(L(l.name)) +
+          /* The line says it too, not only the sentence above the findings. */
+          ({ none:' <span class="badge badge-alert">' + esc(t('till.notChecked')) + '</span>',
+             partial:' <span class="badge badge-pending">' + esc(t('till.partChecked')) + '</span>' }[lineCoverage(l)] || '') + '</span>' +
+        '<span class="till-line-total figure">' + fmt(l.qty * l.unit) + '</span>' +
+      '</div>' +
+      '<div class="till-line-bottom">' +
+        '<span class="qty"><button class="qty-btn" onclick="tillQty(' + i + ',-1)" aria-label="−">−</button>' +
+          '<span class="figure qty-n">' + l.qty + '</span>' +
+          '<button class="qty-btn" onclick="tillQty(' + i + ',1)" aria-label="+">+</button></span>' +
+        '<span class="till-line-unit figure">× ' + fmt(l.unit) + '</span>' +
+        (l.mapping !== 'nondrug'
+          ? '<button class="link-btn" onclick="tillToggleLine(' + i + ')">' + esc(t('till.instructions')) + '</button>' : '') +
+        '<button class="link-btn till-void" onclick="tillVoid(' + i + ')">' + esc(t('till.remove')) + '</button>' +
+      '</div>' +
+      (l.open && l.mapping !== 'nondrug'
+        ? '<div class="till-instr">' +
+            '<label>' + esc(t('till.dose')) + '</label>' +
+            '<input value="' + esc(l.dose) + '" placeholder="' + esc(t('till.dosePh')) + '" oninput="tillSetDose(' + i + ', this.value)">' +
+            '<label>' + esc(t('till.usage')) + '</label>' +
+            '<input value="' + esc(l.usage ? l.usage[lang] || l.usage.en : '') + '" oninput="tillSetUsage(' + i + ', this.value)">' +
+            '<p class="inline-note">' + esc(t('till.usageNote')) + '</p>' +
+          '</div>'
+        : '') +
+    '</div>';
+
+  /* Interactions and duplications read the same way and tier the same way:
+     by severity, not by kind. */
+  const finding = x => {
+    const acked = !!S.till.ack[x.key];
+    const title = x.kind === 'interaction'
+      ? '<span class="till-finding-t" dir="ltr">' + esc(x.a) + ' + ' + esc(x.b) + '</span>'
+      : '<span class="till-finding-t">' + esc(t('dc.duplication')) + ': ' + esc(L(x.label)) + '</span>';
+    const body = x.kind === 'interaction'
+      ? '<p class="till-finding-s">' + esc(L(x.note)) + '</p>'
+      : '<p class="till-finding-s" dir="ltr">' + esc(x.members.join(' + ')) + '</p>';
+    return '<div class="till-finding tier-' + x.tier + (acked ? ' acked' : '') + '">' +
+      '<div class="till-finding-top">' + sevChip(x.severity) + title +
+        (x.tier === 'warn'
+          ? (acked ? '<span class="till-acked">' + esc(t('till.acked')) + '</span>'
+                   : '<button class="btn-small till-ack" onclick="tillAck(' + attr(x.key) + ')">' + esc(t('till.ack')) + '</button>')
+          : '') + '</div>' + body + '</div>';
+  };
+
+  const warns = f.findings.filter(x => x.tier === 'warn');
+  const notes = f.findings.filter(x => x.tier === 'note');
+  const helper = !T.lines.length ? '' :
+    '<div class="card card-pad till-helper">' +
+      '<p class="till-helper-t">' + icon('pill') + esc(t('dc.tabCheck')) + '</p>' +
+      /* Coverage first, as loud as the findings (W8). */
+      '<p class="till-cov">' + esc(coverageSentence(cov)) + '</p>' +
+      warns.map(finding).join('') +
+      (notes.length
+        ? '<details class="till-notes"><summary>' + esc(t('till.notes', { n:notes.length })) + '</summary>' +
+            notes.map(finding).join('') + '</details>'
+        : '') +
+      (f.questions.length
+        ? '<details class="till-notes"><summary>' + esc(t('till.questions', { n:f.questions.length })) + '</summary><ul>' +
+            f.questions.map(qq => '<li>' + esc(L(qq.text)) + '</li>').join('') + '</ul></details>'
+        : '') +
+      (!f.findings.length
+        /* Never a green tick: nothing found is said plainly, beside what was checked. */
+        ? '<p class="till-none">' + esc(t('till.noneFound')) + '</p>' : '') +
+      '<p class="inline-note" style="margin-top:6px;">' + esc(t('dc.notComplete')) + '</p>' +
+    '</div>';
+
+  const tenders = ['cash', 'zaincash', 'qicard'];
+  const pay = !T.lines.length ? '' :
+    '<div class="card card-pad till-pay">' +
+      '<div class="till-sum"><span>' + esc(t('till.subtotal')) + '</span><span class="figure">' + iqd(subtotal) + '</span></div>' +
+      (discount
+        ? '<div class="till-sum"><span>' + esc(t('till.discount')) + ' · ' + esc(T.discountReason) + '</span><span class="figure">− ' + iqd(discount) + '</span></div>'
+        : '') +
+      '<div class="till-sum till-total"><span>' + esc(t('till.total')) + '</span><span class="figure" id="till-total">' + iqd(total) + '</span></div>' +
+      (canDiscount() && !discount
+        ? '<button class="link-btn" onclick="tillOpenDiscount()">' + esc(t('till.addDiscount')) + '</button>' : '') +
+      (T.discountOpen
+        ? '<div class="till-inline" style="margin-top:8px;"><input id="disc-amount" type="number" inputmode="numeric" dir="ltr" placeholder="' +
+            esc(t('till.priceIQD')) + '" value="' + esc((T.discDraft || {}).amount || '') + '">' +
+            '<input id="disc-reason" placeholder="' + esc(t('till.discountReason')) + '" value="' + esc((T.discDraft || {}).reason || '') + '">' +
+            '<button class="btn-small" onclick="tillApplyDiscount()">' + esc(t('till.apply')) + '</button></div>'
+        : '') +
+      '<div class="segmented till-tenders">' + tenders.map(k =>
+        '<button class="' + (T.tender === k ? 'active' : '') + '" onclick="tillTender(' + attr(k) + ')">' + esc(t('tender.' + k)) + '</button>').join('') + '</div>' +
+      (T.tender === 'cash'
+        ? '<div class="field"><label for="till-given">' + esc(t('till.given')) + '</label>' +
+            '<input id="till-given" type="number" inputmode="numeric" dir="ltr" value="' + esc(T.given) + '" oninput="tillGiven(this.value)"></div>'
+        : '<div class="field"><label for="till-ref">' + esc(t('till.ref')) + '</label>' +
+            '<input id="till-ref" dir="ltr" value="' + esc(T.ref) + '" oninput="tillRef(this.value)"></div>' +
+          '<p class="inline-note">' + esc(t('till.recordedOnly')) + '</p>') +
+      '<button class="btn-primary till-complete" onclick="completeSale()">' + esc(t('till.complete', { total:iqd(total) })) + '</button>' +
+    '</div>';
+
+  const today = S.sales.filter(x => x.pharmacy === ph.id);
+  const history = !today.length ? '' :
+    '<p class="section-eyebrow">' + esc(t('till.today', { n:today.length })) + '</p>' +
+    '<div class="card">' + today.map(x =>
+      '<button class="row" style="width:100%;text-align:start;" onclick="openReceipt(' + attr(x.id) + ')">' +
+        '<span class="row-body"><span class="row-title figure" style="display:block;">' + esc(x.id) + ' · ' + iqd(x.total) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(t('tender.' + x.tender)) +
+          (x.refunded ? ' · ' + esc(t('till.refunded')) : '') + '</span></span>' +
+        icon('chevron', 'more-chevron') + '</button>').join('') + '</div>';
+
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="till-head"><span class="till-ph">' + esc(L(ph.name)) + '</span>' +
+      '<span class="till-by">' + esc(t('till.by', { name:currentName() })) + '</span></div>' +
+    '<div class="searchbox">' + icon('barcode') +
+      '<input id="till-q" type="search" autocomplete="off" value="' + esc(T.query) + '" placeholder="' + esc(t('till.scan')) + '" ' +
+        'oninput="tillQuery(this.value)" onkeydown="tillKey(event)">' +
+      (cameraAvailable() ? '<button class="searchbox-x till-cam" onclick="cameraScan()" aria-label="' + esc(t('till.camera')) + '">' + icon('camera') + '</button>' : '') +
+    '</div>' +
+    (hits.length
+      ? '<div class="card">' + hits.map(p => '<button class="row" style="width:100%;text-align:start;" onclick="tillQuery(\'\');tillAdd(' + attr(p.barcode) + ')">' +
+          '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
+          '<span class="row-sub" style="display:block;">' + esc(L(p.pack)) + '</span></span>' + icon('plus') + '</button>').join('') + '</div>'
+      : '') +
+    note + needPrice + unknown +
+    (T.lines.length
+      ? '<div class="card till-cart">' + T.lines.map(lineRow).join('') + '</div>'
+      : '<div class="card card-pad till-empty">' + esc(t('till.empty')) + '</div>') +
+    helper + pay + history +
+    '</div></div>';
+}
+
+function tillReceiptScreen(tabs) {
+  const sale = S.sales.find(x => x.id === S.receiptFor);
+  if (!sale) { S.receiptFor = null; return screenTill(); }
+  const r = renderReceipt(sale, S.receiptLang);
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="till-receipt-bar">' +
+      '<button class="btn-secondary" onclick="toggleReceiptLang()">' +
+        esc(S.receiptLang === 'ar' ? 'English' : 'العربية') + '</button>' +
+      '<button class="btn-primary" onclick="closeReceipt()">' + esc(t('till.newSale')) + '</button>' +
+    '</div>' +
+    '<div class="receipt-wrap"><img class="receipt-img" alt="' + esc(t('till.receipt')) + '" src="' + r.url + '" ' +
+      'data-lang="' + S.receiptLang + '" width="' + r.width + '"></div>' +
+    '<p class="inline-note">' + esc(t('till.printNote')) + '</p>' +
+    (sale.refunded
+      ? '<div class="banner banner-amber">' + icon('alert') + '<p>' + esc(t('till.refundedOn', { reason:sale.refunded.reason })) + '</p></div>'
+      : canRefund()
+        ? '<div class="card card-pad"><p class="urgent-t" style="margin-bottom:8px;">' + esc(t('till.refundT')) + '</p>' +
+            '<div class="till-inline"><input id="refund-reason" placeholder="' + esc(t('till.refundReason')) + '">' +
+            '<button class="btn-small" onclick="refundSale(' + attr(sale.id) + ')">' + esc(t('till.refund')) + '</button></div>' +
+            (S.till.note && S.till.note.kind === 'needReason'
+              ? '<p class="auth-error" style="margin:8px 0 0;">' + esc(t('till.note.needReason')) + '</p>' : '') + '</div>'
+        : '') +
+    '</div></div>';
+}
+
+/* Prices on the catalogue. A pharmacist sees none: what a pharmacy charges is
+   the owner's business until the owner shares it (W23). An owner sees the
+   price of the pharmacy on screen; on All there is no one price to show. */
+function priceTag(p) {
+  const ph = currentPharmacy();
+  if (!canSetPrices() || !ph) return '';
+  const own = (S.prices[ph.id] || {})[p.barcode];
+  const v = pharmacyPrice(ph.id, p.barcode);
+  return ' · ' + (v == null
+    ? '<span class="figure" style="color:var(--clay);">' + esc(t('pd.noPrice')) + '</span>'
+    : '<span class="figure">' + esc(iqd(v)) + '</span>' + (own == null ? ' ' + esc(t('pd.byAverage')) : ''));
+}
+function priceCard(p) {
+  const ph = currentPharmacy();
+  if (!canSetPrices()) return '';
+  if (!ph) return '<p class="inline-note">' + esc(t('pd.pickForPrice')) + '</p>';
+  const own = (S.prices[ph.id] || {})[p.barcode];
+  const avg = marketAverage(p.barcode);
+  const n = marketPrices(p.barcode).length;
+  return '<p class="section-eyebrow">' + esc(t('pd.priceAt', { ph:L(ph.name) })) + '</p>' +
+    '<div class="card card-pad price-card">' +
+      '<div class="till-inline"><input id="pd-price" type="number" inputmode="numeric" dir="ltr" value="' +
+        (own != null ? own : '') + '" placeholder="' + esc(avg != null ? fmt(avg) : t('till.priceIQD')) + '">' +
+        '<button class="btn-small" onclick="saveProductPrice(' + attr(p.barcode) + ')">' + esc(t('pd.savePrice')) + '</button></div>' +
+      '<p class="inline-note" style="margin-top:8px;">' + esc(own != null ? t('pd.ownPrice')
+        : avg != null ? t('pd.defaultAverage') : t('pd.mustSet')) + '</p>' +
+      (canSeeMarket()
+        ? '<p class="market-avg">' + (avg != null
+            ? esc(t('pd.marketAvg', { price:iqd(avg), n }))
+            : esc(t('pd.marketThin', { min:MARKET_FLOOR }))) + '</p>'
+        : '') +
+    '</div>';
+}
+function saveProductPrice(code) {
+  const ph = currentPharmacy();
+  const el = document.getElementById('pd-price');
+  if (!ph || !el) return;
+  if (setPrice(ph.id, code, el.value)) toast(t('pd.priceSaved')); else toast(t('till.note.badPrice'));
+  render();
+}
+
+/* The owner's till card on the dashboard: today at this pharmacy, or a nudge
+   to pick one. */
+function tillCard() {
+  if (!screenAllowed('till')) return '';
+  const ph = currentPharmacy();
+  if (!ph) return linkCard('till', t('d.tillT'), t('d.tillPick'), "goto('till')");
+  const sales = S.sales.filter(x => x.pharmacy === ph.id && !x.refunded);
+  return linkCard('till', t('d.tillT'),
+    sales.length ? t('d.tillToday', { n:sales.length, total:iqd(sales.reduce((a, x) => a + x.total, 0)) }) : t('d.tillNone'),
+    "goto('till')");
+}
+
+/* The receipt logo, on each pharmacy's card on the owner's profile. */
+function logoField(ph) {
+  if (S.role !== 'owner' || ph.verification === 'rejected') return '';
+  return '<div class="logo-field">' +
+    (LOGO_IMG[ph.id] ? '<img class="logo-thumb" alt="" src="' + LOGO_IMG[ph.id].src + '">' : '') +
+    '<label class="btn-ghost logo-btn">' + esc(t(LOGO_IMG[ph.id] ? 'rc.logoReplace' : 'rc.logoUpload')) +
+      '<input type="file" accept="image/png,image/jpeg" class="logo-input" data-ph="' + esc(ph.id) + '" ' +
+      'onchange="uploadLogo(' + attr(ph.id) + ', this)" hidden></label>' +
+    '<span class="inline-note" style="margin:0;">' + esc(t('rc.logoNote')) + '</span></div>';
+}
+
 function screenProducts() {
   const q = drugNorm(S.productQuery);
   const sum = catalogueSummary();
@@ -4078,8 +4999,7 @@ function screenProducts() {
     '<button class="row prod-row" onclick="openProduct(' + attr(p.barcode) + ')">' +
       '<span class="row-body">' +
         '<span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
-        '<span class="row-sub" style="display:block;">' + esc(L(p.pack)) + ' · ' +
-          '<span class="figure">' + esc(iqd(p.price)) + '</span></span>' +
+        '<span class="row-sub" style="display:block;">' + esc(L(p.pack)) + priceTag(p) + '</span>' +
       '</span>' +
       '<span class="prod-meta">' + mappingChip(p.mapping) + '</span>' +
       icon('chevron', 'more-chevron') +
@@ -4148,8 +5068,8 @@ function screenProduct() {
       kv(t('pd.barcode'), p.barcode, 'code') +
       (p.form ? kv(t('pd.form'), t('df.' + p.form) + (p.strength ? ' · ' + p.strength : '')) : '') +
       kv(t('pd.pack'), L(p.pack)) +
-      kv(t('pd.price'), iqd(p.price)) +
     '</div>' +
+    priceCard(p) +
     '<button class="btn-secondary" onclick="goto(\'products\')">' + esc(t('pd.back')) + '</button>' +
     '</div></div>';
 }
@@ -4170,7 +5090,7 @@ function dashboardDark(lead) {
     (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
     bannerFor('home') +
-    soonCard('barcode', 'soon.tillT', 'soon.tillS') +
+    tillCard() +
     linkCard('barcode', t('d.catalogueT', { n:sum.total }), t('d.catalogueS', { n:sum.uncheckable }), "goto('products')") +
     (hasTrainee
       ? linkCard('cap', ready ? t('d.traineeReady', { n:ready }) : t('d.traineeOn'),
@@ -5076,6 +5996,7 @@ function screenProfileAll() {
           kv('badge', t('pr.licence'), ph.licence) +
           kv('user', t('pr.responsible'), ph.responsible ? L(ph.responsible) : t('g.noResponsible')) +
           kv('pin', t(ph.address ? 'pr.address' : 'f.district'), L(ph.address || ph.district)) +
+          logoField(ph) +
         '</div>').join('') +
       '<button class="btn-secondary" style="margin-bottom:16px;" onclick="goto(\'addPharmacy\')">' + icon('plus') +
         esc(t('ap.addAnother')) + '</button>' +
@@ -5189,6 +6110,8 @@ const SCREENS = {
   checkin:       { eyebrow:()=>greeting(), title:()=>currentName(), body:screenCheckin },
   tasks:         { eyebrow:()=>currentName(), title:()=>t('nav.tasks'), body:screenTasks },
   products:      { eyebrow:()=>currentName(), title:()=>t('nav.products'), body:screenProducts },
+  till:          { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); },
+                   title:()=>S.receiptFor ? t('till.receipt') : t('nav.till'), body:screenTill },
   addPharmacy:   { eyebrow:()=>currentName(), title:()=>t('ap.title'), body:screenAddPharmacy },
   product:       { eyebrow:()=>t('nav.products'),
                    title:()=>{ const p = productByCode(S.openProduct); return p ? L(p.name) : t('nav.products'); },
@@ -5271,7 +6194,9 @@ const NAV_OWNER_BOTH =
 const NAV_DARK = {
   pharmacist: [['checkin','clock','nav.checkin'],['tasks','check','nav.tasks'],['drugs','pill','nav.drugs'],
                ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
-  owner:      [['dashboard','home','nav.dashboard'],['products','barcode','nav.products'],['trainees','cap','nav.trainees'],
+  /* The till takes the trainee's slot on the bar: it is used every few
+     minutes, the trainee once a month, and the dashboard links there. */
+  owner:      [['dashboard','home','nav.dashboard'],['till','till','nav.till'],['products','barcode','nav.products'],
                ['drugs','pill','nav.drugs'],['profile','user','nav.profile']]
 };
 
@@ -5300,7 +6225,7 @@ function sidebarGroups() {
    somebody owes is not a simplification. */
 function ownerGroups() {
   const groups = [
-    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['products','barcode','nav.products'],
+    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['till','till','nav.till'],['products','barcode','nav.products'],
                                  ['post','plus','nav.post'],
                                  ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
                                  /* The pharmacy's own consumption. Commercial, not
@@ -5708,6 +6633,10 @@ function renderModal() {
     inner = returnModal(S.modal.month);
   } else if (S.modal.kind === 'billing') {
     inner = billingModal();
+  } else if (S.modal.kind === 'camera') {
+    inner = '<h3 class="modal-title">' + esc(t('till.camera')) + '</h3>' +
+      '<video id="cam" class="cam-video" playsinline muted></video>' +
+      '<button class="btn-secondary" style="margin-top:12px;" onclick="closeModal()">' + esc(t('common.cancel')) + '</button>';
   }
 
   root.innerHTML = '<div class="modal-back" onclick="if(event.target===this)closeModal()">' +
@@ -5736,7 +6665,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0011.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0012.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -5790,6 +6719,8 @@ function signInAs(mail){
   S.takesShifts = isOwner(a) ? !!a.takesShifts : true;
   /* An owner of several starts on All, whoever signed in last. */
   S.pharmacyTab = null;
+  S.till = tillReset();
+  S.receiptFor = null;
   S.signedIn = true;
   S.screen = navFor(S.role)[0][0];
   authError = null;
@@ -6063,6 +6994,7 @@ function toast(msg){
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.modal) closeModal(); });
 
 readFlags();
+restoreLogos();
 render();
 </script>
 </body>

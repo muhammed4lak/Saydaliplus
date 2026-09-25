@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0011">
+<meta name="version" content="CRM_v0.0012">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -762,7 +762,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0011';
+const VERSION = 'CRM_v0.0012';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1822,7 +1822,7 @@ const DATA = {
        one, while partners are still closed; nobody paid for it and nobody had
        to be phoned about it, because the team wrote it. */
     { id:'A1', kind:'announcement', company:null, state:'live',
-      title:'Point of sale is on its way', where:null, from:'2026-09-25', to:'2026-10-31',
+      title:'The till is here', where:null, from:'2026-09-25', to:'2026-10-31',
       contact:null, calledOn:null, calledBy:null, writtenBy:'u1', notes:'Shown on every home screen.',
       surface:'home', price:0 },
     { id:'J1', kind:'job', company:'CO1', state:'live',
@@ -5068,7 +5068,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0011.html';
+const PEER_APP = '../demo/saydali-plus_v0.0012.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
@@ -5265,7 +5265,7 @@ function verifyUser(id) {
   render();
 }
 
-/* ---------- Catalogue mapping (v0.0011) ----------
+/* ---------- Catalogue mapping (v0.0012) ----------
    An operator links a product to its ingredients. The result is AUTO-MATCHED,
    never verified: verification is the clinical curator's step (W19), and the
    CRM offers nobody a way round it. An ingredient that matches a reference

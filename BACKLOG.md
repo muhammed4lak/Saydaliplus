@@ -157,7 +157,8 @@ backlog records is also scheduled):
 System 1 is complete at v0.0015, System 2 at v0.0019. Versions were inserted
 twice on 25 Sep 2026 — v0.0010 for the W7 correction and v0.0011 for the
 review fixes — and W22 and W23 were given v0.0018 and v0.0017, so the numbers
-below are the current ones. The till is v0.0012.
+below are the current ones. The till was built as v0.0012; stock and
+purchasing are next.
 
 **v0.0009 — the switch, and the catalogue.** **Built** (25 Sep 2026) — see
 "v0.0009 as built" below.
@@ -289,15 +290,121 @@ sets its own price — needs the pharmacy on screen to be unambiguous.
 4. **Partners are hidden**, and banners are there from the start for the
    platform's announcements.
 
-### Before v0.0012 — still to decide
+### Before v0.0012 — the last two, answered 25 Sep 2026
 
-1. **Rounding to what cash can pay.** Should prices at the till be held to
-   multiples of 250 IQD, or should the till round the total for cash and record
-   the difference? A price the drawer cannot give change for is a small daily
-   argument at the counter.
-2. **Discounts at the till.** Allowed at all, and by whom? Until permissions
-   arrive (v0.0017), only the owner — recommended — with every discount on the
-   record.
+1. **No rounding.** The total is the exact sum of what was sold, in either
+   direction. (Asked as: hold prices to multiples of 250 IQD, or round the
+   total for cash and record the difference?) The average market price, used
+   as a default price, is still shown to the nearest 250 because it becomes a
+   price somebody charges; a sale's total never is.
+2. **Discounts are the owner's alone** until permissions arrive (v0.0017), and
+   every discount is on the record with its reason.
+
+### v0.0012 as built — the till
+
+- **Where it lives.** On the owner's bar in the trainee's slot (the trainee
+  stays one tap away from the dashboard's card), and in the sidebar's pharmacy
+  group. It is not a marketplace screen, so it is there with everything off.
+  An employed pharmacist has no till yet: selling is granted by the owner, and
+  grants are v0.0017.
+- **Which pharmacy.** The till belongs to the pharmacy on screen. An owner of
+  several on All is asked which; picking one opens that pharmacy's till, not
+  its dashboard. A pharmacy under review cannot sell, and nor can one with no
+  responsible pharmacist — the second is the law, not caution. Switching
+  pharmacy with a cart open sets the cart aside, and that is recorded.
+- **Prices.** Each pharmacy's own, set on the product screen or at the till.
+  With none set, the product sells at the **average market price** — derived,
+  never typed — and with neither, the till does not guess: the owner prices it
+  there and then. The average is shown to the owner only, and only from five
+  pharmacies up; below that the screen says why there is none. A pharmacist
+  sees no price on the catalogue. Every price change is logged with what it
+  was before, and the price is **written onto the sale line**: the check
+  changes a price after a sale and proves the sale did not move.
+- **Scanning.** A wedge scanner or the keyboard (digits then Enter), a name
+  search, and the phone camera **where the browser has a barcode detector** —
+  where it has none the button is not offered rather than offered broken. A
+  misread (bad check digit) is refused; an unknown valid barcode can still be
+  sold by name and price, is marked *not checked*, and goes to the mapping
+  queue. The same barcode twice is one line, quantity two.
+- **The Helper on the basket.** One consolidated check as the cart fills —
+  interactions and duplicate therapy across every line — with coverage first,
+  in one sentence: *"3 of 4 medicines checked · 1 not checked · 1 not a
+  medicine"*, and each unchecked or part-checked line marked on the cart
+  itself. Two tiers render, by severity: **Warn** (serious, critical) on the
+  basket with a one-tap *Acknowledge*, and **Note** (the rest) folded away. The
+  Stop tier is empty (P9). Nothing is ever blocked: a sale with an
+  unacknowledged warning completes, and the sale records every finding and
+  whether it was acknowledged — the raw material for v0.0015's override report.
+  Questions for the patient (contraindications) are folded under the findings.
+- **Money.** The total is the exact sum. Cash needs an amount received at
+  least the total and shows the exact change; ZainCash and Qi Card take an
+  optional reference and say on screen that only the method is recorded —
+  nothing passes through the platform. Discounts: owner only, amount no larger
+  than the basket, reason required, logged. Removing a line is a **void**, and
+  every void is logged. Refunds of a completed sale: owner only, reason
+  required, logged; the sale stays in the list marked refunded.
+- **The receipt.** Drawn as a bitmap 384 dots wide (a 58 mm printer at
+  203 dpi), so Arabic is shaped and joined. At the top the owner's **logo**
+  (uploaded per pharmacy from the owner's profile, printed in greyscale, 300 KB
+  at most); then pharmacy name, licence number, date and time, sale number,
+  each item with quantity × unit price, and under each medicine its **dose**
+  (typed by the pharmacist, never filled in) and **how to use it** (a default
+  by dosage form, editable per line); discount, total, tender, change, and the
+  **dispensing pharmacist's name**. **Arabic by default; one press for
+  English.** Printing waits for the certified printers; the preview is exactly
+  the bitmap that will be sent.
+- **No banner anywhere on it** (P1): the till never asks for one, and the
+  check proves the slot that is on the dashboard is absent here.
+- **The record every later version reads.** `S.tillLog` holds sales, voids,
+  discounts, refunds, price changes, logo uploads and carts set aside, each
+  with who, where and when. v0.0014's audit trail and v0.0017's shift timeline
+  are views of it.
+
+**Known limits of the prototype** (not decisions — each is a later version's
+work): sales, prices and the log live in memory and are gone on reload; the
+logo is remembered on the device only; the market prices are a fixed fixture,
+where production computes them from real sales; the default instructions are
+placeholders by dosage form until the curator writes them (W19); the camera
+scan works on Android's Chrome but not on an iPhone, whose browser has no
+barcode detector — a scanning library fixes that in production; and a refund
+does not return anything to stock, because there is no stock until v0.0013.
+
+### Before v0.0013 — to decide
+
+v0.0013 is stock and purchasing. Most of it was settled on 20 and 25 Sep
+(movements not levels, batches, first-expiring first, quarantine, write-off
+with a reason, near-expiry at 90 days, suppliers are Externals). These are
+what is left:
+
+1. **Selling what the system thinks is out of stock.** In the first weeks the
+   system's stock will be wrong — boxes on the shelf that were never entered.
+   Refuse the sale, or allow it and flag the product for a count?
+   *Recommended:* allow it, record the stock as negative, and put "count this"
+   on the owner's home. Refusing a sale because the software is behind the
+   shelf is how pharmacies stop using a till.
+2. **Opening stock.** How does a pharmacy that already exists get its shelf in?
+   *Recommended:* a **count mode** — scan every box once, enter expiry per
+   batch — plus a spreadsheet import for a pharmacy moving off another system.
+   Which competitors' exports matter is a question only you can answer.
+3. **Purchase cost and bonus units.** Record what each batch cost (it makes
+   margin and stock value possible; owner-only), and the distributor's free
+   units — the *بونص*, 10 + 1 — as units received at zero cost?
+   *Recommended:* yes to both; bonus goods are routine here, and ignoring them
+   makes every cost figure wrong.
+4. **A supplier not in the CRM.** Can an owner add their own distributor, kept
+   private to their pharmacy, or only choose from the Externals list?
+   *Recommended:* add their own; the CRM team is told, and may later link it to
+   an Externals record.
+5. **Where a refunded item goes.** Back to sellable stock, or to quarantine
+   until the pharmacist decides? *Recommended:* the pharmacist chooses at the
+   refund, with *sealed and undamaged* as the only way back to sellable stock,
+   and anything else to quarantine.
+
+**Leftovers that are yours, not the code's:** the certified printer and
+scanner (non-code item 3) before this receipt is shown to a customer; the
+curator (W19) for the real default instructions; and, before production
+computes an average market price from real sales, a line in the pharmacy's
+terms saying their prices feed an anonymous average of at least five.
 
 ### Before v0.0012 — decisions as they were first asked
 
@@ -314,7 +421,7 @@ sets its own price — needs the pharmacy on screen to be unambiguous.
 4. **Partner accounts** (still open): see the recommendation in chat, recorded
    under W15.
 
-**v0.0012 — the till.**
+**v0.0012 — the till.** **Built** (25 Sep 2026) — see "v0.0012 as built" below.
 Scan (camera, wedge scanner, or typed), cart, quantities, cash with change due,
 receipt preview rendered as an image, void and refund with a reason. The price is
 written **onto the sale line** at the moment of sale. The Helper checks the
@@ -440,7 +547,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **Cash rounding and till discounts** — the two questions before v0.0012.
+- **The five questions before v0.0013** — out-of-stock sales, opening stock,
+  cost and bonus units, private suppliers, and where refunds go. See "Before
+  v0.0013" above.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
@@ -451,8 +560,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 **Settled since this list was first written:** receipt contents, language and
 tenders; each pharmacy's own price against an average market reference;
-usage-level default instructions; partners hidden and announcements on; and
-placements staying on. See "Before v0.0012" above.
+usage-level default instructions; partners hidden and announcements on;
+placements staying on; exact totals with no cash rounding; and discounts as
+the owner's alone, with a reason. See "Before v0.0012" above.
 
 ---
 
@@ -1588,7 +1698,8 @@ always reads 3%.
 
 **Raised:** 20 Sep 2026. **Touches:** everything. Versions v0.0009 and
 v0.0012–v0.0015 in Part 0. **Catalogue layer built in v0.0009** — products, mapping confidence,
-the unknown-barcode path and the CRM queue; the till itself is next.
+the unknown-barcode path and the CRM queue. **The till built in v0.0012**; stock
+and purchasing are next.
 
 One build, not three. A till that decrements stock as it sells *is* the
 inventory system, and a controlled-substance register that falls out of
