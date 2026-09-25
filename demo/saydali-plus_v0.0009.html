@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0008">
+<meta name="version" content="App_v0.0009">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -301,6 +301,32 @@
   .banner-green svg{ color:var(--palm); }
   .banner-indigo{ background:var(--indigo-tint); border:1px solid #D6D4EC; color:var(--indigo-dark); }
   .banner-indigo svg{ color:var(--indigo); }
+  /* Neutral: said plainly, neither praised nor warned. Used where green would
+     read as "safe" — the rule that the Helper never shows a green tick extends
+     to saying how much of a product it can check. */
+  .banner-mist{ background:var(--mist); border:1px solid var(--border); color:var(--ink-soft); }
+  .banner-mist svg{ color:var(--indigo); }
+
+  /* v0.0009 — honest placeholders for what arrives next. */
+  .soon-card{ display:flex; gap:12px; align-items:flex-start; }
+  .soon-ico{ flex:none; width:38px; height:38px; border-radius:11px; background:var(--mist);
+             display:grid; place-items:center; color:var(--indigo); }
+  .soon-ico .ico{ width:19px; height:19px; }
+  .soon-t{ font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  html[dir="rtl"] .soon-t{ font-family:var(--font-ar); }
+  .soon-tag{ font-size:10.5px; font-weight:600; color:#8A5610; background:var(--amber-tint);
+             padding:2px 8px; border-radius:100px; }
+  .soon-s{ font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin-top:3px; }
+  .soon-list{ margin:10px 0 0; padding-inline-start:18px; font-size:12.5px; color:var(--ink-soft); line-height:1.8; }
+
+  /* The product catalogue. */
+  .prod-meta{ display:flex; align-items:center; gap:6px; flex:none; }
+  .code{ font-family:var(--font-mono); font-size:12px; letter-spacing:.02em; }
+  .flag-row{ display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
+  .flag-row:last-of-type{ border-bottom:none; }
+  .flag-body{ flex:1; min-width:0; }
+  .flag-t{ display:block; font-size:13.5px; font-weight:600; }
+  .flag-s{ display:block; font-size:12px; color:var(--ink-faint); margin-top:2px; line-height:1.5; }
 
   /* ---------- Stats ---------- */
   .stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
@@ -953,6 +979,7 @@
   <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.3 9.5h17.4M3.3 14.5h17.4"/><path d="M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3Z"/></g></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.8 21 19.5H3L12 3.8Z"/><path d="M12 10v4.2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></g></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19.2 8.8a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4Z"/><path d="M14.5 6.5 17.5 9.5"/></g></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M4 6v12M10 6v12M17 6v12" stroke-width="1.9"/><path d="M7 6v12M13 6v12M15 6v12M20 6v12" stroke-width="1.1"/></g></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </defs></svg>
 
@@ -1074,6 +1101,9 @@ const clinicalOnly = list => list.filter(x => !sponsorOf(x));
    is enforced by where the function is invoked rather than by a flag somebody
    could flip. */
 function bannerFor(surface) {
+  /* Paid placements belong to the ecosystem step, which is switched off with
+     the marketplace. */
+  if (!FLAGS.marketplace) return '';
   if (BANNER_SURFACES.indexOf(surface) < 0) return '';
   const b = LISTINGS.find(x => x.kind === 'banner' && x.state === 'live' && x.surface === surface);
   if (!b) return '';
@@ -1430,6 +1460,43 @@ Object.assign(STRINGS.ar, {
   'g.allBranches':'كل الفروع',
   'g.branchDetails':'الفرع','g.openLabel':'إعلانات مفتوحة',
   'n.branchUncovered':'{branch} بلا صيدلي مسؤول — الفرع لا يفتح قبل تسمية واحد.',
+  /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
+  'nav.checkin':'الحضور','nav.tasks':'المهام','nav.products':'المنتجات',
+  'soon.tag':'قريباً',
+  'soon.checkinT':'تسجيل الحضور',
+  'soon.checkinS':'سجّل حضورك عند فتح الصندوق، ويُسجَّل يومك تلقائياً — ساعات العمل والالتزام بالمواعيد، في سجلّ يعتمد عليه صاحب العمل والنقابة. يصل مع إصدار الحضور.',
+  'soon.tasksT':'مهامك',
+  'soon.tasksS':'ما تسنده إليك صيدليتك من مهام، مع مواعيدها وسجلّ بما أُنجز. تصل مع إصدار المهام.',
+  'tk.l1':'مهام من صيدليتك مع مواعيد إنجازها','tk.l2':'فحوص متكررة — مثل حرارة الثلاجة كل صباح','tk.l3':'سجلّ بما أُنجز ومتى',
+  'soon.tillT':'نقطة البيع',
+  'soon.tillS':'امسح، بِع، اطبع الوصل — ومساعد الوصفات يفحص السلة كلها أثناء البيع، من دليل المنتجات أدناه. تصل في الإصدار القادم.',
+  'd.catalogueT':'{n} منتجاً في الدليل','d.catalogueS':'{n} منها لا يستطيع مساعد الوصفات فحصها بالكامل بعد',
+  'd.traineeReady':'الشهر {n} من تدريب زينب جاهز لمصادقتك','d.traineeReadySub':'السجلّ الأسبوعي والحضور بانتظار مراجعتك.',
+  'd.traineeOn':'متدرّبة واحدة في صيدليتك','d.traineeSub':'افتح لرؤية سجلّها الأسبوعي.',
+  'pd.lookup':'ابحث عن منتج','pd.lookupSub':'امسح علبة لترى ما فيها وهل يستطيع المساعد فحصها.',
+  'pd.search':'امسح باركود أو ابحث بالاسم',
+  'pd.scanHint':'قارئ الباركود يكتب في هذا الحقل ويضغط Enter — يعمل دون أي إعداد.',
+  'pd.count':'{n} منتج','pd.none':'لا يوجد منتج بهذا الاسم أو الرمز.','pd.all':'الكل',
+  'map.verified':'مُراجَع','map.auto':'مطابقة آلية','map.unmapped':'غير مربوط','map.nondrug':'ليس دواءً',
+  'mapl.verified':'ربط المكوّنات راجعه صيدلاني','mapl.auto':'رُبطت المكوّنات آلياً ولم يراجعها صيدلاني بعد',
+  'mapl.unmapped':'لم تُربط مكوّناته بعد','mapl.nondrug':'يُباع في الصيدلية وليس دواءً',
+  'cov.full':'يستطيع مساعد الوصفات فحص كل ما في هذا المنتج.',
+  'cov.partial':'يستطيع المساعد فحص جزء منه فقط. غير موجود في المرجع بعد: {names}.',
+  'cov.none':'لا يستطيع المساعد فحص شيء فيه بعد. غير موجود في المرجع: {names}.',
+  'cov.unmapped':'لم تُربط مكوّناته بعد. يمكن بيعه، وسيقول المساعد صراحةً إنه لم يستطع فحصه.',
+  'cov.nondrug':'ليس دواءً — لا شيء ليفحصه المساعد.',
+  'pd.inside':'ما فيه','pd.outside':'ليس في المرجع','pd.barcode':'الباركود','pd.pack':'العبوة',
+  'pd.price':'السعر المرجعي','pd.form':'الشكل','pd.back':'كل المنتجات',
+  'pd.unknown':'الباركود {code} غير معروف لدينا بعد. أُرسل للربط — ما زال بإمكانك بيعه، وسيقول المساعد إنه لم يستطع فحصه.',
+  'pd.misread':'{code} لا يُقرأ كباركود صحيح — امسحه مجدداً. لم يُرسل شيء للربط.',
+  'pd.requests':'أُرسلت للربط من هذا الجهاز','pd.times':'مُسح {n} مرة',
+  'pd.requestsNote':'في النظام الفعلي تصل هذه إلى قائمة الربط في لوحة الإدارة. هذا النموذج لا يملك خادماً يرسلها إليه.',
+  'pd.catalogueNote':'المرجع السريري مبني على المواد الفعّالة ويبقى صغيراً؛ الدليل يربط كل علبة بموادها. المنتج غير المربوط يُباع عادياً، والمساعد يقولها صراحة.',
+  'g.needResponsible':'{n} من {total} فروع بلا صيدلي مسؤول','g.allResponsible':'لكل فرع صيدلي مسؤول',
+  'sw.title':'مفاتيح النموذج',
+  'sw.marketplace':'السوق','sw.marketplaceSub':'المناوبات والوظائف والإعلانات — مطفأ حتى الخطوة الرابعة',
+  'sw.placements':'التدريب الصيفي','sw.placementsSub':'لوحة التدريب والسجلّ الأسبوعي',
+  'sw.note':'يتذكّرها هذا المتصفح. في النظام الفعلي تُضبط من لوحة الإدارة لكل منطقة.',
   'g.postHere':'انشر مناوبة لهذا الفرع',
   'g.licenceNote':'لكل فرع رخصته وصيدليه المسؤول. المجموعة تدير الفروع ولا تحل محل أيٍ منهما.',
   'bill.perBranch':'{amount} لكل فرع × {n}',
@@ -1638,6 +1705,43 @@ Object.assign(STRINGS.en, {
   'g.allBranches':'All branches',
   'g.branchDetails':'The branch','g.openLabel':'Open posts',
   'n.branchUncovered':'{branch} has no responsible pharmacist — it cannot open until one is named.',
+  /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
+  'nav.checkin':'Check-in','nav.tasks':'Tasks','nav.products':'Products',
+  'soon.tag':'Coming',
+  'soon.checkinT':'Check in',
+  'soon.checkinS':'Check in when you open the till and your day records itself — hours and punctuality, in a record your employer and the Syndicate can rely on. Arrives with the attendance build.',
+  'soon.tasksT':'Your tasks',
+  'soon.tasksS':'The tasks your pharmacy gives you, with due dates and a record of what was done. Arrives with the tasks build.',
+  'tk.l1':'Tasks from your pharmacy, with due dates','tk.l2':'Repeating checks — the fridge temperature every morning','tk.l3':'A record of what was done, and when',
+  'soon.tillT':'Point of sale',
+  'soon.tillS':'Scan, sell, print the receipt — with the Dispensing Helper checking the whole basket as you go, from the product catalogue below. Arrives in the next build.',
+  'd.catalogueT':'{n} products in the catalogue','d.catalogueS':'{n} of them the Dispensing Helper can’t fully check yet',
+  'd.traineeReady':'Month {n} of Zainab’s placement is ready for you','d.traineeReadySub':'Her weekly log and attendance are waiting for your review.',
+  'd.traineeOn':'One trainee on placement with you','d.traineeSub':'Open to see her weekly log.',
+  'pd.lookup':'Look up a product','pd.lookupSub':'Scan a box to see what’s in it, and whether the Helper can check it.',
+  'pd.search':'Scan a barcode, or search by name',
+  'pd.scanHint':'A barcode scanner types into this box and presses Enter — it works with no setup.',
+  'pd.count':'{n} products','pd.none':'No product matches that name or code.','pd.all':'All',
+  'map.verified':'Checked','map.auto':'Auto-matched','map.unmapped':'Not mapped','map.nondrug':'Not a medicine',
+  'mapl.verified':'Ingredients checked by a pharmacist','mapl.auto':'Ingredients matched automatically — not yet checked by a pharmacist',
+  'mapl.unmapped':'Ingredients not linked yet','mapl.nondrug':'Sold at the counter, not a medicine',
+  'cov.full':'The Dispensing Helper can check everything in this.',
+  'cov.partial':'The Helper can check only part of this. Not in the reference yet: {names}.',
+  'cov.none':'The Helper can’t check anything in this yet. Not in the reference: {names}.',
+  'cov.unmapped':'Its ingredients aren’t linked yet. It can still be sold, and the Helper will say plainly that it couldn’t check it.',
+  'cov.nondrug':'Not a medicine — nothing for the Helper to check.',
+  'pd.inside':'What’s in it','pd.outside':'Not in the reference','pd.barcode':'Barcode','pd.pack':'Pack',
+  'pd.price':'Reference price','pd.form':'Form','pd.back':'All products',
+  'pd.unknown':'We don’t know barcode {code} yet. It’s been sent for mapping — you can still sell it, and the Helper will say it couldn’t check it.',
+  'pd.misread':'{code} doesn’t read as a barcode — scan it again. Nothing was sent for mapping.',
+  'pd.requests':'Sent for mapping from this device','pd.times':'Scanned {n}×',
+  'pd.requestsNote':'In the real system these reach the Catalogue queue in the CRM. This prototype has no server to send them to.',
+  'pd.catalogueNote':'The clinical reference is built on active ingredients and stays small; the catalogue links each box to them. An unmapped product sells normally — the Helper just says so.',
+  'g.needResponsible':'{n} of {total} branches have no responsible pharmacist','g.allResponsible':'Every branch has a responsible pharmacist',
+  'sw.title':'Prototype switches',
+  'sw.marketplace':'Marketplace','sw.marketplaceSub':'Relief shifts, jobs and paid placements — off until step 4',
+  'sw.placements':'Student placements','sw.placementsSub':'The placement board and the weekly logbook',
+  'sw.note':'This browser remembers them. In the real system they are set from the CRM, per district.',
   'g.postHere':'Post a shift at this branch',
   'g.licenceNote':'Each branch holds its own licence and its own responsible pharmacist. The group manages them; it replaces neither.',
   'bill.perBranch':'{amount} per branch × {n}',
@@ -1951,6 +2055,70 @@ const DRUGS = [
   {"sci":"Calcium gluconate","ar":"غلوكونات الكالسيوم","atc":"A12AA03","form":"injection","doses":["10% 10 mL"],"notes":{"ar":"وريدي بطيء. لا يُمزج مع السيفترياكسون أبداً. التسرّب خارج الوريد يسبّب نخراً نسيجياً.","en":"Slow IV. Never mixed with ceftriaxone. Extravasation causes tissue necrosis."},"interactions":[{"with":"Ceftriaxone","severity":"critical","note":{"ar":"ترسّب في الرئة والكلية — ممنوع الجمع وريدياً.","en":"Precipitates in lung and kidney — the IV combination is contraindicated."}},{"with":"Digoxin","severity":"serious","note":{"ar":"الكالسيوم الوريدي مع الديجوكسين يسبّب اضطراب نظم.","en":"IV calcium with digoxin causes arrhythmia."}}],"contraindications":[{"ar":"فرط كالسيوم الدم","en":"Hypercalcaemia"},{"ar":"الاستعمال الوريدي المتزامن مع السيفترياكسون","en":"Concurrent IV ceftriaxone"}]}
 ];
 /* DRUGS:END */
+/* PRODUCTS:BEGIN */
+const MAPPING_STATES = ["verified","auto","unmapped","nondrug"];
+const PRODUCTS = [
+  {"barcode":"5000000001002","name":{"ar":"بنادول 500 ملغ","en":"Panadol 500 mg"},"form":"tablet","strength":"500 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":2500,"mapping":"verified","molecules":[{"sci":"Paracetamol","strength":"500 mg"}]},
+  {"barcode":"5000000001019","name":{"ar":"بنادول إكسترا","en":"Panadol Extra"},"form":"tablet","strength":"500/65 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":3000,"mapping":"verified","molecules":[{"sci":"Paracetamol","strength":"500 mg"},{"sci":"Caffeine","strength":"65 mg","ref":false}]},
+  {"barcode":"5000000001026","name":{"ar":"بنادول للزكام والإنفلونزا — نهاري","en":"Panadol Cold & Flu Day"},"form":"tablet","strength":"500/30 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":3500,"mapping":"auto","molecules":[{"sci":"Paracetamol","strength":"500 mg"},{"sci":"Pseudoephedrine","strength":"30 mg","ref":false}]},
+  {"barcode":"5000000001033","name":{"ar":"بروفين 400 ملغ","en":"Brufen 400 mg"},"form":"tablet","strength":"400 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":3000,"mapping":"verified","molecules":[{"sci":"Ibuprofen","strength":"400 mg"}]},
+  {"barcode":"7600000001040","name":{"ar":"فولتارين 50 ملغ","en":"Voltaren 50 mg"},"form":"tablet","strength":"50 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":4000,"mapping":"verified","molecules":[{"sci":"Diclofenac","strength":"50 mg"}]},
+  {"barcode":"7600000001057","name":{"ar":"كتافلام 50 ملغ","en":"Cataflam 50 mg"},"form":"tablet","strength":"50 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":4500,"mapping":"auto","molecules":[{"sci":"Diclofenac","strength":"50 mg"}]},
+  {"barcode":"4000000001065","name":{"ar":"أسبرين بروتكت 100 ملغ","en":"Aspirin Protect 100 mg"},"form":"tablet","strength":"100 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":3500,"mapping":"verified","molecules":[{"sci":"Aspirin","strength":"100 mg"}]},
+  {"barcode":"5000000001071","name":{"ar":"أوغمنتين 1 غ","en":"Augmentin 1 g"},"form":"tablet","strength":"875/125 mg","pack":{"ar":"14 قرصاً","en":"14 tablets"},"price":12000,"mapping":"verified","molecules":[{"sci":"Amoxicillin/Clavulanic acid","strength":"875/125 mg"}]},
+  {"barcode":"6210000001080","name":{"ar":"ساماموكس 500 ملغ","en":"Samamox 500 mg"},"form":"capsule","strength":"500 mg","pack":{"ar":"16 كبسولة","en":"16 capsules"},"price":2500,"mapping":"verified","molecules":[{"sci":"Amoxicillin","strength":"500 mg"}]},
+  {"barcode":"3000000001097","name":{"ar":"زيثروماكس 500 ملغ","en":"Zithromax 500 mg"},"form":"tablet","strength":"500 mg","pack":{"ar":"3 أقراص","en":"3 tablets"},"price":9000,"mapping":"verified","molecules":[{"sci":"Azithromycin","strength":"500 mg"}]},
+  {"barcode":"4000000001102","name":{"ar":"سيبروباي 500 ملغ","en":"Ciprobay 500 mg"},"form":"tablet","strength":"500 mg","pack":{"ar":"10 أقراص","en":"10 tablets"},"price":7000,"mapping":"verified","molecules":[{"sci":"Ciprofloxacin","strength":"500 mg"}]},
+  {"barcode":"3000000001110","name":{"ar":"فلاجيل 500 ملغ","en":"Flagyl 500 mg"},"form":"tablet","strength":"500 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":3000,"mapping":"verified","molecules":[{"sci":"Metronidazole","strength":"500 mg"}]},
+  {"barcode":"8900000001125","name":{"ar":"سيفيكسيم 400 ملغ","en":"Cefixime 400 mg"},"form":"capsule","strength":"400 mg","pack":{"ar":"5 كبسولات","en":"5 capsules"},"price":8000,"mapping":"auto","molecules":[{"sci":"Cefixime","strength":"400 mg"}]},
+  {"barcode":"3000000001134","name":{"ar":"ديفلوكان 150 ملغ","en":"Diflucan 150 mg"},"form":"capsule","strength":"150 mg","pack":{"ar":"كبسولة واحدة","en":"1 capsule"},"price":4000,"mapping":"verified","molecules":[{"sci":"Fluconazole","strength":"150 mg"}]},
+  {"barcode":"4000000001140","name":{"ar":"كانستين كريم 1%","en":"Canesten 1% cream"},"form":"cream","strength":"1%","pack":{"ar":"أنبوب 20 غ","en":"20 g tube"},"price":3500,"mapping":"verified","molecules":[{"sci":"Clotrimazole","strength":"1%"}]},
+  {"barcode":"3000000001158","name":{"ar":"نورفاسك 5 ملغ","en":"Norvasc 5 mg"},"form":"tablet","strength":"5 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":9000,"mapping":"verified","molecules":[{"sci":"Amlodipine","strength":"5 mg"}]},
+  {"barcode":"4000000001164","name":{"ar":"كونكور 5 ملغ","en":"Concor 5 mg"},"form":"tablet","strength":"5 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":8000,"mapping":"verified","molecules":[{"sci":"Bisoprolol","strength":"5 mg"}]},
+  {"barcode":"5000000001170","name":{"ar":"كوزار 50 ملغ","en":"Cozaar 50 mg"},"form":"tablet","strength":"50 mg","pack":{"ar":"28 قرصاً","en":"28 tablets"},"price":10000,"mapping":"verified","molecules":[{"sci":"Losartan","strength":"50 mg"}]},
+  {"barcode":"7600000001187","name":{"ar":"كو-ديوفان 160/12.5 ملغ","en":"Co-Diovan 160/12.5 mg"},"form":"tablet","strength":"160/12.5 mg","pack":{"ar":"28 قرصاً","en":"28 tablets"},"price":16000,"mapping":"verified","molecules":[{"sci":"Valsartan","strength":"160 mg"},{"sci":"Hydrochlorothiazide","strength":"12.5 mg"}]},
+  {"barcode":"5000000001194","name":{"ar":"ليبيتور 20 ملغ","en":"Lipitor 20 mg"},"form":"tablet","strength":"20 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":15000,"mapping":"verified","molecules":[{"sci":"Atorvastatin","strength":"20 mg"}]},
+  {"barcode":"5000000001200","name":{"ar":"كريستور 10 ملغ","en":"Crestor 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"28 قرصاً","en":"28 tablets"},"price":18000,"mapping":"verified","molecules":[{"sci":"Rosuvastatin","strength":"10 mg"}]},
+  {"barcode":"3000000001219","name":{"ar":"بلافيكس 75 ملغ","en":"Plavix 75 mg"},"form":"tablet","strength":"75 mg","pack":{"ar":"28 قرصاً","en":"28 tablets"},"price":20000,"mapping":"verified","molecules":[{"sci":"Clopidogrel","strength":"75 mg"}]},
+  {"barcode":"5000000001224","name":{"ar":"ماريفان 5 ملغ","en":"Marevan 5 mg"},"form":"tablet","strength":"5 mg","pack":{"ar":"100 قرص","en":"100 tablets"},"price":6000,"mapping":"verified","molecules":[{"sci":"Warfarin","strength":"5 mg"}]},
+  {"barcode":"4000000001232","name":{"ar":"زاريلتو 20 ملغ","en":"Xarelto 20 mg"},"form":"tablet","strength":"20 mg","pack":{"ar":"28 قرصاً","en":"28 tablets"},"price":45000,"mapping":"verified","molecules":[{"sci":"Rivaroxaban","strength":"20 mg"}]},
+  {"barcode":"5000000001248","name":{"ar":"لانوكسين 0.25 ملغ","en":"Lanoxin 0.25 mg"},"form":"tablet","strength":"0.25 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":4000,"mapping":"verified","molecules":[{"sci":"Digoxin","strength":"0.25 mg"}]},
+  {"barcode":"3000000001257","name":{"ar":"غلوكوفاج 850 ملغ","en":"Glucophage 850 mg"},"form":"tablet","strength":"850 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":3500,"mapping":"verified","molecules":[{"sci":"Metformin","strength":"850 mg"}]},
+  {"barcode":"3000000001264","name":{"ar":"دياميكرون MR 60 ملغ","en":"Diamicron MR 60 mg"},"form":"tablet","strength":"60 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":9000,"mapping":"verified","molecules":[{"sci":"Gliclazide","strength":"60 mg"}]},
+  {"barcode":"4000000001270","name":{"ar":"أماريل 2 ملغ","en":"Amaryl 2 mg"},"form":"tablet","strength":"2 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":8000,"mapping":"verified","molecules":[{"sci":"Glimepiride","strength":"2 mg"}]},
+  {"barcode":"5000000001286","name":{"ar":"جانوميت 50/1000 ملغ","en":"Janumet 50/1000 mg"},"form":"tablet","strength":"50/1000 mg","pack":{"ar":"56 قرصاً","en":"56 tablets"},"price":35000,"mapping":"auto","molecules":[{"sci":"Sitagliptin","strength":"50 mg"},{"sci":"Metformin","strength":"1000 mg"}]},
+  {"barcode":"4000000001294","name":{"ar":"جارديانس 10 ملغ","en":"Jardiance 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":38000,"mapping":"verified","molecules":[{"sci":"Empagliflozin","strength":"10 mg"}]},
+  {"barcode":"3000000001301","name":{"ar":"لانتوس سولوستار","en":"Lantus SoloStar"},"form":"injection","strength":"100 units/mL","pack":{"ar":"5 أقلام × 3 مل","en":"5 pens × 3 mL"},"price":55000,"mapping":"verified","molecules":[{"sci":"Insulin glargine","strength":"100 units/mL"}]},
+  {"barcode":"5000000001316","name":{"ar":"نيكسيوم 40 ملغ","en":"Nexium 40 mg"},"form":"capsule","strength":"40 mg","pack":{"ar":"14 كبسولة","en":"14 capsules"},"price":12000,"mapping":"verified","molecules":[{"sci":"Esomeprazole","strength":"40 mg"}]},
+  {"barcode":"6210000001325","name":{"ar":"أوميبرازول 20 ملغ (سامراء)","en":"Omeprazole 20 mg (SDI)"},"form":"capsule","strength":"20 mg","pack":{"ar":"14 كبسولة","en":"14 capsules"},"price":2500,"mapping":"verified","molecules":[{"sci":"Omeprazole","strength":"20 mg"}]},
+  {"barcode":"7600000001330","name":{"ar":"موتيليوم 10 ملغ","en":"Motilium 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":4500,"mapping":"verified","molecules":[{"sci":"Domperidone","strength":"10 mg"}]},
+  {"barcode":"7600000001347","name":{"ar":"إيموديوم 2 ملغ","en":"Imodium 2 mg"},"form":"capsule","strength":"2 mg","pack":{"ar":"6 كبسولات","en":"6 capsules"},"price":3000,"mapping":"verified","molecules":[{"sci":"Loperamide","strength":"2 mg"}]},
+  {"barcode":"4000000001355","name":{"ar":"دوفالاك","en":"Duphalac"},"form":"syrup","strength":"3.3 g/5 mL","pack":{"ar":"قنينة 200 مل","en":"200 mL bottle"},"price":6000,"mapping":"verified","molecules":[{"sci":"Lactulose","strength":"3.3 g/5 mL"}]},
+  {"barcode":"5000000001361","name":{"ar":"فنتولين إيفوهيلر","en":"Ventolin Evohaler"},"form":"inhaler","strength":"100 mcg","pack":{"ar":"200 بخة","en":"200 doses"},"price":5000,"mapping":"verified","molecules":[{"sci":"Salbutamol","strength":"100 mcg"}]},
+  {"barcode":"5000000001378","name":{"ar":"سيمبيكورت 160/4.5","en":"Symbicort 160/4.5"},"form":"inhaler","strength":"160/4.5 mcg","pack":{"ar":"120 بخة","en":"120 doses"},"price":30000,"mapping":"verified","molecules":[{"sci":"Budesonide/Formoterol","strength":"160/4.5 mcg"}]},
+  {"barcode":"5000000001385","name":{"ar":"سينغولير 10 ملغ","en":"Singulair 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"28 قرصاً","en":"28 tablets"},"price":20000,"mapping":"auto","molecules":[{"sci":"Montelukast","strength":"10 mg"}]},
+  {"barcode":"7600000001392","name":{"ar":"زيرتك 10 ملغ","en":"Zyrtec 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":4000,"mapping":"verified","molecules":[{"sci":"Cetirizine","strength":"10 mg"}]},
+  {"barcode":"4000000001409","name":{"ar":"كلاريتين 10 ملغ","en":"Claritine 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"10 أقراص","en":"10 tablets"},"price":3500,"mapping":"verified","molecules":[{"sci":"Loratadine","strength":"10 mg"}]},
+  {"barcode":"7600000001415","name":{"ar":"أوتريفين بخاخ أنف 0.1%","en":"Otrivin 0.1% nasal spray"},"form":"spray","strength":"0.1%","pack":{"ar":"10 مل","en":"10 mL"},"price":3000,"mapping":"verified","molecules":[{"sci":"Xylometazoline","strength":"0.1%"}]},
+  {"barcode":"5000000001422","name":{"ar":"أكتيفيد شراب","en":"Actifed syrup"},"form":"syrup","strength":"1.25/30 mg per 5 mL","pack":{"ar":"قنينة 100 مل","en":"100 mL bottle"},"price":4000,"mapping":"verified","molecules":[{"sci":"Triprolidine","strength":"1.25 mg/5 mL","ref":false},{"sci":"Pseudoephedrine","strength":"30 mg/5 mL","ref":false}]},
+  {"barcode":"7600000001439","name":{"ar":"تيغريتول 200 ملغ","en":"Tegretol 200 mg"},"form":"tablet","strength":"200 mg","pack":{"ar":"50 قرصاً","en":"50 tablets"},"price":7000,"mapping":"verified","molecules":[{"sci":"Carbamazepine","strength":"200 mg"}]},
+  {"barcode":"3000000001448","name":{"ar":"ليريكا 75 ملغ","en":"Lyrica 75 mg"},"form":"capsule","strength":"75 mg","pack":{"ar":"14 كبسولة","en":"14 capsules"},"price":12000,"mapping":"verified","molecules":[{"sci":"Pregabalin","strength":"75 mg"}]},
+  {"barcode":"3000000001455","name":{"ar":"زاناكس 0.5 ملغ","en":"Xanax 0.5 mg"},"form":"tablet","strength":"0.5 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":6000,"mapping":"verified","molecules":[{"sci":"Alprazolam","strength":"0.5 mg"}]},
+  {"barcode":"4000000001461","name":{"ar":"يوثيروكس 50 مكغ","en":"Euthyrox 50 mcg"},"form":"tablet","strength":"50 mcg","pack":{"ar":"50 قرصاً","en":"50 tablets"},"price":4000,"mapping":"verified","molecules":[{"sci":"Levothyroxine","strength":"50 mcg"}]},
+  {"barcode":"6210000001479","name":{"ar":"بريدنيزولون 5 ملغ (سامراء)","en":"Prednisolone 5 mg (SDI)"},"form":"tablet","strength":"5 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":1500,"mapping":"auto","molecules":[{"sci":"Prednisolone","strength":"5 mg"}]},
+  {"barcode":"8900000001484","name":{"ar":"حمض الفوليك 5 ملغ","en":"Folic acid 5 mg"},"form":"tablet","strength":"5 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":1000,"mapping":"auto","molecules":[{"sci":"Folic acid","strength":"5 mg"}]},
+  {"barcode":"6250000001499","name":{"ar":"فيتامين د3 50,000 وحدة","en":"Vitamin D3 50,000 IU"},"form":"capsule","strength":"50,000 IU","pack":{"ar":"4 كبسولات","en":"4 capsules"},"price":6000,"mapping":"auto","molecules":[{"sci":"Cholecalciferol","strength":"50,000 IU"}]},
+  {"barcode":"6220000001508","name":{"ar":"أملاح الإماهة الفموية","en":"ORS sachet"},"form":"sachet","strength":"20.5 g","pack":{"ar":"كيس واحد","en":"1 sachet"},"price":500,"mapping":"verified","molecules":[{"sci":"Oral rehydration salts","strength":"20.5 g"}]},
+  {"barcode":"4000000001515","name":{"ar":"نيوروبيون","en":"Neurobion"},"form":"tablet","strength":"","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":5000,"mapping":"unmapped","molecules":[]},
+  {"barcode":"5000000001521","name":{"ar":"سولبادين","en":"Solpadeine"},"form":"tablet","strength":"","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":4000,"mapping":"unmapped","molecules":[]},
+  {"barcode":"5000000001538","name":{"ar":"غافيسكون شراب","en":"Gaviscon liquid"},"form":"syrup","strength":"","pack":{"ar":"قنينة 200 مل","en":"200 mL bottle"},"price":7000,"mapping":"unmapped","molecules":[]},
+  {"barcode":"8690000001545","name":{"ar":"ميبيفرين 135 ملغ","en":"Mebeverine 135 mg"},"form":"tablet","strength":"","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":5000,"mapping":"unmapped","molecules":[]},
+  {"barcode":"8690000001552","name":{"ar":"محرار رقمي","en":"Digital thermometer"},"form":null,"strength":"","pack":{"ar":"قطعة واحدة","en":"1 unit"},"price":6000,"mapping":"nondrug","molecules":[]},
+  {"barcode":"4000000001560","name":{"ar":"حليب أبتاميل 1","en":"Aptamil 1 infant formula"},"form":null,"strength":"","pack":{"ar":"علبة 400 غ","en":"400 g tin"},"price":18000,"mapping":"nondrug","molecules":[]},
+  {"barcode":"8690000001576","name":{"ar":"كمامات طبية","en":"Surgical face masks"},"form":null,"strength":"","pack":{"ar":"علبة 50","en":"Box of 50"},"price":3000,"mapping":"nondrug","molecules":[]},
+  {"barcode":"3000000001585","name":{"ar":"واقي شمس SPF 50","en":"Sunscreen SPF 50"},"form":null,"strength":"","pack":{"ar":"50 مل","en":"50 mL"},"price":15000,"mapping":"nondrug","molecules":[]}
+];
+/* PRODUCTS:END */
 
 const DATA = {
   listings: [
@@ -2157,7 +2325,72 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0008';
+const VERSION = 'App_v0.0009';
+
+/* ==========================================================================
+   SWITCHES (v0.0009)
+
+   The direction decided on 20 Sep 2026 is owner-first: a till and a staff
+   system ship ahead of the marketplace. The marketplace is not deleted. It is
+   SWITCHED OFF — relief shifts, jobs and paid placements together — and every
+   screen that exists only to run it becomes unreachable, not merely unlinked:
+   `screenAllowed()` is asked on every navigation and every render, so a stale
+   link or a typed goto() lands on the home screen instead of a dark one.
+
+   It comes back on per district later (W21). Placements (the student module)
+   are a separate switch and stay ON: they were not part of the decision, and
+   an owner with a trainee is a reason to open the app.
+
+   Read at boot from the page address (#flags=marketplace, or #flags=!placements
+   to turn one off), then from what this browser last chose on the sign-in page.
+   ========================================================================== */
+const FLAGS = { marketplace:false, placements:true };
+const FLAGS_KEY = 'saydali.flags';
+
+function readFlags() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(FLAGS_KEY) || 'null');
+    if (saved) for (const k in FLAGS) if (typeof saved[k] === 'boolean') FLAGS[k] = saved[k];
+  } catch (e) { /* private mode, blocked storage: the defaults stand */ }
+  const m = (location.hash || '').match(/flags=([^&]*)/);
+  if (m) decodeURIComponent(m[1]).split(',').forEach(f => {
+    const off = f.charAt(0) === '!';
+    const k = off ? f.slice(1) : f;
+    if (k in FLAGS) FLAGS[k] = !off;
+  });
+}
+
+function setFlag(k, on) {
+  if (!(k in FLAGS)) return;
+  FLAGS[k] = !!on;
+  try { localStorage.setItem(FLAGS_KEY, JSON.stringify(FLAGS)); } catch (e) { /* not remembered, still applied */ }
+  render();
+}
+
+/* Screens whose only purpose is the relief-shift market. Incidents are here
+   because an incident is filed against a booking, and with the marketplace off
+   there are no bookings to file against. */
+const MARKET_SCREENS = ['shifts', 'handoff', 'earnings', 'applicants', 'incidents'];
+const PLACEMENT_SCREENS = ['placement', 'logbook', 'trainees'];
+
+/* The single gate. Navigation, the sidebar, Profile's links and render() all
+   ask it, so there is one place where "is this reachable?" is decided. */
+function screenAllowed(screen, role) {
+  role = role || S.role;
+  if (PLACEMENT_SCREENS.includes(screen)) return FLAGS.placements;
+  if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
+  /* Browse and a listing are the shift board for a pharmacist and the
+     placement board for a student — same screens, different switches. */
+  if (screen === 'browse' || screen === 'listing') {
+    return role === 'student' ? FLAGS.placements : FLAGS.marketplace;
+  }
+  /* The post form serves both markets for an owner; a manager posts shifts
+     only. */
+  if (screen === 'post') {
+    return FLAGS.marketplace || (role === 'owner' && FLAGS.placements);
+  }
+  return true;
+}
 /* Sheet headings follow the CV's language, not the app's. */
 const SKILL_HEAD = {
   ar: { medical:'المهارات المهنية', nonMedical:'مهارات أخرى' },
@@ -2246,6 +2479,14 @@ const S = {
      month. The fee engine has no clock, so the caller owns the month boundary. */
   plan: 'basic',
   shiftsThisMonth: 0,
+  /* v0.0009 — the product catalogue. A barcode that matches nothing is kept as
+     a mapping request on this device; in production it lands in the CRM's
+     Catalogue queue (the prototype has no shared backend to send it to). */
+  productQuery: '',
+  productFilter: 'all',
+  openProduct: null,
+  scanNote: null,
+  mappingRequests: [],
   /* W7 — null means "all branches". A manager starts on the whole group,
      because the question they open the app with is which branch is short. */
   branch: null,
@@ -2415,8 +2656,10 @@ function screenBrowse() {
   /* W15 — Jobs is a tab of Browse, not a bar item. Browse is already "find
      work"; a permanent job is the same errand on a longer timescale, and the
      bar has no free slot. */
-  const jobsTab = S.browseTab === 'jobs';
-  const tabs = '<div class="segbar">' +
+  const jobsTab = FLAGS.marketplace && S.browseTab === 'jobs';
+  /* Jobs are part of the switched-off marketplace; with one tab left there is
+     nothing to switch between, so the bar goes too. */
+  const tabs = !FLAGS.marketplace ? '' : '<div class="segbar">' +
     ['shifts', 'jobs'].map(k =>
       '<button class="seg' + (S.browseTab === k ? ' on' : '') + '" onclick="setBrowseTab(' + attr(k) + ')">' +
         esc(t(k === 'jobs' ? 'nav.jobs' : (wanted === 'internship' ? 'nav.placements' : 'nav.shiftsTab'))) +
@@ -2672,7 +2915,9 @@ function dispensePharmacy() {
   // belongs to a business, and a pharmacist not standing in one has nowhere to
   // put it.
   if (acct.pharmacy) return { id:acct.pharmacy, name:t('acc.pharmacyRahma') };
-  if (acct.type === 'pharmacist' && S.onShiftToday) return { id:'P2', name:L(DATA.listings[1].pharmacy) };
+  /* The relief shift is part of the marketplace; with it switched off there
+     is no shift and so no pharmacy to record against. */
+  if (acct.type === 'pharmacist' && FLAGS.marketplace && S.onShiftToday) return { id:'P2', name:L(DATA.listings[1].pharmacy) };
   return null;
 }
 /* A student on placement does not dispense, so a student does not record — but
@@ -3315,6 +3560,7 @@ function screenHandoff() {
 /* ---------- Pharmacy dashboard ---------- */
 
 function screenDashboard() {
+  if (!FLAGS.marketplace) return screenDashboardDark();
   const stat = (v, label) => '<div class="stat-card"><span class="stat-num">' + v +
     '</span><span class="stat-label">' + esc(label) + '</span></div>';
 
@@ -3423,7 +3669,11 @@ function setBranch(id) { S.branch = id; goto(id ? 'branch' : 'group'); }
 
 function screenGroup() {
   const board = branchBoard();
-  const short = board.filter(b => b.uncovered > 0 || !b.responsible).length;
+  const market = FLAGS.marketplace;
+  /* With the marketplace off there are no shifts to cover, and the one thing
+     on this board that still matters is the one that was always the worst: a
+     branch with nobody to sign for it cannot legally open. */
+  const short = board.filter(b => (market && b.uncovered > 0) || !b.responsible).length;
 
   const row = b =>
     '<button class="branch-row" onclick="setBranch(' + attr(b.id) + ')">' +
@@ -3434,24 +3684,25 @@ function screenGroup() {
            because the red badge on the same row already says so and saying it
            twice makes the row read as two different problems. */
         '<span class="branch-sub">' +
-          esc([b.responsible ? L(b.responsible) : null, t('g.openPosts', { n:b.openPosts })]
+          esc([b.responsible ? L(b.responsible) : null,
+               market ? t('g.openPosts', { n:b.openPosts }) : L(b.district)]
                 .filter(Boolean).join(' \u00b7 ')) + '</span></span>' +
       '<span class="branch-marks">' +
         (b.responsible ? '' : '<span class="badge badge-alert">' + esc(t('g.noResponsible')) + '</span>') +
-        (b.uncovered
+        (!market ? '' : b.uncovered
           ? '<span class="badge badge-pending">' + esc(t('g.uncovered', { n:b.uncovered })) + '</span>'
           : '<span class="badge badge-verified">' + esc(t('g.covered')) + '</span>') +
-        (b.applicants
+        (market && b.applicants
           ? '<span class="badge badge-stage">' + esc(t('g.waiting', { n:b.applicants })) + '</span>' : '') +
       '</span>' + icon('chevron', 'more-chevron') +
     '</button>';
 
   /* The prompt, not the count \u2014 same rule as W13's home screens. */
   const lead = short
-    ? '<div class="card card-pad urgent-row">' + icon('clock') +
-        '<div><p class="urgent-t">' + esc(t('g.needCover', { n:short, total:board.length })) + '</p>' +
-        '<p class="urgent-s">' + esc(t('g.needCoverSub')) + '</p></div></div>'
-    : '<div class="banner banner-green">' + icon('badge') + '<p>' + esc(t('g.allGood')) + '</p></div>';
+    ? '<div class="card card-pad urgent-row">' + icon(market ? 'clock' : 'alert') +
+        '<div><p class="urgent-t">' + esc(t(market ? 'g.needCover' : 'g.needResponsible', { n:short, total:board.length })) + '</p>' +
+        '<p class="urgent-s">' + esc(t(market ? 'g.needCoverSub' : 'g.noResponsibleSub')) + '</p></div></div>'
+    : '<div class="banner banner-green">' + icon('badge') + '<p>' + esc(t(market ? 'g.allGood' : 'g.allResponsible')) + '</p></div>';
 
   return '<div class="screen-body"><div class="constrain stack">' +
     lead +
@@ -3484,7 +3735,7 @@ function screenBranch() {
       : '<div class="card card-pad urgent-row">' + icon('alert') +
         '<div><p class="urgent-t">' + esc(t('g.noResponsible')) + '</p>' +
         '<p class="urgent-s">' + esc(t('g.noResponsibleSub')) + '</p></div></div>') +
-    (b.applicants
+    (FLAGS.marketplace && b.applicants
       ? '<button class="check-card" onclick="goto(\'applicants\')">' +
           '<span class="check-card-ico">' + icon('users') + '</span>' +
           '<span class="check-card-body">' +
@@ -3493,7 +3744,7 @@ function screenBranch() {
           '<span class="check-card-n figure">' + fmt(b.applicants) + '</span>' +
         '</button>'
       : '') +
-    (b.uncovered
+    (FLAGS.marketplace && b.uncovered
       ? '<div class="card card-pad urgent-row">' + icon('clock') +
         '<div><p class="urgent-t">' + esc(t('g.uncovered', { n:b.uncovered })) + '</p>' +
         '<p class="urgent-s">' + esc(t('g.uncoveredSub')) + '</p></div>' +
@@ -3506,9 +3757,255 @@ function screenBranch() {
     '<div class="card">' +
       kv(t('g.responsible'), b.responsible ? L(b.responsible) : t('g.noResponsible')) +
       kv(t('f.district'), L(b.district)) +
-      kv(t('g.openLabel'), fmt(b.openPosts)) +
+      (FLAGS.marketplace ? kv(t('g.openLabel'), fmt(b.openPosts)) : '') +
     '</div>' +
-    '<button class="btn-primary" onclick="goto(\'post\')">' + esc(t('g.postHere')) + '</button>' +
+    (FLAGS.marketplace
+      ? '<button class="btn-primary" onclick="goto(\'post\')">' + esc(t('g.postHere')) + '</button>'
+      : '') +
+    '</div></div>';
+}
+
+/* ==========================================================================
+   v0.0009 — WHAT THE APP IS WHILE THE MARKETPLACE IS OFF
+
+   Owner-first (backlog Part 0). The owner's home, the pharmacist's home and
+   their tasks, and the product catalogue the till will sell from. Anything
+   not built yet says so, with what it will do — a placeholder that pretends
+   to work is worse than one that is honest about arriving later.
+   ========================================================================== */
+
+function soonCard(ic, titleKey, bodyKey, extra) {
+  return '<div class="card card-pad soon-card">' +
+    '<span class="soon-ico">' + icon(ic) + '</span>' +
+    '<div style="flex:1;min-width:0;">' +
+      '<p class="soon-t">' + esc(t(titleKey)) + '<span class="soon-tag">' + esc(t('soon.tag')) + '</span></p>' +
+      '<p class="soon-s">' + esc(t(bodyKey)) + '</p>' + (extra || '') +
+    '</div></div>';
+}
+
+/* A row card that goes somewhere — used where an indigo check-card would
+   shout, since the Helper's card already does. */
+function linkCard(ic, title, sub, go) {
+  return '<div class="card"><button class="row" style="width:100%;text-align:start;" onclick="' + go + '">' +
+    '<span class="soon-ico">' + icon(ic) + '</span>' +
+    '<span class="row-body"><span class="row-title" style="display:block;">' + esc(title) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(sub) + '</span></span>' +
+    icon('chevron', 'more-chevron') + '</button></div>';
+}
+
+function screenCheckin() {
+  return '<div class="screen-body"><div class="constrain stack">' +
+    soonCard('clock', 'soon.checkinT', 'soon.checkinS') +
+    checkCard() +
+    linkCard('barcode', t('pd.lookup'), t('pd.lookupSub'), "goto('products')") +
+    '</div></div>';
+}
+
+function screenTasks() {
+  return '<div class="screen-body"><div class="constrain stack">' +
+    soonCard('check', 'soon.tasksT', 'soon.tasksS',
+      '<ul class="soon-list"><li>' + esc(t('tk.l1')) + '</li><li>' + esc(t('tk.l2')) + '</li><li>' +
+      esc(t('tk.l3')) + '</li></ul>') +
+    '</div></div>';
+}
+
+/* ---------- The product catalogue (W17) ----------
+   The clinical rules are keyed on molecules; a till scans products. This is the
+   lookup between them, and every product says how far we know what is in it.
+   The one thing it must never do is let a product the Helper cannot check look
+   like one it can. */
+
+const productByCode = code => PRODUCTS.find(p => p.barcode === code) || null;
+
+/* The same arithmetic as src/lib/barcode.ts, which is unit-tested. A barcode
+   whose check digit is wrong is a MISREAD, not a new product — sending it for
+   mapping would have somebody chase a box that does not exist. */
+function ean13Valid(code) {
+  if (!/^\d{13}$/.test(code)) return false;
+  const sum = [...code.slice(0, 12)].reduce((n, c, i) => n + Number(c) * (i % 2 ? 3 : 1), 0);
+  return (10 - sum % 10) % 10 === Number(code[12]);
+}
+
+/* How much of a product the Helper can actually check. Two separate questions
+   are folded together here on purpose, because the pharmacist at the counter
+   only cares about the answer: do we know what is in it (the mapping), and is
+   what is in it in the reference (coverage)? */
+function productCoverage(p) {
+  if (p.mapping === 'nondrug')  return { kind:'nondrug',  outside:[] };
+  if (p.mapping === 'unmapped') return { kind:'unmapped', outside:[] };
+  const outside = p.molecules.filter(m => m.ref === false);
+  const inside  = p.molecules.filter(m => m.ref !== false);
+  return { kind: !outside.length ? 'full' : inside.length ? 'partial' : 'none', outside };
+}
+
+function catalogueSummary() {
+  const by = k => PRODUCTS.filter(p => p.mapping === k).length;
+  const medicines = PRODUCTS.filter(p => p.mapping !== 'nondrug');
+  return {
+    total: PRODUCTS.length, verified: by('verified'), auto: by('auto'),
+    unmapped: by('unmapped'), nondrug: by('nondrug'),
+    uncheckable: medicines.filter(p => productCoverage(p).kind !== 'full').length
+  };
+}
+
+const MAPPING_BADGE = { verified:'badge-verified', auto:'badge-pending', unmapped:'badge-alert', nondrug:'badge-muted' };
+const mappingChip = m => '<span class="badge ' + MAPPING_BADGE[m] + '">' + esc(t('map.' + m)) + '</span>';
+
+function coverageBanner(p) {
+  const c = productCoverage(p);
+  const names = c.outside.map(m => m.sci).join(', ');
+  const tone = c.kind === 'full' ? 'banner-mist' : c.kind === 'nondrug' ? 'banner-mist' : 'banner-amber';
+  return '<div class="banner ' + tone + ' cov-' + c.kind + '">' + icon(c.kind === 'full' ? 'pill' : 'alert') +
+    '<p>' + esc(t('cov.' + c.kind, { names })) + '</p></div>';
+}
+
+function setProductQuery(v) {
+  S.productQuery = v;
+  if (!v) S.scanNote = null;
+  render();
+  const el = document.getElementById('prod-q');
+  if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+function setProductFilter(f) { S.productFilter = f; render(); }
+function openProduct(code) { S.openProduct = code; S.screen = 'product'; S.modal = null; render(); scrollTop(); }
+
+/* Enter in the box is what a wedge scanner sends after the digits, so a scan
+   and a typed code arrive the same way. Anything with letters in it is a name
+   search and is left to the filter. */
+function productKey(ev) {
+  if (ev.key !== 'Enter') return;
+  ev.preventDefault();
+  scanProduct(ev.target.value);
+}
+
+function scanProduct(raw) {
+  const code = String(raw || '').replace(/[\s-]/g, '');
+  if (!/^\d+$/.test(code)) return;
+  if (!ean13Valid(code)) { S.scanNote = { kind:'misread', code }; render(); return; }
+  if (productByCode(code)) { S.scanNote = null; S.productQuery = ''; openProduct(code); return; }
+  const known = S.mappingRequests.find(r => r.barcode === code);
+  if (known) known.times++;
+  else S.mappingRequests.push({ barcode:code, times:1, first:TODAY_ISO });
+  S.scanNote = { kind:'unknown', code };
+  S.productQuery = '';
+  render();
+}
+
+function screenProducts() {
+  const q = drugNorm(S.productQuery);
+  const sum = catalogueSummary();
+  const list = PRODUCTS
+    .filter(p => S.productFilter === 'all' || p.mapping === S.productFilter)
+    .filter(p => !q || drugNorm([p.name.en, p.name.ar, p.barcode].concat(p.molecules.map(m => m.sci)).join(' ')).includes(q))
+    .sort((a, b) => L(a.name).localeCompare(L(b.name), lang === 'ar' ? 'ar' : 'en'));
+
+  const note = !S.scanNote ? '' :
+    '<div class="banner ' + (S.scanNote.kind === 'unknown' ? 'banner-amber' : 'banner-indigo') + ' scan-note">' +
+      icon(S.scanNote.kind === 'unknown' ? 'barcode' : 'alert') +
+      '<p>' + esc(t('pd.' + S.scanNote.kind, { code:S.scanNote.code })) + '</p></div>';
+
+  const chips = ['all', 'verified', 'auto', 'unmapped', 'nondrug'].map(f =>
+    '<button class="chip' + (S.productFilter === f ? ' active' : '') + '" onclick="setProductFilter(' + attr(f) + ')">' +
+      esc(f === 'all' ? t('pd.all') : t('map.' + f)) + ' <span class="figure">' + fmt(f === 'all' ? sum.total : sum[f]) + '</span>' +
+    '</button>').join('');
+
+  const row = p =>
+    '<button class="row prod-row" onclick="openProduct(' + attr(p.barcode) + ')">' +
+      '<span class="row-body">' +
+        '<span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(L(p.pack)) + ' · ' +
+          '<span class="figure">' + esc(iqd(p.price)) + '</span></span>' +
+      '</span>' +
+      '<span class="prod-meta">' + mappingChip(p.mapping) + '</span>' +
+      icon('chevron', 'more-chevron') +
+    '</button>';
+
+  const requests = S.mappingRequests.length
+    ? '<p class="section-eyebrow">' + esc(t('pd.requests')) + '</p>' +
+      '<div class="card">' + S.mappingRequests.map(r =>
+        '<div class="row"><span class="row-body"><span class="row-title code" dir="ltr" style="display:block;">' +
+          esc(r.barcode) + '</span><span class="row-sub" style="display:block;">' +
+          esc(t('pd.times', { n:r.times })) + '</span></span>' + mappingChip('unmapped') + '</div>').join('') +
+      '</div><p class="inline-note">' + esc(t('pd.requestsNote')) + '</p>'
+    : '';
+
+  return '<div class="screen-body">' +
+    '<div class="constrain stack">' +
+      '<div class="searchbox">' + icon('barcode') +
+        '<input id="prod-q" type="search" autocomplete="off" value="' + esc(S.productQuery) + '" ' +
+          'placeholder="' + esc(t('pd.search')) + '" oninput="setProductQuery(this.value)" onkeydown="productKey(event)">' +
+        (S.productQuery ? '<button class="searchbox-x" onclick="setProductQuery(\'\')" aria-label="' +
+          esc(t('common.clear')) + '">&times;</button>' : '') +
+      '</div>' +
+      '<p class="inline-note">' + esc(t('pd.scanHint')) + '</p>' +
+      note +
+    '</div>' +
+    '<div class="chip-row">' + chips + '</div>' +
+    '<div class="constrain stack">' +
+      '<p class="section-eyebrow">' + esc(t('pd.count', { n:list.length })) + '</p>' +
+      (list.length
+        ? '<div class="card">' + list.map(row).join('') + '</div>'
+        : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+          esc(t('pd.none')) + '</div>') +
+      requests +
+      '<p class="inline-note">' + esc(t('pd.catalogueNote')) + '</p>' +
+    '</div></div>';
+}
+
+function screenProduct() {
+  const p = productByCode(S.openProduct);
+  if (!p) return screenProducts();
+
+  const kv = (label, value, cls) =>
+    '<div class="row"><span class="row-body">' +
+      '<span class="row-sub" style="display:block;">' + esc(label) + '</span>' +
+      '<span class="row-title' + (cls ? ' ' + cls : '') + '" style="display:block;"' + (cls ? ' dir="ltr"' : '') + '>' +
+        esc(value) + '</span></span></div>';
+
+  const inside = p.molecules.map(m => {
+    const d = m.ref === false ? null : drugBySci(m.sci);
+    return d
+      ? '<button class="row" style="width:100%;text-align:start;" onclick="openDrug(' + attr(d.sci) + ')">' +
+          '<span class="row-body"><span class="row-title" style="display:block;">' + esc(drugName(d)) + '</span>' +
+          '<span class="row-sub" style="display:block;" dir="ltr">' + esc(m.strength) + '</span></span>' +
+          icon('chevron', 'more-chevron') + '</button>'
+      : '<div class="row"><span class="row-body"><span class="row-title" style="display:block;">' + esc(m.sci) + '</span>' +
+          '<span class="row-sub" style="display:block;" dir="ltr">' + esc(m.strength) + '</span></span>' +
+          '<span class="badge badge-pending">' + esc(t('pd.outside')) + '</span></div>';
+  }).join('');
+
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' + mappingChip(p.mapping) +
+      '<span class="inline-note" style="margin:0;">' + esc(t('mapl.' + p.mapping)) + '</span></div>' +
+    coverageBanner(p) +
+    (inside ? '<p class="section-eyebrow">' + esc(t('pd.inside')) + '</p><div class="card">' + inside + '</div>' : '') +
+    '<div class="card">' +
+      kv(t('pd.barcode'), p.barcode, 'code') +
+      (p.form ? kv(t('pd.form'), t('df.' + p.form) + (p.strength ? ' · ' + p.strength : '')) : '') +
+      kv(t('pd.pack'), L(p.pack)) +
+      kv(t('pd.price'), iqd(p.price)) +
+    '</div>' +
+    '<button class="btn-secondary" onclick="goto(\'products\')">' + esc(t('pd.back')) + '</button>' +
+    '</div></div>';
+}
+
+/* The owner's home while the marketplace is off. It prompts, as W13 decided:
+   what arrives next, the catalogue the till will sell from and how much of it
+   the Helper can check, the trainee waiting on a decision, and the Helper
+   itself — an owner is a pharmacist too. */
+function screenDashboardDark() {
+  const sum = catalogueSummary();
+  const ready = FLAGS.placements ? Object.keys(S.months).find(m => S.months[m] === 'ready') : null;
+  return '<div class="screen-body"><div class="constrain stack">' +
+    (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
+      esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
+    soonCard('barcode', 'soon.tillT', 'soon.tillS') +
+    linkCard('barcode', t('d.catalogueT', { n:sum.total }), t('d.catalogueS', { n:sum.uncheckable }), "goto('products')") +
+    (FLAGS.placements
+      ? linkCard('cap', ready ? t('d.traineeReady', { n:ready }) : t('d.traineeOn'),
+                 ready ? t('d.traineeReadySub') : t('d.traineeSub'), "goto('trainees')")
+      : '') +
+    checkCard() +
     '</div></div>';
 }
 
@@ -3689,12 +4186,18 @@ function screenPost() {
   const later = calculateFees({ grossAmount: total, pharmacyInTrial:false, pharmacistInTrial:false });
   const crossesMidnight = S.end <= S.start;
 
+  /* With the marketplace off the only thing an owner can post is a placement,
+     so the form opens on it and offers nothing else. */
+  if (!FLAGS.marketplace) S.postType = 'internship';
+
   if (S.postType === 'internship') {
     return '<div class="screen-body"><div class="constrain">' +
-      '<div class="segmented">' +
-        '<button onclick="setPostType(\'shift\')">' + esc(t('post.paidShift')) + '</button>' +
-        '<button class="active" onclick="setPostType(\'internship\')">' + esc(t('post.internship')) + '</button>' +
-      '</div>' +
+      (FLAGS.marketplace
+        ? '<div class="segmented">' +
+            '<button onclick="setPostType(\'shift\')">' + esc(t('post.paidShift')) + '</button>' +
+            '<button class="active" onclick="setPostType(\'internship\')">' + esc(t('post.internship')) + '</button>' +
+          '</div>'
+        : '') +
       '<div class="field-row">' +
         '<div class="field"><label>' + esc(t('post.startDate')) + '</label><input type="date"></div>' +
         '<div class="field"><label>' + esc(t('post.endDate')) + '</label><input type="date"></div>' +
@@ -4493,6 +4996,14 @@ const SCREENS = {
                    body:screenDrug },
 
   dashboard:     { eyebrow:()=>greeting(), title:()=>currentName(), body:screenDashboard },
+  /* v0.0009 — the pharmacist's home and tasks while the marketplace is off,
+     and the product catalogue under the coming till. */
+  checkin:       { eyebrow:()=>greeting(), title:()=>currentName(), body:screenCheckin },
+  tasks:         { eyebrow:()=>currentName(), title:()=>t('nav.tasks'), body:screenTasks },
+  products:      { eyebrow:()=>currentName(), title:()=>t('nav.products'), body:screenProducts },
+  product:       { eyebrow:()=>t('nav.products'),
+                   title:()=>{ const p = productByCode(S.openProduct); return p ? L(p.name) : t('nav.products'); },
+                   body:screenProduct },
   /* W7 — the manager's home is the group, and a branch is a screen inside
      it. The eyebrow carries the group name so it is never ambiguous which
      set of branches is on screen. */
@@ -4574,16 +5085,36 @@ const NAV_OWNER_BOTH =
   [['dashboard','home','nav.dashboard'],['post','plus','nav.post'],['applicants','users','nav.applicants'],
    ['more','grid','nav.more'],['profile','user','nav.profile']];
 
+/* v0.0009 — the bars while the marketplace is switched off (Part 0 of the
+   backlog). A pharmacist's day is check-in, tasks, the Helper and their CV;
+   the first two arrive with System 2 and say so honestly until then. The
+   owner and the manager gain Products — the catalogue under the coming till. */
+const NAV_DARK = {
+  pharmacist: [['checkin','clock','nav.checkin'],['tasks','check','nav.tasks'],['drugs','pill','nav.drugs'],
+               ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
+  owner:      [['dashboard','home','nav.dashboard'],['products','barcode','nav.products'],['trainees','cap','nav.trainees'],
+               ['drugs','pill','nav.drugs'],['profile','user','nav.profile']],
+  manager:    [['group','grid','nav.group'],['products','barcode','nav.products'],['billing','wallet','nav.billing'],
+               ['drugs','pill','nav.drugs'],['profile','user','nav.profile']]
+};
+
 function navFor(role) {
-  if (role !== 'owner') return NAV[role] || NAV.pharmacist;
-  return S.takesShifts ? NAV_OWNER_BOTH : NAV_OWNER_PHARMACY_ONLY;
+  let nav;
+  if (!FLAGS.marketplace && NAV_DARK[role]) nav = NAV_DARK[role];
+  else if (role !== 'owner') nav = NAV[role] || NAV.pharmacist;
+  else nav = S.takesShifts ? NAV_OWNER_BOTH : NAV_OWNER_PHARMACY_ONLY;
+  return nav.filter(x => x[0] === 'more' || screenAllowed(x[0], role));
 }
+
+/* The screen a role lands on. */
+const homeScreen = () => (navFor(S.role)[0] || ['profile'])[0];
 
 /* Which roles get a grouped sidebar rather than a flat list. */
 function sidebarGroups() {
-  if (S.role === 'owner')   return ownerGroups();
-  if (S.role === 'manager') return managerGroups();
-  return null;
+  const g = S.role === 'owner' ? ownerGroups() : S.role === 'manager' ? managerGroups() : null;
+  if (!g) return null;
+  return g.map(x => ({ key:x.key, items:x.items.filter(i => screenAllowed(i[0])) }))
+          .filter(x => x.items.length);
 }
 
 /* The owner's sidebar, and what "More" lists. The pharmacist group appears only
@@ -4595,7 +5126,8 @@ function sidebarGroups() {
    flat list makes both harder to scan. */
 function managerGroups() {
   return [
-    { key:'grp.group', items:[['group','grid','nav.group'],['post','plus','nav.post'],
+    { key:'grp.group', items:[['group','grid','nav.group'],['products','barcode','nav.products'],
+                              ['post','plus','nav.post'],
                               ['applicants','users','nav.applicants'],
                               ['consumption','chart','nav.consumption'],
                               ['billing','wallet','nav.billing']] },
@@ -4607,7 +5139,8 @@ function managerGroups() {
 
 function ownerGroups() {
   const groups = [
-    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['post','plus','nav.post'],
+    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['products','barcode','nav.products'],
+                                 ['post','plus','nav.post'],
                                  ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
                                  /* The pharmacy's own consumption. Commercial, not
                                     clinical — which is why it sits here and the
@@ -4615,7 +5148,7 @@ function ownerGroups() {
                                  ['consumption','chart','nav.consumption'],
                                  ['billing','wallet','nav.billing']] }
   ];
-  if (S.takesShifts) {
+  if (S.takesShifts && FLAGS.marketplace) {
     groups.push({ key:'grp.pharmacist', items:[['browse','home','nav.browse'],['shifts','calendar','nav.shifts'],
                                                ['earnings','wallet','nav.earnings']] });
   }
@@ -4656,16 +5189,21 @@ function moreGroups() {
 function profileLinks() {
   if (S.role === 'owner' || S.role === 'manager' || S.role === 'admin') return [];
   if (S.role === 'student') return [['notifications','bell','nav.notifications']];
-  return [['cv','clipboard','nav.cv'], ['notifications','bell','nav.notifications'],
-          ['incidents','alert','nav.incidents']];
+  /* Anything already on the bar is not repeated here, and anything switched
+     off is not offered. */
+  const onBar = navFor(S.role).map(x => x[0]);
+  return [['cv','clipboard','nav.cv'], ['products','barcode','nav.products'],
+          ['notifications','bell','nav.notifications'], ['incidents','alert','nav.incidents']]
+    .filter(x => !onBar.includes(x[0]) && screenAllowed(x[0]))
+    .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
 }
 
 /* Sidebar-only extras for the flat roles. */
 /* Sidebar-only extras for the flat roles. A wide screen has the room the bottom
    bar does not, so nothing hides behind More there. */
 const NAV_EXTRA = {
-  pharmacist: [['cv','clipboard','nav.cv'],['notifications','bell','nav.notifications'],
-               ['incidents','alert','nav.incidents']],
+  pharmacist: [['cv','clipboard','nav.cv'],['products','barcode','nav.products'],
+               ['notifications','bell','nav.notifications'],['incidents','alert','nav.incidents']],
   student:    [['notifications','bell','nav.notifications']],
   admin:      [],
   partner:    [],
@@ -4707,14 +5245,20 @@ function render() {
   // first thing that goes looking for one of those ids finds the wrong one.
   document.getElementById('auth').innerHTML = '';
 
-  const screen = SCREENS[S.screen] || SCREENS.browse;
+  /* The switch is enforced here as well as in goto(): a flag changed while a
+     dark screen is open lands on home rather than rendering what is off. */
+  if (!screenAllowed(S.screen)) S.screen = homeScreen();
+  const screen = SCREENS[S.screen] || SCREENS[homeScreen()];
   const unread = unreadCount();
 
   document.getElementById('app-header').innerHTML = headerHtml(screen.eyebrow(), screen.title());
   document.getElementById('app-body').innerHTML = verificationBanner() + screen.body();
 
   const nav = navFor(S.role);
-  const extra = NAV_EXTRA[S.role] || [];
+  const onBar = nav.map(x => x[0]);
+  const extra = (NAV_EXTRA[S.role] || []).filter(x => !onBar.includes(x[0]) && screenAllowed(x[0]))
+    /* With the market on, the pharmacist's catalogue link waits for the till. */
+    .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
 
   document.getElementById('bottom-nav').innerHTML = nav.map(([id, ic, key]) =>
     '<button class="nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
@@ -4847,6 +5391,20 @@ function renderAuth() {
         '<div class="accounts-label">' + esc(t('auth.demoAccounts')) + '</div>' +
         accounts +
         '<p class="inline-note" style="margin-top:8px;">' + esc(t('auth.demoHint')) + '</p>' +
+      '</div>' +
+      /* v0.0009 — the build's switches, where somebody demonstrating it can
+         reach them. In production these are set from the CRM, per district. */
+      '<div class="accounts flags">' +
+        '<div class="accounts-label">' + esc(t('sw.title')) + '</div>' +
+        ['marketplace', 'placements'].map(k =>
+          '<div class="flag-row"><span class="flag-body">' +
+            '<span class="flag-t">' + esc(t('sw.' + k)) + '</span>' +
+            '<span class="flag-s">' + esc(t('sw.' + k + 'Sub')) + '</span></span>' +
+            '<button class="switch' + (FLAGS[k] ? ' on' : '') + '" role="switch" aria-checked="' + FLAGS[k] + '" ' +
+              'aria-label="' + esc(t('sw.' + k)) + '" data-flag="' + k + '" ' +
+              'onclick="setFlag(' + attr(k) + ',' + (!FLAGS[k]) + ')"><span class="knob"></span></button>' +
+          '</div>').join('') +
+        '<p class="inline-note" style="margin-top:8px;">' + esc(t('sw.note')) + '</p>' +
       '</div>';
 
   } else if (authScreen === 'roles') {
@@ -5012,7 +5570,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0008.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0009.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -5125,6 +5683,7 @@ function goto(s){
      its own tabs does not go through here, so a pharmacist reading the
      reference is not yanked back mid-scroll. */
   if (s === 'drugs') S.drugTab = 'check';
+  if (!screenAllowed(s)) s = homeScreen();
   S.screen = s; S.modal = null; render(); scrollTop();
 }
 
@@ -5316,6 +5875,7 @@ function toast(msg){
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.modal) closeModal(); });
 
+readFlags();
 render();
 </script>
 </body>

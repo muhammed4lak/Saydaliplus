@@ -14,6 +14,7 @@ import { chromium } from 'playwright';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import DRUG_DATA, { DUPLICATE_RULES } from '../data/drugs.mjs';
+import PRODUCT_DATA from '../data/products.mjs';
 import { dirname, join } from 'node:path';
 
 
@@ -32,7 +33,13 @@ function newestBuild(dir, prefix) {
 const here = dirname(fileURLToPath(import.meta.url));
 const build = newestBuild(here, 'saydali-plus_v');
 const file = join(here, build);
-const url = 'file://' + file;
+/* Since v0.0009 the marketplace is switched OFF by default (backlog Part 0).
+   Everything below that exercises it — which is most of this file — runs with
+   it switched back on, because "dark" must mean "unreachable", not "broken":
+   the day W21 turns it on, it has to work exactly as it did. The dark build is
+   checked separately, on a page opened without the switch. */
+const url = 'file://' + file + '#flags=marketplace';
+const darkUrl = 'file://' + file;
 console.log('build: ' + build);
 
 // Sandboxes here ship one Chromium at a fixed path; everywhere else Playwright
@@ -1225,6 +1232,213 @@ console.log('\nthings on one screen line up with each other');
   ok('the home card shares its edges with the board below it, at every width and both directions',
      off.length === 0);
   off.forEach(x => console.log('        ' + x));
+}
+
+console.log('\nthe marketplace, switched off (v0.0009)');
+const dk = await (async () => {
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await ctx.newPage();
+  p.on('pageerror', e => errs.push('pageerror (dark): ' + e.message));
+  p.on('console', m => {
+    if (m.type() === 'error' && !/ERR_(CONNECTION|NAME|INTERNET|CERT)/.test(m.text())) errs.push('console (dark): ' + m.text());
+  });
+  await p.goto(darkUrl);
+  await p.waitForTimeout(400);
+  return p;
+})();
+const parses = p => p.evaluate(() => [...document.querySelectorAll('[onclick]')]
+  .map(el => el.getAttribute('onclick'))
+  .filter(h => { try { new Function(h); return false; } catch (e) { return true; } }));
+
+ok('it is off by default — nobody has to remember to switch it off',
+   await dk.evaluate(() => FLAGS.marketplace === false && FLAGS.placements === true));
+ok('and the sign-in page shows the switches, saying what each one holds',
+   await dk.locator('.flags .switch').count() === 2
+   && await dk.locator('.flags .switch[data-flag="marketplace"]').getAttribute('aria-checked') === 'false');
+
+await signIn(dk, 'ahmed@example.com');
+await dk.evaluate(() => setLang('en'));
+await dk.waitForTimeout(200);
+ok('a pharmacist’s bar is check-in, tasks, the Helper, the CV and their profile',
+   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,tasks,drugs,cv,profile'));
+ok('and they land on check-in', await dk.evaluate(() => S.screen === 'checkin'));
+ok('every marketplace screen is unreachable, not merely unlinked',
+   await dk.evaluate(() => ['browse', 'listing', 'shifts', 'handoff', 'earnings', 'applicants', 'incidents']
+     .every(x => { goto(x); return S.screen !== x; })));
+ok('including by a render that finds itself on one',
+   await dk.evaluate(() => { S.screen = 'earnings'; render(); return S.screen === 'checkin'; }));
+{
+  const found = [];
+  for (const sc of await dk.evaluate(() => navFor(S.role).map(x => x[0]).concat(['products', 'notifications']))) {
+    await go(dk, sc);
+    const n = await dk.evaluate(() => document.querySelectorAll('.listing-card, .job-row, .banner-slot, .next-shift').length);
+    if (n) found.push(sc);
+  }
+  ok(`no shift, job or paid placement appears anywhere a pharmacist can go${found.length ? ' (found on ' + found.join(', ') + ')' : ''}`,
+     found.length === 0);
+}
+await go(dk, 'checkin');
+ok('check-in says it is coming rather than pretending to work',
+   await dk.locator('.soon-tag').count() === 1 && /attendance/i.test(await dk.locator('#app-body').innerText()));
+ok('the Helper is still one tap from the pharmacist’s home', await dk.locator('.check-card').count() === 1);
+await go(dk, 'tasks');
+ok('so do tasks, with what they will do', await dk.locator('.soon-tag').count() === 1
+   && await dk.locator('.soon-list li').count() === 3);
+ok('the relief shift a pharmacist recorded dispensing against is gone with the market',
+   await dk.evaluate(() => dispensePharmacy() === null));
+
+await signOut(dk);
+await signIn(dk, 'rahma@example.com');
+await dk.evaluate(() => setLang('en'));
+await dk.waitForTimeout(200);
+ok('an owner’s bar is their home, products, trainees, the Helper and their profile',
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,products,trainees,drugs,profile'));
+{
+  const txt = await dk.locator('#app-body').innerText();
+  ok('their home stops prompting about applicants and unfilled shifts',
+     !/waiting on you|unfilled/i.test(txt) && await dk.locator('.repeat-chip').count() === 0);
+  ok('and says what arrives next instead', /point of sale/i.test(txt) && await dk.locator('.soon-tag').count() === 1);
+  ok('it counts the catalogue, and how much of it the Helper cannot fully check',
+     await dk.evaluate(t => { const s = catalogueSummary(); return t.includes(s.total + ' products') && t.includes(s.uncheckable + ' of them'); }, txt));
+  ok('and still leads to the trainee waiting on a decision', /Zainab/.test(txt));
+}
+ok('nothing in the sidebar leads to the market',
+   await dk.evaluate(() => ![...document.querySelectorAll('#side-nav [onclick]')]
+     .some(el => /'(browse|shifts|earnings|applicants|incidents)'/.test(el.getAttribute('onclick')))));
+await go(dk, 'post');
+ok('the post form offers a placement and nothing else',
+   await dk.evaluate(() => S.postType === 'internship') && await dk.locator('.segmented').count() === 0);
+
+await signOut(dk);
+await signIn(dk, 'layla@rahmagroup.example');
+await dk.evaluate(() => setLang('en'));
+await dk.waitForTimeout(200);
+ok('a manager’s board leads with the one thing still true without the market: a branch nobody can sign for',
+   /no responsible pharmacist/i.test(await dk.locator('#app-body').innerText())
+   && await dk.locator('.branch-row .badge-pending, .branch-row .badge-stage').count() === 0);
+await dk.evaluate(() => setBranch('P9'));
+await dk.waitForTimeout(200);
+ok('and a branch offers no shift to post', await dk.locator('.btn-primary').count() === 0);
+
+await signOut(dk);
+await signIn(dk, 'zainab@uobaghdad.edu.iq');
+await dk.evaluate(() => setLang('en'));
+await dk.waitForTimeout(200);
+ok('students keep their placement board — placements are a separate switch, and on',
+   await dk.evaluate(() => navFor('student')[0][0] === 'browse'));
+ok('but the jobs tab went with the market', await dk.locator('.segbar').count() === 0);
+
+ok('switching the market on brings every screen back, and switching it off takes them away again',
+   await dk.evaluate(() => {
+     signOut(); signInAs('ahmed@example.com');
+     setFlag('marketplace', true);
+     const on = navFor('pharmacist')[0][0] === 'browse';
+     goto('earnings'); const reached = S.screen === 'earnings';
+     setFlag('marketplace', false);
+     return on && reached && S.screen === 'checkin';
+   }));
+ok('and this browser remembers the choice',
+   await dk.evaluate(() => { try { return JSON.parse(localStorage.getItem(FLAGS_KEY)).marketplace === false; } catch (e) { return false; } }));
+ok('placements have their own switch',
+   await dk.evaluate(() => {
+     setFlag('placements', false);
+     const stu = navFor('student').map(x => x[0]).join();
+     const own = navFor('owner').map(x => x[0]);
+     setFlag('placements', true);
+     return stu === 'drugs,profile' && !own.includes('trainees');
+   }));
+
+console.log('\nthe product catalogue (v0.0009)');
+await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('products'); });
+await dk.waitForTimeout(200);
+ok('the catalogue lists every product', await dk.locator('.prod-row').count() === PRODUCT_DATA.length);
+ok('every product either maps to its ingredients or says it does not',
+   await dk.evaluate(() => PRODUCTS.every(p => {
+     openProduct(p.barcode);
+     const body = document.getElementById('app-body');
+     return !!body.querySelector('[class*="cov-"]') && !!body.querySelector('.badge')
+       && (p.molecules.length > 0) === (p.mapping === 'verified' || p.mapping === 'auto');
+   })));
+ok('a product with an ingredient outside the reference never reads as fully checkable',
+   await dk.evaluate(() => PRODUCTS.filter(p => p.molecules.some(m => m.ref === false)).every(p => {
+     openProduct(p.barcode);
+     return !document.querySelector('.cov-full') && productCoverage(p).kind !== 'full';
+   })));
+ok('full coverage is said plainly, never in green — the Helper does not hand out ticks',
+   await dk.evaluate(() => { openProduct(PRODUCTS.find(p => productCoverage(p).kind === 'full').barcode);
+     const b = document.querySelector('.cov-full'); return !!b && !b.classList.contains('banner-green'); }));
+ok('an unmapped product can still be sold, and the Helper will say so',
+   await dk.evaluate(() => { openProduct(PRODUCTS.find(p => p.mapping === 'unmapped').barcode);
+     return /can still be sold/.test(document.getElementById('app-body').innerText); }));
+ok('an ingredient in the reference opens its drug record',
+   await dk.evaluate(() => { openProduct(PRODUCTS.find(p => p.name.en === 'Co-Diovan 160/12.5 mg').barcode);
+     document.querySelector('#app-body .card button.row').click(); return S.screen === 'drug' && S.openDrug === 'Valsartan'; }));
+
+await dk.evaluate(() => goto('products'));
+ok('scanning a known barcode opens the product',
+   await dk.evaluate(() => { scanProduct(PRODUCTS[0].barcode); return S.screen === 'product' && S.openProduct === PRODUCTS[0].barcode; }));
+ok('an unknown barcode is sent for mapping, once, however often it is scanned',
+   await dk.evaluate(() => {
+     goto('products'); S.mappingRequests = [];
+     scanProduct('4006381333931'); scanProduct(' 4006381-333931 ');
+     return S.mappingRequests.length === 1 && S.mappingRequests[0].times === 2 && S.scanNote.kind === 'unknown';
+   }));
+ok('and the screen says it can still be sold',
+   /can still sell it/.test(await dk.locator('.scan-note').innerText()));
+ok('a misread is refused, and nothing is sent for mapping',
+   await dk.evaluate(() => { scanProduct('4006381333932'); scanProduct('12345');
+     return S.mappingRequests.length === 1 && S.scanNote.kind === 'misread'; }));
+ok('a wedge scanner works: digits, then Enter, in the search box',
+   await dk.evaluate(async () => {
+     const el = document.getElementById('prod-q');
+     el.value = PRODUCTS[5].barcode;
+     el.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true }));
+     return S.screen === 'product' && S.openProduct === PRODUCTS[5].barcode;
+   }));
+await dk.evaluate(() => goto('products'));
+ok('a name search works in Arabic',
+   await dk.evaluate(() => { setProductQuery('بنادول'); const n = document.querySelectorAll('.prod-row').length;
+     setProductQuery(''); return n === PRODUCTS.filter(p => p.name.ar.includes('بنادول')).length && n > 0; }));
+ok('the filters count what they hold',
+   await dk.evaluate(() => { setProductFilter('unmapped'); const n = document.querySelectorAll('.prod-row').length;
+     setProductFilter('all'); return n === catalogueSummary().unmapped; }));
+
+{
+  const broken = [];
+  for (const [mail, screens] of [
+    ['ahmed@example.com', ['checkin', 'tasks', 'drugs', 'cv', 'products', 'profile']],
+    ['rahma@example.com', ['dashboard', 'products', 'trainees', 'post', 'billing', 'profile']],
+    ['layla@rahmagroup.example', ['group', 'branch', 'products', 'billing', 'profile']]
+  ]) {
+    await dk.evaluate(m => { signOut(); signInAs(m); }, mail);
+    for (const sc of screens) {
+      await go(dk, sc);
+      (await parses(dk)).forEach(h => broken.push(`${mail} / ${sc}: ${h.slice(0, 60)}`));
+    }
+  }
+  await dk.evaluate(() => openProduct(PRODUCTS[1].barcode));
+  (await parses(dk)).forEach(h => broken.push('product: ' + h.slice(0, 60)));
+  ok('no broken inline handler on any screen of the switched-off build', broken.length === 0);
+  broken.slice(0, 6).forEach(x => console.log('        ' + x));
+}
+await dk.setViewportSize({ width: 320, height: 700 });
+{
+  const wide = [];
+  for (const [mail, screens] of [['ahmed@example.com', ['checkin', 'tasks', 'products']],
+                                 ['rahma@example.com', ['dashboard', 'products']]]) {
+    await dk.evaluate(m => { signOut(); signInAs(m); }, mail);
+    for (const dir of ['ar', 'en']) {
+      await dk.evaluate(x => setLang(x), dir);
+      for (const sc of screens) {
+        await go(dk, sc);
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${sc} (${dir})`);
+      }
+      await dk.evaluate(() => openProduct(PRODUCTS[2].barcode));
+      if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`product (${dir})`);
+    }
+  }
+  ok(`the new screens do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`,
+     wide.length === 0);
 }
 
 console.log('\nlayout');

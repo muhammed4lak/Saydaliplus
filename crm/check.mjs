@@ -14,6 +14,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 /* The reference is read from its source rather than a number typed here, so
    adding a drug never means editing a test to match. */
+import PRODUCT_DATA from '../data/products.mjs';
 import DRUG_DATA, { DUPLICATE_RULES } from '../data/drugs.mjs';
 import { dirname, join } from 'node:path';
 
@@ -57,7 +58,7 @@ async function open(w = 1520, h = 950) {
 }
 const tab = async (p, k) => { await p.evaluate(x => goTab(x), k); await p.waitForTimeout(220); };
 const MODS = ['orders', 'users', 'pharmacies', 'companies', 'listings', 'invoices',
-              'universities', 'syndicate', 'drugs'];
+              'universities', 'syndicate', 'drugs', 'catalogue'];
 const TABS_ALL = [...MODS, 'reports'];
 
 const p = await open();
@@ -74,7 +75,7 @@ ok('the file states the build its name claims',
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
-ok('eleven tabs: home, the nine modules, and reports', await p.locator('.tab').count() === 11);
+ok('twelve tabs: home, the ten modules, and reports', await p.locator('.tab').count() === 12);
 ok('the document is English, left to right', await p.evaluate(() =>
    document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
 ok('there is no language toggle left to press',
@@ -757,6 +758,97 @@ ok('and it is reportable, oldest first',
      return r.ok && r.rows.length > 0
        && r.rows.every((x, i) => i === 0 || r.rows[i - 1].month <= x.month);
    }));
+
+console.log('\nthe product catalogue and its mapping queue (v0.0009)');
+await tab(p, 'catalogue');
+ok('every catalogue product is here, plus the barcodes tills could not match',
+   await p.evaluate(n => DATA.catalogue.filter(x => x.source === 'catalogue').length === n
+     && DATA.catalogue.some(x => x.source === 'scan'), PRODUCT_DATA.length));
+ok('every barcode is well formed and unique',
+   await p.evaluate(() => {
+     const ok13 = c => /^\d{13}$/.test(c) &&
+       (10 - [...c.slice(0, 12)].reduce((n, d, i) => n + Number(d) * (i % 2 ? 3 : 1), 0) % 10) % 10 === Number(c[12]);
+     return DATA.catalogue.every(x => ok13(x.barcode))
+       && new Set(DATA.catalogue.map(x => x.barcode)).size === DATA.catalogue.length;
+   }));
+ok('every product either maps to its ingredients or says it does not',
+   await p.evaluate(() => DATA.catalogue.every(x =>
+     (x.molecules.length > 0) === (x.mapping === 'verified' || x.mapping === 'auto'))));
+ok('the mapping queue is what is not linked, most-scanned first',
+   await p.evaluate(() => {
+     S.view.catalogue = 'queue'; render();
+     const shown = visibleRows('catalogue');
+     S.view.catalogue = 'all'; render();
+     return shown.length > 0 && shown.every(x => x.mapping === 'unmapped')
+       && shown.every((x, i) => !i || shown[i - 1].scannedBy.length >= x.scannedBy.length);
+   }));
+ok('and the report that reads it agrees',
+   await p.evaluate(() => {
+     const r = runReport(reportById('R20'));
+     return r.ok && r.rows.length === DATA.catalogue.filter(x => x.mapping === 'unmapped').length
+       && r.rows[0].scanned_by === Math.max(...DATA.catalogue.filter(x => x.mapping === 'unmapped').map(x => x.scannedBy.length));
+   }));
+ok('an ingredient outside the reference is never counted as checkable',
+   await p.evaluate(() => DATA.catalogue.filter(x => x.molecules.some(m => m.ref === false))
+     .every(x => productCoverage(x).kind !== 'full')));
+
+{
+  const code = await p.evaluate(() => DATA.catalogue.find(x => x.source === 'scan').barcode);
+  await p.evaluate(c => openRecord('catalogue', c), code);
+  await p.waitForTimeout(200);
+  ok('an unmatched scan opens as an unknown product, with who scanned it',
+     /Unknown product/.test(await p.locator('.rec-title').innerText())
+     && await p.locator('.panel', { hasText:'Scanned at' }).locator('.task-row').count() > 0);
+  await p.evaluate(c => openMapProduct(c), code);
+  await p.waitForTimeout(150);
+  await p.locator('.modal .btn.primary').click();
+  await p.waitForTimeout(150);
+  ok('mapping refuses to save with no name and no ingredient',
+     await p.locator('.modal .err').count() >= 2
+     && await p.evaluate(c => findRecord('catalogue', c).mapping === 'unmapped', code));
+  await p.fill('#m-name-en', 'Cold & Flu Night');
+  await p.selectOption('#m-form', 'tablet');
+  await p.fill('#m-mol-0', 'paracetamol');
+  await p.fill('#m-molst-0', '500 mg');
+  await p.fill('#m-mol-1', 'Dextromethorphan');
+  await p.fill('#m-molst-1', '15 mg');
+  await p.fill('#m-mol-2', 'Doxylamine');
+  await p.fill('#m-molst-2', '6.25 mg');
+  await p.locator('.modal .btn.primary').click();
+  await p.waitForTimeout(200);
+  const mapped = await p.evaluate(c => findRecord('catalogue', c), code);
+  ok('an operator’s link is saved as auto-matched — never as verified',
+     mapped.mapping === 'auto' && mapped.mappedBy === 'u1');
+  ok('an ingredient matching the reference links to it, whatever its case',
+     mapped.molecules[0].sci === 'Paracetamol' && mapped.molecules[0].ref === undefined
+     && mapped.molecules[1].sci === 'Dextromethorphan');
+  ok('and one outside it is kept, and marked, rather than dropped',
+     mapped.molecules[2].sci === 'Doxylamine' && mapped.molecules[2].ref === false
+     && await p.evaluate(c => productCoverage(findRecord('catalogue', c)).kind === 'partial', code));
+  ok('the record says so, and says who linked it',
+     await p.locator('.chip', { hasText:'Not in the reference' }).count() === 1
+     && /Awaiting a pharmacist/.test(await p.locator('#work-body').innerText()));
+  ok('and there is no way to mark it verified from here',
+     await p.locator('.rec-head button', { hasText:/verif/i }).count() === 0
+     && await p.evaluate(() => !Object.keys(window).some(k => /^verify(Product|Mapping)/i.test(k)))
+     && /clinical curator/.test(await p.locator('#work-body').innerText()));
+  await p.evaluate(c => openMapProduct(c), await p.evaluate(() => DATA.catalogue.filter(x => x.source === 'scan')[1].barcode));
+  await p.waitForTimeout(150);
+  await p.fill('#m-name-en', 'Hand cream');
+  await p.locator('.modal .btn', { hasText:'Not a medicine' }).click();
+  await p.waitForTimeout(150);
+  ok('a non-medicine can be marked as one, with no ingredients and no form',
+     await p.evaluate(() => { const x = DATA.catalogue.filter(y => y.source === 'scan')[1];
+       return x.mapping === 'nondrug' && x.molecules.length === 0 && x.form === null; }));
+}
+ok('the catalogue is queryable, with coverage written out',
+   await p.evaluate(() => {
+     const rows = sqlTables().products;
+     const r = runReport(reportById('R21'));
+     return rows.length === DATA.catalogue.length && rows.every(x => !!x.coverage)
+       && r.ok && r.rows.reduce((n, x) => n + x.products, 0) === rows.length;
+   }));
+await p.evaluate(() => closeRecord());
 
 console.log('\nchains: a group over branches, billed once (W7)');
 await tab(p, 'pharmacies');

@@ -19,7 +19,8 @@ decision and the version plan; W17–W21, P6–P9 and C6 are new with it.
 
 **Shipped so far**: W1–W5 in v0.0003; W8's code in v0.0004; W12a, W12b, W12d in
 v0.0005; W14 steps 1–3 and 5 in v0.0006; W10 (in part), W12c, W12e (in part),
-W13, W14 step 4 and W15 in v0.0007; **W6d, W7 and W11 in v0.0008**. Nothing is
+W13, W14 step 4 and W15 in v0.0007; W6d, W7 and W11 in v0.0008; **the switch and the
+catalogue layer of W17 in v0.0009**. Nothing is
 deleted when it ships, because what each entry says about *why* is the part worth
 not re-deriving; each opens with a **Built** line saying what landed and what was
 decided along the way.
@@ -136,7 +137,8 @@ spec versions are settled.
 
 System 1 is complete at v0.0013, System 2 at v0.0015.
 
-**v0.0009 — the switch, and the catalogue.**
+**v0.0009 — the switch, and the catalogue.** **Built** (25 Sep 2026) — see
+"v0.0009 as built" below.
 A feature flag per surface, with the marketplace off by default and switchable
 per district later (W21 needs exactly that). The pharmacist's bar becomes
 Check-in · Tasks · Drugs · CV · Profile, with Tasks and Check-in as honest
@@ -147,6 +149,63 @@ unmapped). A **Catalogue** module in the CRM with the mapping queue: an unknown
 barcode scanned anywhere becomes a task there.
 *The check asserts:* the marketplace is unreachable with the flag off and fully
 green with it on; every product either maps to molecules or says it does not.
+
+### v0.0009 as built
+
+- **The switch.** `FLAGS` with `marketplace` off and `placements` on by default;
+  one gate, `screenAllowed()`, asked by navigation, the sidebar, Profile's
+  links, `goto()` and `render()`, so a dark screen is unreachable rather than
+  unlinked. Relief shifts, jobs, paid placements and incidents (which need a
+  booking) are dark. Switchable from the sign-in page, remembered per browser,
+  and from the page address (`#flags=marketplace`). Per-district switching is
+  still W21's.
+- **Dark homes.** Pharmacist: Check-in · Tasks · Drugs · CV · Profile, with
+  check-in and tasks as labelled placeholders. Owner: Home · Products ·
+  Trainees · Drugs · Profile, the home prompting about the coming till, the
+  catalogue and the trainee. Manager: the board leads with branches that have
+  no responsible pharmacist; shift badges and posting are gone.
+- **The catalogue.** `data/products.mjs` (59 fixture products, fictional valid
+  EAN-13s), validated and embedded into both builds; `src/lib/barcode.ts` with
+  unit tests; a Products screen that searches in both scripts, takes a wedge
+  scanner's digits-then-Enter, refuses a misread, and sends an unknown barcode
+  for mapping without blocking the sale. Every product states how much of it
+  the Helper can check, never in green.
+- **The CRM Catalogue module**, with the mapping queue ordered by how many
+  pharmacies scanned a barcode, a mapping dialog that saves **auto-matched and
+  never verified**, and reports R20–R21.
+- **Checks.** The whole marketplace suite now runs with the switch on and
+  still passes; a new block proves the dark build and the catalogue. Three
+  mutations were run to prove the key assertions fail when their rule is
+  broken.
+
+### Before v0.0010 — decisions needed
+
+1. **Whose price does the till sell at?** The catalogue carries a reference
+   price. Either every pharmacy sells at it, or each pharmacy sets its own
+   selling price with the reference as the default. The till writes the price
+   onto the sale line either way; this decides where that price comes from.
+2. **What must the receipt carry?** Pharmacy name and licence number, date,
+   items, total — and anything else required in practice (a tax line, a
+   pharmacist's name for prescription items). Worth one question to an
+   accountant or to how Salim's receipts are laid out.
+3. **Tenders at the till.** Cash only for now, or cash plus ZainCash / Qi Card
+   *recorded* as the way a customer paid (not processed by us)? Recommended:
+   cash plus recorded tenders, because the drawer count in v0.0012 needs to
+   know which takings are not in the drawer.
+4. **Partner accounts while the marketplace is dark.** A partner can still sign
+   in and submit listings nobody will see until step 5. Keep collecting them
+   as drafts, or close partner sign-in until then?
+5. **Confirm placements stay on.** Students and trainees were not part of the
+   meeting's decision, so the switch was left on.
+
+**Also before the production till, not before v0.0010:** during the catalogue
+go/no-go, note which barcode types real packs carry — EAN-13 is all this build
+reads; EAN-8, UPC-A and 2D codes on some imports would each need handling.
+
+**Known and left alone on purpose:** the owner's Billing screen still shows the
+shift-era plans and charges (v0.0016, blocked on price), and a pharmacist's
+Profile still shows the relief-shift record (replaced by attendance in
+v0.0014).
 
 **v0.0010 — the till.**
 Scan (camera, wedge scanner, or typed), cart, quantities, cash with change due,
@@ -1385,8 +1444,9 @@ always reads 3%.
 
 ## W17. System 1 — the till: point of sale, inventory, purchasing, and the Helper in the cart
 
-**Raised:** 20 Sep 2026. **Touches:** everything. **Not built.** Versions
-v0.0009–v0.0013 in Part 0.
+**Raised:** 20 Sep 2026. **Touches:** everything. Versions v0.0009–v0.0013 in
+Part 0. **Catalogue layer built in v0.0009** — products, mapping confidence,
+the unknown-barcode path and the CRM queue; the till itself is next.
 
 One build, not three. A till that decrements stock as it sells *is* the
 inventory system, and a controlled-substance register that falls out of
