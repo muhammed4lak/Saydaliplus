@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0010">
+<meta name="version" content="CRM_v0.0011">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -762,7 +762,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0010';
+const VERSION = 'CRM_v0.0011';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1058,7 +1058,7 @@ Object.assign(STRINGS, {
   'cat.autoNote':'Saved as auto-matched. Marking a link verified is the clinical curator’s step (W19) and arrives with the Rules module — nobody can skip it from here.',
   'cat.markNonDrug':'Not a medicine','cat.saveAuto':'Save as auto-matched',
   'cat.curatorNote':'Verified means a pharmacist checked this link. That step belongs to the clinical curator (W19) and arrives with the Rules module in v0.0013; until then the CRM does not offer it.',
-  'ls.job':'Job','ls.banner':'Banner',
+  'ls.job':'Job','ls.banner':'Banner','ls.announcement':'Announcement','v.announcements':'Announcements',
   'ls.draft':'Awaiting call','ls.in_review':'In review','ls.live':'Live',
   'ls.ended':'Ended','ls.refused':'Refused',
   'ls.note':'A partner fills a short form, which arrives here as a draft. Somebody phones to collect the rest — wording, artwork, slot, price — and only then does it go live. The human check sits between submission and publication, which is what the placement rules assume.',
@@ -1818,6 +1818,13 @@ const DATA = {
      only then does it go live. The human check sits between submission and
      publication, which is what the P1 criteria assume. */
   listings: [
+    /* v0.0011 — the platform's own announcement. It uses a banner slot from day
+       one, while partners are still closed; nobody paid for it and nobody had
+       to be phoned about it, because the team wrote it. */
+    { id:'A1', kind:'announcement', company:null, state:'live',
+      title:'Point of sale is on its way', where:null, from:'2026-09-25', to:'2026-10-31',
+      contact:null, calledOn:null, calledBy:null, writtenBy:'u1', notes:'Shown on every home screen.',
+      surface:'home', price:0 },
     { id:'J1', kind:'job', company:'CO1', state:'live',
       title:'Production pharmacist — Samarra', where:'Samarra', from:'2026-09-08', to:'2026-10-08',
       contact:'07711110001', calledOn:'2026-09-07', calledBy:'u2', notes:'Rate and shift pattern confirmed.',
@@ -2688,6 +2695,7 @@ const MODULES = {
     views:{
       all:          { label:'v.allListings',  fn:() => true },
       awaitingCall: { label:'v.awaitingCall', fn:x => x.state === 'draft' },
+      announcements:{ label:'v.announcements', fn:x => x.kind === 'announcement' },
       jobs:         { label:'v.jobsL',        fn:x => x.kind === 'job' },
       banners:      { label:'v.bannersL',     fn:x => x.kind === 'banner' },
       liveNow:      { label:'v.liveNow',      fn:x => x.state === 'live' }
@@ -2695,10 +2703,12 @@ const MODULES = {
     facets:['listingKind', 'listingState', 'listingSurface'],
     columns:[
       { key:'title',   label:'c.name',       main:true, get:x => x.title || '—' },
-      { key:'kind',    label:'c.listingKind', chip:x => chip(x.kind === 'job' ? 'chip-info' : 'chip-warn',
+      { key:'kind',    label:'c.listingKind', chip:x => chip(
+                                                 x.kind === 'job' ? 'chip-info' : x.kind === 'announcement' ? 'chip-good' : 'chip-warn',
                                                  x.kind === 'job' ? 'users' : 'flag', t('ls.' + x.kind)),
                        sortAs:x => x.kind },
-      { key:'company', label:'c.partner',    get:x => { const c = companyOf(x.company); return c ? L(c.name) : x.company; } },
+      /* An announcement has no partner: the platform wrote it. */
+      { key:'company', label:'c.partner',    get:x => { if (!x.company) return 'Saydali+'; const c = companyOf(x.company); return c ? L(c.name) : x.company; } },
       { key:'state',   label:'c.status',     chip:x => listingStateChip(x.state), sortAs:x => LISTING_STATES.indexOf(x.state) },
       { key:'surface', label:'c.surface',    get:x => x.surface ? t('surf.' + x.surface) : '—' },
       { key:'from',    label:'c.from',       get:x => fmtDate(x.from), sortAs:x => x.from },
@@ -5058,7 +5068,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0010.html';
+const PEER_APP = '../demo/saydali-plus_v0.0011.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
@@ -5255,7 +5265,7 @@ function verifyUser(id) {
   render();
 }
 
-/* ---------- Catalogue mapping (v0.0010) ----------
+/* ---------- Catalogue mapping (v0.0011) ----------
    An operator links a product to its ingredients. The result is AUTO-MATCHED,
    never verified: verification is the clinical curator's step (W19), and the
    CRM offers nobody a way round it. An ingredient that matches a reference

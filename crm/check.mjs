@@ -907,14 +907,21 @@ ok('the list can be filtered to owners of several',
 
 console.log('\nlistings: a partner fills a form, a person finishes it');
 await tab(p, 'listings');
-ok('the module holds both kinds',
-   await p.evaluate(() => ['job', 'banner'].every(k => DATA.listings.some(x => x.kind === k))));
+ok('the module holds all three kinds — a partner’s job or banner, and the platform’s announcement',
+   await p.evaluate(() => ['job', 'banner', 'announcement'].every(k => DATA.listings.some(x => x.kind === k))));
 ok('every listing sits on a state the machine defines',
    await p.evaluate(() => DATA.listings.every(x => LISTING_STATES.includes(x.state))));
 /* The workflow claim: nothing reaches a pharmacist without a human step. */
-ok('nothing is live that nobody phoned about',
-   await p.evaluate(() => DATA.listings.filter(x => x.state === 'live')
+ok('no partner listing is live that nobody phoned about',
+   await p.evaluate(() => DATA.listings.filter(x => x.state === 'live' && x.company)
      .every(x => !!x.calledOn && !!x.calledBy)));
+/* v0.0011 — announcements are the platform's own, from day one. */
+ok('an announcement is the platform’s: no partner, no price, written by a named person on the team',
+   await p.evaluate(() => DATA.listings.filter(x => x.kind === 'announcement')
+     .every(x => !x.company && !x.price && !!x.writtenBy)));
+ok('and it books a permitted surface, never a clinical one',
+   await p.evaluate(() => DATA.listings.filter(x => x.kind === 'announcement')
+     .every(x => ['browse', 'jobs', 'home'].includes(x.surface))));
 ok('and a draft is exactly a listing awaiting that call',
    await p.evaluate(() => DATA.listings.filter(x => x.state === 'draft')
      .every(x => !x.calledOn)));
@@ -942,8 +949,9 @@ ok('two live banners never hold the same surface on overlapping dates',
      }
      return true;
    }));
-ok('every listing belongs to a company on record',
-   await p.evaluate(() => DATA.listings.every(x => DATA.companies.some(c => c.id === x.company))));
+ok('every partner listing belongs to a company on record',
+   await p.evaluate(() => DATA.listings.filter(x => x.kind !== 'announcement')
+     .every(x => DATA.companies.some(c => c.id === x.company))));
 ok('and the whole lot is queryable',
    await p.evaluate(() => {
      const r = runReport(reportById('R18'));

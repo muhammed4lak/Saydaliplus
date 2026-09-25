@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0010">
+<meta name="version" content="App_v0.0011">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -859,6 +859,8 @@
   .ptab.on{ background:var(--indigo); border-color:var(--indigo); color:#fff; }
   .ptab-dot{ width:7px; height:7px; border-radius:50%; background:var(--clay); flex:none; }
   .ptab.on .ptab-dot{ background:#fff; }
+  .ptab-dot.pending{ background:var(--amber); }
+  .ptab-add{ padding:0 13px; font-size:17px; font-weight:500; color:var(--indigo); border-style:dashed; }
   .pharm-head-t{ font-size:15px; font-weight:600; }
   html[dir="rtl"] .pharm-head-t{ font-family:var(--font-ar); }
   .pharm-head-s{ font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
@@ -1057,6 +1059,13 @@ const LISTINGS = [
     where:{ ar:'الموصل', en:'Mosul' },
     body:{ ar:'', en:'' },
     posted:'2026-09-17' },
+  /* v0.0011 — the platform's own announcement, in the same slot a paid
+     placement would use. No sponsor: nobody paid for it. */
+  { id:'A1', kind:'announcement', company:null, state:'live', surface:'home',
+    title:{ ar:'نقطة البيع قادمة', en:'Point of sale is on its way' },
+    body:{ ar:'دليل منتجاتك جاهز الآن — امسح أي علبة لترى ما يستطيع مساعد الوصفات فحصه.',
+           en:'Your product catalogue is ready — scan any box to see what the Dispensing Helper can check.' },
+    from:'2026-09-25', to:'2026-10-31' },
   { id:'B1', kind:'banner', company:'CO1', sponsor:'CO1', state:'live', surface:'browse',
     title:{ ar:'ساماموكس — متوفر الآن', en:'Samamox — now available' },
     body:{ ar:'من سامراء لصناعة الأدوية', en:'From Samarra Drug Industries' },
@@ -1118,16 +1127,21 @@ const clinicalOnly = list => list.filter(x => !sponsorOf(x));
    is enforced by where the function is invoked rather than by a flag somebody
    could flip. */
 function bannerFor(surface) {
-  /* Paid placements belong to the ecosystem step, which is switched off with
-     the marketplace. */
-  if (!FLAGS.marketplace) return '';
   if (BANNER_SURFACES.indexOf(surface) < 0) return '';
-  const b = LISTINGS.find(x => x.kind === 'banner' && x.state === 'live' && x.surface === surface);
+  /* v0.0011 — two kinds share the slot. The platform's own ANNOUNCEMENTS are
+     there from day one. A partner's PAID placement needs partners switched on
+     (the ecosystem step). Either way the slot stays off every clinical surface,
+     because those surfaces never call this. */
+  const b = LISTINGS.find(x => x.state === 'live' && x.surface === surface &&
+    (x.kind === 'announcement' || (x.kind === 'banner' && FLAGS.partners)));
   if (!b) return '';
   countImpression(b.id);
-  return '<div class="banner-slot">' +
-    /* W6d — derived from `sponsor`, not typed. */
-    (disclosure(b) || '<span class="banner-tag">' + esc(t('ad.paid')) + '</span>') +
+  const paid = b.kind === 'banner';
+  return '<div class="banner-slot ' + (paid ? 'paid' : 'announce') + '">' +
+    /* W6d — the paid label is derived from `sponsor`, not typed; an
+       announcement says it is from the platform. */
+    (paid ? (disclosure(b) || '<span class="banner-tag">' + esc(t('ad.paid')) + '</span>')
+          : '<span class="banner-tag">' + esc(t('ad.fromUs')) + '</span>') +
     '<span class="banner-t">' + esc(L(b.title)) + '</span>' +
     '<span class="banner-s">' + esc(L(b.body)) + '</span>' +
   '</div>';
@@ -1175,7 +1189,7 @@ function subscriptionCharge(plan = 'commission', pharmacies = 1) {
    all of their pharmacies for an owner of several. Every billing figure reads this rather than
    PLANS directly, so an owner of several cannot drift from an owner of one. */
 function myPlan() {
-  const c = subscriptionCharge(S.plan, Math.max(1, myPharmacies().length));
+  const c = subscriptionCharge(S.plan, Math.max(1, myVerifiedPharmacies().length));
   /* `plan` is what the TS interface calls the id; the string keys are written
      plan.basic / plan.premium, so it is aliased here rather than the port
      diverging from src/config/fees.ts. */
@@ -1474,6 +1488,24 @@ Object.assign(STRINGS.ar, {
   'g.openPosts':'{n} إعلان مفتوح',
   'g.openLabel':'إعلانات مفتوحة',
   'n.branchUncovered':'{branch} بلا صيدلي مسؤول — لا تفتح قبل تسمية واحد.',
+  /* v0.0011 — adding a pharmacy, partners closed, announcements */
+  'ap.title':'إضافة صيدلية','ap.addAnother':'إضافة صيدلية أخرى','ap.addFirst':'أملك صيدلية — أضفها',
+  'ap.intro':'ما تحتاجه المراجعة: الاسم والرخصة ووثيقتها والمنطقة والصيدلي المسؤول. تظهر الصيدلية في تبويباتك فوراً، مُعلَّمة كقيد المراجعة.',
+  'ap.nameAr':'اسم الصيدلية (عربي)','ap.nameEn':'اسم الصيدلية (إنكليزي)','ap.nameHint':'يكفي أحدهما.',
+  'ap.responsibleHint':'اتركه فارغاً إن لم يُسمَّ أحد بعد — لكن الصيدلية لا تفتح قبل تسميته.',
+  'ap.doc':'صورة الرخصة','ap.docHint':'يطابقها فريقنا مع النقابة. لا يوجد فحص آلي، لأن النقابة لا تملك واحداً.',
+  'ap.submit':'أرسل للمراجعة','ap.after':'المراجعة تستغرق حتى 7 أيام. لا تُحتسب على فاتورتك قبل توثيقها.',
+  'ap.needName':'أدخل اسم الصيدلية بإحدى اللغتين.','ap.needLicence':'رقم الرخصة مطلوب.',
+  'ap.dupLicence':'هذه الرخصة مسجّلة لصيدلية أخرى.','ap.needDistrict':'المنطقة مطلوبة.','ap.needDoc':'أرفق صورة الرخصة.',
+  'ap.added':'أُضيفت الصيدلية — قيد المراجعة.',
+  'ap.pendingT':'قيد المراجعة','ap.pendingS':'نطابق الرخصة مع النقابة، خلال 7 أيام. حتى ذلك يمكنك تجهيزها، لكنها لا تُحتسب على فاتورتك ولن تبيع أو تنشر.',
+  'ap.rejectedT':'لم تُوثَّق — تواصل معنا',
+  'q.rejectedToast':'رُفض الطلب.',
+  'auth.partnersClosed':'حسابات الشركاء تُفتح لاحقاً. سنتواصل معك حين تصبح متاحة.',
+  'ad.fromUs':'من صيدلي+',
+  'sw.partners':'الشركاء','sw.partnersSub':'حسابات الشركات وإعلاناتها ووظائفها — مطفأ حتى الخطوة الخامسة',
+  'roles.pharmacistSubDark':'سجّل حضورك، تابع مهامك، واحتفظ بسيرة ذاتية موثّقة — ومعك مساعد الوصفات على الكاونتر.',
+  'roles.pharmacySubDark':'أدِر صيدليتك: مساعد الوصفات ودليل منتجاتك، وقريباً نقطة البيع وموظفوك.',
   /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
   'nav.checkin':'الحضور','nav.tasks':'المهام','nav.products':'المنتجات',
   'soon.tag':'قريباً',
@@ -1717,6 +1749,24 @@ Object.assign(STRINGS.en, {
   'g.openPosts':'{n} open',
   'g.openLabel':'Open posts',
   'n.branchUncovered':'{branch} has no responsible pharmacist — it cannot open until one is named.',
+  /* v0.0011 — adding a pharmacy, partners closed, announcements */
+  'ap.title':'Add a pharmacy','ap.addAnother':'Add another pharmacy','ap.addFirst':'I own a pharmacy — add it',
+  'ap.intro':'What review needs: the name, the licence and its document, the district and the responsible pharmacist. The pharmacy joins your tabs straight away, marked as under review.',
+  'ap.nameAr':'Pharmacy name (Arabic)','ap.nameEn':'Pharmacy name (English)','ap.nameHint':'Either one is enough.',
+  'ap.responsibleHint':'Leave it empty if nobody is named yet — but the pharmacy cannot open until someone is.',
+  'ap.doc':'Photo of the licence','ap.docHint':'Our team checks it against the Syndicate. There is no automated check, because the Syndicate has none.',
+  'ap.submit':'Send for review','ap.after':'Review takes up to 7 days. It is not on your bill until it is verified.',
+  'ap.needName':'Enter the pharmacy’s name in either language.','ap.needLicence':'The licence number is required.',
+  'ap.dupLicence':'This licence is already registered to another pharmacy.','ap.needDistrict':'The district is required.','ap.needDoc':'Attach a photo of the licence.',
+  'ap.added':'Pharmacy added — under review.',
+  'ap.pendingT':'Under review','ap.pendingS':'We are checking the licence against the Syndicate, within 7 days. Until then you can set it up, but it is not on your bill and it will not sell or post.',
+  'ap.rejectedT':'Not verified — contact us',
+  'q.rejectedToast':'Request refused.',
+  'auth.partnersClosed':'Partner accounts open later. We will be in touch when they do.',
+  'ad.fromUs':'From Saydali+',
+  'sw.partners':'Partners','sw.partnersSub':'Company accounts, their paid banners and job listings — off until step 5',
+  'roles.pharmacistSubDark':'Check in, see your tasks, and keep a verified CV — with the Dispensing Helper at the counter.',
+  'roles.pharmacySubDark':'Run your pharmacy: the Dispensing Helper and your product catalogue, and soon the till and your staff.',
   /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
   'nav.checkin':'Check-in','nav.tasks':'Tasks','nav.products':'Products',
   'soon.tag':'Coming',
@@ -2212,17 +2262,17 @@ const icon = (n, cls) => '<svg class="ico ' + (cls||'') + '"><use href="#i-' + n
    Modelling it as a group over branches, as v0.0008 did, invented a structure
    the market does not have and a user type nobody is. */
 const PHARMACIES = {
-  P1: { id:'P1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, short:{ar:'الرحمة', en:'Al-Rahma'},
+  P1: { id:'P1', verification:'verified', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, short:{ar:'الرحمة', en:'Al-Rahma'},
         licence:'IQ-PHM-000117', district:{ar:'الكرادة', en:'Karrada'},
         address:{ar:'كرادة داخل، قرب ساحة الفردوس', en:'Karrada Dakhil, near Al-Firdaws roundabout'},
         responsible:{ar:'رحمة الجبوري', en:'Rahma Al-Jubouri'}, openPosts:3, applicants:2, uncovered:1 },
-  P7: { id:'P7', name:{ar:'صيدلية الشفاء', en:'Al-Shifa Pharmacy'}, short:{ar:'الشفاء', en:'Al-Shifa'},
+  P7: { id:'P7', verification:'verified', name:{ar:'صيدلية الشفاء', en:'Al-Shifa Pharmacy'}, short:{ar:'الشفاء', en:'Al-Shifa'},
         licence:'IQ-PHM-000633', district:{ar:'الجادرية', en:'Jadriya'},
         responsible:{ar:'ليلى عبد الكريم', en:'Layla Abdulkarim'}, openPosts:1, applicants:0, uncovered:0 },
-  P8: { id:'P8', name:{ar:'صيدلية الحياة', en:'Al-Hayat Pharmacy'}, short:{ar:'الحياة', en:'Al-Hayat'},
+  P8: { id:'P8', verification:'verified', name:{ar:'صيدلية الحياة', en:'Al-Hayat Pharmacy'}, short:{ar:'الحياة', en:'Al-Hayat'},
         licence:'IQ-PHM-000641', district:{ar:'زيونة', en:'Zayouna'},
         responsible:{ar:'سارة القيسي', en:'Sara Al-Qaisi'}, openPosts:2, applicants:1, uncovered:2 },
-  P9: { id:'P9', name:{ar:'صيدلية دار الدواء', en:'Dar Al-Dawa Pharmacy'}, short:{ar:'دار الدواء', en:'Dar Al-Dawa'},
+  P9: { id:'P9', verification:'verified', name:{ar:'صيدلية دار الدواء', en:'Dar Al-Dawa Pharmacy'}, short:{ar:'دار الدواء', en:'Dar Al-Dawa'},
         licence:'IQ-PHM-000658', district:{ar:'المنصور', en:'Mansour'},
         /* A pharmacy between responsible pharmacists is the case an owner of
            several feels most: nobody to sign for the narcotics register, so it
@@ -2280,7 +2330,12 @@ const isOwner = a => !!(a && a.type === 'pharmacist' && ownedIds(a).length);
 const viewRole = a => isOwner(a) ? 'owner' : (a ? a.type : 'pharmacist');
 
 const pharmacyOf   = id => PHARMACIES[id] || null;
-const myPharmacies = () => ownedIds(ACCOUNTS[S.email]).map(pharmacyOf).filter(Boolean);
+/* A pharmacy the platform refused to verify is not one of the owner's tabs;
+   it stays listed on their profile, marked, so they know why. */
+const myPharmacies = () => ownedIds(ACCOUNTS[S.email]).map(pharmacyOf).filter(p => p && p.verification !== 'rejected');
+/* Billed and counted only once verified — nobody pays for a pharmacy still
+   under review. */
+const myVerifiedPharmacies = () => myPharmacies().filter(p => p.verification === 'verified');
 /* The pharmacy on screen: the only one, or the tab chosen. Null means the
    owner of several is looking at all of them. */
 function currentPharmacy() {
@@ -2335,7 +2390,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0010';
+const VERSION = 'App_v0.0011';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -2353,8 +2408,13 @@ const VERSION = 'App_v0.0010';
 
    Read at boot from the page address (#flags=marketplace, or #flags=!placements
    to turn one off), then from what this browser last chose on the sign-in page.
+
+   v0.0011 — PARTNERS are a switch of their own, off: company accounts, their
+   job listings and their paid banners come with the ecosystem step, after the
+   marketplace. Banners themselves are NOT switched off — the platform uses the
+   same slots from day one for its own announcements.
    ========================================================================== */
-const FLAGS = { marketplace:false, placements:true };
+const FLAGS = { marketplace:false, placements:true, partners:false };
 const FLAGS_KEY = 'saydali.flags';
 
 function readFlags() {
@@ -2388,6 +2448,10 @@ const PLACEMENT_SCREENS = ['placement', 'logbook', 'trainees'];
 function screenAllowed(screen, role) {
   role = role || S.role;
   if (PLACEMENT_SCREENS.includes(screen)) return FLAGS.placements;
+  if (screen === 'partner' || screen === 'partnerNew') return FLAGS.partners;
+  /* Adding a pharmacy is how a pharmacist becomes an owner, and how an owner
+     becomes an owner of several. */
+  if (screen === 'addPharmacy') return role === 'owner' || role === 'pharmacist';
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -2501,6 +2565,8 @@ const S = {
      them, which is where they start, because the question they open the app
      with is which pharmacy needs them. */
   pharmacyTab: null,
+  /* v0.0011 — the add-a-pharmacy form, kept while it is being filled in. */
+  addPh: { nameAr:'', nameEn:'', licence:'', district:'', address:'', responsible:'', doc:'', errors:{} },
   impressions: {},
   browseTab: 'shifts',
   partnerForm: { kind:'job' },
@@ -2689,7 +2755,7 @@ function screenBrowse() {
           '<p class="inline-note">' + esc(t('pl.placedNote')) + '</p></div>'
       : '<p class="section-eyebrow">' + list.length + ' ' +
         esc(t(wanted === 'internship' ? 'l.openPlacements' : 'l.openShifts')) + '</p>') +
-    (placed ? '' : '<div class="constrain stack">' + bannerFor('browse') + '</div>') +
+    '<div class="constrain stack">' + bannerFor('home') + (placed ? '' : bannerFor('browse')) + '</div>' +
     (placed ? '' : list.length
       ? '<div class="grid-cards">' + list.map(listingCard).join('') + '</div>'
       : '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
@@ -3654,7 +3720,10 @@ function dashboardMarket(lead) {
      who has never turned shift-taking on was still being shown "my own work",
      a shift at another pharmacy and a reliability score — the exact thing the
      setting exists to hide, on the one screen they cannot avoid. */
+  /* Asked once: every call counts an impression. */
+  const hb = bannerFor('home');
   return '<div class="screen-body">' + (lead || '') + '<div class="constrain">' +
+    (hb ? '<div style="margin-bottom:14px;">' + hb + '</div>' : '') +
     (S.trial ? '<div class="banner banner-green" style="margin-bottom:16px;">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
     needsYou + pharmacyHalf + (S.takesShifts ? pharmacistHalf : '') +
@@ -3692,14 +3761,17 @@ function pharmacyTabs() {
   if (mine.length < 2) return '';
   const cur = currentPharmacy();
   const on = id => (cur ? cur.id : null) === id;
-  const tab = (id, label, flag) =>
+  const tab = (id, label, flag, pending) =>
     '<button class="ptab' + (on(id) ? ' on' : '') + '" role="tab" aria-selected="' + on(id) + '" ' +
       'onclick="setPharmacy(' + (id ? attr(id) : 'null') + ')">' + esc(label) +
       (flag ? '<span class="ptab-dot" title="' + esc(t('g.noResponsible')) + '"></span>' : '') +
+      (pending ? '<span class="ptab-dot pending" title="' + esc(t('ap.pendingT')) + '"></span>' : '') +
     '</button>';
   return '<div class="constrain"><div class="ptabs" role="tablist">' +
     tab(null, t('g.allPharmacies')) +
-    mine.map(p => tab(p.id, L(p.short || p.name), !p.responsible)).join('') +
+    mine.map(p => tab(p.id, L(p.short || p.name), !p.responsible, p.verification === 'pending')).join('') +
+    /* The way to a further pharmacy, at the end of the strip it would join. */
+    '<button class="ptab ptab-add" onclick="goto(\'addPharmacy\')" aria-label="' + esc(t('ap.title')) + '">+</button>' +
   '</div></div>';
 }
 
@@ -3739,6 +3811,7 @@ function screenPharmacies(lead) {
   return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack">' +
     (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
+    bannerFor('home') +
     top +
     '<p class="section-eyebrow">' + esc(t('g.pharmacyCount', { n:board.length })) + '</p>' +
     '<div class="card">' + board.map(row).join('') + '</div>' +
@@ -3752,7 +3825,11 @@ function screenPharmacies(lead) {
 /* The top of one pharmacy's tab: which pharmacy, who answers for it, and —
    before anything else — whether it can open at all. */
 function pharmacyHeader(p) {
-  return '<div class="card card-pad pharm-head">' +
+  return (p.verification === 'pending'
+      ? '<div class="banner banner-amber ap-pending">' + icon('hourglass') + '<p><strong>' + esc(t('ap.pendingT')) + '</strong> ' +
+        esc(t('ap.pendingS')) + '</p></div>'
+      : '') +
+    '<div class="card card-pad pharm-head">' +
       '<div class="pharm-head-t">' + esc(L(p.name)) + '</div>' +
       '<div class="pharm-head-s">' + esc(L(p.district)) + ' · <span class="figure" dir="ltr">' + esc(p.licence) + '</span></div>' +
       '<div class="pharm-head-s">' + esc(t('g.responsible')) + ': ' +
@@ -3762,6 +3839,82 @@ function pharmacyHeader(p) {
       '<div class="card card-pad urgent-row">' + icon('alert') +
         '<div><p class="urgent-t">' + esc(t('g.noResponsible')) + '</p>' +
         '<p class="urgent-s">' + esc(t('g.noResponsibleSub')) + '</p></div></div>');
+}
+
+/* ==========================================================================
+   ADDING A PHARMACY (v0.0011)
+
+   How a pharmacist becomes an owner, and how an owner becomes an owner of
+   several. The owner gives what verification needs — the licence and its
+   document, the name, where it is, and who the responsible pharmacist is — and
+   the pharmacy joins their tabs straight away, marked as under review. A
+   human checks it against the Syndicate (the same admin queue as every other
+   account); until then it is not billed, and from the till onward it cannot
+   sell or post. There is no automated check to design around, because the
+   Syndicate has none.
+   ========================================================================== */
+function setAddPh(k, v) { S.addPh[k] = v; }
+
+function screenAddPharmacy() {
+  const f = S.addPh, e = f.errors || {};
+  const fld = (k, label, input, hint) =>
+    '<div class="field"><label for="ap-' + k + '">' + esc(label) + '</label>' + input +
+      (hint ? '<p class="inline-note" style="margin-top:5px;">' + esc(hint) + '</p>' : '') +
+      (e[k] ? '<p class="auth-error" style="margin:6px 0 0;">' + esc(e[k]) + '</p>' : '') + '</div>';
+  const inp = (k, extra) => '<input id="ap-' + k + '" value="' + esc(f[k]) + '" ' + (extra || '') +
+    ' oninput="setAddPh(' + attr(k) + ', this.value)">';
+  return '<div class="screen-body"><div class="constrain">' +
+    '<p class="inline-note" style="margin-bottom:14px;">' + esc(t('ap.intro')) + '</p>' +
+    fld('nameAr', t('ap.nameAr'), inp('nameAr', 'dir="rtl"')) +
+    fld('nameEn', t('ap.nameEn'), inp('nameEn', 'dir="ltr"'), t('ap.nameHint')) +
+    fld('licence', t('pr.licence'), inp('licence', 'dir="ltr" class="figure"')) +
+    fld('district', t('f.district'), inp('district')) +
+    fld('address', t('pr.address'), inp('address')) +
+    fld('responsible', t('pr.responsible'), inp('responsible'), t('ap.responsibleHint')) +
+    fld('doc', t('ap.doc'), '<input id="ap-doc" type="file" accept="image/*,application/pdf" ' +
+      'onchange="setAddPh(\'doc\', this.files && this.files[0] ? this.files[0].name : \'\')">' +
+      (f.doc ? '<p class="inline-note" style="margin-top:5px;">' + esc(f.doc) + '</p>' : ''), t('ap.docHint')) +
+    '<button class="btn-primary" onclick="submitAddPharmacy()">' + esc(t('ap.submit')) + '</button>' +
+    '<p class="inline-note" style="margin-top:10px;text-align:center;">' + esc(t('ap.after')) + '</p>' +
+    '</div></div>';
+}
+
+function submitAddPharmacy() {
+  const f = S.addPh;
+  const errors = {};
+  const licence = f.licence.trim();
+  if (!f.nameAr.trim() && !f.nameEn.trim()) errors.nameEn = t('ap.needName');
+  if (!licence) errors.licence = t('ap.needLicence');
+  /* A licence belongs to one pharmacy. The same number twice is a typo or a
+     problem, and neither is resolved by accepting it. */
+  else if (Object.values(PHARMACIES).some(p => p.licence.toLowerCase() === licence.toLowerCase()))
+    errors.licence = t('ap.dupLicence');
+  if (!f.district.trim()) errors.district = t('ap.needDistrict');
+  if (!f.doc) errors.doc = t('ap.needDoc');
+  f.errors = errors;
+  if (Object.keys(errors).length) { render(); return; }
+
+  const id = 'PN' + (Object.keys(PHARMACIES).length + 1);
+  const nm = { ar:f.nameAr.trim() || f.nameEn.trim(), en:f.nameEn.trim() || f.nameAr.trim() };
+  PHARMACIES[id] = {
+    id, verification:'pending', name:nm, short:nm, licence,
+    district:{ ar:f.district.trim(), en:f.district.trim() },
+    address:f.address.trim() ? { ar:f.address.trim(), en:f.address.trim() } : null,
+    responsible:f.responsible.trim() ? { ar:f.responsible.trim(), en:f.responsible.trim() } : null,
+    openPosts:0, applicants:0, uncovered:0
+  };
+  const acct = ACCOUNTS[S.email];
+  acct.pharmacies = ownedIds(acct).concat([id]);
+  /* Into the same human queue as every other account. */
+  DATA.reviewQueue.push({ id:'r-' + id, pharmacy:id, name:nm, role:{ en:'Pharmacy', ar:'صيدلية' },
+    reg:licence, district:{ ar:f.district.trim(), en:f.district.trim() }, doc:true });
+  /* A pharmacist who adds their first pharmacy is an owner from here on — the
+     role follows the link, as it always has. */
+  S.role = viewRole(acct);
+  S.addPh = { nameAr:'', nameEn:'', licence:'', district:'', address:'', responsible:'', doc:'', errors:{} };
+  S.pharmacyTab = id;
+  toast(t('ap.added'));
+  goto('dashboard');
 }
 
 /* The owner's home: the overview for an owner of several on the All tab,
@@ -3806,6 +3959,7 @@ function linkCard(ic, title, sub, go) {
 
 function screenCheckin() {
   return '<div class="screen-body"><div class="constrain stack">' +
+    bannerFor('home') +
     soonCard('clock', 'soon.checkinT', 'soon.checkinS') +
     checkCard() +
     linkCard('barcode', t('pd.lookup'), t('pd.lookupSub'), "goto('products')") +
@@ -4015,6 +4169,7 @@ function dashboardDark(lead) {
   return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack">' +
     (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
+    bannerFor('home') +
     soonCard('barcode', 'soon.tillT', 'soon.tillS') +
     linkCard('barcode', t('d.catalogueT', { n:sum.total }), t('d.catalogueS', { n:sum.uncheckable }), "goto('products')") +
     (hasTrainee
@@ -4347,8 +4502,8 @@ function screenQueue() {
     '<a href="#" onclick="return false" class="link-btn" style="display:inline-block;margin-bottom:12px;">' +
       esc(t('q.document')) + '</a>' +
     '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
-      '<button class="btn-ghost" onclick="review(\'' + r.id + '\')">' + esc(t('q.reject')) + '</button>' +
-      '<button class="btn-small green" onclick="review(\'' + r.id + '\')">' + esc(t('q.approve')) + '</button>' +
+      '<button class="btn-ghost" onclick="decide(' + attr(r.id) + ', false)">' + esc(t('q.reject')) + '</button>' +
+      '<button class="btn-small green" onclick="decide(' + attr(r.id) + ', true)">' + esc(t('q.approve')) + '</button>' +
     '</div></div>';
 
   return '<div class="screen-body"><div class="constrain stack">' +
@@ -4892,7 +5047,7 @@ function screenProfileAll() {
   /* An owner who has never taken a shift would otherwise show a row of zeros
      and "no reliability record", which reads as a bad record rather than an
      absent one. Show the block only when there is something in it. */
-  const hasRecord = S.role === 'pharmacist' || (S.role === 'owner' && S.takesShifts);
+  const hasRecord = S.role === 'pharmacist' || (S.role === 'owner' && S.takesShifts && FLAGS.marketplace);
 
   let detail = '';
   if (hasRecord) {
@@ -4912,13 +5067,18 @@ function screenProfileAll() {
       /* One card per pharmacy held. Each has its own licence and its own
          responsible pharmacist, and the profile says so rather than merging. */
       '<p class="section-eyebrow">' + esc(t(myPharmacies().length > 1 ? 'pr.pharmaciesDetails' : 'pr.pharmacyDetails')) + '</p>' +
-      myPharmacies().map(ph =>
+      ownedIds(ACCOUNTS[S.email]).map(pharmacyOf).filter(Boolean).map(ph =>
         '<div class="card card-pad" style="margin-bottom:10px;">' +
+          (ph.verification === 'verified' ? '' :
+            '<span class="badge ' + (ph.verification === 'pending' ? 'badge-pending' : 'badge-alert') + '" style="margin-bottom:8px;">' +
+              esc(t(ph.verification === 'pending' ? 'ap.pendingT' : 'ap.rejectedT')) + '</span>') +
           kv('home', t('f.pharmacyName'), L(ph.name)) +
           kv('badge', t('pr.licence'), ph.licence) +
           kv('user', t('pr.responsible'), ph.responsible ? L(ph.responsible) : t('g.noResponsible')) +
           kv('pin', t(ph.address ? 'pr.address' : 'f.district'), L(ph.address || ph.district)) +
         '</div>').join('') +
+      '<button class="btn-secondary" style="margin-bottom:16px;" onclick="goto(\'addPharmacy\')">' + icon('plus') +
+        esc(t('ap.addAnother')) + '</button>' +
       (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
         esc(t('pr.trialEnds', {n:22})) + '</p></div>' : '');
   } else if (S.role === 'student') {
@@ -4958,7 +5118,9 @@ function screenProfileAll() {
     /* The opt-in itself. An owner is a pharmacist, but most of them will never
        work somebody else's counter, so the half that exists for that is asked
        for rather than assumed. */
-    (S.role === 'owner'
+    /* Only while the marketplace is on: with it off there are no shifts to
+       take, and a switch for them promises something that is not there. */
+    (S.role === 'owner' && FLAGS.marketplace
       ? '<p class="section-eyebrow">' + esc(t('pr.settings')) + '</p>' +
         '<div class="card card-pad">' +
           '<div class="toggle-row">' +
@@ -5027,6 +5189,7 @@ const SCREENS = {
   checkin:       { eyebrow:()=>greeting(), title:()=>currentName(), body:screenCheckin },
   tasks:         { eyebrow:()=>currentName(), title:()=>t('nav.tasks'), body:screenTasks },
   products:      { eyebrow:()=>currentName(), title:()=>t('nav.products'), body:screenProducts },
+  addPharmacy:   { eyebrow:()=>currentName(), title:()=>t('ap.title'), body:screenAddPharmacy },
   product:       { eyebrow:()=>t('nav.products'),
                    title:()=>{ const p = productByCode(S.openProduct); return p ? L(p.name) : t('nav.products'); },
                    body:screenProduct },
@@ -5190,7 +5353,9 @@ function profileLinks() {
      off is not offered. */
   const onBar = navFor(S.role).map(x => x[0]);
   return [['cv','clipboard','nav.cv'], ['products','barcode','nav.products'],
-          ['notifications','bell','nav.notifications'], ['incidents','alert','nav.incidents']]
+          ['notifications','bell','nav.notifications'], ['incidents','alert','nav.incidents'],
+          /* A pharmacist who owns a pharmacy adds it here and becomes an owner. */
+          ['addPharmacy','plus','ap.addFirst']]
     .filter(x => !onBar.includes(x[0]) && screenAllowed(x[0]))
     .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
 }
@@ -5366,7 +5531,8 @@ function renderAuth() {
   let inner = '';
 
   if (authScreen === 'signin') {
-    const accounts = Object.keys(ACCOUNTS).map(mail => {
+    /* Partner accounts are hidden while partners are switched off. */
+    const accounts = Object.keys(ACCOUNTS).filter(mail => FLAGS.partners || !isPartner(ACCOUNTS[mail])).map(mail => {
       const a = ACCOUNTS[mail];
       const tone = a.verified
         ? 'background:var(--palm-tint);color:var(--palm);'
@@ -5396,7 +5562,7 @@ function renderAuth() {
          reach them. In production these are set from the CRM, per district. */
       '<div class="accounts flags">' +
         '<div class="accounts-label">' + esc(t('sw.title')) + '</div>' +
-        ['marketplace', 'placements'].map(k =>
+        ['marketplace', 'placements', 'partners'].map(k =>
           '<div class="flag-row"><span class="flag-body">' +
             '<span class="flag-t">' + esc(t('sw.' + k)) + '</span>' +
             '<span class="flag-s">' + esc(t('sw.' + k + 'Sub')) + '</span></span>' +
@@ -5411,7 +5577,7 @@ function renderAuth() {
     const opt = (role, ic) => '<button class="role-option" onclick="chooseRole(\'' + role + '\')">' +
       '<span class="role-icon">' + icon(ic) + '</span><span>' +
       '<span class="role-title">' + esc(t('roles.' + role)) + '</span>' +
-      '<span class="role-sub">' + esc(t('roles.' + role + 'Sub')) + '</span></span></button>';
+      '<span class="role-sub">' + esc(t(roleSubKey(role))) + '</span></span></button>';
 
     inner =
       '<button class="auth-back" onclick="setAuth(\'signin\')">' + icon('back') + esc(t('common.back')) + '</button>' +
@@ -5570,7 +5736,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0010.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0011.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -5595,6 +5761,11 @@ function useAccount(mail){
   if (p) { p.value = 'password123'; p.focus(); }
 }
 
+/* The sign-up cards describe what an account gets NOW. With the marketplace
+   off, "find relief shifts" is a promise the app cannot keep. */
+const roleSubKey = r => (!FLAGS.marketplace && STRINGS.en['roles.' + r + 'SubDark'])
+  ? 'roles.' + r + 'SubDark' : 'roles.' + r + 'Sub';
+
 function attemptSignIn(){
   const mail = (document.getElementById('email').value || '').trim().toLowerCase();
   const pass = document.getElementById('password').value || '';
@@ -5604,8 +5775,13 @@ function attemptSignIn(){
   signInAs(mail);
 }
 
+/* Company accounts open with the ecosystem step. Until then a partner who
+   signs in is told so plainly, rather than shown screens that lead nowhere. */
+const partnersClosed = a => isPartner(a) && !FLAGS.partners;
+
 function signInAs(mail){
   const a = ACCOUNTS[mail];
+  if (partnersClosed(a)) { authError = 'auth.partnersClosed'; S.email = mail; render(); return; }
   rememberAccount(mail);
   S.email = mail;
   S.role = viewRole(a);
@@ -5711,6 +5887,15 @@ function openListing(id){ S.openListing = id; S.screen = 'listing'; render(); sc
 function applyTo(id){ S.applied[id] = true; toast(S.verified ? t('l.applied') : t('ver.queued')); render(); }
 function accept(id){ S.accepted[id] = true; toast(t('app.acceptedToast')); render(); }
 function review(id){ S.reviewed[id] = true; toast(t('q.verifiedToast')); render(); }
+/* v0.0011 — approve and reject now differ. A pharmacy an owner added is
+   verified or refused here, and nowhere else. */
+function decide(id, approve) {
+  const r = DATA.reviewQueue.find(x => x.id === id);
+  if (r && r.pharmacy && PHARMACIES[r.pharmacy]) PHARMACIES[r.pharmacy].verification = approve ? 'verified' : 'rejected';
+  S.reviewed[id] = true;
+  toast(t(approve ? 'q.verifiedToast' : 'q.rejectedToast'));
+  render();
+}
 
 function toggleHandoff(k){
   if (S.handoffConfirmedByMe) return;

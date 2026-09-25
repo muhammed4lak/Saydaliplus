@@ -35,10 +35,11 @@ const build = newestBuild(here, 'saydali-plus_v');
 const file = join(here, build);
 /* Since v0.0009 the marketplace is switched OFF by default (backlog Part 0).
    Everything below that exercises it — which is most of this file — runs with
-   it switched back on, because "dark" must mean "unreachable", not "broken":
+   it switched back on — partners too, since v0.0011 — because "dark" must mean
+   "unreachable", not "broken":
    the day W21 turns it on, it has to work exactly as it did. The dark build is
    checked separately, on a page opened without the switch. */
-const url = 'file://' + file + '#flags=marketplace';
+const url = 'file://' + file + '#flags=marketplace,partners';
 const darkUrl = 'file://' + file;
 console.log('build: ' + build);
 
@@ -877,7 +878,7 @@ ok('and says these are not relief shifts',
   ]) {
     await d.evaluate(f => eval('(' + f + ')()'), setup.toString());
     await d.waitForTimeout(160);
-    if (await d.locator('.banner-slot').count() > 0) seen.push(screen);
+    if (await d.locator('.banner-slot.paid').count() > 0) seen.push(screen);
   }
   ok(`a paid placement appears only on permitted surfaces (found on: ${seen.join(', ') || 'none'})`,
      seen.length > 0 && !seen.some(x => x.startsWith('drug')));
@@ -887,7 +888,7 @@ ok('and says these are not relief shifts',
 await d.evaluate(() => { setBrowseTab('shifts'); goto('browse'); });
 await d.waitForTimeout(200);
 ok('a placement is labelled as paid, in the reader’s language',
-   /paid placement/i.test(await d.locator('.banner-slot').innerText()));
+   /paid placement/i.test(await d.locator('.banner-slot.paid').innerText()));
 /* A draft banner is real content with a real company behind it. The only thing
    keeping it off the screen is its state, so the check looks for its text on
    the surface it was bought for, not just wherever the page happens to be. */
@@ -1033,7 +1034,7 @@ await signIn(d, 'ahmed@example.com');
 await d.evaluate(() => { setLang('en'); setBrowseTab('shifts'); goto('browse'); });
 await d.waitForTimeout(250);
 ok('a paid placement names who paid for it, from the field rather than the copy',
-   /paid placement \u2014 samarra/i.test(await d.locator('.banner-slot').innerText()));
+   /paid placement \u2014 samarra/i.test(await d.locator('.banner-slot.paid').innerText()));
 ok('and deleting the sentence would not delete the disclosure',
    await d.evaluate(() => {
      const html = disclosure({ sponsor:'CO1' });
@@ -1109,7 +1110,7 @@ ok('every pharmacy keeps its own name, licence and responsible pharmacist',
        && mine.every(p => 'responsible' in p);
    }));
 ok('there is one tab per pharmacy, plus All — and they start on All',
-   await d.locator('.ptab').count() === 4 && await d.evaluate(() => currentPharmacy() === null)
+   await d.locator('.ptab:not(.ptab-add)').count() === 4 && await d.evaluate(() => currentPharmacy() === null)
    && await d.locator('.ptab.on').innerText() === 'All');
 {
   const txt = await d.locator('#app-body').innerText();
@@ -1273,7 +1274,7 @@ const parses = p => p.evaluate(() => [...document.querySelectorAll('[onclick]')]
 ok('it is off by default — nobody has to remember to switch it off',
    await dk.evaluate(() => FLAGS.marketplace === false && FLAGS.placements === true));
 ok('and the sign-in page shows the switches, saying what each one holds',
-   await dk.locator('.flags .switch').count() === 2
+   await dk.locator('.flags .switch').count() === 3
    && await dk.locator('.flags .switch[data-flag="marketplace"]').getAttribute('aria-checked') === 'false');
 
 await signIn(dk, 'ahmed@example.com');
@@ -1291,7 +1292,7 @@ ok('including by a render that finds itself on one',
   const found = [];
   for (const sc of await dk.evaluate(() => navFor(S.role).map(x => x[0]).concat(['products', 'notifications']))) {
     await go(dk, sc);
-    const n = await dk.evaluate(() => document.querySelectorAll('.listing-card, .job-row, .banner-slot, .next-shift').length);
+    const n = await dk.evaluate(() => document.querySelectorAll('.listing-card, .job-row, .banner-slot.paid, .next-shift').length);
     if (n) found.push(sc);
   }
   ok(`no shift, job or paid placement appears anywhere a pharmacist can go${found.length ? ' (found on ' + found.join(', ') + ')' : ''}`,
@@ -1368,6 +1369,117 @@ ok('placements have their own switch',
      setFlag('placements', true);
      return stu === 'drugs,profile' && !own.includes('trainees');
    }));
+
+console.log('\npartners closed, announcements open, nothing about shifts (v0.0011)');
+await dk.evaluate(() => { signOut(); });
+await dk.waitForTimeout(150);
+ok('partners are switched off by default, on their own switch',
+   await dk.evaluate(() => FLAGS.partners === false));
+ok('and a partner account is not offered on the sign-in page',
+   !(await dk.locator('.account-btn').allInnerTexts()).some(x => /sdi\.example/.test(x)));
+ok('a partner who signs in anyway is told plainly, and let in to nothing',
+   await dk.evaluate(() => { signInAs('sales@sdi.example'); return !S.signedIn; })
+   && /Partner accounts open later|حسابات الشركاء/.test(await dk.locator('.auth-error').innerText()));
+ok('with partners off no paid placement shows anywhere, even with the marketplace on',
+   await dk.evaluate(() => {
+     setFlag('marketplace', true); signInAs('ahmed@example.com'); setBrowseTab('shifts'); goto('browse');
+     const paid = document.querySelectorAll('.banner-slot.paid').length;
+     setFlag('marketplace', false); signOut();
+     return paid === 0;
+   }));
+{
+  const homes = [];
+  for (const [mail, sc] of [['ahmed@example.com', 'checkin'], ['rahma@example.com', 'dashboard'],
+                            ['layla@example.com', 'dashboard'], ['zainab@uobaghdad.edu.iq', 'browse']]) {
+    const n = await dk.evaluate(([m, x]) => { signOut(); signInAs(m); setLang('en'); goto(x);
+      return document.querySelectorAll('.banner-slot.announce').length; }, [mail, sc]);
+    if (n !== 1) homes.push(mail);
+  }
+  ok(`the platform’s announcements are there from the start, on every home${homes.length ? ' (missing for ' + homes.join(', ') + ')' : ''}`,
+     homes.length === 0);
+}
+ok('an announcement says it is from the platform, not that someone paid',
+   await dk.evaluate(() => { const b = document.querySelector('.banner-slot.announce');
+     return /saydali\+/i.test(b.innerText) && !/paid/i.test(b.innerText); }));
+ok('and it stays off every clinical surface, like any placement',
+   await dk.evaluate(() => {
+     signOut(); signInAs('ahmed@example.com');
+     const found = [];
+     [() => { goto('drugs'); setDrugTab('check'); }, () => { goto('drugs'); setDrugTab('reference'); },
+      () => { goto('drugs'); openDrug('Warfarin'); }, () => openProduct(PRODUCTS[0].barcode)].forEach((f, i) => {
+       f(); if (document.querySelector('.banner-slot')) found.push(i);
+     });
+     return found.length === 0;
+   }));
+ok('an owner is not offered a switch for taking shifts while there are none to take',
+   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('profile');
+     return !/Take shifts as a pharmacist/.test(document.getElementById('app-body').innerText)
+       && !document.querySelector('[onclick="toggleTakesShifts()"]'); }));
+ok('and the sign-up cards stop promising relief shifts',
+   await dk.evaluate(() => { signOut(); setLang('en'); setAuth('roles');
+     const txt = document.getElementById('auth').innerText; setAuth('signin');
+     return !/relief shifts|Post shifts/i.test(txt) && /Dispensing Helper/.test(txt); }));
+
+console.log('\nadding a pharmacy (v0.0011)');
+await dk.evaluate(() => { signInAs('rahma@example.com'); setLang('en'); goto('profile'); });
+await dk.waitForTimeout(150);
+ok('an owner adds a pharmacy from their profile',
+   await dk.locator('button', { hasText:'Add another pharmacy' }).count() === 1);
+await dk.locator('button', { hasText:'Add another pharmacy' }).click();
+await dk.waitForTimeout(150);
+ok('the form asks for what verification needs', await dk.evaluate(() => S.screen === 'addPharmacy')
+   && await dk.locator('#ap-licence').count() === 1 && await dk.locator('#ap-doc').count() === 1
+   && await dk.locator('#ap-responsible').count() === 1);
+await dk.locator('.btn-primary').click();
+await dk.waitForTimeout(150);
+ok('an empty form is refused, field by field',
+   await dk.locator('.auth-error').count() === 4 && await dk.evaluate(() => myPharmacies().length === 1));
+await dk.fill('#ap-nameEn', 'Al-Noor Pharmacy');
+await dk.fill('#ap-licence', 'IQ-PHM-000117');
+await dk.fill('#ap-district', 'Karrada');
+await dk.evaluate(() => setAddPh('doc', 'licence.jpg'));
+await dk.locator('.btn-primary').click();
+await dk.waitForTimeout(150);
+ok('a licence already registered to another pharmacy is refused',
+   /already registered/.test(await dk.locator('.auth-error').innerText()));
+await dk.fill('#ap-licence', 'IQ-PHM-000999');
+await dk.locator('.btn-primary').click();
+await dk.waitForTimeout(200);
+const added = await dk.evaluate(() => currentPharmacy() && currentPharmacy().id);
+ok('it joins the owner’s pharmacies at once — so an owner of one now has tabs',
+   !!added && await dk.locator('.ptab:not(.ptab-add)').count() === 3);
+ok('marked as under review, on its tab and at the top of its screen',
+   await dk.locator('.ptab-dot.pending').count() === 1 && await dk.locator('.ap-pending').count() === 1);
+ok('and it is not on the bill until it is verified',
+   await dk.evaluate(() => myPlan().pharmacies === 1));
+ok('it goes to the same human review queue as every other account',
+   await dk.evaluate(id => { signOut(); signInAs('admin@saydali.example'); setLang('en');
+     return DATA.reviewQueue.some(r => r.pharmacy === id) && /Al-Noor Pharmacy/.test(document.getElementById('app-body').innerText); }, added));
+ok('approved there, it is verified — and billed',
+   await dk.evaluate(id => { decide('r-' + id, true); signOut(); signInAs('rahma@example.com');
+     return PHARMACIES[id].verification === 'verified' && myPlan().pharmacies === 2; }, added));
+ok('refused there, it leaves the tabs but stays on the profile, marked',
+   await dk.evaluate(id => {
+     PHARMACIES[id].verification = 'pending';
+     signOut(); signInAs('admin@saydali.example'); S.reviewed['r-' + id] = false; decide('r-' + id, false);
+     signOut(); signInAs('rahma@example.com'); setLang('en');
+     const tabs = myPharmacies().some(p => p.id === id);
+     goto('profile'); const listed = /Not verified/.test(document.getElementById('app-body').innerText);
+     return !tabs && listed;
+   }, added));
+ok('a pharmacist who owns a pharmacy adds it the same way, and becomes an owner',
+   await dk.evaluate(() => {
+     signOut(); signInAs('ahmed@example.com');
+     const offered = profileLinks().some(x => x[0] === 'addPharmacy');
+     goto('addPharmacy');
+     setAddPh('nameEn', 'Al-Kawthar Pharmacy'); setAddPh('licence', 'IQ-PHM-000888');
+     setAddPh('district', 'Adhamiya'); setAddPh('doc', 'licence.pdf');
+     submitAddPharmacy();
+     const became = S.role === 'owner' && myPharmacies().length === 1;
+     ACCOUNTS['ahmed@example.com'].pharmacies = []; signOut();
+     return offered && became;
+   }));
+await dk.evaluate(() => { ACCOUNTS['rahma@example.com'].pharmacies = ['P1']; });
 
 console.log('\nthe product catalogue (v0.0009)');
 await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('products'); });
