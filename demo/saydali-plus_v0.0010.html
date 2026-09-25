@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0009">
+<meta name="version" content="App_v0.0010">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -845,6 +845,23 @@
   }
   .branch-scope .ico{ width:17px; height:17px; color:var(--ink-faint); flex:none; }
   .branch-scope-name{ flex:1; min-width:0; font-size:13.5px; font-weight:600; }
+
+  /* v0.0010 — one tab per pharmacy for an owner of several. The strip scrolls
+     inside itself; the page never does. */
+  .ptabs{ display:flex; gap:6px; overflow-x:auto; padding:2px 0 12px; scrollbar-width:none; }
+  .ptabs::-webkit-scrollbar{ display:none; }
+  .ptab{
+    flex:none; display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 14px;
+    border-radius:100px; border:1px solid var(--border); background:var(--card);
+    font-size:13px; font-weight:600; color:var(--ink-soft); cursor:pointer; white-space:nowrap;
+  }
+  html[dir="rtl"] .ptab{ font-family:var(--font-ar); }
+  .ptab.on{ background:var(--indigo); border-color:var(--indigo); color:#fff; }
+  .ptab-dot{ width:7px; height:7px; border-radius:50%; background:var(--clay); flex:none; }
+  .ptab.on .ptab-dot{ background:#fff; }
+  .pharm-head-t{ font-size:15px; font-weight:600; }
+  html[dir="rtl"] .pharm-head-t{ font-family:var(--font-ar); }
+  .pharm-head-s{ font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
   .repeat-chip{
     display:inline-flex; align-items:center; gap:7px; background:var(--card);
     border:1px solid var(--border); border-radius:12px; padding:10px 13px; font-size:13px;
@@ -1131,7 +1148,7 @@ function countImpression(id) {
 
    A plan replaces the PHARMACY's 7%, never the pharmacist's 3%. Each carries a
    shift allowance; beyond it, ordinary commission. Without the allowance,
-   unlimited posting on the cheaper plan is a hole a chain would find in a week.
+   unlimited posting on the cheaper plan is a hole an owner of several would find in a week.
    ========================================================================== */
 const PLANS = {
   commission: { id:'commission', monthlyFeeIQD:0,      includedShifts:0  },
@@ -1139,27 +1156,26 @@ const PLANS = {
   premium:    { id:'premium',    monthlyFeeIQD:19000,  includedShifts:12 }
 };
 
-/* W7 — what a pharmacy or a CHAIN is charged monthly, and what it buys.
+/* W7 — what an owner of one pharmacy or several is charged monthly.
    Priced per branch, because the cost driver is branches; the allowance is
    POOLED across them, because branches are uneven and an allowance stranded at
    a quiet branch is a bill argued about monthly. Costs us nothing — the total
    is identical either way. Ported from src/config/fees.ts; the unit tests there
    are the authority. */
-const billableBranches = n => (isFinite(n) && n > 1) ? Math.floor(n) : 1;
-function subscriptionCharge(plan = 'commission', branches = 1) {
+const billablePharmacies = n => (isFinite(n) && n > 1) ? Math.floor(n) : 1;
+function subscriptionCharge(plan = 'commission', pharmacies = 1) {
   const chosen = PLANS[plan] || PLANS.commission;
-  const n = billableBranches(branches);
-  return { plan:chosen.id, branches:n, perBranchIQD:chosen.monthlyFeeIQD,
+  const n = billablePharmacies(pharmacies);
+  return { plan:chosen.id, pharmacies:n, perPharmacyIQD:chosen.monthlyFeeIQD,
            monthlyFeeIQD:chosen.monthlyFeeIQD * n,
            includedShifts:chosen.includedShifts * n };
 }
 
 /* The plan as it applies to whoever is signed in — one branch for an owner,
-   the whole group for a manager. Every billing figure reads this rather than
-   PLANS directly, so the chain case cannot drift from the independent one. */
+   all of their pharmacies for an owner of several. Every billing figure reads this rather than
+   PLANS directly, so an owner of several cannot drift from an owner of one. */
 function myPlan() {
-  const g = myGroup();
-  const c = subscriptionCharge(S.plan, g ? g.branches.length : 1);
+  const c = subscriptionCharge(S.plan, Math.max(1, myPharmacies().length));
   /* `plan` is what the TS interface calls the id; the string keys are written
      plan.basic / plan.premium, so it is aliased here rather than the port
      diverging from src/config/fees.ts. */
@@ -1168,7 +1184,7 @@ function myPlan() {
 }
 
 function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial,
-                         plan = 'commission', shiftsFilledThisMonth = 0, branches = 1 }) {
+                         plan = 'commission', shiftsFilledThisMonth = 0, pharmacies = 1 }) {
   if (!isFinite(grossAmount) || grossAmount < 0) throw new Error('Invalid gross amount');
 
   const percentage = grossAmount * FEES.TOTAL_COMMISSION_RATE;
@@ -1190,7 +1206,7 @@ function calculateFees({ grossAmount, pharmacyInTrial, pharmacistInTrial,
   const chosen = PLANS[plan] || PLANS.commission;
   const withinAllowance = !pharmacyInTrial
     && chosen.monthlyFeeIQD > 0
-    && shiftsFilledThisMonth < chosen.includedShifts * billableBranches(branches);
+    && shiftsFilledThisMonth < chosen.includedShifts * billablePharmacies(pharmacies);
   const coveredByPlan = withinAllowance ? chosen.id : null;
 
   const pharmacyFee = (pharmacyInTrial || withinAllowance) ? 0 : fullPharmacyFee;
@@ -1443,23 +1459,21 @@ Object.assign(STRINGS.ar, {
   'jobs.note':'وظائف دائمة من شركات ومكاتب علمية — منفصلة تماماً عن مناوبات الإسناد.',
   'ad.paid':'إعلان مدفوع','ad.paidBy':'إعلان مدفوع — {company}',
   /* W7 — chains */
-  'acc.layla':'ليلى عبد الكريم','acc.laylaTag':'مديرة مجموعة',
-  'nav.group':'الفروع','grp.group':'المجموعة',
-  'g.branchCount':'{n} فروع',
-  'g.needCover':'{n} من {total} فروع تحتاج تغطية هذا الأسبوع',
-  'g.needCoverSub':'اضغط فرعاً لرؤية مناوباته ومتقدميه',
-  'g.allGood':'كل الفروع مغطاة هذا الأسبوع',
+  'acc.layla':'ليلى عبد الكريم','acc.laylaTag':'مالكة 3 صيدليات',
+  'g.pharmacyCount':'{n} صيدليات','g.allPharmacies':'الكل',
+  'g.needCover':'صيدليات تحتاج تغطية هذا الأسبوع: {n} من {total}',
+  'g.needCoverSub':'افتح صيدلية لرؤية مناوباتها ومتقدميها',
+  'g.allGood':'كل صيدلياتك مغطاة هذا الأسبوع',
   'g.noResponsible':'بلا صيدلي مسؤول',
-  'g.noResponsibleSub':'الفرع لا يفتح قبل تسمية صيدلي مسؤول له',
+  'g.noResponsibleSub':'لا تفتح الصيدلية قبل تسمية صيدلي مسؤول لها',
   'g.responsible':'الصيدلي المسؤول',
   'g.uncovered':'{n} بلا تغطية',
   'g.covered':'مغطّى',
-  'g.uncoveredSub':'مناوبات هذا الفرع التي لم يقبلها أحد بعد.',
+  'g.uncoveredSub':'مناوبات هذه الصيدلية التي لم يقبلها أحد بعد.',
   'g.waiting':'{n} بانتظارك',
   'g.openPosts':'{n} إعلان مفتوح',
-  'g.allBranches':'كل الفروع',
-  'g.branchDetails':'الفرع','g.openLabel':'إعلانات مفتوحة',
-  'n.branchUncovered':'{branch} بلا صيدلي مسؤول — الفرع لا يفتح قبل تسمية واحد.',
+  'g.openLabel':'إعلانات مفتوحة',
+  'n.branchUncovered':'{branch} بلا صيدلي مسؤول — لا تفتح قبل تسمية واحد.',
   /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
   'nav.checkin':'الحضور','nav.tasks':'المهام','nav.products':'المنتجات',
   'soon.tag':'قريباً',
@@ -1492,16 +1506,16 @@ Object.assign(STRINGS.ar, {
   'pd.requests':'أُرسلت للربط من هذا الجهاز','pd.times':'مُسح {n} مرة',
   'pd.requestsNote':'في النظام الفعلي تصل هذه إلى قائمة الربط في لوحة الإدارة. هذا النموذج لا يملك خادماً يرسلها إليه.',
   'pd.catalogueNote':'المرجع السريري مبني على المواد الفعّالة ويبقى صغيراً؛ الدليل يربط كل علبة بموادها. المنتج غير المربوط يُباع عادياً، والمساعد يقولها صراحة.',
-  'g.needResponsible':'{n} من {total} فروع بلا صيدلي مسؤول','g.allResponsible':'لكل فرع صيدلي مسؤول',
+  'g.needResponsible':'صيدليات بلا صيدلي مسؤول: {n} من {total}','g.allResponsible':'لكل صيدلية من صيدلياتك صيدلي مسؤول',
+  'tr.none':'لا يوجد متدرّبون في صيدلياتك.','tr.postOne':'انشر فرصة تدريب','pr.pharmaciesDetails':'صيدلياتك',
   'sw.title':'مفاتيح النموذج',
   'sw.marketplace':'السوق','sw.marketplaceSub':'المناوبات والوظائف والإعلانات — مطفأ حتى الخطوة الرابعة',
   'sw.placements':'التدريب الصيفي','sw.placementsSub':'لوحة التدريب والسجلّ الأسبوعي',
   'sw.note':'يتذكّرها هذا المتصفح. في النظام الفعلي تُضبط من لوحة الإدارة لكل منطقة.',
-  'g.postHere':'انشر مناوبة لهذا الفرع',
-  'g.licenceNote':'لكل فرع رخصته وصيدليه المسؤول. المجموعة تدير الفروع ولا تحل محل أيٍ منهما.',
-  'bill.perBranch':'{amount} لكل فرع × {n}',
-  'bill.oneInvoice':'فاتورة واحدة للمجموعة، لا فاتورة لكل فرع.',
-  'bill.pooled':'رصيد المناوبات مشترك بين الفروع — يُصرف في أي فرع.',
+  'g.licenceNote':'لكل صيدلية رخصتها وصيدليها المسؤول. امتلاك أكثر من صيدلية لا يغيّر ذلك — صيدلي مسؤول واحد لا يجيب عن ثلاث.',
+  'bill.perPharmacy':'{amount} لكل صيدلية × {n}',
+  'bill.oneInvoice':'فاتورة واحدة لكل صيدلياتك.',
+  'bill.pooled':'رصيد المناوبات مشترك بين صيدلياتك — يُصرف في أيٍّ منها.',
   'ls.job':'وظيفة','ls.banner':'إعلان','ls.draft':'مسودة','ls.in_review':'قيد المراجعة',
   'ls.live':'منشور','ls.ended':'منتهٍ','ls.refused':'مرفوض',
   'pt.submit':'قدّم إعلاناً','pt.submitSub':'املأ الأساسيات ونتّصل بك لإكماله.',
@@ -1688,22 +1702,20 @@ Object.assign(STRINGS.en, {
   'jobs.note':'Permanent roles from companies and scientific bureaux — entirely separate from relief shifts.',
   'ad.paid':'Paid placement','ad.paidBy':'Paid placement — {company}',
   /* W7 — chains */
-  'acc.layla':'Layla Abdulkarim','acc.laylaTag':'Group manager',
-  'nav.group':'Branches','grp.group':'The group',
-  'g.branchCount':'{n} branches',
-  'g.needCover':'{n} of {total} branches need cover this week',
-  'g.needCoverSub':'Tap a branch for its shifts and its applicants',
-  'g.allGood':'Every branch is covered this week',
+  'acc.layla':'Layla Abdulkarim','acc.laylaTag':'Owner, 3 pharmacies',
+  'g.pharmacyCount':'{n} pharmacies','g.allPharmacies':'All',
+  'g.needCover':'Pharmacies needing cover this week: {n} of {total}',
+  'g.needCoverSub':'Open a pharmacy for its shifts and its applicants',
+  'g.allGood':'Every one of your pharmacies is covered this week',
   'g.noResponsible':'No responsible pharmacist',
-  'g.noResponsibleSub':'A branch cannot open until one is named',
+  'g.noResponsibleSub':'A pharmacy cannot open until one is named',
   'g.responsible':'Responsible pharmacist',
   'g.uncovered':'{n} uncovered',
   'g.covered':'Covered',
-  'g.uncoveredSub':'Shifts at this branch nobody has taken yet.',
+  'g.uncoveredSub':'Shifts at this pharmacy nobody has taken yet.',
   'g.waiting':'{n} waiting on you',
   'g.openPosts':'{n} open',
-  'g.allBranches':'All branches',
-  'g.branchDetails':'The branch','g.openLabel':'Open posts',
+  'g.openLabel':'Open posts',
   'n.branchUncovered':'{branch} has no responsible pharmacist — it cannot open until one is named.',
   /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
   'nav.checkin':'Check-in','nav.tasks':'Tasks','nav.products':'Products',
@@ -1737,16 +1749,16 @@ Object.assign(STRINGS.en, {
   'pd.requests':'Sent for mapping from this device','pd.times':'Scanned {n}×',
   'pd.requestsNote':'In the real system these reach the Catalogue queue in the CRM. This prototype has no server to send them to.',
   'pd.catalogueNote':'The clinical reference is built on active ingredients and stays small; the catalogue links each box to them. An unmapped product sells normally — the Helper just says so.',
-  'g.needResponsible':'{n} of {total} branches have no responsible pharmacist','g.allResponsible':'Every branch has a responsible pharmacist',
+  'g.needResponsible':'Pharmacies with no responsible pharmacist: {n} of {total}','g.allResponsible':'Every one of your pharmacies has a responsible pharmacist',
+  'tr.none':'No trainees at your pharmacies.','tr.postOne':'Post a placement','pr.pharmaciesDetails':'Your pharmacies',
   'sw.title':'Prototype switches',
   'sw.marketplace':'Marketplace','sw.marketplaceSub':'Relief shifts, jobs and paid placements — off until step 4',
   'sw.placements':'Student placements','sw.placementsSub':'The placement board and the weekly logbook',
   'sw.note':'This browser remembers them. In the real system they are set from the CRM, per district.',
-  'g.postHere':'Post a shift at this branch',
-  'g.licenceNote':'Each branch holds its own licence and its own responsible pharmacist. The group manages them; it replaces neither.',
-  'bill.perBranch':'{amount} per branch × {n}',
-  'bill.oneInvoice':'One invoice for the group, not one per branch.',
-  'bill.pooled':'The shift allowance is pooled across branches — spend it at any of them.',
+  'g.licenceNote':'Each pharmacy holds its own licence and needs its own responsible pharmacist. Owning several changes neither — one responsible pharmacist cannot answer for three.',
+  'bill.perPharmacy':'{amount} per pharmacy × {n}',
+  'bill.oneInvoice':'One invoice for all your pharmacies.',
+  'bill.pooled':'The shift allowance is shared across your pharmacies — spend it at any of them.',
   'ls.job':'Job','ls.banner':'Banner','ls.draft':'Draft','ls.in_review':'In review',
   'ls.live':'Live','ls.ended':'Ended','ls.refused':'Refused',
   'pt.submit':'Submit a listing','pt.submitSub':'Fill in the basics and we call you to finish it.',
@@ -2189,39 +2201,37 @@ const attr = s => JSON.stringify(String(s)).replace(/"/g, '&quot;');
    renders at the SVG default, which is enormous. */
 const icon = (n, cls) => '<svg class="ico ' + (cls||'') + '"><use href="#i-' + n + '"/></svg>';
 
-/* ---------- Branches and chains (W7) ----------
+/* ---------- Pharmacies, and owners of more than one (W7, revised v0.0010) ----------
 
-   A chain is not a bigger pharmacy, it is several pharmacies. Every branch
-   holds its own licence and its own responsible pharmacist — that is how
-   pharmacy ownership works here, and it is why W1's one-pharmacist-one-pharmacy
-   link is untouched by this: nothing below changes what a branch IS. What a
-   chain adds is a GROUP over branches, a person who manages the group, and one
-   bill instead of nine.
+   Iraq has no pharmacy chains, but some pharmacists own several pharmacies.
+   So there is no "group" and no "manager": there is an OWNER whose ownership
+   link points at more than one pharmacy. Each pharmacy keeps its own name, its
+   own licence and its own responsible pharmacist — owning three does not make
+   them one — and the owner sees each in a tab of their own.
 
-   Modelling it the other way round — one account owning many pharmacies — would
-   have collided with the licensing rule on the first real customer, and it is a
-   migration nobody wants to run against live data. */
+   Modelling it as a group over branches, as v0.0008 did, invented a structure
+   the market does not have and a user type nobody is. */
 const PHARMACIES = {
-  P1: { id:'P1', group:'G1', name:{ar:'صيدلية الرحمة — الكرادة',  en:'Al-Rahma — Karrada'},
-        district:{ar:'الكرادة', ar2:'', en:'Karrada'},
-        responsible:{ar:'رحمة جاسم',  en:'Rahma Jassim'},  openPosts:3, applicants:2, uncovered:1 },
-  P7: { id:'P7', group:'G1', name:{ar:'صيدلية الرحمة — الجادرية', en:'Al-Rahma — Jadriya'},
-        district:{ar:'الجادرية', en:'Jadriya'},
-        responsible:{ar:'عمار العبيدي', en:'Ammar Al-Obaidi'}, openPosts:1, applicants:0, uncovered:0 },
-  P8: { id:'P8', group:'G1', name:{ar:'صيدلية الرحمة — زيونة',   en:'Al-Rahma — Zayouna'},
-        district:{ar:'زيونة', en:'Zayouna'},
-        responsible:{ar:'سارة القيسي', en:'Sara Al-Qaisi'},   openPosts:2, applicants:1, uncovered:2 },
-  P9: { id:'P9', group:'G1', name:{ar:'صيدلية الرحمة — المنصور',  en:'Al-Rahma — Mansour'},
-        district:{ar:'المنصور', en:'Mansour'},
-        /* A branch between responsible pharmacists is the case a chain feels
-           most: nobody to sign for the narcotics log, so it cannot open. It
-           leads the board for that reason, not because of the shift count. */
+  P1: { id:'P1', name:{ar:'صيدلية الرحمة', en:'Al-Rahma Pharmacy'}, short:{ar:'الرحمة', en:'Al-Rahma'},
+        licence:'IQ-PHM-000117', district:{ar:'الكرادة', en:'Karrada'},
+        address:{ar:'كرادة داخل، قرب ساحة الفردوس', en:'Karrada Dakhil, near Al-Firdaws roundabout'},
+        responsible:{ar:'رحمة الجبوري', en:'Rahma Al-Jubouri'}, openPosts:3, applicants:2, uncovered:1 },
+  P7: { id:'P7', name:{ar:'صيدلية الشفاء', en:'Al-Shifa Pharmacy'}, short:{ar:'الشفاء', en:'Al-Shifa'},
+        licence:'IQ-PHM-000633', district:{ar:'الجادرية', en:'Jadriya'},
+        responsible:{ar:'ليلى عبد الكريم', en:'Layla Abdulkarim'}, openPosts:1, applicants:0, uncovered:0 },
+  P8: { id:'P8', name:{ar:'صيدلية الحياة', en:'Al-Hayat Pharmacy'}, short:{ar:'الحياة', en:'Al-Hayat'},
+        licence:'IQ-PHM-000641', district:{ar:'زيونة', en:'Zayouna'},
+        responsible:{ar:'سارة القيسي', en:'Sara Al-Qaisi'}, openPosts:2, applicants:1, uncovered:2 },
+  P9: { id:'P9', name:{ar:'صيدلية دار الدواء', en:'Dar Al-Dawa Pharmacy'}, short:{ar:'دار الدواء', en:'Dar Al-Dawa'},
+        licence:'IQ-PHM-000658', district:{ar:'المنصور', en:'Mansour'},
+        /* A pharmacy between responsible pharmacists is the case an owner of
+           several feels most: nobody to sign for the narcotics register, so it
+           cannot open. It leads the owner's overview for that reason. */
         responsible:null, openPosts:1, applicants:0, uncovered:3 }
 };
 
-const GROUPS = {
-  G1: { id:'G1', name:{ar:'مجموعة الرحمة', en:'Al-Rahma Group'}, branches:['P1','P7','P8','P9'] }
-};
+/* The one placement in the fixture is at Al-Rahma. */
+const TRAINEE_AT = 'P1';
 
 /* ---------- Accounts ----------
    These are the accounts in supabase/seed.sql. Signing in as one is how you
@@ -2234,7 +2244,7 @@ const GROUPS = {
 const ACCOUNTS = {
   'ahmed@example.com':      { type:'pharmacist', pharmacy:null, verified:true,  nameKey:'acc.ahmed',  tagKey:'acc.ahmedTag',  initials:{ar:'أك',en:'AK'}, trial:true  },
   'noor@example.com':       { type:'pharmacist', pharmacy:null, verified:false, nameKey:'acc.noor',   tagKey:'acc.noorTag',   initials:{ar:'نس',en:'NS'}, trial:true  },
-  'rahma@example.com':      { type:'pharmacist', pharmacy:'P1', verified:true,  nameKey:'acc.rahma',  tagKey:'acc.rahmaTag',  initials:{ar:'رج',en:'RJ'}, trial:true,
+  'rahma@example.com':      { type:'pharmacist', pharmacies:['P1'], verified:true,  nameKey:'acc.rahma',  tagKey:'acc.rahmaTag',  initials:{ar:'رج',en:'RJ'}, trial:true,
                               /* Off by default: most owners never take a locum
                                  shift, and a screen you will not use is clutter
                                  on a phone. Turned on in settings. */
@@ -2244,12 +2254,11 @@ const ACCOUNTS = {
   'sales@sdi.example':      { type:'partner',    pharmacy:null, verified:true,  nameKey:'acc.partner',tagKey:'acc.partnerTag',initials:{ar:'سد',en:'SD'}, trial:false,
                               /* The Externals record this account speaks for. */
                               company:'CO1' },
-  /* W7 — a chain manager. Still a pharmacist: the link is what makes them a
-     manager, exactly as the pharmacy link is what makes Rahma an owner. They
-     manage the group; they are not the responsible pharmacist of any branch,
-     which is a different person at each one. */
-  'layla@rahmagroup.example':{ type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.layla', tagKey:'acc.laylaTag', initials:{ar:'لع',en:'LA'}, trial:false,
-                              manages:'G1' }
+  /* W7, revised — an owner of three pharmacies. Not a manager and not a
+     different kind of account: a pharmacist whose ownership link points at
+     more than one pharmacy. She is the responsible pharmacist at one of them;
+     the others each need their own. */
+  'layla@example.com':      { type:'pharmacist', pharmacies:['P7','P8','P9'], verified:true, nameKey:'acc.layla', tagKey:'acc.laylaTag', initials:{ar:'لع',en:'LA'}, trial:false }
 };
 
 /* PARTNER / شريك (W15) — a company account, not a clinician.
@@ -2262,22 +2271,23 @@ const ACCOUNTS = {
    rather than two. */
 const isPartner = a => !!(a && a.type === 'partner');
 
-const isOwner = a => !!(a && a.type === 'pharmacist' && a.pharmacy);
-/* W7 — same shape one level up: a manager is a pharmacist with a link to a
-   GROUP. Neither "owner" nor "manager" is an account type, and nothing stores
-   either; both fall out of which link the account carries. */
-const isManager = a => !!(a && a.type === 'pharmacist' && a.manages);
+/* The pharmacies an account owns — none, one, or several. */
+const ownedIds = a => (a && a.pharmacies) || [];
+const isOwner = a => !!(a && a.type === 'pharmacist' && ownedIds(a).length);
 /* What the interface shows. Derived, never stored — change the link and the
-   view follows. Manager is checked first: a group link is the wider job, and
-   an account carrying both would be managing branches it also stands behind
-   the counter of. */
-const viewRole = a => isManager(a) ? 'manager'
-  : (isOwner(a) ? 'owner' : (a ? a.type : 'pharmacist'));
+   view follows. An owner of one and an owner of four are the same role; the
+   second simply has tabs. */
+const viewRole = a => isOwner(a) ? 'owner' : (a ? a.type : 'pharmacist');
 
-/* The group this account manages, and its branches, in board order. */
-const myGroup    = () => { const a = ACCOUNTS[S.email]; return a && a.manages ? GROUPS[a.manages] : null; };
-const myBranches = () => { const g = myGroup(); return g ? g.branches.map(id => PHARMACIES[id]) : []; };
-const branchOf   = id => PHARMACIES[id] || null;
+const pharmacyOf   = id => PHARMACIES[id] || null;
+const myPharmacies = () => ownedIds(ACCOUNTS[S.email]).map(pharmacyOf).filter(Boolean);
+/* The pharmacy on screen: the only one, or the tab chosen. Null means the
+   owner of several is looking at all of them. */
+function currentPharmacy() {
+  const mine = myPharmacies();
+  if (mine.length === 1) return mine[0];
+  return mine.find(p => p.id === S.pharmacyTab) || null;
+}
 
 /* Levantine month names — حزيران، تموز، آب، أيلول — not the Gulf
    transliterations Intl produces for `ar`. */
@@ -2325,7 +2335,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0009';
+const VERSION = 'App_v0.0010';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -2384,8 +2394,8 @@ function screenAllowed(screen, role) {
   if (screen === 'browse' || screen === 'listing') {
     return role === 'student' ? FLAGS.placements : FLAGS.marketplace;
   }
-  /* The post form serves both markets for an owner; a manager posts shifts
-     only. */
+  /* The post form serves both markets for an owner: shifts with the
+     marketplace on, placements whenever placements are. */
   if (screen === 'post') {
     return FLAGS.marketplace || (role === 'owner' && FLAGS.placements);
   }
@@ -2419,17 +2429,17 @@ const TXNS = [
 ];
 
 const NOTIFS = [
-  { id:'n1', roles:['owner','manager'], key:'n.applicationReceived', vars:()=>({name:L(DATA.applicants[0].name), when:L(DATA.listings[0].short)}), ago:'n.ago.2h', read:false },
+  { id:'n1', roles:['owner'], key:'n.applicationReceived', vars:()=>({name:L(DATA.applicants[0].name), when:L(DATA.listings[0].short)}), ago:'n.ago.2h', read:false },
   { id:'n2', roles:['pharmacist'], key:'n.handoffWaiting', ago:'n.ago.5h', read:false },
   { id:'n3', roles:['pharmacist'], key:'n.payoutSettled', vars:()=>({amount:iqd(38800)}), ago:'n.ago.1d', read:true },
   { id:'n4', roles:['pharmacist'], key:'n.verified', ago:'n.ago.3d', read:true },
   { id:'n5', roles:['student'], key:'n.monthApproved', vars:()=>({pharmacy:L({en:'Al-Rahma Pharmacy', ar:'صيدلية الرحمة'})}), ago:'n.ago.1d', read:false },
   { id:'n6', roles:['student'], key:'n.weekDue', vars:()=>({n:6}), ago:'n.ago.3d', read:true },
-  /* W7 — the one a manager opens the app for: a branch with nobody to sign
-     for it. It is theirs alone; a single-branch owner has no group to hear
-     about. */
-  { id:'n7', roles:['manager'], key:'n.branchUncovered',
-    vars:()=>({ branch:L(PHARMACIES.P9.name) }), ago:'n.ago.5h', read:false }
+  /* W7 — a pharmacy with nobody to sign for it. Shown only to the owner of
+     that pharmacy: `only` narrows a notification below its role. */
+  { id:'n7', roles:['owner'], key:'n.branchUncovered',
+    only:()=>myPharmacies().some(p => !p.responsible),
+    vars:()=>({ branch:L((myPharmacies().find(p => !p.responsible) || PHARMACIES.P9).name) }), ago:'n.ago.5h', read:false }
 ];
 
 /* The student's twelve weeks. Weeks 1-5 are done, 6 is in hand, the rest are
@@ -2487,9 +2497,10 @@ const S = {
   openProduct: null,
   scanNote: null,
   mappingRequests: [],
-  /* W7 — null means "all branches". A manager starts on the whole group,
-     because the question they open the app with is which branch is short. */
-  branch: null,
+  /* W7 — which pharmacy an owner of several is looking at; null is all of
+     them, which is where they start, because the question they open the app
+     with is which pharmacy needs them. */
+  pharmacyTab: null,
   impressions: {},
   browseTab: 'shifts',
   partnerForm: { kind:'job' },
@@ -2914,7 +2925,10 @@ function dispensePharmacy() {
   // the pharmacy whose shift they are working. No shift, no pharmacy: the log
   // belongs to a business, and a pharmacist not standing in one has nowhere to
   // put it.
-  if (acct.pharmacy) return { id:acct.pharmacy, name:t('acc.pharmacyRahma') };
+  if (ownedIds(acct).length) {
+    const ph = currentPharmacy() || myPharmacies()[0];
+    return { id:ph.id, name:L(ph.name) };
+  }
   /* The relief shift is part of the marketplace; with it switched off there
      is no shift and so no pharmacy to record against. */
   if (acct.type === 'pharmacist' && FLAGS.marketplace && S.onShiftToday) return { id:'P2', name:L(DATA.listings[1].pharmacy) };
@@ -3384,7 +3398,10 @@ function screenCheck() {
    does. */
 function screenConsumption() {
   const acct = ACCOUNTS[S.email];
-  const rows = S.dispensing.filter(r => r.pharmacy === (acct && acct.pharmacy));
+  /* The pharmacy on screen, or all of an owner's pharmacies when they are
+     looking at all of them. */
+  const scope = currentPharmacy();
+  const rows = S.dispensing.filter(r => scope ? r.pharmacy === scope.id : ownedIds(acct).includes(r.pharmacy));
   const byDrug = new Map();
   rows.forEach(r => byDrug.set(r.sci, (byDrug.get(r.sci) || 0) + r.n));
   const list = [...byDrug.entries()].sort((a, b) => b[1] - a[1]);
@@ -3559,8 +3576,7 @@ function screenHandoff() {
 
 /* ---------- Pharmacy dashboard ---------- */
 
-function screenDashboard() {
-  if (!FLAGS.marketplace) return screenDashboardDark();
+function dashboardMarket(lead) {
   const stat = (v, label) => '<div class="stat-card"><span class="stat-num">' + v +
     '</span><span class="stat-label">' + esc(label) + '</span></div>';
 
@@ -3601,7 +3617,7 @@ function screenDashboard() {
 
   const pharmacyHalf =
     '<div class="section-head"><p class="section-eyebrow">' +
-      esc(t('grp.pharmacy') + ' · ' + t('acc.pharmacyRahma')) + '</p>' +
+      esc(t('grp.pharmacy') + ' · ' + L((currentPharmacy() || myPharmacies()[0]).name)) + '</p>' +
       '<button class="link-btn" onclick="goto(\'post\')">' + esc(t('nav.post')) + '</button></div>' +
     /* The three-stat row is gone (W13): it reported what the two prompts above
        already act on, and a number nobody presses is furniture. */
@@ -3638,7 +3654,7 @@ function screenDashboard() {
      who has never turned shift-taking on was still being shown "my own work",
      a shift at another pharmacy and a reliability score — the exact thing the
      setting exists to hide, on the one screen they cannot avoid. */
-  return '<div class="screen-body"><div class="constrain">' +
+  return '<div class="screen-body">' + (lead || '') + '<div class="constrain">' +
     (S.trial ? '<div class="banner banner-green" style="margin-bottom:16px;">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
     needsYou + pharmacyHalf + (S.takesShifts ? pharmacistHalf : '') +
@@ -3646,47 +3662,63 @@ function screenDashboard() {
 }
 
 /* ==========================================================================
-   THE CHAIN MANAGER'S SCREENS (W7)
+   OWNERS OF MORE THAN ONE PHARMACY (W7, revised v0.0010)
 
-   A chain's problem is not "how is my pharmacy doing", it is "which of my
-   branches is short this week". So the home screen is a BOARD over branches
-   rather than a dashboard for one, and the ordering is the answer: a branch
-   with no responsible pharmacist first, then by how many shifts are uncovered.
-   A branch that is fine sorts to the bottom and can be ignored, which is the
-   whole point.
+   An owner of several sees a tab per pharmacy, and an "All" tab that answers
+   the question they open the app with: which of my pharmacies needs me? Its
+   order is the answer — a pharmacy with no responsible pharmacist first,
+   because it cannot legally open; then, while the marketplace is on, by what
+   is outstanding there. A pharmacy that is fine sorts to the bottom and can be
+   ignored, which is the point.
+
+   An owner of one sees no tabs at all. One pharmacy is not a list.
    ========================================================================== */
 
-/* Branches worst-first. "Worst" is: cannot legally open, then most uncovered
-   shifts, then most people waiting on a reply. */
-function branchBoard() {
-  return myBranches().slice().sort((a, b) =>
+function pharmacyBoard() {
+  const market = FLAGS.marketplace;
+  return myPharmacies().slice().sort((a, b) =>
     (!!b.responsible === !!a.responsible
-      ? (b.uncovered - a.uncovered) || (b.applicants - a.applicants)
+      ? (market ? (b.uncovered - a.uncovered) || (b.applicants - a.applicants) : 0)
       : (a.responsible ? 1 : -1)));
 }
 
-function setBranch(id) { S.branch = id; goto(id ? 'branch' : 'group'); }
+function setPharmacy(id) { S.pharmacyTab = id || null; S.screen = 'dashboard'; S.modal = null; render(); scrollTop(); }
 
-function screenGroup() {
-  const board = branchBoard();
+/* The tab strip. It scrolls sideways inside itself rather than widening the
+   page, so four pharmacy names still fit a 320px phone. A pharmacy nobody can
+   sign for carries a mark on its tab, so it is visible from any of them. */
+function pharmacyTabs() {
+  const mine = myPharmacies();
+  if (mine.length < 2) return '';
+  const cur = currentPharmacy();
+  const on = id => (cur ? cur.id : null) === id;
+  const tab = (id, label, flag) =>
+    '<button class="ptab' + (on(id) ? ' on' : '') + '" role="tab" aria-selected="' + on(id) + '" ' +
+      'onclick="setPharmacy(' + (id ? attr(id) : 'null') + ')">' + esc(label) +
+      (flag ? '<span class="ptab-dot" title="' + esc(t('g.noResponsible')) + '"></span>' : '') +
+    '</button>';
+  return '<div class="constrain"><div class="ptabs" role="tablist">' +
+    tab(null, t('g.allPharmacies')) +
+    mine.map(p => tab(p.id, L(p.short || p.name), !p.responsible)).join('') +
+  '</div></div>';
+}
+
+/* The "All" tab. */
+function screenPharmacies(lead) {
+  const board = pharmacyBoard();
   const market = FLAGS.marketplace;
-  /* With the marketplace off there are no shifts to cover, and the one thing
-     on this board that still matters is the one that was always the worst: a
-     branch with nobody to sign for it cannot legally open. */
   const short = board.filter(b => (market && b.uncovered > 0) || !b.responsible).length;
 
   const row = b =>
-    '<button class="branch-row" onclick="setBranch(' + attr(b.id) + ')">' +
+    '<button class="branch-row" onclick="setPharmacy(' + attr(b.id) + ')">' +
       '<span class="branch-body">' +
         '<span class="branch-name">' + esc(L(b.name)) + '</span>' +
-        /* The responsible pharmacist names the branch's accountable person.
-           When there isn't one it is left out rather than spelled out here,
-           because the red badge on the same row already says so and saying it
-           twice makes the row read as two different problems. */
+        /* The responsible pharmacist is named when there is one. When there
+           is not, the red badge on the same row says so once. */
         '<span class="branch-sub">' +
           esc([b.responsible ? L(b.responsible) : null,
                market ? t('g.openPosts', { n:b.openPosts }) : L(b.district)]
-                .filter(Boolean).join(' \u00b7 ')) + '</span></span>' +
+                .filter(Boolean).join(' · ')) + '</span></span>' +
       '<span class="branch-marks">' +
         (b.responsible ? '' : '<span class="badge badge-alert">' + esc(t('g.noResponsible')) + '</span>') +
         (!market ? '' : b.uncovered
@@ -3697,72 +3729,51 @@ function screenGroup() {
       '</span>' + icon('chevron', 'more-chevron') +
     '</button>';
 
-  /* The prompt, not the count \u2014 same rule as W13's home screens. */
-  const lead = short
+  /* The prompt, not the count — same rule as W13's home screens. */
+  const top = short
     ? '<div class="card card-pad urgent-row">' + icon(market ? 'clock' : 'alert') +
         '<div><p class="urgent-t">' + esc(t(market ? 'g.needCover' : 'g.needResponsible', { n:short, total:board.length })) + '</p>' +
         '<p class="urgent-s">' + esc(t(market ? 'g.needCoverSub' : 'g.noResponsibleSub')) + '</p></div></div>'
     : '<div class="banner banner-green">' + icon('badge') + '<p>' + esc(t(market ? 'g.allGood' : 'g.allResponsible')) + '</p></div>';
 
-  return '<div class="screen-body"><div class="constrain stack">' +
-    lead +
-    '<p class="section-eyebrow">' + esc(t('g.branchCount', { n:board.length })) + '</p>' +
+  return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack">' +
+    (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
+      esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
+    top +
+    '<p class="section-eyebrow">' + esc(t('g.pharmacyCount', { n:board.length })) + '</p>' +
     '<div class="card">' + board.map(row).join('') + '</div>' +
-    /* Said on the screen, not only in the backlog: the group is a management
-       layer, and a manager who thinks it replaces the branch licence will make
-       a decision no software can walk back. */
+    /* Said on the screen: owning several changes nothing about what each one
+       needs. An owner who thinks one responsible pharmacist can answer for
+       three pharmacies will make a decision no software can walk back. */
     '<p class="inline-note">' + esc(t('g.licenceNote')) + '</p>' +
     '</div></div>';
 }
 
-function screenBranch() {
-  const b = branchOf(S.branch);
-  if (!b) return screenGroup();
-
-  const scope =
-    '<button class="branch-scope" onclick="setBranch(null)" style="width:100%;border:none;cursor:pointer;">' +
-      icon('grid') + '<span class="branch-scope-name">' + esc(L(b.name)) + '</span>' +
-      '<span class="link-btn">' + esc(t('g.allBranches')) + '</span></button>';
-
-  const kv = (label, value) =>
-    '<div class="row"><span class="row-body">' +
-      '<span class="row-sub" style="display:block;">' + esc(label) + '</span>' +
-      '<span class="row-title" style="display:block;">' + esc(value) + '</span></span></div>';
-
-  const needs =
-    (b.responsible
-      ? ''
-      : '<div class="card card-pad urgent-row">' + icon('alert') +
-        '<div><p class="urgent-t">' + esc(t('g.noResponsible')) + '</p>' +
-        '<p class="urgent-s">' + esc(t('g.noResponsibleSub')) + '</p></div></div>') +
-    (FLAGS.marketplace && b.applicants
-      ? '<button class="check-card" onclick="goto(\'applicants\')">' +
-          '<span class="check-card-ico">' + icon('users') + '</span>' +
-          '<span class="check-card-body">' +
-            '<span class="check-card-t">' + esc(t('d.waitingOnYou', { n:b.applicants })) + '</span>' +
-            '<span class="check-card-s">' + esc(t('d.waitingSub')) + '</span></span>' +
-          '<span class="check-card-n figure">' + fmt(b.applicants) + '</span>' +
-        '</button>'
-      : '') +
-    (FLAGS.marketplace && b.uncovered
-      ? '<div class="card card-pad urgent-row">' + icon('clock') +
-        '<div><p class="urgent-t">' + esc(t('g.uncovered', { n:b.uncovered })) + '</p>' +
-        '<p class="urgent-s">' + esc(t('g.uncoveredSub')) + '</p></div>' +
-        '<button class="btn-ghost" onclick="goto(\'post\')">' + esc(t('nav.post')) + '</button></div>'
-      : '');
-
-  return '<div class="screen-body"><div class="constrain stack">' +
-    scope + needs +
-    '<p class="section-eyebrow">' + esc(t('g.branchDetails')) + '</p>' +
-    '<div class="card">' +
-      kv(t('g.responsible'), b.responsible ? L(b.responsible) : t('g.noResponsible')) +
-      kv(t('f.district'), L(b.district)) +
-      (FLAGS.marketplace ? kv(t('g.openLabel'), fmt(b.openPosts)) : '') +
+/* The top of one pharmacy's tab: which pharmacy, who answers for it, and —
+   before anything else — whether it can open at all. */
+function pharmacyHeader(p) {
+  return '<div class="card card-pad pharm-head">' +
+      '<div class="pharm-head-t">' + esc(L(p.name)) + '</div>' +
+      '<div class="pharm-head-s">' + esc(L(p.district)) + ' · <span class="figure" dir="ltr">' + esc(p.licence) + '</span></div>' +
+      '<div class="pharm-head-s">' + esc(t('g.responsible')) + ': ' +
+        esc(p.responsible ? L(p.responsible) : t('g.noResponsible')) + '</div>' +
     '</div>' +
-    (FLAGS.marketplace
-      ? '<button class="btn-primary" onclick="goto(\'post\')">' + esc(t('g.postHere')) + '</button>'
-      : '') +
-    '</div></div>';
+    (p.responsible ? '' :
+      '<div class="card card-pad urgent-row">' + icon('alert') +
+        '<div><p class="urgent-t">' + esc(t('g.noResponsible')) + '</p>' +
+        '<p class="urgent-s">' + esc(t('g.noResponsibleSub')) + '</p></div></div>');
+}
+
+/* The owner's home: the overview for an owner of several on the All tab,
+   otherwise the home of the one pharmacy on screen. */
+function screenDashboard() {
+  const mine = myPharmacies();
+  const tabs = pharmacyTabs();
+  if (mine.length > 1 && !currentPharmacy()) return screenPharmacies(tabs);
+  const lead = tabs + (mine.length > 1
+    ? '<div class="constrain stack" style="margin-bottom:14px;">' + pharmacyHeader(currentPharmacy()) + '</div>'
+    : '');
+  return FLAGS.marketplace ? dashboardMarket(lead) : dashboardDark(lead);
 }
 
 /* ==========================================================================
@@ -3993,15 +4004,20 @@ function screenProduct() {
    what arrives next, the catalogue the till will sell from and how much of it
    the Helper can check, the trainee waiting on a decision, and the Helper
    itself — an owner is a pharmacist too. */
-function screenDashboardDark() {
+function dashboardDark(lead) {
   const sum = catalogueSummary();
   const ready = FLAGS.placements ? Object.keys(S.months).find(m => S.months[m] === 'ready') : null;
-  return '<div class="screen-body"><div class="constrain stack">' +
+  /* The trainee is at one pharmacy; she belongs on that pharmacy's tab, and
+     on nobody else's home. */
+  const cur = currentPharmacy();
+  const hasTrainee = FLAGS.placements && ownedIds(ACCOUNTS[S.email]).includes(TRAINEE_AT) &&
+    (!cur || cur.id === TRAINEE_AT);
+  return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack">' +
     (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
     soonCard('barcode', 'soon.tillT', 'soon.tillS') +
     linkCard('barcode', t('d.catalogueT', { n:sum.total }), t('d.catalogueS', { n:sum.uncheckable }), "goto('products')") +
-    (FLAGS.placements
+    (hasTrainee
       ? linkCard('cap', ready ? t('d.traineeReady', { n:ready }) : t('d.traineeOn'),
                  ready ? t('d.traineeReadySub') : t('d.traineeSub'), "goto('trainees')")
       : '') +
@@ -4045,11 +4061,11 @@ function billingLedger() {
 }
 
 function screenBilling() {
-  /* W7 — one source for the plan, so a chain's bill cannot drift from an
+  /* W7 — one source for the plan, so an owner of several cannot drift from an
      independent pharmacy's. `myPlan()` returns the plan itself for an owner and
-     the per-branch multiple for a manager; every figure below reads it. */
+     the per-pharmacy multiple for an owner of several; every figure below reads it. */
   const plan = myPlan();
-  const chain = plan.branches > 1;
+  const several = plan.pharmacies > 1;
   const ledger = billingLedger();
   const used = ledger.filter(x => x.fees.coveredByPlan).length;
   const left = Math.max(0, plan.includedShifts - used);
@@ -4093,9 +4109,9 @@ function screenBilling() {
             '<span class="plan-name">' + esc(t('plan.' + plan.id)) + '</span>' +
             '<span class="plan-fee figure">' + esc(iqd(plan.monthlyFeeIQD)) + esc(t('bill.perMonth')) + '</span>' +
           '</div>' +
-          (chain
+          (several
             ? '<p class="inline-note" style="margin-top:6px;">' +
-              esc(t('bill.perBranch', { amount:iqd(plan.perBranchIQD), n:plan.branches })) + ' \u00b7 ' +
+              esc(t('bill.perPharmacy', { amount:iqd(plan.perPharmacyIQD), n:plan.pharmacies })) + ' \u00b7 ' +
               esc(t('bill.oneInvoice')) + '</p>'
             : '') +
           '<div class="allowance">' +
@@ -4105,7 +4121,7 @@ function screenBilling() {
               '<span class="allowance-pip' + (k < used ? ' spent' : '') + '"></span>').join('') + '</div>' +
             '<p class="inline-note" style="margin-top:8px;">' +
               esc(left ? t('bill.allowanceLeft', { n:left }) : t('bill.allowanceSpent')) +
-              (chain ? ' \u00b7 ' + esc(t('bill.pooled')) : '') + '</p>' +
+              (several ? ' \u00b7 ' + esc(t('bill.pooled')) : '') + '</p>' +
           '</div>' +
         '</div>' +
         (saved > 0
@@ -4768,6 +4784,13 @@ function certificateSheet() {
 /* ---------- Pharmacy: trainees ---------- */
 
 function screenTrainees() {
+  if (!ownedIds(ACCOUNTS[S.email]).includes(TRAINEE_AT)) {
+    return '<div class="screen-body"><div class="constrain stack">' +
+      '<div class="card card-pad" style="text-align:center;color:var(--ink-faint);font-size:13px;">' +
+        esc(t('tr.none')) + '</div>' +
+      '<button class="btn-primary" onclick="goto(\'post\')">' + esc(t('tr.postOne')) + '</button>' +
+      '</div></div>';
+  }
   const readyMonth = Object.keys(S.months).find(m => S.months[m] === 'ready');
   const approved = S.weeks.filter(w => w.status === 'approved').length;
 
@@ -4827,7 +4850,7 @@ function returnModal(month) {
 /* ---------- Notifications ---------- */
 
 function screenNotifications() {
-  const mine = S.notifs.filter(n => n.roles.includes(S.role));
+  const mine = S.notifs.filter(notifMine);
 
   return '<div class="screen-body"><div class="constrain stack">' +
     (mine.some(n => !n.read)
@@ -4886,13 +4909,16 @@ function screenProfileAll() {
   }
   if (S.role === 'owner') {
     detail +=
-      '<p class="section-eyebrow">' + esc(t('pr.pharmacyDetails')) + '</p>' +
-      '<div class="card card-pad">' +
-        kv('home', t('f.pharmacyName'), lang==='ar' ? 'صيدلية الرحمة' : 'Al-Rahma Pharmacy') +
-        kv('badge', t('pr.licence'), 'IQ-PHM-000117') +
-        kv('user', t('pr.responsible'), lang==='ar' ? 'د. رحمة الجبوري' : 'Dr Rahma Al-Jubouri') +
-        kv('pin', t('pr.address'), lang==='ar' ? 'كرادة داخل، قرب ساحة الفردوس' : 'Karrada Dakhil, near Al-Firdaws roundabout') +
-      '</div>' +
+      /* One card per pharmacy held. Each has its own licence and its own
+         responsible pharmacist, and the profile says so rather than merging. */
+      '<p class="section-eyebrow">' + esc(t(myPharmacies().length > 1 ? 'pr.pharmaciesDetails' : 'pr.pharmacyDetails')) + '</p>' +
+      myPharmacies().map(ph =>
+        '<div class="card card-pad" style="margin-bottom:10px;">' +
+          kv('home', t('f.pharmacyName'), L(ph.name)) +
+          kv('badge', t('pr.licence'), ph.licence) +
+          kv('user', t('pr.responsible'), ph.responsible ? L(ph.responsible) : t('g.noResponsible')) +
+          kv('pin', t(ph.address ? 'pr.address' : 'f.district'), L(ph.address || ph.district)) +
+        '</div>').join('') +
       (S.trial ? '<div class="banner banner-green">' + icon('badge') + '<p>' +
         esc(t('pr.trialEnds', {n:22})) + '</p></div>' : '');
   } else if (S.role === 'student') {
@@ -5004,12 +5030,6 @@ const SCREENS = {
   product:       { eyebrow:()=>t('nav.products'),
                    title:()=>{ const p = productByCode(S.openProduct); return p ? L(p.name) : t('nav.products'); },
                    body:screenProduct },
-  /* W7 — the manager's home is the group, and a branch is a screen inside
-     it. The eyebrow carries the group name so it is never ambiguous which
-     set of branches is on screen. */
-  group:         { eyebrow:()=>greeting(), title:()=>L((myGroup()||{}).name || {en:'',ar:''}), body:screenGroup },
-  branch:        { eyebrow:()=>L((myGroup()||{}).name || {en:'',ar:''}),
-                   title:()=>L((branchOf(S.branch)||{}).name || {en:'',ar:''}), body:screenBranch },
   more:          { eyebrow:()=>currentName(), title:()=>t('nav.more'), body:screenMore },
   billing:       { eyebrow:()=>currentName(), title:()=>t('nav.billing'), body:screenBilling },
   post:          { eyebrow:()=>currentName(), title:()=>t('post.title'), body:screenPost },
@@ -5068,12 +5088,7 @@ const NAV = {
                ['logbook','book','nav.logbook'],['drugs','pill','nav.drugs'],['profile','user','nav.profile']],
   admin:      [['queue','badge','nav.queue'],['profile','user','nav.profile']],
   /* A partner has two things to do here and neither is clinical. */
-  partner:    [['partner','clipboard','nav.listings'],['profile','user','nav.profile']],
-  /* W7 — a chain manager runs branches, not a counter. Their bar has no
-     pharmacist half at all: nothing about their day is a shift they work. */
-  manager:    [['group','grid','nav.group'],['post','plus','nav.post'],
-               ['applicants','users','nav.applicants'],['billing','wallet','nav.billing'],
-               ['profile','user','nav.profile']]
+  partner:    [['partner','clipboard','nav.listings'],['profile','user','nav.profile']]
 };
 
 /* The owner's bottom bar. Without shift-taking, the pharmacy screens fit on
@@ -5088,13 +5103,12 @@ const NAV_OWNER_BOTH =
 /* v0.0009 — the bars while the marketplace is switched off (Part 0 of the
    backlog). A pharmacist's day is check-in, tasks, the Helper and their CV;
    the first two arrive with System 2 and say so honestly until then. The
-   owner and the manager gain Products — the catalogue under the coming till. */
+   owner gains Products — the catalogue under the coming till. An owner of
+   several pharmacies has the same bar; the pharmacies are tabs, not a role. */
 const NAV_DARK = {
   pharmacist: [['checkin','clock','nav.checkin'],['tasks','check','nav.tasks'],['drugs','pill','nav.drugs'],
                ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
   owner:      [['dashboard','home','nav.dashboard'],['products','barcode','nav.products'],['trainees','cap','nav.trainees'],
-               ['drugs','pill','nav.drugs'],['profile','user','nav.profile']],
-  manager:    [['group','grid','nav.group'],['products','barcode','nav.products'],['billing','wallet','nav.billing'],
                ['drugs','pill','nav.drugs'],['profile','user','nav.profile']]
 };
 
@@ -5111,7 +5125,7 @@ const homeScreen = () => (navFor(S.role)[0] || ['profile'])[0];
 
 /* Which roles get a grouped sidebar rather than a flat list. */
 function sidebarGroups() {
-  const g = S.role === 'owner' ? ownerGroups() : S.role === 'manager' ? managerGroups() : null;
+  const g = S.role === 'owner' ? ownerGroups() : null;
   if (!g) return null;
   return g.map(x => ({ key:x.key, items:x.items.filter(i => screenAllowed(i[0])) }))
           .filter(x => x.items.length);
@@ -5121,22 +5135,6 @@ function sidebarGroups() {
    when they have asked for it. Billing is pharmacy-side and always present: an
    owner is CHARGED whether or not they ever earn anything, and hiding what
    somebody owes is not a simplification. */
-/* W7 — the manager's sidebar. Same grouping argument as the owner's: the
-   group-wide screens and the account screens are two different jobs, and one
-   flat list makes both harder to scan. */
-function managerGroups() {
-  return [
-    { key:'grp.group', items:[['group','grid','nav.group'],['products','barcode','nav.products'],
-                              ['post','plus','nav.post'],
-                              ['applicants','users','nav.applicants'],
-                              ['consumption','chart','nav.consumption'],
-                              ['billing','wallet','nav.billing']] },
-    { key:'grp.account', items:[['drugs','pill','nav.drugs'],['cv','clipboard','nav.cv'],
-                                ['notifications','bell','nav.notifications'],
-                                ['profile','user','nav.profile']] }
-  ];
-}
-
 function ownerGroups() {
   const groups = [
     { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['products','barcode','nav.products'],
@@ -5172,7 +5170,6 @@ function ownerGroups() {
    ran out, which is exactly the situation More exists for. */
 function moreGroups() {
   if (S.role === 'owner') return ownerGroups();
-  if (S.role === 'manager') return managerGroups();
   if (S.role === 'student') {
     return [{ key:'grp.account', items:[['notifications','bell','nav.notifications'],
                                         ['profile','user','nav.profile']] }];
@@ -5187,7 +5184,7 @@ function moreGroups() {
    The owner keeps More: they have two jobs and genuinely more screens than a
    phone bar holds. */
 function profileLinks() {
-  if (S.role === 'owner' || S.role === 'manager' || S.role === 'admin') return [];
+  if (S.role === 'owner' || S.role === 'admin') return [];
   if (S.role === 'student') return [['notifications','bell','nav.notifications']];
   /* Anything already on the bar is not repeated here, and anything switched
      off is not offered. */
@@ -5206,8 +5203,7 @@ const NAV_EXTRA = {
                ['notifications','bell','nav.notifications'],['incidents','alert','nav.incidents']],
   student:    [['notifications','bell','nav.notifications']],
   admin:      [],
-  partner:    [],
-  manager:    []
+  partner:    []
 };
 
 function greeting() {
@@ -5222,8 +5218,12 @@ function currentName() {
   return a ? t(a.nameKey) : '';
 }
 
+/* A notification is someone's when their role matches and, if it narrows
+   further, when that is true of them too. */
+const notifMine = n => n.roles.includes(S.role) && (!n.only || n.only());
+
 function unreadCount() {
-  return S.notifs.filter(n => n.roles.includes(S.role) && !n.read).length;
+  return S.notifs.filter(n => notifMine(n) && !n.read).length;
 }
 
 /* ==========================================================================
@@ -5570,7 +5570,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0009.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0010.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -5612,6 +5612,8 @@ function signInAs(mail){
   S.verified = a.verified;
   S.trial = a.trial;
   S.takesShifts = isOwner(a) ? !!a.takesShifts : true;
+  /* An owner of several starts on All, whoever signed in last. */
+  S.pharmacyTab = null;
   S.signedIn = true;
   S.screen = navFor(S.role)[0][0];
   authError = null;
@@ -5858,7 +5860,7 @@ function readNotif(id){
   render();
 }
 function markAllRead(){
-  S.notifs.forEach(n => { if (n.roles.includes(S.role)) n.read = true; });
+  S.notifs.forEach(n => { if (notifMine(n)) n.read = true; });
   render();
 }
 

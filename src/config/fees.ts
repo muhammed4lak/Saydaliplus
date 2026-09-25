@@ -50,7 +50,7 @@ export const PROCESSOR_FEE_RATE = 0.02;
    Each plan includes a SHIFT ALLOWANCE, and ordinary commission applies beyond
    it. Without the allowance, unlimited posting on the cheaper plan is a hole:
    at twenty shifts a month a subscribed pharmacy would cost us ~47,000 IQD
-   against commission, and at forty, ~103,000 — a chain would find that in a
+   against commission, and at forty, ~103,000 — an owner of several would find it in a
    week. With it, a forty-shift pharmacy still saves and we still earn.
 
    Break-even against commission, at a 40,000 IQD shift: 3.2 shifts on Basic,
@@ -92,17 +92,16 @@ export interface FeeInput {
    * NOT counting this one. Only read when a plan carries an allowance — the
    * caller owns the month boundary, because the fee engine has no clock.
    *
-   * For a chain this is the count across the WHOLE GROUP, because the allowance
-   * is pooled. See `subscriptionCharge`.
+   * For an owner of several pharmacies this is the count across ALL of them,
+   * because the allowance is shared. See `subscriptionCharge`.
    */
   shiftsFilledThisMonth?: number;
   /**
-   * How many branches the plan is bought for (W7). One for an independent
-   * pharmacy, which is the default. The allowance scales with it, so a
-   * four-branch chain on Basic gets twenty shifts to spend wherever it likes
-   * rather than five per branch.
+   * How many pharmacies the owner's plan covers (W7). One is the default and
+   * the ordinary case. The allowance scales with it, so an owner of four on
+   * Basic gets twenty shifts to spend wherever they like rather than five each.
    */
-  branches?: number;
+  pharmacies?: number;
 }
 
 export interface FeeBreakdown {
@@ -159,7 +158,7 @@ export function calculateFees({
   pharmacistInTrial,
   plan = 'commission',
   shiftsFilledThisMonth = 0,
-  branches = 1,
+  pharmacies = 1,
 }: FeeInput): FeeBreakdown {
   if (!Number.isFinite(grossAmount) || grossAmount < 0) {
     throw new Error(`Invalid gross amount: ${grossAmount}`);
@@ -184,7 +183,7 @@ export function calculateFees({
   const fullPharmacyFee = roundIQD(chargeableCommission) - fullPharmacistFee;
 
   // A plan covers this shift only while the allowance lasts. Beyond it the
-  // pharmacy pays ordinary commission, which is what stops a chain subscribing
+  // pharmacy pays ordinary commission, which is what stops an owner subscribing
   // to the cheapest plan and posting forty shifts against it.
   const chosen = PLANS[plan] ?? PLANS.commission;
   // The trial wins over the allowance. A pharmacy in its first 30 days pays
@@ -193,7 +192,7 @@ export function calculateFees({
   // would reach its second month with the allowance quietly eaten.
   const withinAllowance = !pharmacyInTrial
     && chosen.monthlyFeeIQD > 0
-    && shiftsFilledThisMonth < chosen.includedShifts * billableBranches(branches);
+    && shiftsFilledThisMonth < chosen.includedShifts * billablePharmacies(pharmacies);
   const coveredByPlan = withinAllowance ? chosen.id : null;
 
   const pharmacyFee = (pharmacyInTrial || withinAllowance) ? 0 : fullPharmacyFee;
@@ -218,64 +217,61 @@ export function calculateFees({
 }
 
 /* ==========================================================================
-   CHAINS (W7)
+   OWNERS WITH MORE THAN ONE PHARMACY (W7, revised 25 Sep 2026)
 
-   A chain is not a bigger pharmacy, it is several pharmacies. Each branch holds
-   its own licence and its own responsible pharmacist — that is Iraqi law and it
-   is why the one-pharmacist-one-pharmacy link from W1 is untouched here. What a
-   chain adds is a GROUP over branches and one bill instead of nine.
+   Iraq has no pharmacy chains, but some pharmacists own several pharmacies.
+   Each pharmacy keeps its own licence and its own responsible pharmacist; what
+   several have in common is their OWNER, who pays one bill for all of them.
 
    Two decisions are baked in below, and both are load-bearing:
 
-   1. **Price per branch.** The cost driver is branches, not companies: nine
-      branches post nine branches' worth of shifts and take nine branches' worth
-      of support. A flat chain price is the same hole the shift allowance closed
-      in W14, one level up — one Basic subscription covering twelve branches
-      would cost us roughly 100,000 IQD a month against commission.
+   1. **Priced per pharmacy.** The cost driver is pharmacies, not owners: four
+      pharmacies post four pharmacies' worth of shifts and take four
+      pharmacies' worth of support. A flat per-owner price is the same hole the
+      shift allowance closed in W14, one level up.
 
-   2. **Pool the allowance.** The shifts a chain is owed are the sum of its
-      branches', spendable anywhere. This costs nothing against per-branch
-      allowances — the total is identical — and it is the whole reason a chain
-      buys: branches are uneven, and an allowance stranded at a quiet branch
-      while a busy one pays commission is a bill they will argue about monthly.
+   2. **The allowance is shared.** The shifts an owner is owed are the sum of
+      their pharmacies', spendable at any of them. This costs nothing against
+      separate allowances — the total is identical — and it is the reason an
+      owner of several buys: pharmacies are uneven, and an allowance stranded at
+      a quiet one while a busy one pays commission is a bill argued about monthly.
 
    Volume discounts are deliberately NOT here. A rate card belongs in code; a
-   negotiated discount for a particular chain belongs in the CRM as data on that
-   chain, where an operator can see who was given what and why.
+   discount negotiated with a particular owner belongs in the CRM as data.
    ========================================================================== */
 
-/** At least one. A group with no branches is a data error, not a free plan. */
-const billableBranches = (branches: number): number =>
-  Number.isFinite(branches) && branches > 1 ? Math.floor(branches) : 1;
+/** At least one. An owner with no pharmacies is a data error, not a free plan. */
+const billablePharmacies = (pharmacies: number): number =>
+  Number.isFinite(pharmacies) && pharmacies > 1 ? Math.floor(pharmacies) : 1;
 
 export interface SubscriptionCharge {
   plan: PlanId;
-  /** Branches actually charged for. */
-  branches: number;
-  /** Fee per branch per month. */
-  perBranchIQD: number;
-  /** What the chain is invoiced monthly — one invoice, not one per branch. */
+  /** Pharmacies actually charged for. */
+  pharmacies: number;
+  /** Fee per pharmacy per month. */
+  perPharmacyIQD: number;
+  /** What the owner is invoiced monthly — one invoice, not one per pharmacy. */
   monthlyFeeIQD: number;
-  /** Shifts the fee covers across the whole group, spendable at any branch. */
+  /** Shifts the fee covers across all the owner's pharmacies, spendable at any. */
   includedShifts: number;
 }
 
 /**
- * What a pharmacy or a chain is charged monthly, and what that buys.
+ * What an owner is charged monthly, and what that buys.
  *
- * Called with no `branches` for an independent pharmacy, which is the ordinary
- * case and returns exactly the plan's own numbers.
+ * Called with no count for the ordinary case — one pharmacy — and returns
+ * exactly the plan's own numbers.
  */
 export function subscriptionCharge(
   plan: PlanId = 'commission',
-  branches = 1,
+  pharmacies = 1,
 ): SubscriptionCharge {
   const chosen = PLANS[plan] ?? PLANS.commission;
-  const n = billableBranches(branches);
+  const n = billablePharmacies(pharmacies);
   return {
     plan: chosen.id,
-    branches: n,
-    perBranchIQD: chosen.monthlyFeeIQD,
+    pharmacies: n,
+    perPharmacyIQD: chosen.monthlyFeeIQD,
     monthlyFeeIQD: chosen.monthlyFeeIQD * n,
     includedShifts: chosen.includedShifts * n,
   };

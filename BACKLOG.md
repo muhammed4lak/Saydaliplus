@@ -20,7 +20,8 @@ decision and the version plan; W17–W21, P6–P9 and C6 are new with it.
 **Shipped so far**: W1–W5 in v0.0003; W8's code in v0.0004; W12a, W12b, W12d in
 v0.0005; W14 steps 1–3 and 5 in v0.0006; W10 (in part), W12c, W12e (in part),
 W13, W14 step 4 and W15 in v0.0007; W6d, W7 and W11 in v0.0008; **the switch and the
-catalogue layer of W17 in v0.0009**. Nothing is
+catalogue layer of W17 in v0.0009; **W7 rebuilt as owners of several pharmacies
+in v0.0010**. Nothing is
 deleted when it ships, because what each entry says about *why* is the part worth
 not re-deriving; each opens with a **Built** line saying what landed and what was
 decided along the way.
@@ -126,23 +127,26 @@ spec versions are settled.
 | Version | Theme | Entries |
 | --- | --- | --- |
 | **v0.0009** | The switch, and the catalogue underneath the till | flags; W17 catalogue |
-| **v0.0010** | The till | W17 sell |
-| **v0.0011** | Stock and purchasing | W17 inventory |
-| **v0.0012** | Cash, and the offline model | W17 cash, offline |
-| **v0.0013** | Clinical governance | W19; P8; W17 helper tiers |
-| **v0.0014** | Attendance | W18 roster, check-in/out |
-| **v0.0015** | Tasks, performance, and the absent owner's day | W18; P7 |
-| **v0.0016** | Paying for it | pricing — *blocked on a decision* |
+| **v0.0010** | Owners of more than one pharmacy — no chains, no manager | W7 revised |
+| **v0.0011** | The till | W17 sell |
+| **v0.0012** | Stock and purchasing | W17 inventory |
+| **v0.0013** | Cash, and the offline model | W17 cash, offline |
+| **v0.0014** | Clinical governance | W19; P8; W17 helper tiers |
+| **v0.0015** | Attendance | W18 roster, check-in/out |
+| **v0.0016** | Tasks, performance, and the absent owner's day | W18; P7 |
+| **v0.0017** | Paying for it | pricing — *blocked on a decision* |
 | later | Assessment, then shift credits, then the ecosystem | W20, W21, P6 |
 
-System 1 is complete at v0.0013, System 2 at v0.0015.
+System 1 is complete at v0.0014, System 2 at v0.0016. **v0.0010 was inserted on
+25 Sep 2026** for the W7 correction, so every later version moved up by one; the
+till is v0.0011.
 
 **v0.0009 — the switch, and the catalogue.** **Built** (25 Sep 2026) — see
 "v0.0009 as built" below.
 A feature flag per surface, with the marketplace off by default and switchable
 per district later (W21 needs exactly that). The pharmacist's bar becomes
 Check-in · Tasks · Drugs · CV · Profile, with Tasks and Check-in as honest
-"coming in this build series" placeholders until v0.0014. The product layer
+"coming in this build series" placeholders until v0.0015. The product layer
 beneath the existing molecule layer: barcode, AR/EN name, form, strength, pack,
 price, molecule links, and a **mapping confidence** (verified / auto-mapped /
 unmapped). A **Catalogue** module in the CRM with the mapping queue: an unknown
@@ -178,7 +182,22 @@ green with it on; every product either maps to molecules or says it does not.
   mutations were run to prove the key assertions fail when their rule is
   broken.
 
-### Before v0.0010 — decisions needed
+### Decisions for the till — answered 25 Sep 2026
+
+The answers, then the questions as they were asked.
+
+1. **Price: each pharmacy sets its own.** The reference is the **average market
+   price** — derived from what pharmacies actually charge, never typed in.
+2. **Receipt:** pharmacy name, licence number, date, items and total; **default
+   instructions per drug**, which the dispensing pharmacist can override; the
+   **dispensing pharmacist's name**; and a **logo** at the top, uploaded by the
+   owner from their own view.
+3. **Tenders: cash, ZainCash and Qi Card** — all three recorded, none processed
+   by the platform.
+4. **Partner accounts: still open** — see below.
+5. **Placements stay on.**
+
+The questions as they were asked:
 
 1. **Whose price does the till sell at?** The catalogue carries a reference
    price. Either every pharmacy sells at it, or each pharmacy sets its own
@@ -190,7 +209,7 @@ green with it on; every product either maps to molecules or says it does not.
    accountant or to how Salim's receipts are laid out.
 3. **Tenders at the till.** Cash only for now, or cash plus ZainCash / Qi Card
    *recorded* as the way a customer paid (not processed by us)? Recommended:
-   cash plus recorded tenders, because the drawer count in v0.0012 needs to
+   cash plus recorded tenders, because the drawer count in v0.0013 needs to
    know which takings are not in the drawer.
 4. **Partner accounts while the marketplace is dark.** A partner can still sign
    in and submit listings nobody will see until step 5. Keep collecting them
@@ -198,37 +217,73 @@ green with it on; every product either maps to molecules or says it does not.
 5. **Confirm placements stay on.** Students and trainees were not part of the
    meeting's decision, so the switch was left on.
 
-**Also before the production till, not before v0.0010:** during the catalogue
+**Also before the production till, not before v0.0011:** during the catalogue
 go/no-go, note which barcode types real packs carry — EAN-13 is all this build
 reads; EAN-8, UPC-A and 2D codes on some imports would each need handling.
 
 **Known and left alone on purpose:** the owner's Billing screen still shows the
-shift-era plans and charges (v0.0016, blocked on price), and a pharmacist's
+shift-era plans and charges (v0.0017, blocked on price), and a pharmacist's
 Profile still shows the relief-shift record (replaced by attendance in
-v0.0014).
+v0.0015).
 
-**v0.0010 — the till.**
+### v0.0010 as built — owners of more than one pharmacy
+
+A correction to W7, not the till. Iraq has no pharmacy chains, but some
+pharmacists own several pharmacies. So the group, the chain and the manager
+role are gone, and an owner's ownership link is a **list**: Rahma owns one
+pharmacy, Layla owns three. An owner of several sees an **All** tab and one tab
+per pharmacy; an owner of one sees no tabs. Billing follows the owner: priced
+per pharmacy, the shift allowance shared across them, one invoice. See W7.
+
+It went before the till because the till's first decision — each pharmacy
+sets its own price — needs the pharmacy on screen to be unambiguous.
+
+### Before v0.0011 — decisions needed
+
+1. **Default instructions: usage, or dose?** Recommended: a default says how to
+   take the medicine (*"after food"*, *"shake well"*, *"swallow whole"*), and the
+   **dose is always typed by the pharmacist**. A default dose is wrong for most
+   patients, and printed on a receipt it carries an authority it should not.
+   Who writes the defaults is the curator's call (W19); until one is named the
+   prototype uses plain usage lines, clearly marked as placeholders.
+2. **Receipt language.** Arabic by default with English on request, per receipt?
+3. **The average market price, shown to whom?** Showing a pharmacy what others
+   charge is useful and sensitive: it needs P6's floor — no average from fewer
+   than five pharmacies — or it tells one pharmacy another's price.
+4. **Partner accounts** (still open): see the recommendation in chat, recorded
+   under W15.
+
+**v0.0011 — the till.**
 Scan (camera, wedge scanner, or typed), cart, quantities, cash with change due,
 receipt preview rendered as an image, void and refund with a reason. The price is
 written **onto the sale line** at the moment of sale. The Helper checks the
 basket as one consolidated check, not per item, and states coverage per basket:
 "3 of 4 items checked; 1 not in the reference." Tiers render as Note and Warn;
 the Stop list ships **empty** (P9). Phone and desktop layouts, both directions.
+As decided on 25 Sep 2026: **each pharmacy's own price**, with the average
+market price beside it as the reference; tenders **cash, ZainCash and Qi Card**,
+recorded not processed; and a receipt carrying the owner's **logo** (uploaded
+from the owner's view), pharmacy name, licence number, date, items with their
+**instructions** (defaults the dispensing pharmacist can override), total, and
+the **dispensing pharmacist's name**. For an owner of several, the till belongs
+to the pharmacy tab on screen.
 *The check asserts:* a price change never alters a past sale; an unmapped item is
 announced rather than silently passed; nothing in the cart can open a banner.
 
-**v0.0011 — stock and purchasing.**
+**v0.0012 — stock and purchasing.**
 Stock as a **ledger of movements** — sale, receipt, adjustment, return, expiry
 write-off — with levels always derived, never stored. Purchase orders from
 suppliers, who are already Externals (distributors and storage houses, W4):
 draft → sent → received, with partial receipt. Batches and expiry dates;
-near-expiry and low-stock prompts on the owner's home. The controlled-substance
+near-expiry and low-stock prompts on the owner's home. **Expired stock is never
+available stock** (W17): an expired batch is quarantined, not sellable, and
+leaves stock only by a write-off with a reason. The controlled-substance
 register falls out of dispensing as a derived view of movements for controlled
 items, not a separate log.
 *The check asserts:* no stock level is ever written directly; the register
 reconciles to movements exactly.
 
-**v0.0012 — cash, and the offline model.**
+**v0.0013 — cash, and the offline model.**
 Till sessions opened and closed per person. **Blind count**: the drawer total is
 entered before the expected figure is shown. Every variance carries a note and
 an owner sign-off. Voids, refunds, discounts and no-sale drawer opens are all
@@ -239,7 +294,7 @@ of the same product while offline — reconciling to the right level.
 *The check asserts:* the expected total is not in the page before the count is
 entered; two offline devices reconcile correctly.
 
-**v0.0013 — clinical governance.**
+**v0.0014 — clinical governance.**
 A **Rules** module in the CRM — `proposed → under review → approved (tier) →
 retired` — with a named approver and date on every transition, and a rule that
 was never approved never fires. Every released rule set is versioned and
@@ -251,7 +306,7 @@ per-patient alert suppression inside that pharmacy and nowhere else.
 *The check asserts:* no CRM role can read a patient row; a retired rule stops
 firing; a rule set from any past date can be reproduced.
 
-**v0.0014 — attendance.**
+**v0.0015 — attendance.**
 The roster: an employment record per person with start and end dates and a role
 (pharmacist or assistant), invitations for staff without accounts, deactivation
 that keeps history. Check-in is tied to opening a till session. A missed
@@ -263,7 +318,7 @@ last till transaction is shown beside the claim as evidence.
 *The check asserts:* an auto-closed shift never counts as clean; approval never
 overwrites the claim.
 
-**v0.0015 — tasks, performance, and the absent owner's day.**
+**v0.0016 — tasks, performance, and the absent owner's day.**
 Tasks with due dates and recurrence — the daily fridge-temperature check is the
 case to design for — and completion. Performance derived from what people must
 do anyway (attendance, till activity) rather than from self-reported ticks.
@@ -275,7 +330,7 @@ pharmacist side opens its three things: check-in, tasks, CV.
 *The check asserts:* no screen ranks pharmacists by sales; a flag names its
 comparison.
 
-**v0.0016 — paying for it.**
+**v0.0017 — paying for it.**
 Subscriptions for the two systems on the W14 ledger, seat-aware so a one-person
 pharmacy is not charged for staff it does not have. **Blocked** until the price
 is set — see the open decisions below.
@@ -289,15 +344,15 @@ pharma-facing products.
 
 These are yours, and several gate the production track. None is a coding task.
 
-1. **Name the clinical curator** (W19) — before v0.0013 leaves the prototype.
+1. **Name the clinical curator** (W19) — before v0.0014 leaves the prototype.
 2. **The catalogue go/no-go** (W17) — ten hours, a hundred real SKUs seeded from
    Kimadia / MoH registration lists, mapped to molecules. Count how many map
    cleanly. Before any production work on System 1.
 3. **Certify the hardware** (W17) — buy one or two Bluetooth thermal printers
-   and a wedge scanner and test Arabic bitmap receipts on them. Before v0.0010's
+   and a wedge scanner and test Arabic bitmap receipts on them. Before v0.0011's
    receipt is shown to a customer.
-4. **Five owner conversations** with v0.0010–v0.0012 in hand.
-5. **Price the two systems** — gates v0.0016.
+4. **Five owner conversations** with v0.0011–v0.0013 in hand.
+5. **Price the two systems** — gates v0.0017.
 6. **Choose the name** (W9) — before the first sale.
 7. **Word the moonlighting clause** (W21) — before the first shift credit.
 
@@ -342,10 +397,14 @@ owner" becomes a derived fact, like `dormant` and `unclaimed` already are.
 **Needs deciding:**
 - Does Users still offer "Pharmacy owners" as a saved view? Probably yes, as a
   view *over pharmacists* rather than a type.
-- Can one pharmacist own more than one pharmacy? Migration `0001` currently says
-  no, on the basis that one licensed pharmacist may own one pharmacy under Iraqi
-  law. If that holds the link is one-to-one and much stays simple. If not, the
-  ownership edge becomes a table and several screens change shape.
+- Can one pharmacist own more than one pharmacy? **Answered 25 Sep 2026: yes —
+  some do.** The prototypes model it from v0.0010 (W7). **The real schema does
+  not yet:** in migration `0001`, `pharmacy_details` is keyed on the account's
+  profile, so each pharmacy is its own login, and the comment there states the
+  one-pharmacy rule. The production track needs a `pharmacies` table of its own
+  and an ownership table between pharmacists and pharmacies, with RLS rewritten
+  around the owner rather than the pharmacy account. That is a migration to
+  write before any owner of several is onboarded, not after.
 - What does the link mean when a pharmacy is sold or the responsible pharmacist
   changes? A link with a start and end date is a different object from a foreign
   key.
@@ -597,73 +656,63 @@ built** — see the note under each. W6e was always covered by W4.
 - **W6e. Model the real supply chain in Externals.** Covered by W4; listed here
   because it is also what a procurement product (S4) later runs on.
 
-## W7. Chain and multi-branch accounts
+## W7. Owners of more than one pharmacy
 
-**Built — App_v0.0008 / CRM_v0.0008.**
+**Rebuilt — App_v0.0010 / CRM_v0.0010,** replacing the chain model v0.0008
+shipped.
 
-**The modelling decision, which is the load-bearing part.** A chain is *not* one
-account owning many pharmacies. Every branch keeps its own licence and its own
-responsible pharmacist, because that is how pharmacy ownership works here — so
-W1's one-pharmacist-one-pharmacy link is untouched by this entire build.
-What a chain adds is a **group over branches** and a **manager link** on an
-account. Modelling it the other way round would have collided with the licensing
-rule on the first real customer, and it is a migration nobody wants to run
-against live data.
+**What changed, and why.** v0.0008 modelled a *chain*: a group over branches,
+and a manager account with a link to the group. **Iraq has no pharmacy
+chains.** What it has is pharmacists who own more than one pharmacy — each a
+business in its own right, with its own name, its own licence and its own
+responsible pharmacist. So there is no group, no chain and no manager role. An
+**owner** is a pharmacist whose ownership link is a **list**: one pharmacy for
+most, several for some. `isOwner()` and `viewRole()` derive the role from the
+list; nothing stores it, and an owner of one and an owner of three are the same
+role.
 
-That gives the same shape one level up: `isOwner` is a pharmacist with a
-pharmacy link, `isManager` is a pharmacist with a group link, and `viewRole()`
-derives both. Neither is an account type and neither is stored.
+**The app.** An owner of several sees an **All** tab and one tab per pharmacy,
+by its short name. All lists their pharmacies worst-first — one with no
+responsible pharmacist first, because it cannot legally open; then, with the
+marketplace on, by what is outstanding there — and says on screen that owning
+several changes nothing about what each one needs. A pharmacy's tab is headed
+with its name, licence and responsible pharmacist, and warns first if it has
+none; that tab carries a mark on the strip so it shows from any of the others.
+An owner of one sees no tabs. The profile lists every pharmacy held, each as
+itself. Notifications about a pharmacy reach its owner and nobody else.
 
-**The app.** A manager signs in to a **branch board** rather than a dashboard:
-one row per branch, sorted worst-first — a branch that cannot legally open, then
-by uncovered shifts, then by applicants waiting. A branch that is fine sorts to
-the bottom and can be ignored, which is the whole point. Tapping one scopes the
-screen to it; there is always a way back to all of them. The manager's
-navigation carries no pharmacist half at all: nothing about their day is a shift
-they work. The board states on screen that the group does not replace a branch
-licence, because a manager who believes otherwise makes a decision no software
-can walk back.
+**The pricing, and the two decisions inside it** (`subscriptionCharge()` in
+`src/config/fees.ts`, with unit tests):
 
-**The pricing, and the two decisions inside it.** Both are in
-`src/config/fees.ts` as `subscriptionCharge()`, with unit tests:
+1. **Priced per pharmacy.** The cost driver is pharmacies, not owners. A flat
+   per-owner price is the W14 allowance hole one level up.
+2. **The allowance is shared.** The shifts an owner is owed are the sum of their
+   pharmacies', spendable at any of them — the same total, and the reason an
+   owner of several buys: pharmacies are uneven. R19 shows the unevenness.
 
-1. **Priced per branch.** The cost driver is branches, not companies. A flat
-   chain price is the W14 allowance hole one level up — one Basic subscription
-   covering twelve branches would cost roughly 100,000 IQD a month against
-   commission.
-2. **Allowance pooled.** The shifts a chain is owed are the sum of its branches',
-   spendable anywhere. This costs us nothing — the total is identical — and it
-   is the reason a chain buys: branches are uneven, and an allowance stranded at
-   a quiet branch while a busy one pays commission is a bill argued about every
-   month. R19 shows exactly that unevenness.
+Volume discounts are not in code: a negotiated discount is data on the owner in
+the CRM.
 
-**Volume discounts are deliberately not in the code.** A rate card belongs in
-code; a discount negotiated with a particular chain belongs in the CRM as data
-on that chain, where an operator can see who was given what and why.
+**The CRM.** Users carry `pharmacies` (a list) instead of `pharmacy`. Each
+pharmacy row names its owning pharmacist in a column, with a saved view and a
+facet for owners of several. Commission stays at the pharmacy that generated
+it; the subscription and the **invoice belong to the owner** when they own
+several — one invoice, their pharmacies none — and to the pharmacy otherwise.
+There is no group table, because there are no groups.
 
-**The CRM.** Branches are ordinary pharmacy rows with a `group` column, a saved
-view and a facet. Commission stays at the branch that generated it; the
-subscription belongs to the group; **the invoice is one per bill-payer**, so a
-chain gets one invoice a month and its branches get none — nine invoices for one
-company is what a chain complains about before it complains about the price.
-Groups are their own SQL table with no licence column, which is the model
-restated where a query can see it.
+**Decided by default in v0.0010:** an owner's pharmacies share **one plan**,
+since they are billed as one subscription.
 
-**Raised:** 18 Sep 2026. **Touches:** app + CRM.
-
-Excluded from v1 by the brief. Worth revisiting sooner than that implies: the
-first customer willing to pay a real subscription (S1) is a chain with several
-branches and a staffing headache, and the exclusion blocks exactly that sale.
-
-**Still open, and needing your judgement rather than more code:**
-- **The discount ladder.** At what branch count does a chain get a discount, and
-  how much? Linear pricing is what shipped; a twelve-branch chain will ask.
-- **Who the manager is, legally.** The fixture makes them a pharmacist. If a
-  chain's manager is a businessman rather than a clinician, the account is no
-  longer "a pharmacist with a group link" and the model needs a second shape.
-- **What a manager may see of W8's tallies.** It is the branches' own data and
-  the group is what owns them, so probably yes — but per branch and labelled as
-  such, never pooled into one number that hides which branch it came from.
+**Still open:**
+- **The production schema** — see W1: the real tables still make each pharmacy
+  its own login.
+- **The discount ladder** for owners of several — linear pricing is what
+  shipped.
+- **Per-pharmacy staff and stock.** From the till onward (v0.0011) everything
+  that happens at a counter belongs to one pharmacy's tab; employees belong to a
+  pharmacy, not to the owner (W23).
+- **What an owner of several sees of W8's tallies** — their own pharmacies',
+  per pharmacy and labelled, never pooled into a number that hides which one.
 
 ## W8. The dispensing log: what v0.0004 settled, and what it did not
 
@@ -1160,6 +1209,14 @@ appears nowhere on the surface it was bought for. Impressions are counted as
 `(placement, day)` counters and nothing else, so no query can reconstruct who saw
 what — the same shape, for the same reason, as the dispensing tallies in W8.
 
+**While the marketplace is dark (from v0.0009)** a partner can still sign in and
+raise listings that nobody sees. Recommended on 25 Sep 2026, awaiting a
+decision: **open banners on the owner's home now**, since the owner's app is a
+commercial surface P1 already permits and the natural advertisers — suppliers
+and distributors — sell to owners; and **hold job listings**, because in
+Phase 1 their audience is the employees of paying customers, which is an
+owner's staff being advertised other jobs inside the owner's own system.
+
 **The hybrid intake is what the user chose:** the partner fills the form, then a
 person calls to collect everything the form deliberately does not ask for. The
 form holds four fields; the contact number it captures is what the call uses.
@@ -1444,8 +1501,8 @@ always reads 3%.
 
 ## W17. System 1 — the till: point of sale, inventory, purchasing, and the Helper in the cart
 
-**Raised:** 20 Sep 2026. **Touches:** everything. Versions v0.0009–v0.0013 in
-Part 0. **Catalogue layer built in v0.0009** — products, mapping confidence,
+**Raised:** 20 Sep 2026. **Touches:** everything. Versions v0.0009 and
+v0.0011–v0.0014 in Part 0. **Catalogue layer built in v0.0009** — products, mapping confidence,
 the unknown-barcode path and the CRM queue; the till itself is next.
 
 One build, not three. A till that decrements stock as it sells *is* the
@@ -1498,6 +1555,24 @@ actually shows; and **no automatic deduction from anyone's pay, ever.**
 **Suppliers are Externals.** Distributors and storage houses already exist as
 Externals records (W4); purchase orders are raised against them.
 
+**Expired stock is never available stock** (added 25 Sep 2026). This is a real
+failure in the competitor: an expired box still counts as stock on hand, so the
+shelf looks full, reorders do not happen, and nothing stops it being sold. Here:
+
+- Stock is held **by batch**, each with its expiry date, and "available" is
+  computed from unexpired batches only. On its expiry date a batch moves to
+  **expired — quarantined**: still counted, never as available.
+- The till sells **first-expiring first** from what is available. If the only
+  stock left is expired, the product shows as **out of stock**, with how many
+  expired units are sitting in quarantine.
+- An expired batch leaves stock only by a **write-off movement** with a reason
+  (destroyed, returned to supplier), a date and who did it — the evidence an
+  inspector or the supplier will ask for.
+- This is not a clinical block, so P9 is not in tension with it. If an expiry
+  date was entered wrongly, the fix is an audited **correction to the batch**,
+  which is an owner's permission (W23) — never an override at the till.
+- Near-expiry stock (the next 90 days, adjustable) is where W22 begins.
+
 ### Needs deciding
 
 - The catalogue go/no-go (Part 0, non-code track item 2).
@@ -1509,7 +1584,7 @@ Externals records (W4); purchase orders are raised against them.
 ## W18. System 2 — the pharmacy's people: check-in/out, tasks, performance
 
 **Raised:** 20 Sep 2026. **Touches:** app + CRM. **Not built.** Versions
-v0.0014–v0.0015.
+v0.0015–v0.0016.
 
 For the owner who is not always in the building. Seen working at Salim.
 
@@ -1548,7 +1623,7 @@ systems get expensive if added later.
 ## W19. The clinical curator, and the rule-governance module
 
 **Raised:** 20 Sep 2026. **Touches:** CRM, the Helper. **Not built.** Version
-v0.0013; the person is on the non-code track.
+v0.0014; the person is on the non-code track.
 
 Once the Helper sits in a till influencing what is dispensed, somebody must be
 accountable for a rule being wrong or missing. "The software said so" is not a
@@ -1586,7 +1661,7 @@ ask and the first question a pharma partner's compliance team will ask.
 ## W20. The Syndicate assessment, and specialty categories
 
 **Raised:** 20 Sep 2026. **Touches:** app, CRM, the CV. **Not built.** After
-v0.0016.
+v0.0017.
 
 An accredited test that scores pharmacists and sorts them into specialty
 categories — dermatological, OTC, cardiovascular and so on — which they present
@@ -1651,6 +1726,61 @@ W20.
   accredited hours; a shift arranged directly counts toward none of them. Phone
   numbers are not exposed before acceptance. The handoff record stays the
   evidentiary backbone. (C2.)
+
+## W22. The near-expiry exchange
+
+**Raised:** 25 Sep 2026. **Touches:** app, CRM. Promotes S9 from strategy to
+work. **Not built.**
+
+A page listing stock nearing its expiry date, for exchange or sale between
+pharmacies. **Available to pharmacy owners by default**; an owner can grant it
+to an employee pharmacist (W23).
+
+It follows from W17's batches: the candidates are the pharmacy's own batches
+inside the near-expiry window, and a listing is created from a batch, not typed.
+Worth deciding before it is built:
+
+- **Who can see a listing** — every pharmacy, or pharmacies within a distance?
+  Nearby is what makes an exchange practical; everywhere is what makes it
+  liquid.
+- **Whether money passes through the platform.** The no-wallet rule says no:
+  the platform matches, the two pharmacies settle between themselves, and the
+  transfer is recorded as a stock movement at both ends.
+- **Controlled substances are excluded.** Moving them between pharmacies is a
+  regulated transfer with its own register, not a marketplace listing.
+- **What it shows a competitor.** A pharmacy's near-expiry list says something
+  about its stock and its sales; listings are opt-in, per batch, and name the
+  pharmacy only once the other side asks.
+
+## W23. Permissions an owner grants, and what was done on each shift
+
+**Raised:** 25 Sep 2026. **Touches:** app, CRM, every System 1 and 2 screen.
+**Not built.**
+
+Some things are an owner's by default: the near-expiry exchange (W22),
+purchase orders, setting prices, stock corrections, write-offs, cash
+variances, voids and refunds above an amount, and editing the receipt and its
+logo. An owner can **grant** any of them to an employee pharmacist, per pharmacy.
+
+**And the owner sees what was done.** Every action at a pharmacy carries who
+did it and which shift it happened in — the shift being the till session that
+check-in opens (W18). A **timeline per shift** shows the owner, in order, what
+each person did: sales, voids, refunds, overrides of default instructions,
+price changes, corrections, write-offs, stock received, listings made.
+
+Design rules worth writing down now:
+
+- **Default deny.** A new employee can sell and check in, and nothing else,
+  until the owner grants it.
+- **Granted per pharmacy.** An owner of several trusts different people at
+  different pharmacies.
+- **A grant is itself on the timeline** — who granted what, to whom, when — and
+  revoking it is too.
+- **The timeline is a record, not a surveillance feed.** It shows actions taken
+  in the system, never location, and the employee can see their own. P7 still
+  governs anything that looks like a sales ranking.
+- **The CRM does not read it.** It is the pharmacy's operational record, like
+  patient history (P8); the platform sees counts, not names.
 
 ---
 
@@ -1931,6 +2061,8 @@ makes the app open every day, and S4, S5 and S7 all need it to.
   reference unassailable.
 
 ## S9. Near-expiry stock exchange between pharmacies
+*Promoted to work as W22 on 25 Sep 2026.*
+
 *Later. A density play, not a revenue line.*
 
 Pharmacies list near-expiry stock to each other. Expiry write-off is a real,

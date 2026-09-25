@@ -121,15 +121,15 @@ await signIn(d, 'rahma@example.com');
 ok('the account type is pharmacist, not a third type',
    await d.evaluate(() => ACCOUNTS['rahma@example.com'].type === 'pharmacist'));
 ok('and ownership is a link, not a type',
-   await d.evaluate(() => !!ACCOUNTS['rahma@example.com'].pharmacy));
+   await d.evaluate(() => ACCOUNTS['rahma@example.com'].pharmacies.length === 1));
 ok('"owner" is derived from the link rather than stored',
    await d.evaluate(() => {
      const a = ACCOUNTS['rahma@example.com'];
-     const keep = a.pharmacy;
+     const keep = a.pharmacies;
      const was = viewRole(a);
-     a.pharmacy = null;
+     a.pharmacies = [];
      const now = viewRole(a);
-     a.pharmacy = keep;
+     a.pharmacies = keep;
      return was === 'owner' && now === 'pharmacist';
    }));
 
@@ -1083,87 +1083,107 @@ ok('and \u0645\u0633\u0627\u0639\u062f \u0627\u0644\u0648\u0635\u0641\u0627\u062
 ok('both the tab and the home card carry the new name',
    (await d.locator('#app-body').innerText()).toLowerCase().includes('dispensing helper'));
 
-console.log('\nchains: a group of branches, one bill (W7)');
+console.log('\nan owner of more than one pharmacy (W7, revised v0.0010)');
+/* Iraq has no pharmacy chains; some pharmacists own several pharmacies. So
+   this is an OWNER with more than one ownership link — not a manager, not a
+   group, not a user type of its own. */
+ok('there is no manager role and no group anywhere in the build',
+   await d.evaluate(() => !Object.values(ACCOUNTS).some(a => viewRole(a) === 'manager' || 'manages' in a)
+     && typeof GROUPS === 'undefined' && typeof isManager === 'undefined'));
 await signOut(d);
-await signIn(d, 'layla@rahmagroup.example');
+await signIn(d, 'layla@example.com');
 await d.evaluate(() => setLang('en'));
 await d.waitForTimeout(250);
-ok('a chain manager is a pharmacist with a GROUP link, not a new account type',
-   await d.evaluate(() => ACCOUNTS[S.email].type === 'pharmacist' && !!ACCOUNTS[S.email].manages));
-ok('and the view follows the link rather than a stored role',
-   await d.evaluate(() => S.role === 'manager' && viewRole({ type:'pharmacist', manages:'G1' }) === 'manager'));
-/* W1's rule is the one this build could most easily have broken. */
-ok('every branch still keeps its own licence and its own responsible pharmacist',
-   await d.evaluate(() => myBranches().every(b => 'responsible' in b)
-     && Object.values(PHARMACIES).filter(x => x.responsible)
-          .every(x => typeof x.responsible === 'object')));
-ok('a manager lands on the group, not on one branch',
-   await d.evaluate(() => S.screen === 'group' && S.branch === null));
-
+ok('an owner of three is simply an owner, whose link points at three pharmacies',
+   await d.evaluate(() => S.role === 'owner' && ACCOUNTS[S.email].pharmacies.length === 3
+     && viewRole({ type:'pharmacist', pharmacies:['P1'] }) === viewRole(ACCOUNTS[S.email])));
+ok('with the same bar as an owner of one',
+   await d.evaluate(() => navFor('owner').map(x => x[0]).join() ===
+     (() => { const keep = S.email; S.email = 'rahma@example.com'; const n = navFor('owner').map(x => x[0]).join(); S.email = keep; return n; })()));
+/* W1's rule is the one this change could most easily have broken. */
+ok('every pharmacy keeps its own name, licence and responsible pharmacist',
+   await d.evaluate(() => {
+     const mine = myPharmacies();
+     return new Set(mine.map(p => p.licence)).size === mine.length
+       && new Set(mine.map(p => p.name.en)).size === mine.length
+       && mine.every(p => 'responsible' in p);
+   }));
+ok('there is one tab per pharmacy, plus All — and they start on All',
+   await d.locator('.ptab').count() === 4 && await d.evaluate(() => currentPharmacy() === null)
+   && await d.locator('.ptab.on').innerText() === 'All');
 {
   const txt = await d.locator('#app-body').innerText();
-  ok('the board says how many branches are short, not how many exist',
-     /branches need cover/.test(txt));
-  ok('and lists every branch in the group',
-     await d.locator('.branch-row').count() === await d.evaluate(() => myBranches().length));
-  ok('the branch that cannot legally open sorts first',
-     await d.evaluate(() => branchBoard()[0].responsible === null));
-  ok('and says so in the one colour nothing else on the board uses',
+  ok('All says how many of them need the owner, not how many exist', /needing cover this week: \d of 3/.test(txt));
+  ok('and lists every pharmacy', await d.locator('.branch-row').count() === 3);
+  ok('the pharmacy that cannot legally open sorts first',
+     await d.evaluate(() => pharmacyBoard()[0].responsible === null));
+  ok('and says so in the one colour nothing else on the list uses',
      await d.locator('.branch-row').first().locator('.badge-alert').count() === 1);
-  ok('a covered branch sorts last and is marked as needing nothing',
-     await d.evaluate(() => { const b = branchBoard(); return b[b.length - 1].uncovered === 0; }));
-  ok('the screen states that the group does not replace a branch licence',
-     /licence/i.test(txt) && /replaces neither|does not replace/i.test(txt));
+  ok('its tab carries the mark too, so it shows from any of them', await d.locator('.ptab .ptab-dot').count() === 1);
+  ok('a covered pharmacy sorts last', await d.evaluate(() => { const b = pharmacyBoard(); return b[b.length - 1].uncovered === 0; }));
+  ok('the screen says owning several changes nothing about what each one needs',
+     /licence/i.test(txt) && /one responsible pharmacist cannot answer for three/i.test(txt));
 }
-
-await d.evaluate(() => setBranch('P9'));
+await d.locator('.branch-row').first().click();
 await d.waitForTimeout(250);
-ok('tapping a branch scopes the screen to it',
-   await d.evaluate(() => S.screen === 'branch' && S.branch === 'P9'));
-ok('and names the branch, not the group',
-   (await d.locator('#app-body').innerText()).includes('Mansour'));
-await d.locator('.branch-scope').click();
+ok('opening one from the list selects its tab', await d.evaluate(() => currentPharmacy().id === 'P9')
+   && await d.locator('.ptab.on').innerText() === 'Dar Al-Dawa');
+{
+  const txt = await d.locator('#app-body').innerText();
+  ok('and heads the screen with that pharmacy, its licence and who answers for it',
+     /Dar Al-Dawa Pharmacy/.test(txt) && /IQ-PHM-000658/.test(txt) && /cannot open until one is named/.test(txt));
+}
+await d.locator('.ptab', { hasText:'All' }).click();
 await d.waitForTimeout(250);
-ok('and there is a way back to all of them',
-   await d.evaluate(() => S.screen === 'group' && S.branch === null));
+ok('and All takes them back to all of them', await d.evaluate(() => currentPharmacy() === null));
+ok('the profile lists every pharmacy held, each as itself',
+   await d.evaluate(() => { goto('profile'); const t2 = document.getElementById('app-body').innerText;
+     return ['IQ-PHM-000633', 'IQ-PHM-000641', 'IQ-PHM-000658'].every(l => t2.includes(l)); }));
+ok('the alert about a pharmacy nobody can sign for reaches its owner and nobody else',
+   await d.evaluate(() => {
+     const mine = S.notifs.filter(notifMine).some(n => n.id === 'n7');
+     const keep = S.email; S.email = 'rahma@example.com';
+     const theirs = S.notifs.filter(notifMine).some(n => n.id === 'n7');
+     S.email = keep; return mine && !theirs;
+   }));
+ok('an owner without a trainee is not shown someone else’s',
+   await d.evaluate(() => { goto('trainees'); return !/Zainab/.test(document.getElementById('app-body').innerText); }));
+ok('signing in again starts on All, not on the last tab somebody chose',
+   await d.evaluate(() => { setPharmacy('P8'); signOut(); signInAs('layla@example.com'); return currentPharmacy() === null; }));
+ok('an owner of one sees no tabs at all',
+   await d.evaluate(() => { signOut(); signInAs('rahma@example.com'); goto('dashboard');
+     const n = document.querySelectorAll('.ptab').length; signOut(); signInAs('layla@example.com'); return n === 0; }));
 
-console.log('\nwhat a chain is charged');
+console.log('\nwhat an owner of several is charged');
 await d.evaluate(() => goto('billing'));
 await d.waitForTimeout(250);
 {
   const txt = await d.locator('#app-body').innerText();
-  ok('priced per branch, so one subscription cannot cover twelve of them',
-     await d.evaluate(() => myPlan().monthlyFeeIQD === PLANS[S.plan].monthlyFeeIQD * myBranches().length));
+  ok('priced per pharmacy, so one subscription cannot cover twelve of them',
+     await d.evaluate(() => myPlan().monthlyFeeIQD === PLANS[S.plan].monthlyFeeIQD * myPharmacies().length));
   ok('and the bill says so in words as well as arithmetic',
-     /per branch/i.test(txt) && /one invoice/i.test(txt));
-  ok('the allowance is pooled across the group',
-     await d.evaluate(() => myPlan().includedShifts === PLANS[S.plan].includedShifts * myBranches().length));
-  ok('and the screen says it is spendable at any branch',
-     /pooled|any of them/i.test(txt));
-  ok('an independent pharmacy is charged exactly the plan, unchanged',
+     /per pharmacy/i.test(txt) && /one invoice/i.test(txt));
+  ok('the allowance is shared across their pharmacies',
+     await d.evaluate(() => myPlan().includedShifts === PLANS[S.plan].includedShifts * myPharmacies().length));
+  ok('and the screen says it is spendable at any of them', /shared|any of them/i.test(txt));
+  ok('an owner of one is charged exactly the plan, unchanged',
      await d.evaluate(() => {
        const c = subscriptionCharge('basic', 1);
-       return c.monthlyFeeIQD === PLANS.basic.monthlyFeeIQD
-           && c.includedShifts === PLANS.basic.includedShifts;
+       return c.monthlyFeeIQD === PLANS.basic.monthlyFeeIQD && c.includedShifts === PLANS.basic.includedShifts;
      }));
-  ok('a group with no branches is never billed as zero branches',
-     await d.evaluate(() => [0, -2, NaN].every(n => subscriptionCharge('basic', n).branches === 1)));
-  ok('the pooled allowance runs out where the arithmetic says it does',
+  ok('nobody is ever billed for zero pharmacies',
+     await d.evaluate(() => [0, -2, NaN].every(n => subscriptionCharge('basic', n).pharmacies === 1)));
+  ok('the shared allowance runs out where the arithmetic says it does',
      await d.evaluate(() => {
-       const n = myBranches().length;
+       const n = myPharmacies().length;
        const within = calculateFees({ grossAmount:40000, pharmacyInTrial:false, pharmacistInTrial:false,
-                                      plan:'basic', branches:n, shiftsFilledThisMonth:(5 * n) - 1 });
+                                      plan:'basic', pharmacies:n, shiftsFilledThisMonth:(5 * n) - 1 });
        const beyond = calculateFees({ grossAmount:40000, pharmacyInTrial:false, pharmacistInTrial:false,
-                                      plan:'basic', branches:n, shiftsFilledThisMonth:5 * n });
+                                      plan:'basic', pharmacies:n, shiftsFilledThisMonth:5 * n });
        return within.coveredByPlan === 'basic' && within.pharmacyFee === 0
            && beyond.coveredByPlan === null && beyond.pharmacyFee === 2800;
      }));
 }
-
-ok('a manager gets no pharmacist half \u2014 nothing about their day is a shift they work',
-   await d.evaluate(() => !navFor('manager').some(x => ['browse', 'shifts', 'earnings'].includes(x[0]))));
-ok('but the reference is still theirs, in the account group',
-   await d.evaluate(() => managerGroups().some(g => g.items.some(x => x[0] === 'drugs'))));
 
 console.log('\nevery inline handler actually parses');
 /* A value interpolated into onclick="f(...)" without escaping its own quotes
@@ -1178,8 +1198,8 @@ console.log('\nevery inline handler actually parses');
     ['rahma@example.com', ['dashboard', 'post', 'applicants', 'trainees', 'billing', 'more', 'cv', 'profile']],
     ['zainab@uobaghdad.edu.iq', ['browse', 'placement', 'logbook', 'drugs', 'profile']],
     ['sales@sdi.example', ['partner', 'partnerNew', 'profile']],
-    ['layla@rahmagroup.example', ['group', 'branch', 'post', 'applicants', 'billing',
-                                  'consumption', 'drugs', 'cv', 'notifications', 'profile']]
+    ['layla@example.com', ['dashboard', 'post', 'applicants', 'trainees', 'billing',
+                           'consumption', 'drugs', 'cv', 'notifications', 'profile']]
   ]) {
     await signOut(d);
     await signIn(d, mail);
@@ -1310,15 +1330,16 @@ ok('the post form offers a placement and nothing else',
    await dk.evaluate(() => S.postType === 'internship') && await dk.locator('.segmented').count() === 0);
 
 await signOut(dk);
-await signIn(dk, 'layla@rahmagroup.example');
+await signIn(dk, 'layla@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('a manager’s board leads with the one thing still true without the market: a branch nobody can sign for',
+ok('an owner of several sees, on All, the one thing still true without the market: a pharmacy nobody can sign for',
    /no responsible pharmacist/i.test(await dk.locator('#app-body').innerText())
    && await dk.locator('.branch-row .badge-pending, .branch-row .badge-stage').count() === 0);
-await dk.evaluate(() => setBranch('P9'));
+await dk.evaluate(() => setPharmacy('P9'));
 await dk.waitForTimeout(200);
-ok('and a branch offers no shift to post', await dk.locator('.btn-primary').count() === 0);
+ok('and a pharmacy’s own tab offers no shift to post, only what is coming',
+   !/post a shift/i.test(await dk.locator('#app-body').innerText()) && await dk.locator('.soon-tag').count() === 1);
 
 await signOut(dk);
 await signIn(dk, 'zainab@uobaghdad.edu.iq');
@@ -1408,7 +1429,7 @@ ok('the filters count what they hold',
   for (const [mail, screens] of [
     ['ahmed@example.com', ['checkin', 'tasks', 'drugs', 'cv', 'products', 'profile']],
     ['rahma@example.com', ['dashboard', 'products', 'trainees', 'post', 'billing', 'profile']],
-    ['layla@rahmagroup.example', ['group', 'branch', 'products', 'billing', 'profile']]
+    ['layla@example.com', ['dashboard', 'products', 'trainees', 'billing', 'profile']]
   ]) {
     await dk.evaluate(m => { signOut(); signInAs(m); }, mail);
     for (const sc of screens) {
@@ -1459,25 +1480,22 @@ for (const s of ['browse', 'shifts', 'earnings', 'cv', 'profile']) {
   ok(`${s} does not scroll sideways at 320px`,
      await narrow.evaluate(() => document.body.scrollWidth) <= 320);
 }
-/* The branch board is the widest thing in the build — a name, a responsible
-   pharmacist and up to three badges on one row — so it gets the narrow
-   treatment in both directions. A chain manager on a cheap Android is the
-   person most likely to be standing in one of the branches. */
+/* An owner of several gets the widest things in the build: four tabs in a
+   strip, and a list where a row carries a name, a responsible pharmacist and a
+   badge. Both get the narrow treatment in both directions — the owner of
+   three is the person most likely to be standing in one of them with a phone. */
 {
   await narrow.evaluate(() => signOut());
-  await signIn(narrow, 'layla@rahmagroup.example');
+  await signIn(narrow, 'layla@example.com');
   for (const dir of ['ar', 'en']) {
     await narrow.evaluate(x => setLang(x), dir);
-    for (const s of ['group', 'billing']) {
-      await narrow.evaluate(x => { if (x === 'group') setBranch(null); goto(x); }, s);
+    for (const [label, go] of [['All', () => setPharmacy(null)], ['a pharmacy tab', () => setPharmacy('P9')],
+                               ['billing', () => goto('billing')], ['profile', () => goto('profile')]]) {
+      await narrow.evaluate(f => eval('(' + f + ')()'), go.toString());
       await narrow.waitForTimeout(150);
-      ok(`${s} does not scroll sideways at 320px (${dir})`,
+      ok(`${label} does not scroll sideways at 320px (${dir})`,
          await narrow.evaluate(() => document.body.scrollWidth) <= 320);
     }
-    await narrow.evaluate(() => setBranch('P9'));
-    await narrow.waitForTimeout(150);
-    ok(`a branch does not scroll sideways at 320px (${dir})`,
-       await narrow.evaluate(() => document.body.scrollWidth) <= 320);
   }
 }
 

@@ -132,15 +132,15 @@ await p.waitForTimeout(120);
 ok('the owner view is a view over pharmacists, not a type of its own',
    await p.evaluate(() => {
      const r = visibleRows('users');
-     return r.length > 0 && r.every(u => u.type === 'pharmacist' && !!u.pharmacy);
+     return r.length > 0 && r.every(u => u.type === 'pharmacist' && u.pharmacies.length > 0);
    }));
 ok('an owner is derived from the link — clear it and they leave the view',
    await p.evaluate(() => {
      const u = DATA.users.find(isOwner);
-     const keep = u.pharmacy;
-     u.pharmacy = null;
+     const keep = u.pharmacies;
+     u.pharmacies = [];
      const gone = !visibleRows('users').some(x => x.id === u.id) && !isOwner(u);
-     u.pharmacy = keep; render();
+     u.pharmacies = keep; render();
      return gone;
    }));
 ok('and the list says so in one chip rather than two columns',
@@ -621,41 +621,42 @@ ok('a covered shift is zero AND says which plan absorbed it',
 ok('a commission row carries a real amount and no plan',
    await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'commission')
      .every(r => r.amount > 0 && r.reason === 'commission')));
-/* W7 — a subscription belongs to whoever bought the plan: a pharmacy standing
-   alone, or a chain. The branch rows underneath keep their own commission, so
-   "which branch cost what" survives the roll-up. */
-ok('a subscription row matches its plan’s published fee, per branch',
+/* W7, revised v0.0010 — a subscription belongs to whoever bought the plan: the
+   pharmacy, or the pharmacist who owns several. The pharmacy rows underneath
+   keep their own commission, so "which pharmacy cost what" survives. */
+ok('a subscription row matches its plan’s published fee, per pharmacy',
    await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription').every(r => {
-     if (!r.group) return r.amount === PLANS[r.reason].monthlyFeeIQD;
-     return r.amount === PLANS[r.reason].monthlyFeeIQD * branchesIn(r.group).length;
+     if (!r.payer) return r.amount === PLANS[r.reason].monthlyFeeIQD;
+     return r.amount === PLANS[r.reason].monthlyFeeIQD * pharmaciesOf(r.payer).length;
    })));
-ok('every row points at a pharmacy or a chain that exists',
+ok('every row points at a pharmacy, or a pharmacist who owns several, that exists',
    await p.evaluate(() => DATA.ledger.every(r =>
      (r.pharmacy && DATA.pharmacies.some(x => x.id === r.pharmacy)) ||
-     (r.group && DATA.groups.some(x => x.id === r.group)))));
+     (r.payer && pharmaciesOf(r.payer).length > 1))));
 ok('nobody is charged a subscription they are not on',
    await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription').every(r =>
-     r.group
-       ? (DATA.groups.find(x => x.id === r.group) || {}).plan === r.reason
+     r.payer
+       ? pharmaciesOf(r.payer).every(x => x.plan === r.reason)
        : (DATA.pharmacies.find(x => x.id === r.pharmacy) || {}).plan === r.reason)));
-ok('a branch inside a chain raises no subscription of its own',
+ok('a pharmacy whose owner has others raises no subscription of its own',
    await p.evaluate(() => DATA.ledger.filter(r => r.kind === 'subscription')
-     .every(r => !(r.pharmacy && (DATA.pharmacies.find(x => x.id === r.pharmacy) || {}).group))));
-/* The allowance is what stops a chain subscribing to the cheapest plan and
-   posting forty shifts against it. Pooled across a group — which is the same
-   total, just spendable anywhere. */
+     .every(r => !(r.pharmacy && ownsSeveral(DATA.pharmacies.find(x => x.id === r.pharmacy))))));
+/* The allowance is what stops an owner subscribing to the cheapest plan and
+   posting forty shifts against it. Shared across an owner's pharmacies —
+   the same total, just spendable at any of them. */
 ok('nobody has more shifts covered in a month than their plan allows',
    await p.evaluate(() => {
      const byKey = {};
      DATA.ledger.filter(r => r.kind === 'covered').forEach(r => {
-       const ph = DATA.pharmacies.find(x => x.id === r.pharmacy);
-       const k = ((ph && ph.group) || r.pharmacy) + '|' + r.date.slice(0, 7);
+       const k = (r.payer || r.pharmacy) + '|' + r.date.slice(0, 7);
        byKey[k] = (byKey[k] || 0) + 1;
      });
      return Object.entries(byKey).every(([k, n]) => {
        const payer = k.split('|')[0];
-       const g = DATA.groups.find(x => x.id === payer);
-       if (g) return n <= PLANS[g.plan || 'commission'].includedShifts * branchesIn(g.id).length;
+       if (payer.charAt(0) === 'U') {
+         const mine = pharmaciesOf(payer);
+         return n <= PLANS[mine[0].plan || 'commission'].includedShifts * mine.length;
+       }
        const ph = DATA.pharmacies.find(x => x.id === payer);
        return n <= PLANS[ph.plan || 'commission'].includedShifts;
      });
@@ -669,24 +670,21 @@ ok('a pay-as-you-go pharmacy never has a covered shift',
 console.log('\nand it is reportable');
 ok('the SQL view exposes the ledger with its reason intact',
    await p.evaluate(() => Object.keys(sqlTables().ledger[0]).sort().join() ===
-     'amount,date,group_id,id,kind,order_id,pharmacy_id,reason'));
+     'amount,date,id,kind,order_id,payer_id,pharmacy_id,reason'));
 ok('a pharmacy’s plan is queryable beside its charges',
    await p.evaluate(() => sqlTables().pharmacies.every(r => !!r.plan)));
-/* W7 — a chain has to be queryable as a thing, or the roll-up is a screen
-   nobody can reproduce from the data. */
-ok('a chain is its own table, not a kind of pharmacy',
-   await p.evaluate(() => sqlTables().groups.length === DATA.groups.length
-     && sqlTables().groups.every(g => g.branches > 0)
-     && !('licence' in sqlTables().groups[0])));
-ok('and a branch carries the chain it belongs to',
-   await p.evaluate(() => sqlTables().pharmacies.filter(r => r.group_id).length
-     === DATA.pharmacies.filter(p2 => p2.group).length));
-ok('the chain roll-up reports per branch, not just per chain',
+/* W7 — ownership has to be queryable, or the roll-up is a screen nobody can
+   reproduce from the data. And there is no chain table: there are no chains. */
+ok('there is no group or chain table, because there are no chains',
+   await p.evaluate(() => !('groups' in sqlTables()) && !('group_id' in sqlTables().pharmacies[0])));
+ok('ownership is queryable as a count on the pharmacist',
+   await p.evaluate(() => sqlTables().users.find(u => u.id === 'U14').pharmacies_owned === 3));
+ok('the roll-up for an owner of several reports per pharmacy, not just per owner',
    await p.evaluate(() => {
      const r = runReport(reportById('R19'));
-     return r.ok && r.rows.length > 1 && r.rows.length === branchesIn('G1').filter(b =>
+     return r.ok && r.rows.length > 1 && r.rows.length === pharmaciesOf('U14').filter(b =>
        DATA.ledger.some(l => l.pharmacy === b.id && l.date.startsWith('2026-09'))).length
-       && r.rows.every(x => x.chain === 'Al-Rahma Group');
+       && r.rows.every(x => x.owner === 'Layla Abdulkarim');
    }));
 ok('MRR totals the subscription rows for the month',
    await p.evaluate(() => {
@@ -710,24 +708,24 @@ await tab(p, 'invoices');
 ok('an invoice totals its month of ledger rows, for whoever it is addressed to',
    await p.evaluate(() => DATA.invoices.every(i => {
      const want = DATA.ledger
-       .filter(r => (i.group ? r.group === i.group : (r.pharmacy === i.pharmacy && !r.group))
+       .filter(r => (i.payer ? r.payer === i.payer : (r.pharmacy === i.pharmacy && !r.payer))
                  && r.date.slice(0, 7) === i.month)
        .reduce((n, r) => n + r.amount, 0);
      return i.amount === want;
    })));
-/* W7 — one invoice for the chain. Nine invoices for one company is the thing
-   a chain complains about before it complains about the price. */
-ok('a chain gets ONE invoice a month, not one per branch',
+/* W7 — one invoice for the owner of several. Three invoices for one person is
+   what they complain about before they complain about the price. */
+ok('a pharmacist who owns several gets ONE invoice a month, not one per pharmacy',
    await p.evaluate(() => {
      const months = [...new Set(DATA.invoices.map(i => i.month))];
-     return DATA.groups.every(g => months.every(m =>
-       DATA.invoices.filter(i => i.group === g.id && i.month === m).length <= 1));
+     return months.every(m => DATA.invoices.filter(i => i.payer === 'U14' && i.month === m).length <= 1)
+       && DATA.invoices.some(i => i.payer === 'U14');
    }));
-ok('and no branch of a chain is invoiced separately',
+ok('and none of their pharmacies is invoiced separately',
    await p.evaluate(() => DATA.invoices.every(i =>
-     !i.pharmacy || !(DATA.pharmacies.find(x => x.id === i.pharmacy) || {}).group)));
+     !i.pharmacy || !ownsSeveral(DATA.pharmacies.find(x => x.id === i.pharmacy)))));
 ok('every invoice is addressed to exactly one payer',
-   await p.evaluate(() => DATA.invoices.every(i => !!i.pharmacy !== !!i.group)));
+   await p.evaluate(() => DATA.invoices.every(i => !!i.pharmacy !== !!i.payer)));
 ok('and the list says who that is',
    await p.evaluate(() => DATA.invoices.every(i => !!billedTo(i))));
 ok('no invoice is raised for a month with nothing to charge',
@@ -850,47 +848,61 @@ ok('the catalogue is queryable, with coverage written out',
    }));
 await p.evaluate(() => closeRecord());
 
-console.log('\nchains: a group over branches, billed once (W7)');
+console.log('\none pharmacist, several pharmacies — no chains (W7, revised v0.0010)');
 await tab(p, 'pharmacies');
-/* The rule W1 set and this build could most easily have broken. */
-ok('a branch is a pharmacy row with its own licence, not a row on the chain',
-   await p.evaluate(() => branchesIn('G1').length > 1
-     && branchesIn('G1').every(b => !!b.licence)
-     && new Set(branchesIn('G1').map(b => b.licence)).size === branchesIn('G1').length));
-ok('and the chain holds no licence of its own',
-   await p.evaluate(() => DATA.groups.every(g => !('licence' in g))));
-ok('the chain is a column on the branch, so it sorts and filters like one',
-   await p.evaluate(() => MODULES.pharmacies.columns.some(c => c.key === 'group')));
-ok('there is a saved view for the branches that belong to one',
+ok('there are no groups and no chains in the data',
+   await p.evaluate(() => !('groups' in DATA) && DATA.pharmacies.every(x => !('group' in x))));
+/* The rule W1 set, which this build could most easily have broken. */
+ok('each pharmacy an owner holds is its own row with its own licence and name',
    await p.evaluate(() => {
-     S.view.pharmacies = 'chains'; render();
+     const mine = pharmaciesOf('U14');
+     return mine.length === 3 && new Set(mine.map(x => x.licence)).size === 3
+       && new Set(mine.map(x => x.name.en)).size === 3;
+   }));
+ok('ownership is a list on the pharmacist, and it agrees with the pharmacies',
+   await p.evaluate(() => DATA.users.filter(isOwner).every(u =>
+     u.pharmacies.slice().sort().join() === pharmaciesOf(u.id).map(x => x.id).sort().join())));
+ok('an owner of several is still simply an owner in the users list',
+   await p.evaluate(() => { S.view.users = 'owner'; render(); const r = visibleRows('users');
+     S.view.users = 'all'; render(); return r.some(u => u.id === 'U14'); }));
+ok('the pharmacist who owns them is a column, so it sorts and filters',
+   await p.evaluate(() => MODULES.pharmacies.columns.some(c => c.key === 'holder')));
+ok('there is a saved view for pharmacies whose owner has others',
+   await p.evaluate(() => {
+     S.view.pharmacies = 'several'; render();
      const shown = visibleRows('pharmacies');
      S.view.pharmacies = 'all'; render();
-     return shown.length > 0 && shown.every(x => !!x.group);
+     return shown.length === 3 && shown.every(x => x.user === 'U14');
    }));
-ok('an independent pharmacy is not swept into it',
-   await p.evaluate(() => DATA.pharmacies.some(x => !x.group)));
+await p.evaluate(() => openRecord('users', 'U14'));
+await p.waitForTimeout(200);
+ok('their record lists every pharmacy they own',
+   await p.evaluate(() => ['Al-Shifa Pharmacy', 'Al-Hayat Pharmacy', 'Dar Al-Dawa Pharmacy']
+     .every(n => document.getElementById('work-body').innerText.includes(n))));
+await p.evaluate(() => closeRecord());
 
 await tab(p, 'invoices');
-ok('a chain is billed once a month and its branches are not billed at all',
+ok('they are billed once a month for all of them',
    await p.evaluate(() => {
      const sept = DATA.invoices.filter(i => i.month === '2026-09');
-     return sept.filter(i => i.group === 'G1').length === 1
-       && !sept.some(i => branchesIn('G1').some(b => b.id === i.pharmacy));
+     return sept.filter(i => i.payer === 'U14').length === 1
+       && !sept.some(i => pharmaciesOf('U14').some(b => b.id === i.pharmacy));
    }));
-ok('that one invoice is the plan per branch, plus whatever the allowance did not cover',
+ok('that one invoice is the plan per pharmacy, plus whatever the shared allowance did not cover',
    await p.evaluate(() => {
-     const inv = DATA.invoices.find(i => i.group === 'G1' && i.month === '2026-09');
-     const g = DATA.groups.find(x => x.id === 'G1');
-     const sub = PLANS[g.plan].monthlyFeeIQD * branchesIn('G1').length;
+     const inv = DATA.invoices.find(i => i.payer === 'U14' && i.month === '2026-09');
+     const mine = pharmaciesOf('U14');
+     const sub = PLANS[mine[0].plan].monthlyFeeIQD * mine.length;
      const commission = DATA.ledger
-       .filter(r => r.group === 'G1' && r.date.startsWith('2026-09') && r.kind !== 'subscription')
+       .filter(r => r.payer === 'U14' && r.date.startsWith('2026-09') && r.kind !== 'subscription')
        .reduce((n, r) => n + r.amount, 0);
      return inv.amount === sub + commission;
    }));
-ok('and the list can be filtered down to the chains',
+ok('and the bill names the pharmacist, and how many pharmacies it covers',
+   await p.evaluate(() => /Layla Abdulkarim · 3 pharmacies/.test(billedTo(DATA.invoices.find(i => i.payer === 'U14')))));
+ok('the list can be filtered to owners of several',
    await p.evaluate(() => !!FACETS.invoicePayer
-     && DATA.invoices.some(i => FACETS.invoicePayer.of(i) === 'chain')
+     && DATA.invoices.some(i => FACETS.invoicePayer.of(i) === 'several')
      && DATA.invoices.some(i => FACETS.invoicePayer.of(i) === 'single')));
 
 console.log('\nlistings: a partner fills a form, a person finishes it');
