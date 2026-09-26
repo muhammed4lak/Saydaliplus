@@ -445,22 +445,55 @@ ideas to choose from, not decisions (T = transition):
   available stock): such boxes would count as available until checked. Only
   with a decision.
 
+### Before v0.0013 — answered 26 Sep 2026 (the switch-over)
+
+**Two ways in: scanning (the default) and a spreadsheet.**
+
+1. **Scanning — count mode, the default.**
+   - **Shelf by shelf (T2).** The app cannot know where anything sits, so the
+     pharmacist says so: a count session starts by naming the shelf or
+     section — typed once ("Shelf 3 — painkillers") or picked from the
+     pharmacy's own list of shelves, which it builds as it goes. Optionally a
+     printed shelf label (a QR code) is scanned to start that shelf's session.
+     Every box counted in a session is stored with that shelf, so the product
+     remembers where it lives — which later answers "where is it?" for a new
+     employee. Sessions pause and resume, and several phones can count
+     different shelves at once.
+   - **Progress is stated honestly.** The app cannot know how many boxes a
+     shelf holds, so there is no "63 % of your shelf". What it can say: boxes
+     and products counted in this shelf, and **how many of the products the
+     pharmacy has sold are now counted** ("41 of the 58 products you have sold
+     are counted").
+   - **Fast counting (T3).** Keep-scanning on: each scan adds one, a long
+     press types a quantity, expiry as month and year with "same as the last
+     box" one tap away.
+2. **Selling before counting (T1), with a disclaimer** saying what happens
+   and how, shown where the owner turns it on and on the till until the count
+   is done — roughly: *"You can sell before you count. Until a product is
+   counted its stock figure is not real: sales can take it below zero, and it
+   joins **Count this**, most-sold first. Nothing is ever blocked."*
+3. **The spreadsheet import (T5)**, reading its own columns in either
+   language, with the review-and-confirm step and the one-press undo decided
+   above. **Karmasoft first**: it is what pharmacies here normally use. Until
+   a real Karmasoft export has been seen, the import finds columns by what
+   they contain, so a Karmasoft file works without a special case; a
+   Karmasoft-specific mapping follows once a sample arrives.
+
+T4 (distributors' invoices) arrives with purchasing; T6, T7 are the team's
+call; T8 is out.
+
 ### Before v0.0013 — still to decide
 
-1. **Which of T1–T8** go into v0.0013. *Recommended:* T1, T2, T3 and T5 in the
-   build; T4 as soon as purchasing is in (it shares the path); T6 and T7 are
-   the team's call; T8 only if you accept the W17 tension.
-2. **Which competitors' exports** the import should recognise first (S2).
-3. **How long an undo stays possible** after an import or a count.
+1. **How long an undo stays possible** after an import or a count.
    *Recommended:* until the end of the next day, and never after a later
-   count of the same products — after that, a correction is a normal
-   adjustment with a reason.
-4. **Seeing the history before v0.0017.** Everything is logged from v0.0013,
-   but the owner's timeline is v0.0017. *Recommended:* v0.0013 shows a simple
-   stock history per product and a list of imports and counts with their
-   undo button; the full timeline follows.
+   count of the same products.
+2. **Seeing the history before v0.0017.** *Recommended:* a stock history per
+   product and a list of imports and counts with their undo button in
+   v0.0013; the full timeline follows.
 
-**Leftovers that are yours, not the code's:** the certified printer and
+**Leftovers that are yours, not the code's:** **a Karmasoft export** — one
+real file, names and prices anonymised if you like, or even a screenshot of
+its columns — so the import can recognise it by name; the certified printer and
 scanner (non-code item 3) before this receipt is shown to a customer; the
 curator (W19) for the real default instructions; and, before production
 computes an average market price from real sales, a line in the pharmacy's
@@ -738,6 +771,21 @@ crumpled barcodes in shop lighting is untested until the hardware test
 (non-code item 3); the built-in reader is tuned for a box held up to the
 camera, not for a barcode across a room.
 
+## Reminders
+
+- **After v0.0014 — the phone app and the stores.** Raised 26 Sep 2026: when
+  to move to React for Google Play and the App Store. The recommendation given,
+  not yet decided: the project already has React (the Next.js codebase); the
+  phone app should be **React Native with Expo**, sharing the business rules
+  and data with the web app, because the till needs Bluetooth printing,
+  reliable camera scanning and offline storage that a website cannot give on
+  an iPhone. Start it **after v0.0014** (the offline model proven), **after
+  the hardware test** (the printer decides the Bluetooth code) and with the
+  five owner conversations done; the prototypes' checks become the real app's
+  acceptance tests. Needed for the stores: a Google Play developer account, an
+  Apple developer account, a privacy policy covering patient data, and the
+  name (W9). **Bring this back to the user with v0.0014's notes.**
+
 ## The non-code track
 
 These are yours, and several gate the production track. None is a coding task.
@@ -756,9 +804,8 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **Four questions before v0.0013** — which switch-over ideas (T1–T8), which
-  competitors' exports, how long undo lasts, and stock history before the
-  timeline. See "Before v0.0013 — still to decide" above.
+- **Two questions before v0.0013** — how long undo lasts, and stock history
+  before the timeline. See "Before v0.0013 — still to decide" above.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
