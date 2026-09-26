@@ -633,39 +633,48 @@ picked); a correction after the undo window is made by **recounting the shelf**
 stock value covers what came in with a cost (imports and receipts); the undo
 window follows the device's clock.
 
-### Before v0.0014 — to decide
+### Before v0.0014 — answered 26 Sep 2026
 
-v0.0014 is cash and the offline model: till sessions, the blind count,
-variances with a note and the owner's sign-off, the audit trail, and selling
-offline with movements that replay on reconnecting.
+1. **One session per drawer**, every sale tagged with who made it; the
+   per-person figure comes from the tags.
+2. **The opening float is counted**, blind, like the close.
+3. **A note for every variance; the owner signs off above an amount they
+   set** (e.g. 5,000 IQD).
+4. **Offline: warn at 24 hours and on every sale after 72; never block.**
+5. *(Open — see below.)*
+6. **An adjustment form in v0.0014**, a correction with a reason, on the same
+   audit trail.
 
-1. **One drawer, or one per person?** Most pharmacies here have one drawer
-   that everyone on shift uses. Is a till session per **drawer** (everyone's
-   sales tagged with who made them, one count at close), or per **person**
-   (each opens and closes their own)? *Recommended:* per drawer, with each sale
-   tagged — it matches how the counter works, and the per-person figure falls
-   out of the tags.
-2. **The opening float.** Counted at the start of each session, or a fixed
-   amount the owner sets? *Recommended:* counted, blind like the close — a
-   fixed float is the number that is wrong on the one day it matters.
-3. **When a variance needs the owner.** A note is required for any variance;
-   should the owner's sign-off be required for every one, or only above an
-   amount they set? *Recommended:* above an amount the owner sets (e.g. 5,000
-   IQD); below it, the note is enough and it still shows in the history.
-4. **Offline for how long?** A device that has not synced for a long time is
-   the one whose stock and prices are most wrong. Warn after 24 hours, and
-   **never block selling** (S1's spirit) — or block after some limit?
-   *Recommended:* warn at 24 hours and on every sale after 72, never block.
-5. **Two devices selling the last box offline.** Both sales stand, stock goes
-   below zero, the product joins *Count this* — consistent with S1. Confirm.
-6. **An adjustment form** (a correction with a reason, outside a count) —
-   in v0.0014 with the audit trail, or leave corrections to recounting a
-   shelf? *Recommended:* in v0.0014; it belongs on the same audit trail.
+### Before v0.0014 — still to decide
 
-**Leftovers that are yours:** a **Karmasoft export** (still); confirming the
-**controlled list** — pregabalin especially — with the curator and the
-Ministry's schedule; whether **printed shelf labels** (QR) are worth having
-at launch; and, from the non-code track, the printer and scanner test.
+**D5. The last box, sold twice while offline.** Explained 26 Sep 2026:
+*recommended* — both sales stand (both boxes left the counter, so the record
+must say so); stock goes below zero; on syncing, the product is flagged as
+**sold on two devices while offline — check the shelf**, not just "count
+this", with both sales named; a controlled substance that goes below zero is
+put at the top of the owner's home. The alternatives — splitting stock
+between devices before they go offline, or letting only one device sell
+offline — both end in refusing a sale at the counter, which S1 rules out.
+
+**Leftovers that are yours:** a **Karmasoft export** (being obtained);
+confirming the **controlled list** against the Ministry's schedule — see L2 as
+explained 26 Sep 2026; whether **printed shelf labels** are worth having at
+launch — see L3; and the **printer and scanner test** (planned for the coming
+days).
+
+- **L2, explained.** The app treats five drugs as controlled — tramadol,
+  diazepam, alprazolam, phenobarbital, pregabalin — so every movement of them
+  goes into the register. That list was chosen here as a placeholder. In Iraq
+  the real one is the Ministry of Health's schedule of narcotic and
+  psychotropic substances; what is needed is that official list (or someone
+  who can read it against ours), so the register holds exactly what an
+  inspector will ask for. Pregabalin is the one to check first: restricted
+  here because of misuse, but its exact status could not be confirmed.
+- **L3, explained.** A small printed sticker per shelf with a code on it;
+  scanning it starts that shelf's count without typing, and later helps a new
+  employee find things. The receipt printer can print them. *Recommended:*
+  not at launch — naming or picking a shelf takes a second — and revisit after
+  the owner conversations.
 
 **v0.0014 — cash, and the offline model.**
 Till sessions opened and closed per person. **Blind count**: the drawer total is
@@ -941,9 +950,8 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **Six questions before v0.0014** — one drawer or one per person, the
-  opening float, when a variance needs the owner, how long offline, the last
-  box sold twice, and an adjustment form. See "Before v0.0014 — to decide".
+- **One question before v0.0014** — the last box sold twice while offline
+  (D5). See "Before v0.0014 — still to decide".
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
