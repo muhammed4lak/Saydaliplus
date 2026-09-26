@@ -154,7 +154,9 @@ backlog records is also scheduled):
 | **v0.0020** | Paying for it | pricing — *blocked on a decision* |
 | later | Assessment, then shift credits, then the ecosystem | W20, W21, P6 |
 
-System 1 is complete at v0.0015, System 2 at v0.0019. Versions were inserted
+System 1 is complete at v0.0015, System 2 at v0.0019. Fixes to a built
+version are numbered `.1`, `.2` after it and listed under "Amendments" below;
+they never renumber this table. Versions were inserted
 twice on 25 Sep 2026 — v0.0010 for the W7 correction and v0.0011 for the
 review fixes — and W22 and W23 were given v0.0018 and v0.0017, so the numbers
 below are the current ones. The till was built as v0.0012; stock and
@@ -528,6 +530,73 @@ is set — see the open decisions below.
 self-assessment from its first build), then W21 (shift credits and the
 marketplace switching on district by district), then P6's area data and the
 pharma-facing products.
+
+## Amendments — bug fixes and changes to built versions
+
+**How this works (decided 26 Sep 2026).** A problem found in a built version is
+**not fixed on the spot**. It is written down here first — what is wrong and
+what will be done about it — and built only when asked. Fixes to version
+`v0.00NN` ship as **`v0.00NN.1`**, then `.2`, and so on; the planned versions
+above keep their numbers, so an amendment never pushes stock, permissions or
+anything else down the list. Files carry the full number
+(`saydali-plus_v0.0012.1.html`), and the test harness's newest-build picker
+learns to read the third number when the first amendment is built.
+
+### v0.0012.1 — the till: receipt and instructions
+
+Reported 26 Sep 2026, from the till on a phone. **Not built yet.**
+
+**A1. The line prices on the receipt are too big.** Each item's
+`1 × 35,250 = 35,250` is drawn at the same size as the item's name, so the
+figures compete with the name. *Plan:* the item-line figures drop from 15 px to
+about 12 px, and stay bold; the item name keeps its size, and the **Total**
+stays the largest thing on the receipt. The payment and change lines follow the
+smaller size.
+
+**A2. The default instructions say nothing useful.** v0.0012 prints a default
+by dosage form: "Swallow with water" under every tablet, "Shake the bottle"
+under every syrup. A patient learns nothing from that. *Plan:*
+- **Remove the form-based defaults entirely.** A medicine with nothing worth
+  saying prints no instruction line, only the dose if the pharmacist typed one.
+- **Defaults come from the molecule, and only where timing or food changes
+  something.** Examples: **levothyroxine** (the thyroid one) — on an empty
+  stomach, in the morning, 30 minutes before breakfast; proton-pump inhibitors
+  (omeprazole, esomeprazole) — before breakfast; NSAIDs (ibuprofen,
+  diclofenac) and low-dose aspirin — after food; metformin — with food;
+  gliclazide, glimepiride — with breakfast; furosemide, hydrochlorothiazide —
+  in the morning; simvastatin, montelukast — in the evening; amitriptyline —
+  at bedtime; warfarin, insulin glargine — at the same time every day;
+  **methotrexate — once a week only**; ciprofloxacin — two hours apart from
+  milk and antacids; metronidazole — after food, no alcohol. About fifty of the
+  119 molecules get one; the rest get none.
+- **A fixed list of instructions, in both languages**, kept in the drug
+  reference (`data/drugs.mjs`) next to the interactions, so the app and the
+  CRM read the same thing and a receipt switched to English translates every
+  line: before food · after food · with food · on an empty stomach · before
+  breakfast · with breakfast · in the morning · in the evening · at bedtime ·
+  at the same time every day · once a week only · apart from milk and antacids
+  · no alcohol.
+- **At the till, those are quick taps.** Opening a line's instructions shows
+  them as chips, the molecule's defaults already on; the pharmacist taps to
+  add or remove, and can add a short note of their own. The dose stays typed
+  by the pharmacist, every time, never filled in.
+- For a combination product (Janumet: sitagliptin + metformin), the defaults of
+  each molecule are merged, without repeats.
+- The chosen instructions show on the cart line itself, so the pharmacist can
+  see what will print without opening anything.
+- Content is **placeholder until the clinical curator (W19) reviews it**, as
+  the interactions are.
+
+**A3. A stale version number in the CRM.** The Catalogue screen says marking a
+link *verified* "arrives with the Rules module in v0.0013". The Rules module is
+clinical governance, v0.0015. *Plan:* correct the two strings.
+
+*The check will assert:* no generic form line ("swallow", "shake") appears on
+any receipt; levothyroxine and methotrexate carry their instructions by
+default; a medicine with no defaults prints no instruction line; every
+instruction exists in both languages and follows the receipt's language; the
+item figures are drawn smaller than the item names and the total; the dose is
+never pre-filled.
 
 ## The non-code track
 
