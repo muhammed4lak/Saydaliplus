@@ -371,36 +371,94 @@ scan works on Android's Chrome but not on an iPhone, whose browser has no
 barcode detector — a scanning library fixes that in production; and a refund
 does not return anything to stock, because there is no stock until v0.0013.
 
-### Before v0.0013 — to decide
+### Before v0.0013 — answered 26 Sep 2026
 
-v0.0013 is stock and purchasing. Most of it was settled on 20 and 25 Sep
-(movements not levels, batches, first-expiring first, quarantine, write-off
-with a reason, near-expiry at 90 days, suppliers are Externals). These are
-what is left:
+1. **S1 — selling what the system thinks is out of stock: allowed.** Stock
+   goes negative and the product goes on the owner's "count this" list. The
+   till never refuses a sale because the software is behind the shelf.
+2. **S2 — opening stock: both.** **Count mode is the default**; a
+   **spreadsheet import** is the second way in. The import has a **review and
+   confirm step** before anything is added. **Undo works on the whole thing**:
+   a whole import, or a whole count session, can be taken back in one press,
+   because a wrong file or a wrong shelf is added all at once. Undo is itself a
+   set of movements (the ledger is append-only — nothing is deleted), and
+   every import, count, confirm and undo is **logged for the owner**, and shows
+   on the owner's timeline (W23).
+3. **S3 — cost and bonus units: record both.** Each batch carries what it
+   cost (owner-only), and distributor bonus units (*بونص*, 10 + 1) are received
+   at zero cost.
+4. **S4 — suppliers: owners can add their own**, and adding one is how the
+   supplier database grows:
+   - As the owner types, the app **suggests matching suppliers from the CRM**
+     by relevance, forgiving the ways one name gets written — *مذخر / مخزن /
+     مستودع*, *ال*, *ة / ه*, *ى / ي*, spacing, English or Arabic ("Al-Shifa
+     storage house" = "مذخر الشفاء").
+   - If one is the same, the owner **confirms** it and is linked. If none is,
+     the supplier is added, private to that pharmacy, and lands in the CRM
+     queue — grouped, so "three pharmacies added *Al-Shifa storage*" is one
+     task, not three.
+   - When the CRM team adds or links the record, the owner is **asked**, not
+     told: "Is *Al-Shifa storage* the same as *Al-Shifa Drug Store (Karrada)*?"
+     Nothing is ever linked without the owner confirming it.
+5. **S5 — refunds: the pharmacist chooses, with *back to stock* pre-selected.**
+   Two options are shown — back to sellable stock, or quarantine — and one
+   tap confirms the default.
 
-1. **Selling what the system thinks is out of stock.** In the first weeks the
-   system's stock will be wrong — boxes on the shelf that were never entered.
-   Refuse the sale, or allow it and flag the product for a count?
-   *Recommended:* allow it, record the stock as negative, and put "count this"
-   on the owner's home. Refusing a sale because the software is behind the
-   shelf is how pharmacies stop using a till.
-2. **Opening stock.** How does a pharmacy that already exists get its shelf in?
-   *Recommended:* a **count mode** — scan every box once, enter expiry per
-   batch — plus a spreadsheet import for a pharmacy moving off another system.
-   Which competitors' exports matter is a question only you can answer.
-3. **Purchase cost and bonus units.** Record what each batch cost (it makes
-   margin and stock value possible; owner-only), and the distributor's free
-   units — the *بونص*, 10 + 1 — as units received at zero cost?
-   *Recommended:* yes to both; bonus goods are routine here, and ignoring them
-   makes every cost figure wrong.
-4. **A supplier not in the CRM.** Can an owner add their own distributor, kept
-   private to their pharmacy, or only choose from the Externals list?
-   *Recommended:* add their own; the CRM team is told, and may later link it to
-   an Externals record.
-5. **Where a refunded item goes.** Back to sellable stock, or to quarantine
-   until the pharmacist decides? *Recommended:* the pharmacist chooses at the
-   refund, with *sealed and undamaged* as the only way back to sellable stock,
-   and anything else to quarantine.
+### Making the switch-over easy — ideas, 26 Sep 2026
+
+Raised after the team's meeting on onboarding: the move from paper or a
+competitor to this till has to be as simple and smooth as possible. These are
+ideas to choose from, not decisions (T = transition):
+
+- **T1. Sell from day one; count later.** Because of S1 the till works with no
+  stock entered at all. Every product sold before it has been counted joins
+  the "count this" list, most-sold first — so the first thing counted is what
+  moves, and the long tail can wait.
+- **T2. Count a shelf at a time.** A count session is one shelf or section,
+  paused and resumed at will, with a progress figure ("63 % of your shelf is
+  counted"). Two or three phones can count different shelves at once and it
+  all lands in the same stock.
+- **T3. Fast counting.** Scan with keep-scanning on: each scan adds one, a long
+  press types a quantity. Expiry entered as **month and year only** (medicines
+  are dated to the month), with "same as the last box" one tap away.
+- **T4. The distributor's invoices as the source.** Most stock arrives on an
+  invoice, and distributors here often send Excel. Importing the last two or
+  three months of invoices gives a first figure for most of the shelf, with
+  batches and expiry already on it — and it is the same path purchasing will
+  use every week after.
+- **T5. A spreadsheet that reads itself.** Our template for anyone starting
+  fresh; for anyone else, the import recognises the barcode, name, quantity,
+  expiry and cost columns itself, whatever they are called, in either
+  language. Rows are matched to the catalogue by barcode, then by name with a
+  confidence; the review step shows *matched*, *probably matched — check*,
+  *not found*, *duplicates* and *errors* before anything is confirmed.
+- **T6. Someone from the team does it with them.** For the first pharmacies,
+  a person from the team spends a morning at the counter and does the count
+  with them. It costs the team's time and teaches the team exactly where the
+  count is slow, which is worth more than anything in this list.
+- **T7. Run both for two weeks.** Keep the old system or notebook alongside
+  for a fortnight, with a daily "the two disagree on these five products"
+  prompt, then switch off the old one.
+- **T8. "Expiry unknown", for the opening count only.** Let a box be counted
+  without its expiry, marked *check expiry*, so the count does not stall on a
+  date nobody can read. **In tension with W17** (expired stock is never
+  available stock): such boxes would count as available until checked. Only
+  with a decision.
+
+### Before v0.0013 — still to decide
+
+1. **Which of T1–T8** go into v0.0013. *Recommended:* T1, T2, T3 and T5 in the
+   build; T4 as soon as purchasing is in (it shares the path); T6 and T7 are
+   the team's call; T8 only if you accept the W17 tension.
+2. **Which competitors' exports** the import should recognise first (S2).
+3. **How long an undo stays possible** after an import or a count.
+   *Recommended:* until the end of the next day, and never after a later
+   count of the same products — after that, a correction is a normal
+   adjustment with a reason.
+4. **Seeing the history before v0.0017.** Everything is logged from v0.0013,
+   but the owner's timeline is v0.0017. *Recommended:* v0.0013 shows a simple
+   stock history per product and a list of imports and counts with their
+   undo button; the full timeline follows.
 
 **Leftovers that are yours, not the code's:** the certified printer and
 scanner (non-code item 3) before this receipt is shown to a customer; the
@@ -698,9 +756,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **The five questions before v0.0013** — out-of-stock sales, opening stock,
-  cost and bonus units, private suppliers, and where refunds go. See "Before
-  v0.0013" above.
+- **Four questions before v0.0013** — which switch-over ideas (T1–T8), which
+  competitors' exports, how long undo lasts, and stock history before the
+  timeline. See "Before v0.0013 — still to decide" above.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
