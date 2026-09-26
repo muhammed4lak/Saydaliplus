@@ -657,9 +657,30 @@ shelf, printed on the receipt printer (as a bitmap, like the receipt);
 scanning it starts that shelf's count. Naming or picking a shelf stays the
 default. Scheduled with v0.0014.
 
-**L2 — the controlled list:** a spreadsheet and a PDF were sent to draw the
-list from for now (subject to change when firmer sources arrive). **They did
-not arrive in the session** — to be re-sent.
+**L2 — the controlled list: the two files, read 26 Sep 2026.**
+- **The spreadsheet** is the Ministry's **register of registered medicines**:
+  5,214 products with national code (some), scientific name, trade name,
+  pack and form, manufacturer and its country, the marketing-authorisation
+  holder, registration numbers and dates, notes (renamings, cancellations,
+  suspensions) and shelf life. It has **no barcodes** and no controlled
+  marking. It is not the controlled list — but it is the best source yet for
+  the catalogue: trade names to match against (the import's "probably"
+  pile, the till's name search), registration numbers to show on a product,
+  and manufacturers and authorisation holders for the CRM's Externals.
+- **The PDF** is the **National Committee for Drug Selection's Essential Drugs
+  List** (25 Jul 2023, list 1188, 54 pages): national codes, strength and
+  unit per item, grouped by therapeutic class, with notes on which level of
+  care may hold it. It is a formulary, **not a schedule of controlled
+  substances**. What it does confirm by class: tramadol (4H, opioid
+  analgesics — with morphine, pethidine) and diazepam (4A, hypnotics and
+  anxiolytics — with lorazepam, chlordiazepoxide). It does not settle
+  alprazolam, phenobarbital or pregabalin; **pregabalin is not on it at all**
+  (gabapentin is, without restriction).
+- **So the controlled list stays as it is**, its source noted in the drug
+  reference, and the real schedule is still needed. *Proposed uses of the two
+  files* (not built): the register as a reference table in the CRM, with
+  each catalogue product linked to its registration; the EDL's national code
+  on each molecule. Both wait on a go.
 
 ### Proposed — the till and the Helper as one, and simpler (26 Sep 2026)
 
@@ -693,10 +714,27 @@ built) of this proposal:
   the till opens in for anyone not permitted to sell (until v0.0017, every
   pharmacist). The Drugs tab keeps the reference only.
 
-**To decide:** (1) whether U1–U7 go ahead as shown or with changes; (2)
-whether it ships as an amendment (v0.0013.1) or inside v0.0014; (3) the
-pharmacist's bar once the Helper lives in the till — *suggested:* Check-in ·
-Tasks · Till (check only) · Drugs · Profile, with the CV moving to Profile.
+**Decided 26 Sep 2026:** as shown; shipped as the amendment **v0.0013.1**,
+and UI amendments continue (v0.0013.2, …) until the UI is approved; the
+pharmacist's bar becomes Check-in · Tasks · Till · Drugs · Profile. See
+"v0.0013.1 as built" under Amendments.
+
+### Proposed — a simpler home screen (26 Sep 2026)
+
+Mockups made, not built — for v0.0013.2 if approved:
+- **H1. One headline figure:** today's sales at the pharmacy on screen, with
+  the change against yesterday (named) and the number of sales, and a
+  seven-day line in a muted colour with only today marked.
+- **H2. Two actions:** Open the till · Count a shelf.
+- **H3. "Needs you":** one list, only what needs the owner, each row one tap
+  from what to do — expired batches, near-expiry, suppliers to confirm, a
+  trainee's month to review. It replaces the stack of cards (till, stock,
+  catalogue, trainee, Helper).
+- **H4. The announcement** shrinks to one quiet line at the bottom; the
+  trial countdown moves to Profile.
+- **H5. An owner of several, on All:** the combined figure, then one row per
+  pharmacy with its sales, its change, and whether anything needs the owner
+  there (a pharmacy that cannot sell says so).
 
 **Leftovers that are yours:** a **Karmasoft export** (being obtained);
 confirming the **controlled list** against the Ministry's schedule — see L2 as
@@ -942,6 +980,37 @@ crumpled barcodes in shop lighting is untested until the hardware test
 (non-code item 3); the built-in reader is tuned for a box held up to the
 camera, not for a barcode across a room.
 
+### v0.0013.1 as built — the till and the Helper as one
+
+- **U1** Scan bar, basket, and a **Pay bar pinned above the navigation** (and
+  beside the sidebar on a wide screen), measured rather than assumed.
+- **U2** A line is its name, what will print, "×2" and its total; tapping it
+  opens a **sheet** with the quantity stepper, dose, the how-to-take chips, a
+  note, and *Remove*.
+- **U3** One **Helper strip** under the basket ("1 warning to look at —
+  Aspirin Protect + Marevan · Major bleeding risk…", or "Warning
+  acknowledged") and one **coverage line** ("Helper: 2 of 4 medicines checked ·
+  1 in part · 1 not checked", or "… · nothing found in what it checked").
+- **U4** Findings about the same drugs are **one item** with each reason
+  (*Interaction*, *Duplicate therapy*) and one *Acknowledge*, which
+  acknowledges all of them; the sale still records each finding and its
+  acknowledgement. The Helper sheet names what was and was not checked and
+  folds the patient questions.
+- **U5** **Pay** opens a sheet: the total, the three tenders, *Received
+  exactly … ✓*, and *Different amount* / *Discount* as links.
+- **U6** Today's sales are one line on the empty till, opening their own
+  sheet.
+- **U7** **Sell / Check only** for the owner; checking needs no prices and
+  sells nothing; *Sell this basket* turns it into a sale and asks for any
+  missing price. A pharmacist gets the till in **check-only** mode — no
+  prices, no payment — until selling is granted (v0.0017).
+- The pharmacist's bar is **Check-in · Tasks · Till · Drugs · Profile**; the
+  CV is on Profile. With the marketplace off, **Drugs is the reference
+  only**, with a line pointing to the till.
+- **Leftover:** the marketplace-on build keeps its own check in Drugs, where
+  W8's dispensing tally lives. Folding that tally into the till (check-only
+  records nothing today) is to be done before W21 switches the market on.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -992,10 +1061,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **The till redesign (U1–U7)** — go ahead as shown, as an amendment or in
-  v0.0014, and the pharmacist's bar. See "Proposed — the till and the Helper
-  as one". Nothing else blocks v0.0014; the controlled-list files (L2) need
-  re-sending.
+- **The home screen (H1–H5)** — approve, change, or not; see "Proposed — a
+  simpler home screen". **The two files (L2)** — whether to use them as
+  proposed. Nothing blocks v0.0014.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.

@@ -1284,8 +1284,11 @@ ok('and the sign-in page shows the switches, saying what each one holds',
 await signIn(dk, 'ahmed@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('a pharmacist’s bar is check-in, tasks, the Helper, the CV and their profile',
-   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,tasks,drugs,cv,profile'));
+/* v0.0013.1: the Helper lives in the till, which takes the CV's slot. */
+ok('a pharmacist’s bar is check-in, tasks, the till (checking), the reference and their profile',
+   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,tasks,till,drugs,profile'));
+ok('and the CV is one tap away on Profile',
+   await dk.evaluate(() => profileLinks().some(x => x[0] === 'cv')));
 ok('and they land on check-in', await dk.evaluate(() => S.screen === 'checkin'));
 ok('every marketplace screen is unreachable, not merely unlinked',
    await dk.evaluate(() => ['browse', 'listing', 'shifts', 'handoff', 'earnings', 'applicants', 'incidents']
@@ -1564,7 +1567,13 @@ ok('the filters count what they hold',
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); goto('till');
     tillScan('5000000001224'); tillScan('4000000001065'); tillToggleLine(0); tillOpenDiscount(); tillScan('6291234567894'); });
   (await parses(dk)).forEach(h => broken.push('till: ' + h.slice(0, 60)));
-  await dk.evaluate(() => { S.till.given = '1000000'; completeSale(); });
+  for (const k of ['tillHelper', 'tillPay', 'tillToday']) {
+    await dk.evaluate(k => openTillSheet(k), k);
+    (await parses(dk)).forEach(h => broken.push(k + ': ' + h.slice(0, 60)));
+  }
+  await dk.evaluate(() => { closeModal(); setTillMode('check'); });
+  (await parses(dk)).forEach(h => broken.push('check only: ' + h.slice(0, 60)));
+  await dk.evaluate(() => { setTillMode('sell'); S.till.given = '1000000'; completeSale(); });
   (await parses(dk)).forEach(h => broken.push('receipt: ' + h.slice(0, 60)));
   ok('no broken inline handler on any screen of the switched-off build', broken.length === 0);
   broken.slice(0, 6).forEach(x => console.log('        ' + x));
@@ -1589,8 +1598,20 @@ console.log('\nthe till (v0.0012)');
   const mixed = [pick('full'), pick('partial'), pick('none'), pick('nondrug')];
 
   await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('till'); });
-  ok('a pharmacist without a pharmacy has no till — it is the owner’s until permissions (v0.0017)',
-     await dk.evaluate(() => !screenAllowed('till') && S.screen !== 'till' && !navFor(S.role).some(x => x[0] === 'till')));
+  /* v0.0013.1 (U7): a pharmacist has the till in check-only mode — never
+     prices, never payment — until the owner may grant selling (v0.0017). */
+  ok('a pharmacist without a pharmacy gets the till to CHECK, never to sell',
+     await dk.evaluate(() => { const r = screenAllowed('till') && S.screen === 'till' && tillMode() === 'check' && !canSell() &&
+       !document.querySelector('.till-mode') && /Check only/.test(document.querySelector('.till-checknote').innerText);
+       tillScan('5000000001224'); tillScan('4000000001065');
+       const r2 = S.till.lines.length === 2 && !document.querySelector('.till-pay-btn') && !document.querySelector('.till-line-total') &&
+         !/IQD/.test(document.getElementById('app-body').innerText) && !!document.querySelector('.till-flag.warn');
+       setTillMode('sell'); openPay(); completeSale();
+       const r3 = tillMode() === 'check' && !S.modal && !S.sales.some(x => x.by === 'ahmed@example.com');
+       tillClear(); return r && r2 && r3; }));
+  ok('with the Helper in the till, Drugs is the reference, and says where the check went',
+     await dk.evaluate(() => { goto('drugs'); return S.drugTab === 'reference' && !document.querySelector('.segbar') &&
+       /It is in the till now/.test(document.getElementById('app-body').innerText); }));
   await dk.evaluate(() => { goto('products'); openProduct(PRODUCTS[0].barcode); });
   ok('…and sees no price on the catalogue: what a pharmacy charges is the owner’s business',
      await dk.evaluate(() => !document.querySelector('.price-card, .market-avg') &&
@@ -1601,9 +1622,9 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(() => /Till/.test(document.getElementById('app-body').innerText) &&
        document.querySelectorAll('.banner-slot').length > 0));
   await dk.evaluate(() => goto('till'));
-  ok('the till opens on the owner’s pharmacy, named, with who is dispensing',
-     await dk.evaluate(() => S.screen === 'till' && /Al-Rahma/.test(document.querySelector('.till-ph').innerText) &&
-       /Rahma/.test(document.querySelector('.till-by').innerText)));
+  ok('the till opens on the owner’s pharmacy, named, selling',
+     await dk.evaluate(() => S.screen === 'till' && /Al-Rahma/i.test(document.getElementById('app-header').innerText) &&
+       tillMode() === 'sell' && /Sell/.test(document.querySelector('.till-mode .active').innerText)));
 
   const avgCode = await dk.evaluate(() => PRODUCTS.find(p => marketAverage(p.barcode) != null && p.mapping !== 'nondrug').barcode);
   const thinCode = await dk.evaluate(() => (PRODUCTS.find(p => marketPrices(p.barcode).length && marketAverage(p.barcode) == null) || {}).barcode);
@@ -1630,8 +1651,8 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(c => { setPrice('P1', c, 1234); S.till = tillReset(); tillScan(c); tillQty(0, 1); tillQty(0, 1);
        render(); return tillTotals().total === 3702 && /3,702/.test(document.getElementById('till-total').innerText); }, avgCode));
   ok('cash short of the total is refused and nothing is sold',
-     await dk.evaluate(() => { const n = S.sales.length; S.till.given = '3700'; completeSale();
-       return S.sales.length === n && S.till.note && S.till.note.kind === 'shortCash' && !!document.querySelector('.till-note'); }));
+     await dk.evaluate(() => { const n = S.sales.length; openPay(); S.till.given = '3700'; completeSale();
+       return S.sales.length === n && S.till.note && S.till.note.kind === 'shortCash' && !!document.querySelector('.till-pay .auth-error'); }));
   ok('cash covering it completes the sale, with the exact change',
      await dk.evaluate(() => { S.till.given = '5000'; completeSale(); const s = S.sales[0];
        return s.total === 3702 && s.given === 5000 && s.change === 1298 && s.tender === 'cash' && s.pharmacy === 'P1'; }));
@@ -1670,22 +1691,27 @@ console.log('\nthe till (v0.0012)');
   ok('Marevan with Aspirin is a Warn on the basket, acknowledgeable in one tap, never a stop',
      await dk.evaluate(() => { setPrice('P1', '5000000001224', 6000); setPrice('P1', '4000000001065', 3500);
        tillScan('5000000001224'); tillScan('4000000001065');
-       const warn = document.querySelector('.till-finding.tier-warn .till-ack');
-       return !!warn && !document.querySelector('.modal-back') && !!document.querySelector('.till-confirm, .till-complete'); }));
+       /* U3/U4: one strip on the basket; the acknowledgement is one tap away
+          in the Helper sheet; Pay stays on screen throughout. */
+       const strip = document.querySelector('.till-helper .till-flag.warn');
+       openHelper(); const warn = document.querySelector('.sheet .till-finding.tier-warn .till-ack');
+       const r = !!strip && !!warn && !document.querySelector('.modal-back') && !!document.querySelector('.till-pay-btn');
+       closeModal(); return r; }));
   ok('completing without acknowledging still sells — and records that it was not acknowledged',
      await dk.evaluate(() => { S.till.given = '10000'; completeSale(); const f = S.sales[0].findings.find(x => x.a && x.b);
        return S.sales[0].total === 9500 && f && f.tier === 'warn' && f.acknowledged === false; }));
   ok('acknowledged, it is recorded as acknowledged',
      await dk.evaluate(() => { closeReceipt(); tillScan('5000000001224'); tillScan('4000000001065');
-       document.querySelector('.till-finding.tier-warn .till-ack').click();
-       const shown = /Acknowledged/.test(document.querySelector('.till-helper').innerText);
+       openHelper(); document.querySelector('.sheet .till-finding.tier-warn .till-ack').click();
+       const inSheet = /Acknowledged/.test(document.querySelector('.sheet').innerText); closeModal();
+       const shown = inSheet && /Warning acknowledged/.test(document.querySelector('.till-helper').innerText);
        S.till.tender = 'zaincash'; S.till.ref = 'ZC-7781'; completeSale();
        const s = S.sales[0];
        return shown && s.findings.find(x => x.a && x.b).acknowledged === true &&
          s.tender === 'zaincash' && s.ref === 'ZC-7781' && s.given === null && s.change === null; }));
   ok('ZainCash and Qi Card are recorded, never processed — the screen says so',
      await dk.evaluate(() => { closeReceipt(); tillScan('4000000001065'); tillTender('qicard');
-       const said = /no money passes through/i.test(document.querySelector('.till-pay').innerText);
+       openPay(); const said = /no money passes through/i.test(document.querySelector('.till-pay').innerText);
        completeSale(); return said && S.sales[0].tender === 'qicard' && S.sales[0].ref === null; }));
 
   await dk.evaluate(() => { closeReceipt(); S.till = tillReset(); });
@@ -1695,7 +1721,8 @@ console.log('\nthe till (v0.0012)');
        return S.till.lines.length === 4 && c.full === 1 && c.partial === 1 && c.unchecked === 1 && c.nondrug === 1 && c.medicines === 3; }, mixed));
   ok('…in one sentence at the top of the Helper, not a footnote',
      await dk.evaluate(() => /1 of 3 medicines checked.*1 in part.*1 not checked.*1 not a medicine/
-       .test(document.querySelector('.till-helper .till-cov').innerText)));
+       .test(document.querySelector('.till-helper .till-cov').innerText) &&
+       /^Helper:/.test(document.querySelector('.till-helper .till-cov').innerText.trim())));
   ok('the unchecked line is marked on the cart itself',
      await dk.evaluate(() => [...document.querySelectorAll('.till-line')].filter(x => /Not checked/i.test(x.innerText)).length === 1));
   ok('nothing on the till opens a banner — it is a dispensing surface (P1)',
@@ -1706,8 +1733,8 @@ console.log('\nthe till (v0.0012)');
   ok('a dose typed by the pharmacist reaches the receipt beside the instruction',
      await dk.evaluate(() => { if (pharmacyPrice('P1', '5000000001033') == null) setPrice('P1', '5000000001033', 2000);
        tillScan('5000000001033'); const i = S.till.lines.findIndex(x => x.barcode === '5000000001033');
-       tillToggleLine(i); const el = document.querySelector('.till-instr .till-dose'); el.value = '1 tablet twice daily';
-       el.dispatchEvent(new Event('input'));
+       tillToggleLine(i); const el = document.querySelector('.sheet .till-instr .till-dose'); el.value = '1 tablet twice daily';
+       el.dispatchEvent(new Event('input')); closeModal();
        S.till.given = '100000'; completeSale();
        return receiptLines(S.sales[0], 'en').some(l => l.kind === 'instr' && l.text === '1 tablet twice daily — After food'); }));
   ok('a non-medicine carries no instruction',
@@ -1730,7 +1757,8 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(() => { const n = S.tillLog.filter(x => x.kind === 'void').length; tillVoid(0);
        return !S.till.lines.length && S.tillLog.filter(x => x.kind === 'void').length === n + 1; }));
   ok('a discount needs a reason; with one it comes off the exact total and is logged',
-     await dk.evaluate(() => { tillScan('4000000001065'); tillScan('4000000001065'); tillOpenDiscount();
+     /* U5: the discount is a link in the Pay sheet. */
+     await dk.evaluate(() => { tillScan('4000000001065'); tillScan('4000000001065'); openPay(); tillOpenDiscount();
        document.getElementById('disc-amount').value = '500'; tillApplyDiscount();
        const refused = S.till.discount === 0 && S.till.note.kind === 'badDiscount';
        const kept = document.getElementById('disc-amount').value === '500';
@@ -1740,7 +1768,7 @@ console.log('\nthe till (v0.0012)');
   ok('a discount larger than the basket is refused',
      await dk.evaluate(() => { const T = S.till; T.discount = 0; tillOpenDiscount();
        document.getElementById('disc-amount').value = '8000'; document.getElementById('disc-reason').value = 'x'; tillApplyDiscount();
-       return T.discount === 0; }));
+       const r = T.discount === 0; closeModal(); return r; }));
   ok('discounts and refunds are the owner’s alone (until permissions)',
      await dk.evaluate(() => { const keep = S.role; S.role = 'pharmacist';
        const r = !canDiscount() && !canRefund() && !canSetPrices() && !canSeeMarket() && !setPrice('P1', '4000000001065', 1);
@@ -1767,7 +1795,7 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(() => S.screen === 'till' && /Which pharmacy/i.test(document.getElementById('app-body').innerText) && !document.getElementById('till-q')));
   ok('picking one opens that pharmacy’s till, not the dashboard',
      await dk.evaluate(() => { setPharmacy('P7'); return S.screen === 'till' && !!document.getElementById('till-q') &&
-       document.querySelector('.till-ph').innerText.includes(L(PHARMACIES.P7.name)); }));
+       document.getElementById('app-header').innerText.toLowerCase().includes(L(PHARMACIES.P7.name).toLowerCase()); }));
   ok('prices are each pharmacy’s own: setting one at P7 leaves P8 alone',
      await dk.evaluate(c => { setPrice('P7', c, 4321); return pharmacyPrice('P7', c) === 4321 && pharmacyPrice('P8', c) === marketAverage(c); }, avgCode));
   ok('switching pharmacy with a cart open sets the cart aside, on the record',
@@ -1775,8 +1803,9 @@ console.log('\nthe till (v0.0012)');
        return had && !S.till.lines.length && S.tillLog.some(x => x.kind === 'cleared' && x.pharmacy === 'P7'); }, avgCode));
   ok('a sale is recorded against the pharmacy it was made in, and listed only there',
      await dk.evaluate(c => { tillScan(c); S.till.given = '100000'; completeSale(); const id = S.sales[0].id;
-       closeReceipt(); const atP8 = document.getElementById('app-body').innerText.includes(id);
-       setPharmacy('P7'); const atP7 = document.getElementById('app-body').innerText.includes(id);
+       /* U6: today's sales live one tap away, in their own sheet. */
+       closeReceipt(); openToday(); const atP8 = document.getElementById('modal-root').innerText.includes(id); closeModal();
+       setPharmacy('P7'); openToday(); const atP7 = document.getElementById('modal-root').innerText.includes(id); closeModal();
        return S.sales[0].pharmacy === 'P8' && atP8 && !atP7; }, avgCode));
   ok('a pharmacy with no responsible pharmacist cannot sell',
      await dk.evaluate(() => { setPharmacy('P9'); return !!document.querySelector('.till-blocked') && !document.getElementById('till-q') &&
@@ -1930,6 +1959,7 @@ console.log('\nthe till, amended (v0.0012.1)');
   /* A5 */
   await dk.evaluate(() => { closeModal(); S.till = tillReset(); tillScan('4000000001065'); tillScan('4000000001065'); });
   ok('A5 — cash is one tap to confirm the exact total, with nothing to type',
+     await dk.evaluate(() => { openPay(); return true; }) &&
      await dk.evaluate(() => /Received exactly 7,000 IQD/.test(document.querySelector('.till-confirm').innerText) &&
        !document.getElementById('till-given')));
   ok('confirmed, it completes: received equals the total, no change, recorded as confirmed',
@@ -1937,7 +1967,7 @@ console.log('\nthe till, amended (v0.0012.1)');
        const rc = receiptLines(s, 'en').map(l => l.text + ' ' + (l.amount || '')).join('\n');
        return s.total === 7000 && s.given === 7000 && s.change === 0 && s.cashConfirmed === true &&
          /Change 0 IQD/.test(rc); }));
-  await dk.evaluate(() => { closeReceipt(); tillScan('4000000001065'); });
+  await dk.evaluate(() => { closeReceipt(); tillScan('4000000001065'); openPay(); });
   ok('a different amount is typed, and the change shows as it is typed',
      await dk.evaluate(() => { document.querySelector('.till-other').click();
        const el = document.getElementById('till-given'); el.value = '10000'; el.dispatchEvent(new Event('input'));
@@ -1953,7 +1983,7 @@ console.log('\nthe till, amended (v0.0012.1)');
        completeSale(); const s = S.sales[0]; closeReceipt();
        return s.given === 10000 && s.change === 6500 && s.cashConfirmed === false; }));
   ok('ZainCash and Qi Card are untouched: no cash confirmation, a reference, recorded only',
-     await dk.evaluate(() => { tillScan('4000000001065'); tillTender('zaincash');
+     await dk.evaluate(() => { tillScan('4000000001065'); openPay(); tillTender('zaincash');
        const r = !document.querySelector('.till-confirm') && !!document.getElementById('till-ref') && !!document.querySelector('.till-complete');
        completeSale(); const s = S.sales[0]; closeReceipt(); return r && s.tender === 'zaincash' && s.cashConfirmed === null; }));
 }
@@ -2285,6 +2315,85 @@ console.log('\nstock and purchasing (v0.0013)');
        return s.state === 'saved' && S.screen === 'count' && !openCountSession(); }));
 }
 
+/* ---------------------------------------------------------------------------
+   v0.0013.1 — the till and the Helper as one, simpler (U1–U7).
+   --------------------------------------------------------------------------- */
+console.log('\nthe till and the Helper as one (v0.0013.1)');
+{
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('till'); S.till = tillReset(); render(); });
+  ok('U6 — the empty till offers today’s sales in one line, not a list',
+     await dk.evaluate(() => !!document.querySelector('.till-today') && !document.querySelector('.till-today-list') &&
+       /Today · \d+ sales/.test(document.querySelector('.till-today').innerText)));
+  ok('U2 — a line is its name, what will print, a quantity and a total: no steppers or links on the basket',
+     await dk.evaluate(() => { setPrice('P1', '5000000001224', 6000); setPrice('P1', '4000000001065', 3500);
+       tillScan('5000000001224'); tillScan('4000000001065'); tillScan('4000000001065');
+       const body = document.getElementById('app-body');
+       return body.querySelectorAll('.till-line').length === 2 && !body.querySelector('.qty-btn, .till-void, .link-btn') &&
+         body.querySelectorAll('.till-line')[1].querySelector('.till-qty').innerText === '×2'; }));
+  ok('U1 — the Pay bar is pinned in view, with the total',
+     await dk.evaluate(() => { const bar = document.querySelector('.till-paybar'); const r = bar.getBoundingClientRect();
+       return getComputedStyle(bar).position === 'fixed' && r.bottom <= innerHeight + 1 && r.top > innerHeight / 2 &&
+         /13,000 IQD/.test(bar.innerText); }));
+  ok('…beside the sidebar on a wide screen, not under it',
+     await dk.evaluate(() => { const bar = document.querySelector('.till-paybar').getBoundingClientRect();
+       const side = document.querySelector('.sidebar').getBoundingClientRect();
+       return bar.left >= side.right - 1 || bar.right <= side.left + 1; }));
+  ok('tapping a line opens its sheet: quantity, dose, how to take it, remove',
+     await dk.evaluate(() => { tillToggleLine(1); const sh = document.querySelector('.sheet');
+       const r = !!sh && !!sh.querySelector('.sheet-stepper') && !!sh.querySelector('.till-dose') && sh.querySelectorAll('.take-chip').length > 5 &&
+         !!sh.querySelector('.till-void');
+       sh.querySelectorAll('.sheet-stepper button')[1].click();
+       return r && S.till.lines[1].qty === 3 && document.querySelector('.sheet .sheet-stepper b').innerText === '3'; }));
+  ok('remove, from the sheet, closes it and is a void on the record',
+     await dk.evaluate(() => { const n = S.tillLog.filter(x => x.kind === 'void').length;
+       document.querySelector('.sheet .till-void').click();
+       return !S.modal && S.till.lines.length === 1 && S.tillLog.filter(x => x.kind === 'void').length === n + 1; }));
+  ok('U4 — an interaction and a duplication about the same two drugs are ONE warning with both reasons',
+     await dk.evaluate(() => { tillScan('4000000001065'); const f = tillFindings(S.till.lines).findings.filter(x => x.tier === 'warn');
+       const g = tillGroups(S.till.lines).groups.filter(x => x.tier === 'warn');
+       return f.length === 2 && g.length === 1 && g[0].items.length === 2 &&
+         /^1 warning to look at/.test(document.querySelector('.till-flag.warn').innerText); }));
+  ok('…one acknowledgement covers both, and each is recorded on the sale as acknowledged',
+     await dk.evaluate(() => { openHelper(); const sh = document.querySelector('.sheet');
+       const both = /Interaction:/.test(sh.innerText) && /Duplicate therapy:/.test(sh.innerText) && sh.querySelectorAll('.till-ack').length === 1;
+       sh.querySelector('.till-ack').click(); closeModal();
+       const done = /Warning acknowledged/.test(document.querySelector('.till-flag').innerText);
+       confirmCash(); const s = S.sales[0]; closeReceipt();
+       return both && done && s.findings.filter(x => x.tier === 'warn').length === 2 && s.findings.filter(x => x.tier === 'warn').every(x => x.acknowledged); }));
+  ok('U3 — coverage stays on the screen, and says so when nothing is found (never a green tick)',
+     await dk.evaluate(() => { tillScan('5000000001002'); const c = document.querySelector('.till-cov').innerText;
+       return /Helper: 1 of 1 medicines checked · nothing found in what it checked/.test(c) && !document.querySelector('.till-flag') &&
+         !document.querySelector('#app-body .banner-green'); }));
+  ok('the Helper sheet names what was and was not checked',
+     await dk.evaluate(() => { tillScan('5000000001422'); openHelper(); const t = document.querySelector('.sheet .till-covdetail').innerText; closeModal();
+       return /Checked: Panadol 500 mg\./.test(t) && /Not checked: Actifed syrup\./.test(t); }));
+  ok('U5 — Pay opens a sheet; the sale closes it and shows the receipt',
+     await dk.evaluate(() => { document.querySelector('.till-pay-btn').click(); const open = S.modal && S.modal.kind === 'tillPay' &&
+       document.querySelectorAll('.sheet .till-tenders button').length === 3 && !!document.querySelector('.sheet .till-confirm');
+       document.querySelector('.sheet .till-confirm').click();
+       const r = open && !S.modal && !!document.querySelector('.receipt-img'); closeReceipt(); return r; }));
+  ok('U7 — the owner can check without selling: no prices, no Pay, and nothing sold',
+     await dk.evaluate(() => { setTillMode('check'); const n = S.sales.length;
+       window.__np = PRODUCTS.find(p => p.mapping !== 'nondrug' && pharmacyPrice('P1', p.barcode) == null).barcode;
+       tillScan('5000000001224'); tillScan(window.__np);
+       const r = !document.querySelector('.till-pay-btn') && !document.querySelector('.till-line-total') && !!document.querySelector('.till-tosell') &&
+         S.till.lines.length === 2 && S.sales.length === n;
+       completeSale(); return r && S.sales.length === n; }));
+  ok('checking needs no price; turning it into a sale asks for the one that is missing',
+     await dk.evaluate(() => { const np = window.__np, line = S.till.lines.find(l => l.barcode === np);
+       const unpriced = line.unit == null;
+       document.querySelector('.till-tosell').click();
+       const asked = tillMode() === 'sell' && S.till.needPrice === np && !!document.querySelector('.till-needprice');
+       openPay(); const blocked = !S.modal;
+       document.getElementById('till-price').value = '55000'; tillSetPriceAndAdd(np);
+       return unpriced && asked && blocked && line.unit === 55000 && !S.till.needPrice && S.till.lines.length === 2; }));
+  await dk.evaluate(() => { tillClear(); });
+  ok('the sheets are Arabic in Arabic',
+     await dk.evaluate(() => { setLang('ar'); tillScan('5000000001224'); tillScan('4000000001065'); openHelper();
+       const r = /قبل أن تسلّمها/.test(document.querySelector('.sheet').innerText) && document.documentElement.dir === 'rtl';
+       closeModal(); tillClear(); setLang('en'); return r; }));
+}
+
 await dk.setViewportSize({ width: 320, height: 700 });
 {
   const wide = [];
@@ -2305,6 +2414,12 @@ await dk.setViewportSize({ width: 320, height: 700 });
         await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('5000000001224'); tillScan('4000000001065');
           tillScan('5000000001286'); tillToggleLine(0); tillOpenDiscount(); tillScan('6291234567894'); tillCashManual(true); });
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`till (${dir})`);
+        /* v0.0013.1: every sheet, at 320. */
+        for (const k of ['tillLine', 'tillHelper', 'tillPay']) {
+          await dk.evaluate(k => { openTillSheet(k, { i:0 }); if (k === 'tillPay') { tillOpenDiscount(); tillCashManual(true); openTillSheet('tillPay'); } }, k);
+          if (await dk.evaluate(() => Math.max(document.body.scrollWidth, document.querySelector('.sheet').scrollWidth)) > 320) wide.push(`${k} (${dir})`);
+        }
+        await dk.evaluate(() => closeModal());
         await dk.evaluate(() => { S.till.given = '1000000'; completeSale(); });
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`receipt (${dir})`);
         await dk.evaluate(() => closeReceipt());

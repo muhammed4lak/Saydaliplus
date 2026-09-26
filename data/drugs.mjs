@@ -37,6 +37,11 @@
             list is a placeholder until the clinical curator (W19) and the
             Ministry's schedule confirm it; pregabalin is on it because of
             its misuse in Iraq, and is the entry most worth checking.
+            Checked 26 Sep 2026 against the NCDS Essential Drugs List
+            (25 Jul 2023): tramadol sits under 4H (opioid analgesics) and
+            diazepam under 4A (hypnotics and anxiolytics); alprazolam,
+            phenobarbital and pregabalin are not confirmed by it — the list
+            is a formulary, not a schedule, and pregabalin is not on it.
      take   optional — WHEN and HOW to take it, as keys of TAKE below: before or
             after food, in the morning, once a week. What the till prints under
             a medicine by default (v0.0012.1). Only where the timing changes
