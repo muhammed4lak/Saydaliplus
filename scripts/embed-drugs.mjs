@@ -46,6 +46,7 @@ for (const d of DRUGS) {
     if (!c.ar || !c.en) problems.push(`${d.sci}: contraindication needs both languages`);
   }
   for (const k of d.take || []) if (!TAKE[k]) problems.push(`${d.sci}: unknown take "${k}"`);
+  if ('controlled' in d && d.controlled !== true) problems.push(`${d.sci}: controlled must be true or absent`);
 }
 for (const [k, v] of Object.entries(TAKE)) if (!v.ar || !v.en) problems.push(`take ${k}: needs both languages`);
 for (const r of DUPLICATE_RULES) {

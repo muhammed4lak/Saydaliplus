@@ -532,7 +532,7 @@ to permitted staff, and only from five pharmacies up.
 *The check asserts:* a price change never alters a past sale; an unmapped item is
 announced rather than silently passed; nothing in the cart can open a banner.
 
-**v0.0013 — stock and purchasing.**
+**v0.0013 — stock and purchasing.** **Built** (26 Sep 2026) — see "v0.0013 as built" below.
 Stock as a **ledger of movements** — sale, receipt, adjustment, return, expiry
 write-off — with levels always derived, never stored. Purchase orders from
 suppliers, who are already Externals (distributors and storage houses, W4):
@@ -544,6 +544,128 @@ register falls out of dispensing as a derived view of movements for controlled
 items, not a separate log.
 *The check asserts:* no stock level is ever written directly; the register
 reconciles to movements exactly.
+
+### v0.0013 as built — stock and purchasing
+
+- **A ledger of movements.** Count, import, receipt, bonus, sale, refund,
+  write-off, settle, undo — each appended by one function, `addMovement()`, and
+  never edited. Every level on every screen is summed from them. The check
+  reads the page's own source to prove there is one writer and no stored level.
+- **Batches.** Each has a product, an expiry (month and year), and the shelf
+  it was counted on. An expired batch is counted but never available — it is
+  in quarantine — and leaves only by a **write-off with a reason** (destroyed,
+  returned to the supplier, other).
+- **The till** sells **first-expiring first**, never from an expired batch.
+  Past what is recorded the sale still completes (S1) and the shortfall lands
+  on the product's *sold before it was counted* line, below zero, and on
+  **Count this**. A line whose recorded stock is only expired says *check the
+  date on the box*.
+- **Refunds (S5):** *back to stock* is pre-selected — each unit returns to the
+  batch it left; *set aside* puts it in quarantine.
+- **Counting (T2, T3).** Name the shelf (typed, or picked from the pharmacy's
+  list, which grows). Each scan adds a box; the quantity can be typed; expiry
+  as MM/YY, *same as the last box* one tap away, *a box with another date* for
+  a second line. The camera works here too, with keep-scanning. A count is the
+  truth about **one shelf**: what is recorded there and not found now leaves
+  it — and while counting, the screen lists **what is recorded on this shelf
+  and not counted yet**, so nothing leaves by surprise. A count settles the
+  product's sales made before it. Every counted product is **linked to its
+  shelf** ("Where: Shelf 1 — painkillers · Shelf 2" on the product).
+- **Progress is a count, never a percentage:** "13 drugs counted", per shelf
+  with its boxes.
+- **The import (T5):** CSV and .xlsx, read in the page (no library) — the
+  .xlsx unzipped with the browser's own decompressor, the first sheet found
+  through the workbook's relationships, shared and inline strings, Excel date
+  serials. Columns found by heading (Arabic or English) and by content, and
+  re-pointable. Five piles — matched, probably matched (answered yes or no
+  before it can be confirmed), not found (one with a real barcode can come in
+  by its name, and goes for mapping), duplicates (merged), errors (no
+  quantity, no readable expiry). An expired row goes straight to quarantine;
+  a product already in stock is flagged. Nothing is in stock until confirmed.
+  Old .xls is met with "save it as .xlsx or CSV". Our CSV template downloads.
+- **Save and continue later** for counts and imports — kept on the device
+  (`localStorage`) across closing the app; a count open when switching
+  pharmacy is saved, to continue there.
+- **Undo (Q3):** a whole count or import, in one press, as reversing
+  movements; until the end of the next day, and never once a later count or
+  import has touched the same products (undoing the later one frees the
+  earlier). The screen says why when there is no undo.
+- **History (Q4):** per product, its movements (who, when, which operation);
+  on the Stock screen, every count and import with its undo button or the
+  reason there is none.
+- **Purchase orders:** draft → sent → partly received → received, or closed
+  with the rest not coming. Lines carry quantity, **bonus** and unit cost.
+  Receiving writes a batch per line with its expiry and cost; bonus units
+  arrive **at zero cost**, lowering the batch's average cost (S3). The order
+  text copies for WhatsApp; nothing passes through the platform. With costs
+  recorded, the owner sees stock value at cost.
+- **Suppliers (S4):** suggestions from the CRM's distributors and storage
+  houses as the owner types, forgiving مذخر / مخزن / مستودع, ال, ة/ه, ى/ي and
+  Arabic or English; *this one* links; *none of these* adds it privately and
+  queues it for the team. When the team proposes a link, the owner is asked
+  "Is *مخزن الشفاء* the same as *Al-Shifa Drug Store*?" — only a yes links it.
+  The CRM gained **Al-Shifa Drug Store** (CO8), a *Named by pharmacies* view,
+  the pharmacies that named a record on the record itself, and report **R22**
+  — one row per supplier however many ways it was written, with how many
+  owners confirmed. The CRM has no way to confirm on an owner's behalf.
+- **The controlled register** is the ledger filtered to controlled
+  substances, with a running balance — so it reconciles to the movements
+  exactly, which the check proves. Controlled is a new flag in the drug
+  reference: tramadol, diazepam, alprazolam, phenobarbital and pregabalin,
+  placeholder until the curator and the Ministry's schedule confirm it.
+- **Prompts** on the owner's home and the Stock screen, only when non-zero:
+  count this, expired in quarantine, expiring within 90 days, below the
+  minimum the owner set on a product, returns set aside.
+- **Logged** for the owner: counts started, saved, confirmed, undone; imports
+  started, saved, confirmed, undone, discarded; orders created, sent, received,
+  closed; write-offs; minimum levels; suppliers added, linked, refused.
+- **Owner-only**, per pharmacy; an owner of several picks the pharmacy first.
+- **Demo data:** Al-Rahma starts with one shelf counted three days ago (past
+  its undo window), including an expired batch, one expiring within 90 days
+  and a controlled substance; two suppliers, one of them awaiting the owner's
+  confirmation.
+
+**Known limits of the prototype:** stock lives in memory (only saved drafts
+survive a reload); the CRM's proposals are a fixture, since the prototype has
+no shared backend; shelf QR labels are not printed yet (a shelf is named or
+picked); a correction after the undo window is made by **recounting the shelf**
+— there is no separate adjustment form yet; counted stock carries no cost, so
+stock value covers what came in with a cost (imports and receipts); the undo
+window follows the device's clock.
+
+### Before v0.0014 — to decide
+
+v0.0014 is cash and the offline model: till sessions, the blind count,
+variances with a note and the owner's sign-off, the audit trail, and selling
+offline with movements that replay on reconnecting.
+
+1. **One drawer, or one per person?** Most pharmacies here have one drawer
+   that everyone on shift uses. Is a till session per **drawer** (everyone's
+   sales tagged with who made them, one count at close), or per **person**
+   (each opens and closes their own)? *Recommended:* per drawer, with each sale
+   tagged — it matches how the counter works, and the per-person figure falls
+   out of the tags.
+2. **The opening float.** Counted at the start of each session, or a fixed
+   amount the owner sets? *Recommended:* counted, blind like the close — a
+   fixed float is the number that is wrong on the one day it matters.
+3. **When a variance needs the owner.** A note is required for any variance;
+   should the owner's sign-off be required for every one, or only above an
+   amount they set? *Recommended:* above an amount the owner sets (e.g. 5,000
+   IQD); below it, the note is enough and it still shows in the history.
+4. **Offline for how long?** A device that has not synced for a long time is
+   the one whose stock and prices are most wrong. Warn after 24 hours, and
+   **never block selling** (S1's spirit) — or block after some limit?
+   *Recommended:* warn at 24 hours and on every sale after 72, never block.
+5. **Two devices selling the last box offline.** Both sales stand, stock goes
+   below zero, the product joins *Count this* — consistent with S1. Confirm.
+6. **An adjustment form** (a correction with a reason, outside a count) —
+   in v0.0014 with the audit trail, or leave corrections to recounting a
+   shelf? *Recommended:* in v0.0014; it belongs on the same audit trail.
+
+**Leftovers that are yours:** a **Karmasoft export** (still); confirming the
+**controlled list** — pregabalin especially — with the curator and the
+Ministry's schedule; whether **printed shelf labels** (QR) are worth having
+at launch; and, from the non-code track, the printer and scanner test.
 
 **v0.0014 — cash, and the offline model.**
 Till sessions opened and closed per person. **Blind count**: the drawer total is
@@ -787,7 +909,8 @@ rediscovered as new or lost when circumstances change.
 
 ## Reminders
 
-- **After v0.0014 — the phone app and the stores.** Raised 26 Sep 2026: when
+- **After v0.0014 — the phone app and the stores.** *(Still pending at
+  v0.0013.)* Raised 26 Sep 2026: when
   to move to React for Google Play and the App Store. The recommendation given,
   not yet decided: the project already has React (the Next.js codebase); the
   phone app should be **React Native with Expo**, sharing the business rules
@@ -818,8 +941,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **Nothing blocks v0.0013** — every question before it is answered (see
-  "Before v0.0013 — answered"). Waiting on: a Karmasoft sample export.
+- **Six questions before v0.0014** — one drawer or one per person, the
+  opening float, when a variance needs the owner, how long offline, the last
+  box sold twice, and an adjustment form. See "Before v0.0014 — to decide".
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.

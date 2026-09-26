@@ -49,3 +49,17 @@ describe('the defaults that matter most', () => {
     expect(bySci('Paracetamol')?.take).toBeUndefined();
   });
 });
+
+describe('controlled substances (v0.0013)', () => {
+  it('is marked only as true, never as false', () => {
+    for (const d of DRUGS) if ('controlled' in d) expect(d.controlled, d.sci).toBe(true);
+  });
+
+  it('includes the benzodiazepines and tramadol', () => {
+    for (const s of ['Diazepam', 'Alprazolam', 'Tramadol']) expect(bySci(s)?.controlled, s).toBe(true);
+  });
+
+  it('does not include ordinary analgesics', () => {
+    for (const s of ['Paracetamol', 'Ibuprofen']) expect(bySci(s)?.controlled, s).toBeUndefined();
+  });
+});

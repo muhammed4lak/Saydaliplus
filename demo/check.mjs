@@ -13,6 +13,7 @@
 import { chromium } from 'playwright';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { deflateRawSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import DRUG_DATA, { DUPLICATE_RULES, TAKE as TAKE_DATA } from '../data/drugs.mjs';
 import PRODUCT_DATA from '../data/products.mjs';
@@ -1315,8 +1316,8 @@ await signOut(dk);
 await signIn(dk, 'rahma@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('an owner’s bar is their home, the till, products, the Helper and their profile',
-   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,till,products,drugs,profile'));
+ok('an owner’s bar is their home, the till, stock, the Helper and their profile',
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,till,stock,drugs,profile'));
 {
   const txt = await dk.locator('#app-body').innerText();
   ok('their home stops prompting about applicants and unfilled shifts',
@@ -1547,8 +1548,8 @@ ok('the filters count what they hold',
   const broken = [];
   for (const [mail, screens] of [
     ['ahmed@example.com', ['checkin', 'tasks', 'drugs', 'cv', 'products', 'profile']],
-    ['rahma@example.com', ['dashboard', 'till', 'products', 'trainees', 'post', 'billing', 'profile']],
-    ['layla@example.com', ['dashboard', 'till', 'products', 'trainees', 'billing', 'profile']]
+    ['rahma@example.com', ['dashboard', 'till', 'stock', 'count', 'import', 'orders', 'suppliers', 'register', 'products', 'trainees', 'post', 'billing', 'profile']],
+    ['layla@example.com', ['dashboard', 'till', 'stock', 'products', 'trainees', 'billing', 'profile']]
   ]) {
     await dk.evaluate(m => { signOut(); signInAs(m); }, mail);
     for (const sc of screens) {
@@ -1957,6 +1958,333 @@ console.log('\nthe till, amended (v0.0012.1)');
        completeSale(); const s = S.sales[0]; closeReceipt(); return r && s.tender === 'zaincash' && s.cashConfirmed === null; }));
 }
 
+/* ---------------------------------------------------------------------------
+   v0.0013 — STOCK AND PURCHASING. The two things the backlog said this
+   version's check must prove — no stock level is ever written directly, and
+   the controlled register reconciles to the movements exactly — and every
+   decision behind it: batches and expiry, first-expiring first, quarantine,
+   write-offs with a reason, never refusing a sale (S1), cost and bonus units
+   (S3), suppliers matched and confirmed (S4), refunds back to stock by
+   default (S5), shelf-by-shelf counting, a spreadsheet import with a review,
+   save-and-continue, undo with its window (Q3), and history (Q4).
+   --------------------------------------------------------------------------- */
+console.log('\nstock and purchasing (v0.0013)');
+{
+  /* A real .xlsx, built here: a zip of the XML a spreadsheet program writes,
+     with Arabic headings the way a Karmasoft export might have them. */
+  const crcTable = [...Array(256)].map((_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
+  const crc32 = buf => { let c = 0xFFFFFFFF; for (const b of buf) c = crcTable[(c ^ b) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const zip = files => {
+    const locals = [], centrals = []; let off = 0;
+    for (const [name, text] of files) {
+      const raw = Buffer.from(text, 'utf8'), data = deflateRawSync(raw), nm = Buffer.from(name, 'utf8');
+      const h = Buffer.alloc(30); h.writeUInt32LE(0x04034b50, 0); h.writeUInt16LE(20, 4); h.writeUInt16LE(0x0800, 6); h.writeUInt16LE(8, 8);
+      h.writeUInt32LE(crc32(raw), 14); h.writeUInt32LE(data.length, 18); h.writeUInt32LE(raw.length, 22); h.writeUInt16LE(nm.length, 26);
+      const c = Buffer.alloc(46); c.writeUInt32LE(0x02014b50, 0); c.writeUInt16LE(20, 4); c.writeUInt16LE(20, 6); c.writeUInt16LE(0x0800, 8); c.writeUInt16LE(8, 10);
+      c.writeUInt32LE(crc32(raw), 16); c.writeUInt32LE(data.length, 20); c.writeUInt32LE(raw.length, 24); c.writeUInt16LE(nm.length, 28); c.writeUInt32LE(off, 42);
+      locals.push(h, nm, data); centrals.push(c, nm); off += 30 + nm.length + data.length;
+    }
+    const cd = Buffer.concat(centrals), e = Buffer.alloc(22);
+    e.writeUInt32LE(0x06054b50, 0); e.writeUInt16LE(files.length, 8); e.writeUInt16LE(files.length, 10); e.writeUInt32LE(cd.length, 12); e.writeUInt32LE(off, 16);
+    return Buffer.concat([...locals, cd, e]);
+  };
+  const sheetRows = [
+    ['ت', 'اسم المادة', 'الباركود', 'الكمية', 'تاريخ الانتهاء', 'سعر الشراء'],
+    ['1', 'Panadol 500 mg', '5000000001002', '10', '2027-06-30', '1500'],
+    ['2', 'بروفين 400 ملغ', '', '5', '46752', '2500'],          // no barcode; an Excel date serial
+    ['3', 'Panadol 500 mg', '5000000001002', '2', '06/2027', '1500'],   // same product and expiry: a duplicate
+    ['4', 'Voltaren 50 mg', '7600000001040', '4', '', '3000'],     // no expiry: an error
+    ['5', 'Local cough syrup', '6291234567894', '4', '12/2027', '1800'], // a real barcode, not in the catalogue
+    ['6', 'Something unreadable', '', '3', '01/2028', ''],           // nothing to match
+    ['7', 'Voltaren 50 mg', '7600000001040', '2', '01/2026', '3000']  // already expired
+  ];
+  const strings = [...new Set(sheetRows.flat().filter(v => !/^\d+$/.test(v) && v !== ''))];
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const colL = i => String.fromCharCode(65 + i);
+  const sheetXml = '<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' +
+    sheetRows.map((r, y) => '<row r="' + (y + 1) + '">' + r.map((v, x) => v === '' ? '' :
+      /^\d+$/.test(v) && x !== 2 ? '<c r="' + colL(x) + (y + 1) + '"><v>' + v + '</v></c>' :
+      x === 2 ? '<c r="' + colL(x) + (y + 1) + '" t="inlineStr"><is><t>' + v + '</t></is></c>' :
+      '<c r="' + colL(x) + (y + 1) + '" t="s"><v>' + strings.indexOf(v) + '</v></c>').join('') + '</row>').join('') + '</sheetData></worksheet>';
+  const xlsx = zip([
+    ['[Content_Types].xml', '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>'],
+    ['xl/workbook.xml', '<?xml version="1.0"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Stock" sheetId="1" r:id="rId7"/></sheets></workbook>'],
+    ['xl/_rels/workbook.xml.rels', '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId7" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/stock.xml"/></Relationships>'],
+    ['xl/worksheets/stock.xml', sheetXml],
+    ['xl/sharedStrings.xml', '<?xml version="1.0"?><sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + strings.map(s => '<si><t>' + esc(s) + '</t></si>').join('') + '</sst>']
+  ]);
+
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
+  ok('an owner’s bar: home, the till, stock, the Helper, their profile',
+     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,till,stock,drugs,profile'));
+  ok('the catalogue is one tap inside Stock and in the sidebar',
+     await dk.evaluate(() => { goto('stock'); return /Catalogue and prices/.test(document.getElementById('app-body').innerText) &&
+       sidebarGroups()[0].items.some(x => x[0] === 'products'); }));
+  ok('the home screen says what the shelf needs',
+     await dk.evaluate(() => { goto('dashboard'); const t = document.getElementById('app-body').innerText;
+       return /Stock/.test(t) && /Expired batches in quarantine: 1/.test(t) && /Expiring within 90 days: 1/.test(t); }));
+
+  /* The two things this version's check was promised to prove. */
+  ok('NO STOCK LEVEL IS EVER WRITTEN DIRECTLY: one writer of movements, and no level stored anywhere',
+     await dk.evaluate(() => {
+       const src = [...document.scripts].map(s => s.textContent).join('\n');
+       const writers = (src.match(/S\.movements\.push\(/g) || []).length;
+       const assigned = /S\.movements\s*=(?!=)|\.movements\[[^\]]*\]\s*=(?!=)|\b(level|onHand|available)\s*:\s*\d/.test(src.replace(/available:\s*stock/g, ''));
+       const batchKeys = new Set(S.batches.flatMap(b => Object.keys(b)));
+       return writers === 1 && !assigned && ['qty', 'level', 'available', 'stock'].every(k => !batchKeys.has(k)); }));
+  ok('every level on screen is the sum of its movements',
+     await dk.evaluate(() => stockCodes('P1').every(c => { const st = stockOf('P1', c);
+       return st.onHand === S.movements.filter(m => m.pharmacy === 'P1' && m.code === c).reduce((n, m) => n + m.qty, 0); })));
+
+  ok('a pharmacist without a pharmacy reaches none of it',
+     await dk.evaluate(() => STOCK_SCREENS.every(s => !screenAllowed(s, 'pharmacist'))));
+
+  /* Batches, expiry, first-expiring first, quarantine. */
+  ok('an expired batch is counted but never available — it is in quarantine',
+     await dk.evaluate(() => { const st = stockOf('P1', '7600000001040'); return st.available === 0 && st.expired === 3 && st.onHand === 3; }));
+  ok('the till sells first-expiring first',
+     await dk.evaluate(() => { goto('count'); startCount('Shelf 2'); countScan('5000000001002'); countScan('5000000001002');
+       countExpiry(0, ymOffset(3).slice(5) + '/' + ymOffset(3).slice(2, 4)); confirmCount();
+       goto('till'); S.till = tillReset(); tillScan('5000000001002'); tillQty(0, 1); tillQty(0, 1);
+       const before = stockOf('P1', '5000000001002').batches.filter(b => b.kind === 'stock').map(b => [b.expiry, b.qty]);
+       confirmCash(); closeReceipt();
+       const moves = S.movements.filter(m => m.ref === S.sales[0].id).map(m => [S.batches.find(b => b.id === m.batch).expiry, m.qty]);
+       return moves.length === 2 && moves[0][0] === ymOffset(3) && moves[0][1] === -2 && moves[1][0] === ymOffset(14) && moves[1][1] === -1; }));
+  ok('never from an expired batch: with only expired stock the line says to check the box, and the sale still goes through (S1)',
+     await dk.evaluate(() => { S.till = tillReset(); tillScan('7600000001040');
+       const said = /only expired|All that is recorded is expired/i.test(document.querySelector('.till-line').innerText);
+       confirmCash(); closeReceipt(); const st = stockOf('P1', '7600000001040');
+       return said && st.expired === 3 && st.unbatched === -1 && st.available === -1; }));
+  ok('a product sold past its record joins “Count this”',
+     await dk.evaluate(() => stockPrompts('P1').countThis.some(x => x.code === '7600000001040' && x.short === 1)));
+
+  /* Counting. */
+  ok('a count starts by naming the shelf — nothing is assumed about where things are',
+     await dk.evaluate(() => { goto('count'); startCount(''); return S.stockNote.kind === 'needShelf' && !openCountSession(); }));
+  ok('shelves already named are offered',
+     await dk.evaluate(() => { render(); return [...document.querySelectorAll('.st-shelf-pick')].map(x => x.innerText).join('|') === 'Shelf 1 — painkillers|Fridge|Shelf 2'; }));
+  ok('each scan adds a box; a box with no expiry cannot be confirmed',
+     await dk.evaluate(() => { startCount('Shelf 3'); countScan('5000000001316'); countScan('5000000001316'); countScan('5000000001316');
+       const s = openCountSession(); confirmCount();
+       return s.items.length === 1 && s.items[0].qty === 3 && S.stockNote.kind === 'needExpiry' && s.state === 'open'; }));
+  ok('expiry is month and year; the last box’s is one tap away; another date is another line',
+     await dk.evaluate(() => { countExpiry(0, '11/27'); countSplit(0); const s = openCountSession();
+       const offered = /Same as the last box \(11\/2027\)/.test(document.querySelector('.ct-same').innerText);
+       countSameAsLast(1); /* the same date again merges back into one line */
+       const merged = s.items.length === 1 && s.items[0].qty === 4;
+       countSplit(0); countExpiry(1, '02/28');
+       return offered && merged && s.items.length === 2 && s.items[1].expiry === '2028-02'; }));
+  ok('progress is a count of drugs and boxes, never a percentage',
+     await dk.evaluate(() => { const t = document.querySelector('.ct-progress').innerText; return t === '1 drugs · 5 boxes' && !/%/.test(document.getElementById('app-body').innerText); }));
+  ok('save and continue later: it leaves the screen, waits on the hub, and resumes where it was',
+     await dk.evaluate(() => { saveCount(); const onHub = /Count: Shelf 3/.test(document.getElementById('app-body').innerText) &&
+       !!document.querySelector('.st-draft .btn-small');
+       const id = S.countSessions.find(x => x.shelf === 'Shelf 3').id; resumeCount(id);
+       return onHub && S.screen === 'count' && openCountSession().items.length === 2; }));
+  ok('a saved count survives closing the app (on this device)',
+     await (async () => { const p2 = await dk.context().newPage(); await p2.goto(darkUrl);
+       const r = await p2.evaluate(() => { signInAs('rahma@example.com'); setLang('en');
+         return S.countSessions.some(x => x.shelf === 'Shelf 3' && x.state === 'saved'); });
+       await p2.close(); return r; })());
+  ok('confirmed: “2 drugs counted” on the shelf, each linked to its shelf',
+     await dk.evaluate(() => { countScan('5000000001316'); openCountSession().items.forEach((it, i) => { if (!it.expiry) countExpiry(i, '11/27'); });
+       countScan('4000000001294'); countExpiry(openCountSession().items.length - 1, '05/28'); confirmCount();
+       const nex = stockOf('P1', '5000000001316');
+       /* After resuming, the next Nexium joined its last line (02/28): 4 + 2. */
+       return S.screen === 'stock' && nex.available === 6 && S.shelfOf.P1['5000000001316'].join() === 'Shelf 3' &&
+         /Shelf 3 · 2 drugs, 7 boxes/.test(document.querySelector('.st-shelves').innerText); }));
+  ok('a count settles sales made before it: they were already off the shelf it saw',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('3000000001219'); tillQty(0, 1); confirmCash(); closeReceipt();
+       const before = stockOf('P1', '3000000001219').available;
+       goto('count'); startCount('Shelf 3'); countScan('3000000001219'); countExpiry(0, '09/28');
+       /* a recount of Shelf 3: Nexium and Jardiance are not on it this time —
+          and the screen says so before it is confirmed */
+       window.__warned = /Recorded on this shelf, not counted yet: 2/.test(document.querySelector('.ct-left').innerText);
+       confirmCount(); const st = stockOf('P1', '3000000001219');
+       return before === -2 && st.available === 1 && st.unbatched === 0 && !stockPrompts('P1').countThis.some(x => x.code === '3000000001219'); }));
+  ok('a recount of a shelf is the truth about that shelf: what is no longer on it leaves',
+     await dk.evaluate(() => window.__warned && stockOf('P1', '5000000001316').available === 0 && stockOf('P1', '4000000001294').available === 0));
+
+  /* Undo (Q3). */
+  ok('the earlier count cannot be undone once a later one touched the same products; the later one can',
+     await dk.evaluate(() => { const [a, b] = S.countSessions.filter(x => x.shelf === 'Shelf 3' && x.state === 'committed');
+       return undoState(a).ok === false && undoState(a).why === 'later' && undoState(b).ok === true; }));
+  ok('undo takes the whole count back in one press, as movements, and is recorded',
+     await dk.evaluate(() => { goto('stock'); const b = S.countSessions.filter(x => x.shelf === 'Shelf 3' && x.state === 'committed')[1];
+       const n = S.movements.length;
+       document.querySelector('.st-op[data-op="' + b.id + '"] .st-undo').click();
+       return b.state === 'undone' && stockOf('P1', '5000000001316').available === 6 && S.movements.length > n &&
+         S.movements.slice(n).every(m => m.kind === 'undo' && m.ref === b.id) && S.tillLog.some(x => x.kind === 'countUndone' && x.op === b.id); }));
+  ok('once the later one is undone, the earlier one can be undone again',
+     await dk.evaluate(() => undoState(S.countSessions.filter(x => x.shelf === 'Shelf 3' && x.state === 'committed')[0]).ok));
+  ok('until the end of the next day — after that, no undo, and the screen says why',
+     await dk.evaluate(() => { const a = S.countSessions.filter(x => x.shelf === 'Shelf 3' && x.state === 'committed')[0];
+       S.clockShift = 2 * 864e5; render(); const r = undoState(a).why === 'window' &&
+         /undo window has passed/.test(document.querySelector('.st-op[data-op="' + a.id + '"]').innerText) &&
+         !document.querySelector('.st-op[data-op="' + a.id + '"] .st-undo');
+       S.clockShift = 0; render(); return r; }));
+
+  /* The spreadsheet (T5). */
+  await dk.evaluate(() => { goto('import'); window.__pan = stockOf('P1', '5000000001002').available; window.__vol = stockOf('P1', '7600000001040').expired;
+    window.__bru = stockOf('P1', '5000000001033').available; });
+  await dk.setInputFiles('#im-file', { name:'karmasoft-export.xlsx', mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer:xlsx });
+  await dk.waitForFunction(() => S.screen === 'import' && !!document.querySelector('.im-pile'), null, { timeout:5000 }).catch(() => {});
+  ok('an .xlsx is read — first sheet by its relationship, shared and inline strings — and its Arabic columns found by themselves',
+     await dk.evaluate(() => { const imp = S.imports.find(x => x.id === S.openImport);
+       return !!imp && imp.rows.length === 7 && imp.cols.barcode === 2 && imp.cols.name === 1 && imp.cols.qty === 3 &&
+         imp.cols.expiry === 4 && imp.cols.cost === 5; }));
+  ok('nothing is in stock yet: it is a review',
+     await dk.evaluate(() => stockOf('P1', '5000000001002').available === window.__pan));
+  ok('every row lands in its pile: matched, probably, not found, duplicates, errors',
+     await dk.evaluate(() => { const rows = classifyImport(S.imports.find(x => x.id === S.openImport)); const p = k => rows.filter(r => r.pile === k).map(r => r.i + 1).join();
+       return p('matched') === '1,7' && p('probable') === '2' && p('notFound') === '5,6' && p('duplicate') === '3' && p('error') === '4'; }));
+  ok('an Excel date serial and a written date read as the same month',
+     await dk.evaluate(() => { const rows = classifyImport(S.imports.find(x => x.id === S.openImport));
+       return rows[1].expiry === '2027-12' && rows[0].expiry === '2027-06' && rows[2].expiry === '2027-06'; }));
+  ok('an expired row and a product already in stock are flagged before anything is added',
+     await dk.evaluate(() => { const t = document.getElementById('app-body').textContent;   /* matched rows sit in a closed <details> */
+       return /expired — goes to quarantine/i.test(t) && /adds to what is recorded/i.test(t); }));
+  ok('a “probably” row must be answered before the import can be confirmed',
+     await dk.evaluate(() => { document.querySelector('.im-confirm').click(); return S.importNote.kind === 'probableLeft' && stockOf('P1', '5000000001002').available === window.__pan; }));
+  ok('“is it Brufen 400 mg?” — yes moves it to matched',
+     await dk.evaluate(() => { const q = document.querySelector('.im-row[data-pile="probable"]'); const said = /Is it Brufen 400 mg\?/.test(q.innerText);
+       q.querySelector('.im-yes').click(); return said && !document.querySelector('.im-row[data-pile="probable"]'); }));
+  ok('an unknown product with a real barcode can come in by its name — the owner ticks it',
+     await dk.evaluate(() => { document.querySelector('.im-row[data-row="4"] input[type=checkbox]').click();
+       return !!document.querySelector('.im-row[data-row="4"] input:checked'); }));
+  ok('save and continue later works for an import too',
+     await dk.evaluate(() => { const id = S.openImport; saveImport(id); const waiting = /Import: karmasoft-export.xlsx/.test(document.getElementById('app-body').innerText);
+       resumeImport(id); return waiting && S.screen === 'import' && S.imports.find(x => x.id === id).decide[1] === 'yes'; }));
+  ok('confirmed: duplicates merged, costs kept, the expired row straight to quarantine, the unknown one sent for mapping',
+     await dk.evaluate(() => { const id = S.openImport; document.querySelector('.im-confirm').click();
+       const imp = S.imports.find(x => x.id === id);
+       const pan = S.movements.filter(m => m.ref === id && m.code === '5000000001002');
+       return imp.state === 'committed' && pan.length === 1 && pan[0].qty === 12 && pan[0].unitCost === 1500 &&
+         stockOf('P1', '7600000001040').expired === window.__vol + 2 && stockOf('P1', '5000000001033').available === window.__bru + 5 &&
+         S.mappingRequests.some(r => r.barcode === '6291234567894') && stockOf('P1', '6291234567894').available === 4; }));
+  ok('the whole import can be undone in one press',
+     await dk.evaluate(() => { const imp = S.imports.find(x => x.state === 'committed'); undoOp(imp.id);
+       return imp.state === 'undone' && stockOf('P1', '5000000001002').available === window.__pan && stockOf('P1', '6291234567894').available === 0; }));
+  ok('an old .xls is met with “save it as .xlsx or CSV”, not a failure',
+     await (async () => { await dk.evaluate(() => goto('import'));
+       await dk.setInputFiles('#im-file', { name:'old.xls', mimeType:'application/vnd.ms-excel', buffer:Buffer.from('not really') });
+       await dk.waitForTimeout(150);
+       return dk.evaluate(() => S.importNote && S.importNote.kind === 'xls' && /Save it as \.xlsx or CSV/.test(document.querySelector('.im-note').innerText)); })());
+  ok('a CSV reads too: a byte-order mark, semicolons, quoted commas',
+     await (async () => {
+       const csv = '﻿Barcode;Name;Qty;Expiry;Cost\r\n5000000001316;"Nexium 40 mg, 14 caps";3;09/2027;9000\r\n';
+       await dk.setInputFiles('#im-file', { name:'stock.csv', mimeType:'text/csv', buffer:Buffer.from(csv, 'utf8') });
+       await dk.waitForTimeout(200);
+       return dk.evaluate(() => { const imp = S.imports.find(x => x.id === S.openImport); const r = classifyImport(imp);
+         const ok1 = r.length === 1 && r[0].pile === 'matched' && r[0].raw.name === 'Nexium 40 mg, 14 caps' && r[0].expiry === '2027-09';
+         discardImport(imp.id); return ok1; }); })());
+
+  /* Purchase orders, cost and bonus (S3). */
+  ok('an order needs a supplier before it is sent',
+     await dk.evaluate(() => { goto('orders'); newOrder(); const o = openOrderRec(); o.supplier = null; render();
+       orderAdd('5000000001316'); orderLine(0, 'qty', '10'); orderLine(0, 'bonus', '1'); orderLine(0, 'cost', '9000');
+       sendOrder(); return o.state === 'draft' && S.stockNote.kind === 'needSupplier'; }));
+  ok('sent, it records that it was sent — the text can be copied for WhatsApp; nothing passes through us',
+     await dk.evaluate(() => { const o = openOrderRec(); orderSupplier('SP1'); sendOrder();
+       return o.state === 'sent' && /Nexium 40 mg × 10 \(\+1 Bonus\)/.test(orderText(o)); }));
+  ok('received in part: a batch with its expiry and cost; the bonus arrives at zero and lowers the unit cost',
+     await dk.evaluate(() => { const o = openOrderRec(); orderRecv(0, 'qty', '6'); orderRecv(0, 'bonus', '1'); orderRecv(0, 'expiry', '08/28'); orderRecv(0, 'cost', '9000');
+       const before = stockOf('P1', '5000000001316').available; receiveOrder();
+       const b = S.batches.find(x => x.id === o.receipts[0].lines[0].batch);
+       return o.state === 'partial' && stockOf('P1', '5000000001316').available === before + 7 && b.expiry === '2028-08' &&
+         Math.round(batchCost(b.id)) === Math.round(6 * 9000 / 7) &&
+         S.movements.some(m => m.batch === b.id && m.kind === 'bonus' && m.qty === 1 && m.unitCost === 0); }));
+  ok('the rest can arrive later, or the order be closed',
+     await dk.evaluate(() => { const o = openOrderRec(); const left = o.lines[0].recv.qty === 4 && o.lines[0].recv.bonus === 0;
+       closeOrder(); return left && o.state === 'closed'; }));
+  ok('with costs recorded, the owner sees the stock’s value',
+     await dk.evaluate(() => { goto('stock'); return !!document.querySelector('.st-value') && stockValue('P1') > 0; }));
+
+  /* Suppliers (S4). */
+  ok('a supplier is suggested from the database however it is written',
+     await dk.evaluate(() => ['Al-Shifa storage house', 'مخزن الشفا', 'مذخر الشفاء', 'مستودع الشفاء'].every(n => (supplierMatches(n)[0] || {}).id === 'CO8') &&
+       (supplierMatches('Rafidain')[0] || {}).id === 'CO5' && supplierMatches('مذخر النور').length === 0));
+  ok('picking the suggestion links it',
+     await dk.evaluate(() => { goto('suppliers'); supplierQuery('Rafidain pharma'); document.querySelector('.sp-sugg[data-crm="CO5"] .sp-pick').click();
+       return suppliersOf('P1').some(s => s.linked === 'CO5'); }));
+  ok('none of them: it is added as the pharmacy’s own, and goes to the team',
+     await dk.evaluate(() => { supplierQuery('مذخر النور'); const offered = !document.querySelector('.sp-sugg');
+       document.querySelector('.sp-own').click();
+       const s = suppliersOf('P1').find(x => x.name === 'مذخر النور');
+       return offered && s && !s.linked && S.supplierRequests.some(r => r.name === 'مذخر النور' && r.pharmacy === 'P1'); }));
+  ok('even with a suggestion on screen, “none of these” stays private — nothing is linked for the owner',
+     await dk.evaluate(() => { supplierQuery('الشفاء الجديد'); const suggested = !!document.querySelector('.sp-sugg[data-crm="CO8"]');
+       document.querySelector('.sp-own').click(); const s = suppliersOf('P1').find(x => x.name === 'الشفاء الجديد');
+       return suggested && s && s.linked === null; }));
+  ok('when the team finds the record, the owner is asked — and only a yes links it',
+     await dk.evaluate(() => { const card = document.querySelector('.sp-confirm[data-sp="SP2"]');
+       const asked = /Is “مخزن الشفاء” the same as “Al-Shifa Drug Store”\?/.test(card.innerText);
+       const s = S.suppliers.find(x => x.id === 'SP2'); const before = s.linked;
+       card.querySelector('.sp-yes').click();
+       return asked && before === null && s.linked === 'CO8' && S.tillLog.some(x => x.kind === 'supplierLinked' && x.supplier === 'SP2'); }));
+
+  /* Refunds (S5). */
+  ok('a refund offers two places, with back to stock already chosen',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('5000000001002'); confirmCash();
+       const radios = [...document.querySelectorAll('input[name="rf-dest"]')];
+       return radios.length === 2 && (radios.find(r => r.checked) || {}).value === 'stock'; }));
+  ok('confirmed as it stands, the box goes back to the batch it left',
+     await dk.evaluate(() => { const before = stockOf('P1', '5000000001002').available; const sale = S.sales[0];
+       const from = S.movements.find(m => m.ref === sale.id && m.kind === 'sale').batch;
+       document.getElementById('refund-reason').value = 'Wrong item'; refundSale(sale.id);
+       const back = S.movements.find(m => m.ref === sale.id && m.kind === 'refund');
+       return stockOf('P1', '5000000001002').available === before + 1 && back.batch === from && sale.refunded.dest === 'stock'; }));
+  ok('set aside instead, it goes to quarantine — counted, not available',
+     await dk.evaluate(() => { closeReceipt(); tillScan('5000000001002'); confirmCash(); const sale = S.sales[0];
+       const before = stockOf('P1', '5000000001002');
+       document.querySelector('input[name="rf-dest"][value="quarantine"]').checked = true;
+       document.getElementById('refund-reason').value = 'Opened box'; refundSale(sale.id);
+       const after = stockOf('P1', '5000000001002'); closeReceipt();
+       return after.quarantine === 1 && after.available === before.available && sale.refunded.dest === 'quarantine'; }));
+
+  /* Write-offs, minimums, the product screen. */
+  ok('an expired batch leaves only by a write-off with a reason',
+     await dk.evaluate(() => { openProduct('7600000001040'); const b = S.batches.find(x => x.pharmacy === 'P1' && x.code === '7600000001040' && x.kind === 'stock' && isExpired(x.expiry) && batchQty(x.id) > 0);
+       writeOff(b.id); const refused = batchQty(b.id) > 0 && S.stockNote.kind === 'needReason';
+       document.getElementById('wo-' + b.id).value = 'destroyed'; writeOff(b.id);
+       return refused && batchQty(b.id) === 0 && S.movements.some(m => m.batch === b.id && m.kind === 'writeoff' && m.reason === 'destroyed'); }));
+  ok('the product screen says where it lives and shows its history',
+     await dk.evaluate(() => { openProduct('5000000001002'); const t = document.getElementById('app-body').innerText;
+       return /Where: Shelf 1 — painkillers · Shelf 2/.test(t) && !!document.querySelector('.sk-hist'); }));
+  ok('a minimum the owner sets brings the product onto “below your minimum”',
+     await dk.evaluate(() => { document.getElementById('min-level').value = '500'; setMinLevel('5000000001002');
+       return stockPrompts('P1').low.some(x => x.code === '5000000001002' && x.min === 500); }));
+
+  /* The controlled register. */
+  ok('THE CONTROLLED REGISTER RECONCILES TO THE MOVEMENTS EXACTLY',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('3000000001455'); tillQty(0, 1); confirmCash(); closeReceipt();
+       const reg = controlledRegister('P1');
+       const codes = [...new Set(reg.map(r => r.code))];
+       const everyMove = S.movements.filter(m => m.pharmacy === 'P1' && isControlled(m.code)).map(m => m.id).join() === reg.map(r => r.id).join();
+       const balances = codes.every(c => reg.filter(r => r.code === c).pop().balance === stockOf('P1', c).onHand);
+       return reg.length >= 2 && everyMove && balances && codes.includes('3000000001455') && !codes.includes('5000000001002'); }));
+  ok('the register lists them, newest first, with who and why',
+     await dk.evaluate(() => { goto('register'); const rows = [...document.querySelectorAll('.rg-row')];
+       return rows.length >= 2 && /Xanax/.test(rows[0].innerText) && /Sale/.test(rows[0].innerText) && /balance 8/.test(rows[0].innerText); }));
+
+  /* Logged, and kept per pharmacy. */
+  ok('everything is logged for the owner: counts, imports, undo, receipts, write-offs, suppliers',
+     await dk.evaluate(() => ['count', 'countSaved', 'countUndone', 'import', 'importUndone', 'orderReceived', 'writeoff', 'supplierLinked', 'supplierAdded']
+       .every(k => S.tillLog.some(x => x.kind === k))));
+  ok('each pharmacy’s stock is its own',
+     await dk.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy('P7'); goto('stock');
+       const clean = stockCodes('P7').length === 0 && /0 drugs counted/.test(document.getElementById('app-body').innerText);
+       goto('count'); startCount('Front'); countScan('5000000001002'); countExpiry(0, '10/27'); confirmCount();
+       return clean && stockOf('P7', '5000000001002').available === 1 && stockOf('P1', '5000000001002').available !== 1 &&
+         suppliersOf('P7').length === 1; }));
+  ok('an owner of several on All is asked which pharmacy first',
+     await dk.evaluate(() => { setPharmacy(null); goto('stock'); return /Which pharmacy’s stock/i.test(document.getElementById('app-body').innerText); }));
+  ok('switching pharmacy mid-count saves the count, to continue there',
+     await dk.evaluate(() => { setPharmacy('P7'); goto('count'); startCount('Back'); countScan('4000000001065');
+       const id = S.openCount; setPharmacy('P8'); const s = S.countSessions.find(x => x.id === id);
+       return s.state === 'saved' && S.screen === 'count' && !openCountSession(); }));
+}
+
 await dk.setViewportSize({ width: 320, height: 700 });
 {
   const wide = [];
@@ -1980,6 +2308,20 @@ await dk.setViewportSize({ width: 320, height: 700 });
         await dk.evaluate(() => { S.till.given = '1000000'; completeSale(); });
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`receipt (${dir})`);
         await dk.evaluate(() => closeReceipt());
+        /* v0.0013: the stock screens, each with something in it. */
+        for (const [label, fn] of [
+          ['stock', () => { goto('stock'); document.querySelectorAll('details').forEach(d => d.open = true); }],
+          ['count', () => { goto('count'); startCount('A long shelf name — fridge, cold chain items'); countScan('5000000001286'); countSplit(0); countScan('4000000001065'); }],
+          ['import', () => { goto('import'); }],
+          ['order', () => { goto('orders'); newOrder(); orderAdd('5000000001286'); orderAdd('4000000001065'); }],
+          ['order receiving', () => { orderSupplier('SP1'); sendOrder(); }],
+          ['suppliers', () => { goto('suppliers'); supplierQuery('Al-Shifa storage house'); }],
+          ['register', () => { goto('register'); }],
+          ['product with stock', () => { openProduct('5000000001002'); document.querySelectorAll('details').forEach(d => d.open = true); }]]) {
+          await dk.evaluate(f => eval('(' + f + ')()'), fn.toString());
+          if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${label} (${dir})`);
+        }
+        await dk.evaluate(() => { const s = openCountSession(); if (s) discardCount(s.id); });
       }
     }
   }

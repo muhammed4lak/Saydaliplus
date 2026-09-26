@@ -9,6 +9,8 @@ export interface Drug {
   notes: { ar: string; en: string };
   interactions?: { with: string; severity: 'warning' | 'serious' | 'critical'; note: { ar: string; en: string } }[];
   contraindications?: { ar: string; en: string }[];
+  /** A controlled substance: its movements form the controlled register. */
+  controlled?: boolean;
   /** Keys of TAKE: when and how to take it. Never a dose. */
   take?: string[];
 }

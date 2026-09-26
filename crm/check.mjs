@@ -787,6 +787,21 @@ ok('the mapping queue is what is not linked, most-scanned first',
 ok('the catalogue names the right version for the curator’s step (v0.0015, clinical governance)',
    await p.evaluate(() => { const keys = ['cat.note', 'cat.curatorNote'];
      return keys.every(k => /Rules module in v0\.0015/.test(t(k))) && !keys.some(k => /v0\.0013/.test(t(k))); }));
+/* v0.0013 (S4): suppliers pharmacies named — one task per supplier, and a
+   link the owner confirms, never the team. */
+ok('the storage house pharmacies named is a record, with the pharmacies that named it',
+   await p.evaluate(() => { const c = DATA.companies.find(x => x.id === 'CO8');
+     return !!c && c.roles.includes('storage') && namedBy('CO8').length === 3 &&
+       new Set(namedBy('CO8').map(r => r.name)).size === 3; }));
+ok('“Named by pharmacies” lists it',
+   await p.evaluate(() => { S.view.companies = 'named'; render(); const rows = visibleRows('companies');
+     S.view.companies = 'all'; render(); return rows.length === 1 && rows[0].id === 'CO8'; }));
+ok('three spellings are one row of the report, with how many owners confirmed',
+   await p.evaluate(() => { const r = runReport(reportById('R22'));
+     const shifa = r.ok && r.rows.find(x => x.group_key === 'CO8');
+     return !!shifa && shifa.pharmacies === 3 && shifa.confirmed === 1 && r.rows.length === 2; }));
+ok('the CRM holds no way to confirm a link for an owner',
+   await p.evaluate(() => !/confirmed\s*=\s*true/.test([...document.scripts].map(s => s.textContent).join('\n'))));
 ok('and the report that reads it agrees',
    await p.evaluate(() => {
      const r = runReport(reportById('R20'));

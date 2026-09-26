@@ -32,6 +32,11 @@
      notes  the counselling line — what you say handing it over
      interactions [{ with, severity: warning|serious|critical, note }]
      contraindications [{ ar, en }]
+     controlled  optional, true — a controlled substance: every movement of it
+            appears in the pharmacy's controlled register (v0.0013). The
+            list is a placeholder until the clinical curator (W19) and the
+            Ministry's schedule confirm it; pregabalin is on it because of
+            its misuse in Iraq, and is the entry most worth checking.
      take   optional — WHEN and HOW to take it, as keys of TAKE below: before or
             after food, in the morning, once a week. What the till prints under
             a medicine by default (v0.0012.1). Only where the timing changes
@@ -181,7 +186,7 @@ export default [
     {ar:'الثلث الأخير من الحمل', en:'Third trimester of pregnancy'}
   ] },
 
-{ sci:'Tramadol', ar:'ترامادول', atc:'N02AX02', form:'capsule',
+{ sci:'Tramadol', ar:'ترامادول', atc:'N02AX02', form:'capsule', controlled:true,
   doses:['50 mg','100 mg/2 mL','100 mg SR'],
   notes:{ar:'مادة خاضعة للرقابة. يخفض عتبة الاختلاج وينبّه للنعاس — لا قيادة حتى يُعرف أثره.',
          en:'A controlled substance. Lowers the seizure threshold and causes drowsiness — no driving until they know how it affects them.'},
@@ -1173,7 +1178,7 @@ export default [
     {ar:'إطالة QT معروفة', en:'Known QT prolongation'}
   ] },
 
-{ sci:'Diazepam', ar:'ديازيبام', atc:'N05BA01', form:'tablet',
+{ sci:'Diazepam', ar:'ديازيبام', atc:'N05BA01', form:'tablet', controlled:true,
   doses:['2 mg','5 mg','10 mg','10 mg/2 mL'],
   notes:{ar:'مادة خاضعة للرقابة. أسبوعان كحدّ أقصى — الاعتماد يبدأ بعدها. لا قيادة ولا كحول.',
          en:'A controlled substance. Two weeks maximum — dependence starts after that. No driving, no alcohol.'},
@@ -1188,7 +1193,7 @@ export default [
     {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
   ] },
 
-{ sci:'Alprazolam', ar:'ألبرازولام', atc:'N05BA12', form:'tablet',
+{ sci:'Alprazolam', ar:'ألبرازولام', atc:'N05BA12', form:'tablet', controlled:true,
   doses:['0.25 mg','0.5 mg','1 mg'],
   notes:{ar:'مادة خاضعة للرقابة وأسرع البنزوديازيبينات إحداثاً للاعتماد. لا يُوقف فجأة بعد استعمال منتظم.',
          en:'A controlled substance and the fastest of the benzodiazepines to create dependence. Never stopped abruptly after regular use.'},
@@ -1235,7 +1240,7 @@ export default [
     {ar:'اضطرابات دورة اليوريا', en:'Urea cycle disorders'}
   ] },
 
-{ sci:'Pregabalin', ar:'بريغابالين', atc:'N03AX16', form:'capsule',
+{ sci:'Pregabalin', ar:'بريغابالين', atc:'N03AX16', form:'capsule', controlled:true,
   doses:['25 mg','75 mg','150 mg','300 mg'],
   notes:{ar:'مادة خاضعة للرقابة ويُساء استعمالها. لا يُوقف فجأة. الدوار والنعاس في الأيام الأولى يزولان.',
          en:'A controlled substance and widely misused. Not stopped abruptly. The dizziness and drowsiness of the first days settle.'},
@@ -1554,7 +1559,7 @@ export default [
     {ar:'تثبيط الجهاز العصبي المركزي', en:'CNS depression'}
   ] },
 
-{ sci:'Phenobarbital', ar:'فينوباربيتال', atc:'N03AA02', form:'tablet',
+{ sci:'Phenobarbital', ar:'فينوباربيتال', atc:'N03AA02', form:'tablet', controlled:true,
   doses:['15 mg','30 mg','60 mg','100 mg'],
   notes:{ar:'محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. لا يُوقف فجأة — خطر حالة صرعية.',
          en:'A powerful enzyme inducer — it undermines the contraceptive pill and much else. Never stopped abruptly: status epilepticus.'},

@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0012.1">
+<meta name="version" content="App_v0.0013">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -984,6 +984,44 @@
   .take-chip{ font-size:12px; }
   .till-confirm{ margin-top:4px; }
   .till-other{ display:block; margin:10px auto 0; }
+  /* v0.0013 — stock */
+  .st-summary .st-big{ font-family:var(--font-display); font-weight:700; font-size:20px; color:var(--indigo-dark); }
+  .st-small{ font-size:12.5px; color:var(--ink-soft); margin-top:4px; }
+  .st-shelves{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .st-shelf{ font-size:12px; }
+  .st-prompt summary, .im-pile summary{ display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; font-size:13.5px; font-weight:600; }
+  .st-prompt-n{ min-width:28px; text-align:center; border-radius:8px; padding:2px 6px; background:var(--mist); color:var(--indigo-dark); }
+  .st-count .st-prompt-n, .st-expired .st-prompt-n, .im-error .st-prompt-n{ background:var(--clay-tint); color:var(--clay); }
+  .st-near .st-prompt-n, .st-low .st-prompt-n, .im-probable .st-prompt-n{ background:var(--amber-tint); color:#8A5610; }
+  .st-actions{ display:grid; gap:8px; }
+  .st-actions .btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; }
+  .st-actions .btn-primary .ico{ width:18px; height:18px; }
+  .st-op, .st-draft, .im-row, .sp-sugg, .rg-row, .sk-batch, .sk-mv{ gap:10px; }
+  .ct-qty{ width:46px; text-align:center; border:none; font-weight:600; font-size:15px; background:none; }
+  .ct-exp{ width:84px; border:1.4px solid var(--border); border-radius:10px; padding:7px 9px; font-size:14px; }
+  .ct-noexp .ct-exp{ border-color:var(--amber); }
+  .ct-focus{ background:var(--mist); }
+  .im-pick{ display:block; cursor:pointer; }
+  .im-colgrid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-top:10px; }
+  .im-col{ display:grid; gap:4px; font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .im-col select, .po-supplier, .sk-wo select{ border:1.4px solid var(--border); border-radius:10px; padding:8px; font-size:13px; background:var(--card); min-width:0; }
+  .im-inc input{ width:20px; height:20px; accent-color:var(--indigo); }
+  .im-yn{ display:flex; gap:6px; flex:none; }
+  .po-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(80px, 1fr)); gap:8px; margin-top:8px; }
+  .po-grid label{ display:grid; gap:4px; font-size:11.5px; font-weight:600; color:var(--ink-soft); }
+  .po-in{ width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:7px 9px; font-size:14px; }
+  .rg-q, .sk-q{ font-weight:600; flex:none; }
+  .rg-q.neg, .sk-q.neg{ color:var(--clay); }
+  .rg-bal{ font-size:12px; color:var(--ink-soft); flex:none; }
+  .sk-figs{ display:flex; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--ink-soft); }
+  .sk-figs b{ font-size:20px; color:var(--indigo-dark); }
+  .sk-where{ display:flex; align-items:center; gap:6px; font-size:13px; margin-top:8px; }
+  .sk-where .ico{ width:15px; height:15px; color:var(--indigo); }
+  .sk-wo{ margin-top:8px; }
+  .sk-hist summary{ padding:12px 14px; font-size:13px; font-weight:600; cursor:pointer; }
+  .rf-dest{ display:grid; gap:6px; margin-bottom:10px; }
+  .rf-dest .checkbox-row{ margin-bottom:0; }
+  .till-onlyexp{ color:var(--clay); }
   .till-change{ font-size:13px; font-weight:600; color:var(--indigo-dark); margin-top:6px; min-height:1.3em; }
   .market-avg{ font-size:12.5px; color:var(--ink-soft); background:var(--mist); border-radius:10px; padding:8px 10px; margin-top:8px; }
   .logo-field{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; }
@@ -1501,6 +1539,172 @@ const STRINGS = {
 };
 
 let lang = 'ar';
+/* v0.0013 — stock and purchasing. */
+Object.assign(STRINGS.ar, {
+  'nav.stock':'المخزون','st.choose':'مخزون أيّ صيدلية؟',
+  'st.drugsCounted':'{n} دواء مجرود','st.drugsImported':'{n} دواء مستورد من جدول','st.shelfCount':'{n} دواء، {boxes} علبة',
+  'st.value':'قيمة المخزون بسعر الشراء: {v}',
+  'st.countThis':'اجرد هذه: {n}','st.soldPast':'بيع منه {n} أكثر مما هو مسجّل',
+  'st.expired':'دفعات منتهية في الحجز: {n}','st.expiredRow':'{n} علبة · انتهت {exp}',
+  'st.near':'تنتهي خلال 90 يوماً: {n}','st.nearRow':'{n} علبة · تنتهي {exp}',
+  'st.low':'تحت الحد الأدنى: {n}','st.lowRow':'متوفر {have} · الحد الأدنى {min}',
+  'st.quarantined':'مرتجعات محجوزة: {n}','st.quarRow':'{n} علبة محجوزة',
+  'st.countThisH':'اجرد هذه — بيع منها أكثر من المسجّل','st.expiredH':'دفعات منتهية، في الحجز','st.nearH':'تنتهي خلال 90 يوماً',
+  'st.lowH':'تحت الحد الأدنى الذي حدّدته','st.quarantinedH':'مرتجعات محجوزة',
+  'st.countShelf':'اجرد رفّاً','st.importSheet':'استورد جدولاً',
+  'st.saved':'محفوظ للمتابعة','st.resume':'تابع',
+  'st.draftCount':'جرد: {shelf}','st.draftCountSub':'{n} علبة · {when}',
+  'st.draftImport':'استيراد: {file}','st.draftImportSub':'{n} صفّاً · {when}',
+  'st.orders':'طلبيات الشراء','st.ordersOpen':'{n} مفتوحة','st.suppliers':'الموردون','st.suppliersConfirm':'{n} بانتظار تأكيدك',
+  'st.register':'سجل المواد الخاضعة للرقابة','st.catalogue':'الكتالوج والأسعار',
+  'st.history':'الجرد والاستيراد','st.opCount':'جرد: {shelf}','st.opImport':'استيراد: {file}',
+  'st.opSub':'{n} دواء · {who} · {when}','st.opUndone':'تراجع عنه {who}',
+  'st.undo':'تراجع','st.undone':'تمّ التراجع — وسُجّل.',
+  'st.undoUntil':'يمكن التراجع حتى {when}',
+  'st.noUndo.window':'انتهت مهلة التراجع — التصحيح الآن تعديل بسبب',
+  'st.noUndo.later':'جُرد المنتج نفسه بعده — التصحيح الآن تعديل بسبب',
+  'st.noUndo.undone':'','st.noUndo.notCommitted':'',
+  'st.minSaved':'حُفظ الحد الأدنى.',
+  'st.note.needShelf':'اكتب اسم الرف أو اختره.','st.note.misread':'{code} ليس باركوداً صحيحاً — امسح مرة أخرى.',
+  'st.note.badExpiry':'اكتب تاريخ الانتهاء شهراً وسنة، مثلاً 03/27.','st.note.emptyCount':'لم تجرد شيئاً بعد.',
+  'st.note.needExpiry':'لكل سطر تاريخ انتهاء قبل التأكيد.','st.note.needReason':'اختر سبب الشطب.',
+  'st.note.notFound':'لم يُعثر على "{code}" في الكتالوج.','st.note.needSupplier':'اختر المورد أولاً.',
+  'st.note.emptyOrder':'أضف مادة واحدة على الأقل.','st.note.badReceive':'كمية غير صحيحة.',
+  'st.note.nothingReceived':'لم تُدخل كمية مستلمة.',
+  'ct.whichShelf':'أيّ رف تجرد؟','ct.whichShelfS':'كل علبة تُجرد تُربط بهذا الرف، فيعرف كل منتج مكانه.',
+  'ct.shelfPh':'مثلاً: رف 3 — المسكّنات','ct.start':'ابدأ',
+  'ct.counting':'جرد: {shelf}','ct.progress':'{n} دواء · {boxes} علبة','ct.scan':'امسح العلبة',
+  'ct.empty':'امسح أول علبة على هذا الرف.','ct.unknown':'ليس في الكتالوج',
+  'ct.same':'مثل العلبة السابقة ({exp})','ct.otherDate':'علبة بتاريخ آخر',
+  'ct.howto':'كل مسحة تضيف علبة. اكتب العدد مباشرة إن شئت. تاريخ الانتهاء شهر وسنة.',
+  'ct.confirm':'أكّد الجرد — {n} دواء','ct.save':'احفظ وتابع لاحقاً','ct.discard':'تجاهل',
+  'ct.done':'جُرد {n} دواء على {shelf}.',
+  'ct.notYet':'مسجّل على هذا الرف ولم يُجرد بعد: {n}','ct.willLeave':'إن أكّدت دون جردها، تُسجّل على أنها لم تعد على هذا الرف.',
+  'im.title':'استورد جدولاً','im.sub':'CSV أو Excel (.xlsx). لا يُضاف شيء قبل أن تراجع وتؤكد.',
+  'im.pick':'اختر الملف','im.template':'نزّل نموذجنا (CSV)',
+  'im.karmasoft':'ملفات كارماسوفت تُقرأ بأعمدتها. التعرّف الخاص بكارماسوفت يأتي بعد رؤية ملف حقيقي.',
+  'im.note.xls':'{file} بصيغة Excel القديمة (.xls). احفظه بصيغة .xlsx أو CSV وحاول مرة أخرى.',
+  'im.note.type':'{file} ليس CSV ولا Excel.','im.note.unreadable':'تعذّرت قراءة {file}.','im.note.empty':'{file} فارغ.',
+  'im.note.nothing':'لا صفوف محددة للإضافة.','im.note.probableLeft':'أجب عن الصفوف "على الأرجح" أولاً.',
+  'im.column':'عمود {n}','im.rows':'{n} صفّاً','im.columns':'الأعمدة كما قُرئت — غيّرها إن لزم','im.none':'—',
+  'im.f.barcode':'الباركود','im.f.name':'الاسم','im.f.qty':'الكمية','im.f.expiry':'الانتهاء','im.f.cost':'سعر الشراء',
+  'im.pile.matched':'مطابقة','im.pile.probable':'على الأرجح — تحقّق','im.pile.notFound':'غير موجودة','im.pile.duplicate':'مكرّرة','im.pile.error':'أخطاء',
+  'im.rowN':'صف {n}','im.qty':'{n} علبة','im.expired':'منتهٍ — يذهب للحجز','im.already':'يُضاف إلى المسجّل',
+  'im.isIt':'هل هو {name}؟','im.yes':'نعم','im.no':'لا','im.mergedInto':'دُمج مع الصف {n}',
+  'im.err.qty':'لا كمية صحيحة','im.err.expiry':'لا تاريخ انتهاء مقروء',
+  'im.byName':'ليس في الكتالوج — يمكن إضافته باسمه، ويُرسل للربط','im.noBarcode':'لا باركود ولا اسم مطابق',
+  'im.confirm':'أضِف {n} صفّاً إلى المخزون','im.save':'احفظ وتابع لاحقاً','im.discard':'تجاهل',
+  'im.undoNote':'يمكن التراجع عن الاستيراد كاملاً حتى نهاية اليوم التالي.','im.done':'أُضيف {n} دواء.',
+  'po.new':'طلبية جديدة','po.none':'لا طلبيات بعد.','po.noSupplier':'بلا مورد','po.lines':'{n} مادة',
+  'po.s.draft':'مسودة','po.s.sent':'أُرسلت','po.s.partial':'استُلمت جزئياً','po.s.received':'استُلمت','po.s.closed':'أُغلقت',
+  'po.supplier':'المورد','po.pickSupplier':'اختر المورد','po.addSupplier':'أضف مورداً','po.addLine':'امسح أو اكتب اسم المادة',
+  'po.empty':'أضف مواد الطلبية.','po.qty':'الكمية','po.bonus':'بونص','po.cost':'سعر الوحدة','po.costPh':'د.ع',
+  'po.send':'علّمها مرسلة','po.sendNote':'تُرسل الطلبية كما تفعل الآن — يمكنك نسخ نصّها للواتساب. لا شيء يمرّ عبرنا.',
+  'po.receive':'استلم','po.receiveNote':'كل استلام يُنشئ دفعة بتاريخ انتهائها وسعرها. البونص يُستلم بلا كلفة.',
+  'po.recvQty':'المستلم','po.expiry':'الانتهاء','po.got':'{n}/{of} + بونص {b}/{bof}',
+  'po.copy':'انسخ نص الطلبية','po.copied':'نُسخ.','po.copyFailed':'تعذّر النسخ.','po.close':'أغلق — الباقي لن يصل',
+  'po.back':'كل الطلبيات','po.receivedToast':'استُلم وأُضيف إلى المخزون.','po.textHead':'طلبية {id} — {ph}',
+  'sp.add':'أضف مورداً','sp.addPh':'اسم المذخر أو الموزّع','sp.suggested':'في قاعدة بياناتنا','sp.inCrm':'مورد مسجّل',
+  'sp.thisOne':'هذا هو','sp.addOwn':'ليس منها — أضف "{name}" كمورد خاص','sp.ownNote':'يبقى خاصاً بصيدليتك، ويُرسل لفريقنا ليُضاف.',
+  'sp.yours':'مورّدوك','sp.linked':'مربوط بقاعدة البيانات','sp.private':'خاص بصيدليتك','sp.waiting':'بانتظار تأكيدك',
+  'sp.same':'هل "{mine}" هو "{crm}"؟','sp.sameS':'وجده فريقنا في قاعدة البيانات. لا يُربط إلا بتأكيدك.','sp.yes':'نعم، نفسه','sp.no':'لا',
+  'rg.note':'كل حركة لمادة خاضعة للرقابة، بترتيبها وبرصيدها. هو دفتر الحركات نفسه مفلتراً، فلا يمكن أن يخالفه. القائمة مؤقتة حتى يؤكدها المسؤول السريري.',
+  'rg.empty':'لا حركات لمواد خاضعة للرقابة بعد.','rg.bal':'الرصيد {n}',
+  'sk.title':'المخزون في {ph}','sk.available':'متوفر','sk.expiredQ':'منتهٍ في الحجز','sk.quarantineQ':'مرتجع محجوز',
+  'sk.onlyExpired':'المسجّل منه منتهٍ فقط ({n}). تحقّق من التاريخ على العلبة.','sk.where':'مكانه: {shelves}',
+  'sk.minPh':'نبّهني تحت …','sk.minSave':'احفظ','sk.unbatched':'بيع قبل الجرد','sk.quarantine':'مرتجعات محجوزة',
+  'sk.batch':'دفعة تنتهي {exp}','sk.expired':'منتهية','sk.cost':'الكلفة {c}','sk.why':'السبب','sk.writeOff':'اشطب',
+  'sk.r.destroyed':'أُتلفت','sk.r.returnedToSupplier':'أُرجعت للمورد','sk.r.other':'سبب آخر','sk.r.soldBeforeCounted':'بيع قبل الجرد',
+  'sk.history':'سجل الحركات ({n})',
+  'mv.count':'جرد','mv.import':'استيراد','mv.receipt':'استلام','mv.bonus':'بونص','mv.sale':'بيع','mv.refund':'إرجاع',
+  'mv.writeoff':'شطب','mv.undo':'تراجع','mv.settle':'تسوية بالجرد','mv.adjust':'تعديل',
+  'd.stockT':'المخزون','d.stockStart':'ابدأ بجرد رفّ أو استيراد جدول.',
+  'rf.where':'أين يذهب المرتجع؟','rf.stock':'يعود للمخزون','rf.quarantine':'إلى الحجز',
+  'till.onlyExpired':'المسجّل منه منتهٍ فقط — تحقّق من التاريخ على العلبة.'
+});
+Object.assign(STRINGS.en, {
+  'nav.stock':'Stock','st.choose':'Which pharmacy’s stock?',
+  'st.drugsCounted':'{n} drugs counted','st.drugsImported':'{n} drugs imported from a spreadsheet','st.shelfCount':'{n} drugs, {boxes} boxes',
+  'st.value':'Stock value at cost: {v}',
+  'st.countThis':'Count this: {n}','st.soldPast':'{n} sold beyond what is recorded',
+  'st.expired':'Expired batches in quarantine: {n}','st.expiredRow':'{n} boxes · expired {exp}',
+  'st.near':'Expiring within 90 days: {n}','st.nearRow':'{n} boxes · expires {exp}',
+  'st.low':'Below your minimum: {n}','st.lowRow':'{have} available · minimum {min}',
+  'st.quarantined':'Returns set aside: {n}','st.quarRow':'{n} boxes set aside',
+  'st.countThisH':'Count this — sold beyond what is recorded','st.expiredH':'Expired batches, in quarantine','st.nearH':'Expiring within 90 days',
+  'st.lowH':'Below the minimum you set','st.quarantinedH':'Returns set aside',
+  'st.countShelf':'Count a shelf','st.importSheet':'Import a spreadsheet',
+  'st.saved':'Saved to continue','st.resume':'Continue',
+  'st.draftCount':'Count: {shelf}','st.draftCountSub':'{n} boxes · {when}',
+  'st.draftImport':'Import: {file}','st.draftImportSub':'{n} rows · {when}',
+  'st.orders':'Purchase orders','st.ordersOpen':'{n} open','st.suppliers':'Suppliers','st.suppliersConfirm':'{n} waiting for you to confirm',
+  'st.register':'Controlled register','st.catalogue':'Catalogue and prices',
+  'st.history':'Counts and imports','st.opCount':'Count: {shelf}','st.opImport':'Import: {file}',
+  'st.opSub':'{n} drugs · {who} · {when}','st.opUndone':'undone by {who}',
+  'st.undo':'Undo','st.undone':'Undone — and recorded.',
+  'st.undoUntil':'can be undone until {when}',
+  'st.noUndo.window':'the undo window has passed — a correction is now an adjustment with a reason',
+  'st.noUndo.later':'counted again since — a correction is now an adjustment with a reason',
+  'st.noUndo.undone':'','st.noUndo.notCommitted':'',
+  'st.minSaved':'Minimum saved.',
+  'st.note.needShelf':'Type the shelf’s name, or pick one.','st.note.misread':'{code} is not a valid barcode — scan again.',
+  'st.note.badExpiry':'Type the expiry as month and year, e.g. 03/27.','st.note.emptyCount':'Nothing counted yet.',
+  'st.note.needExpiry':'Every line needs an expiry before confirming.','st.note.needReason':'Choose why it is written off.',
+  'st.note.notFound':'“{code}” is not in the catalogue.','st.note.needSupplier':'Choose the supplier first.',
+  'st.note.emptyOrder':'Add at least one item.','st.note.badReceive':'That quantity is not valid.',
+  'st.note.nothingReceived':'No quantity received entered.',
+  'ct.whichShelf':'Which shelf are you counting?','ct.whichShelfS':'Every box counted is linked to this shelf, so each product knows where it lives.',
+  'ct.shelfPh':'e.g. Shelf 3 — painkillers','ct.start':'Start',
+  'ct.counting':'Counting: {shelf}','ct.progress':'{n} drugs · {boxes} boxes','ct.scan':'Scan the box',
+  'ct.empty':'Scan the first box on this shelf.','ct.unknown':'Not in the catalogue',
+  'ct.same':'Same as the last box ({exp})','ct.otherDate':'A box with another date',
+  'ct.howto':'Each scan adds a box. Type the number instead if you like. Expiry is month and year.',
+  'ct.confirm':'Confirm the count — {n} drugs','ct.save':'Save and continue later','ct.discard':'Discard',
+  'ct.done':'{n} drugs counted on {shelf}.',
+  'ct.notYet':'Recorded on this shelf, not counted yet: {n}','ct.willLeave':'Confirm without counting them and they are recorded as no longer on this shelf.',
+  'im.title':'Import a spreadsheet','im.sub':'CSV or Excel (.xlsx). Nothing is added until you have reviewed it and confirmed.',
+  'im.pick':'Choose the file','im.template':'Download our template (CSV)',
+  'im.karmasoft':'Karmasoft files are read by their columns. Recognising Karmasoft by name comes once a real export has been seen.',
+  'im.note.xls':'{file} is the older Excel format (.xls). Save it as .xlsx or CSV and try again.',
+  'im.note.type':'{file} is neither CSV nor Excel.','im.note.unreadable':'{file} could not be read.','im.note.empty':'{file} is empty.',
+  'im.note.nothing':'No rows are selected to add.','im.note.probableLeft':'Answer the “probably” rows first.',
+  'im.column':'Column {n}','im.rows':'{n} rows','im.columns':'The columns as read — change them if needed','im.none':'—',
+  'im.f.barcode':'Barcode','im.f.name':'Name','im.f.qty':'Quantity','im.f.expiry':'Expiry','im.f.cost':'Unit cost',
+  'im.pile.matched':'Matched','im.pile.probable':'Probably matched — check','im.pile.notFound':'Not found','im.pile.duplicate':'Duplicates','im.pile.error':'Errors',
+  'im.rowN':'Row {n}','im.qty':'{n} boxes','im.expired':'expired — goes to quarantine','im.already':'adds to what is recorded',
+  'im.isIt':'Is it {name}?','im.yes':'Yes','im.no':'No','im.mergedInto':'merged into row {n}',
+  'im.err.qty':'no valid quantity','im.err.expiry':'no readable expiry',
+  'im.byName':'not in the catalogue — can come in by its name, and goes for mapping','im.noBarcode':'no barcode and no matching name',
+  'im.confirm':'Add {n} rows to stock','im.save':'Save and continue later','im.discard':'Discard',
+  'im.undoNote':'The whole import can be undone until the end of tomorrow.','im.done':'{n} drugs added.',
+  'po.new':'New order','po.none':'No orders yet.','po.noSupplier':'No supplier','po.lines':'{n} items',
+  'po.s.draft':'Draft','po.s.sent':'Sent','po.s.partial':'Partly received','po.s.received':'Received','po.s.closed':'Closed',
+  'po.supplier':'Supplier','po.pickSupplier':'Choose the supplier','po.addSupplier':'Add a supplier','po.addLine':'Scan or type an item',
+  'po.empty':'Add the items to order.','po.qty':'Quantity','po.bonus':'Bonus','po.cost':'Unit cost','po.costPh':'IQD',
+  'po.send':'Mark as sent','po.sendNote':'Send it the way you do now — the order text can be copied into WhatsApp. Nothing passes through us.',
+  'po.receive':'Receive','po.receiveNote':'Each receipt creates a batch with its expiry and cost. Bonus units arrive at no cost.',
+  'po.recvQty':'Received','po.expiry':'Expiry','po.got':'{n}/{of} + bonus {b}/{bof}',
+  'po.copy':'Copy the order text','po.copied':'Copied.','po.copyFailed':'Could not copy.','po.close':'Close — the rest will not come',
+  'po.back':'All orders','po.receivedToast':'Received, and added to stock.','po.textHead':'Order {id} — {ph}',
+  'sp.add':'Add a supplier','sp.addPh':'The storage house or distributor’s name','sp.suggested':'In our database','sp.inCrm':'A registered supplier',
+  'sp.thisOne':'This one','sp.addOwn':'None of these — add “{name}” as your own','sp.ownNote':'It stays private to your pharmacy, and goes to our team to be added.',
+  'sp.yours':'Your suppliers','sp.linked':'Linked to the database','sp.private':'Private to your pharmacy','sp.waiting':'Waiting for you to confirm',
+  'sp.same':'Is “{mine}” the same as “{crm}”?','sp.sameS':'Our team found it in the database. It is only linked if you confirm.','sp.yes':'Yes, the same','sp.no':'No',
+  'rg.note':'Every movement of a controlled substance, in order, with its balance. It is the movement ledger filtered, so it cannot disagree with it. The list of controlled substances is a placeholder until the clinical curator confirms it.',
+  'rg.empty':'No movements of controlled substances yet.','rg.bal':'balance {n}',
+  'sk.title':'Stock at {ph}','sk.available':'available','sk.expiredQ':'expired, in quarantine','sk.quarantineQ':'returns set aside',
+  'sk.onlyExpired':'All that is recorded is expired ({n}). Check the date on the box.','sk.where':'Where: {shelves}',
+  'sk.minPh':'Tell me below…','sk.minSave':'Save','sk.unbatched':'Sold before it was counted','sk.quarantine':'Returns set aside',
+  'sk.batch':'Batch expiring {exp}','sk.expired':'Expired','sk.cost':'cost {c}','sk.why':'Reason','sk.writeOff':'Write off',
+  'sk.r.destroyed':'Destroyed','sk.r.returnedToSupplier':'Returned to the supplier','sk.r.other':'Other','sk.r.soldBeforeCounted':'sold before it was counted',
+  'sk.history':'Movements ({n})',
+  'mv.count':'Count','mv.import':'Import','mv.receipt':'Received','mv.bonus':'Bonus','mv.sale':'Sale','mv.refund':'Refund',
+  'mv.writeoff':'Write-off','mv.undo':'Undo','mv.settle':'Settled by a count','mv.adjust':'Adjustment',
+  'd.stockT':'Stock','d.stockStart':'Start by counting a shelf or importing a spreadsheet.',
+  'rf.where':'Where does it go?','rf.stock':'Back to stock','rf.quarantine':'Set aside (quarantine)',
+  'till.onlyExpired':'All that is recorded is expired — check the date on the box.'
+});
+
 /* v0.0012 — the till. */
 Object.assign(STRINGS.ar, {
   /* v0.0012.1 */
@@ -2188,7 +2392,7 @@ const DRUGS = [
   {"sci":"Mefenamic acid","ar":"حمض الميفيناميك","atc":"M01AG01","form":"capsule","take":["afterFood"],"doses":["250 mg","500 mg"],"notes":{"ar":"خيار شائع لعسر الطمث — يبدأ مع أول إحساس بالألم ويؤخذ مع الطعام.","en":"A common first choice for period pain — start at the first twinge, take with food."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"خطر نزف هضمي مضاعف.","en":"Compounded GI bleeding risk."}}],"contraindications":[{"ar":"قرحة هضمية فعّالة","en":"Active peptic ulcer"},{"ar":"داء الأمعاء الالتهابي","en":"Inflammatory bowel disease"},{"ar":"قصور كلوي شديد","en":"Severe renal impairment"}]},
   {"sci":"Celecoxib","ar":"سيليكوكسيب","atc":"M01AH01","form":"capsule","doses":["100 mg","200 mg"],"notes":{"ar":"ألطف على المعدة من بقية مضادات الالتهاب، لكن الخطر القلبي ليس أقل.","en":"Gentler on the stomach than the other NSAIDs; the cardiovascular risk is not lower."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"يرفع INR — راقب التخثر.","en":"Raises INR — monitor coagulation."}},{"with":"Fluconazole","severity":"warning","note":{"ar":"يضاعف مستوى السيليكوكسيب — تُنصّف الجرعة.","en":"Doubles celecoxib levels — halve the dose."}}],"contraindications":[{"ar":"فرط الحساسية للسلفوناميدات","en":"Sulfonamide hypersensitivity"},{"ar":"مرض قلبي إقفاري","en":"Ischaemic heart disease"},{"ar":"الثلث الأخير من الحمل","en":"Third trimester of pregnancy"}]},
   {"sci":"Meloxicam","ar":"ميلوكسيكام","atc":"M01AC06","form":"tablet","take":["afterFood"],"doses":["7.5 mg","15 mg"],"notes":{"ar":"مرة واحدة يومياً مع الطعام.","en":"Once daily, with food."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"خطر نزف هضمي مضاعف.","en":"Compounded GI bleeding risk."}},{"with":"Lisinopril","severity":"serious","note":{"ar":"مع مدرّ بول: خطر أذية كلوية حادة.","en":"With a diuretic, a risk of acute kidney injury."}}],"contraindications":[{"ar":"قرحة هضمية فعّالة","en":"Active peptic ulcer"},{"ar":"قصور قلب شديد","en":"Severe heart failure"},{"ar":"الثلث الأخير من الحمل","en":"Third trimester of pregnancy"}]},
-  {"sci":"Tramadol","ar":"ترامادول","atc":"N02AX02","form":"capsule","doses":["50 mg","100 mg/2 mL","100 mg SR"],"notes":{"ar":"مادة خاضعة للرقابة. يخفض عتبة الاختلاج وينبّه للنعاس — لا قيادة حتى يُعرف أثره.","en":"A controlled substance. Lowers the seizure threshold and causes drowsiness — no driving until they know how it affects them."},"interactions":[{"with":"Sertraline","severity":"serious","note":{"ar":"متلازمة السيروتونين — الجمع مع مثبطات استرداد السيروتونين.","en":"Serotonin syndrome when combined with an SSRI."}},{"with":"Fluoxetine","severity":"serious","note":{"ar":"متلازمة السيروتونين، ويقلّل فعالية الترامادول.","en":"Serotonin syndrome, and reduces tramadol’s effect."}},{"with":"Carbamazepine","severity":"warning","note":{"ar":"يقلّل فعالية الترامادول بتحريض الإنزيمات.","en":"Reduces tramadol’s effect through enzyme induction."}}],"contraindications":[{"ar":"صرع غير مضبوط","en":"Uncontrolled epilepsy"},{"ar":"تناول مثبطات MAO خلال 14 يوماً","en":"MAO inhibitor within 14 days"},{"ar":"تثبيط تنفسي شديد","en":"Severe respiratory depression"}]},
+  {"sci":"Tramadol","ar":"ترامادول","atc":"N02AX02","form":"capsule","controlled":true,"doses":["50 mg","100 mg/2 mL","100 mg SR"],"notes":{"ar":"مادة خاضعة للرقابة. يخفض عتبة الاختلاج وينبّه للنعاس — لا قيادة حتى يُعرف أثره.","en":"A controlled substance. Lowers the seizure threshold and causes drowsiness — no driving until they know how it affects them."},"interactions":[{"with":"Sertraline","severity":"serious","note":{"ar":"متلازمة السيروتونين — الجمع مع مثبطات استرداد السيروتونين.","en":"Serotonin syndrome when combined with an SSRI."}},{"with":"Fluoxetine","severity":"serious","note":{"ar":"متلازمة السيروتونين، ويقلّل فعالية الترامادول.","en":"Serotonin syndrome, and reduces tramadol’s effect."}},{"with":"Carbamazepine","severity":"warning","note":{"ar":"يقلّل فعالية الترامادول بتحريض الإنزيمات.","en":"Reduces tramadol’s effect through enzyme induction."}}],"contraindications":[{"ar":"صرع غير مضبوط","en":"Uncontrolled epilepsy"},{"ar":"تناول مثبطات MAO خلال 14 يوماً","en":"MAO inhibitor within 14 days"},{"ar":"تثبيط تنفسي شديد","en":"Severe respiratory depression"}]},
   {"sci":"Amoxicillin","ar":"أموكسيسيلين","atc":"J01CA04","form":"capsule","doses":["125 mg/5 mL","250 mg/5 mL","250 mg","500 mg","1 g"],"notes":{"ar":"يُفضّل مع الطعام لتقليل الاضطراب المعوي. يُكمل الكورس كاملاً.","en":"With food to reduce GI upset. Finish the course."},"interactions":[{"with":"Methotrexate","severity":"serious","note":{"ar":"يقلّل طرح الميثوتريكسيت ويزيد سميّته.","en":"Reduces methotrexate clearance, raising toxicity."}},{"with":"Warfarin","severity":"warning","note":{"ar":"قد يرفع INR — راقب التخثر.","en":"May raise INR — monitor coagulation."}}],"contraindications":[{"ar":"فرط الحساسية للبنسلينات","en":"Penicillin hypersensitivity"},{"ar":"كثرة الوحيدات العدائية","en":"Infectious mononucleosis"}]},
   {"sci":"Amoxicillin/Clavulanic acid","ar":"أموكسيسيلين/حمض الكلافولانيك","atc":"J01CR02","form":"tablet","take":["withFood"],"doses":["228 mg/5 mL","457 mg/5 mL","625 mg","1 g"],"notes":{"ar":"يؤخذ في بداية الوجبة — الكلافولانيك هو سبب الإسهال، والطعام يخفّفه.","en":"Take at the start of a meal — the clavulanate is what causes the diarrhoea, and food blunts it."},"interactions":[{"with":"Methotrexate","severity":"serious","note":{"ar":"يقلّل طرح الميثوتريكسيت.","en":"Reduces methotrexate clearance."}},{"with":"Warfarin","severity":"warning","note":{"ar":"قد يرفع INR.","en":"May raise INR."}},{"with":"Allopurinol","severity":"warning","note":{"ar":"يزيد احتمال الطفح الجلدي.","en":"Raises the chance of a rash."}}],"contraindications":[{"ar":"فرط الحساسية للبنسلينات","en":"Penicillin hypersensitivity"},{"ar":"يرقان أو خلل كبدي سابق مع هذا الدواء","en":"Previous jaundice or hepatic dysfunction with this drug"}]},
   {"sci":"Azithromycin","ar":"أزيثرومايسين","atc":"J01FA10","form":"tablet","doses":["200 mg/5 mL","250 mg","500 mg"],"notes":{"ar":"كورس ثلاثة أيام عادة، مرة واحدة يومياً. الأثر يستمر بعد انتهاء الأقراص.","en":"Usually a three-day course, once daily. It keeps working after the tablets run out."},"interactions":[{"with":"Amiodarone","severity":"critical","note":{"ar":"إطالة QT — يُتجنّب الجمع.","en":"QT prolongation — avoid the combination."}},{"with":"Domperidone","severity":"serious","note":{"ar":"إطالة QT مضاعفة.","en":"Additive QT prolongation."}},{"with":"Warfarin","severity":"warning","note":{"ar":"قد يرفع INR.","en":"May raise INR."}}],"contraindications":[{"ar":"يرقان ركودي سابق مع الماكروليدات","en":"Previous cholestatic jaundice with a macrolide"},{"ar":"إطالة QT معروفة","en":"Known QT prolongation"}]},
@@ -2267,11 +2471,11 @@ const DRUGS = [
   {"sci":"Fluoxetine","ar":"فلوكسيتين","atc":"N06AB03","form":"capsule","take":["morning"],"doses":["10 mg","20 mg","40 mg"],"notes":{"ar":"صباحاً. الأثر يحتاج 2–4 أسابيع والقلق قد يزيد في الأيام الأولى — هذه أهم جملة تُقال عند الصرف.","en":"In the morning. It takes two to four weeks, and anxiety can worsen in the first days — that is the single most important thing to say at the counter."},"interactions":[{"with":"Tramadol","severity":"serious","note":{"ar":"متلازمة السيروتونين واختلاج.","en":"Serotonin syndrome and seizures."}},{"with":"Metoprolol","severity":"serious","note":{"ar":"يرفع الميتوبرولول كثيراً.","en":"Substantially raises metoprolol."}},{"with":"Warfarin","severity":"serious","note":{"ar":"خطر نزف مرتفع.","en":"Raised bleeding risk."}},{"with":"Ibuprofen","severity":"serious","note":{"ar":"نزف هضمي.","en":"GI bleeding."}}],"contraindications":[{"ar":"تناول مثبطات MAO خلال 14 يوماً","en":"MAO inhibitor within 14 days"},{"ar":"هوس غير مضبوط","en":"Uncontrolled mania"}]},
   {"sci":"Sertraline","ar":"سيرترالين","atc":"N06AB06","form":"tablet","doses":["25 mg","50 mg","100 mg"],"notes":{"ar":"مع الطعام. لا يُوقف فجأة — أعراض الانسحاب مزعجة ويُخفّض تدريجياً.","en":"With food. Never stopped abruptly — the discontinuation symptoms are unpleasant; taper it."},"interactions":[{"with":"Tramadol","severity":"serious","note":{"ar":"متلازمة السيروتونين.","en":"Serotonin syndrome."}},{"with":"Warfarin","severity":"serious","note":{"ar":"خطر نزف مرتفع.","en":"Raised bleeding risk."}},{"with":"Ibuprofen","severity":"serious","note":{"ar":"نزف هضمي.","en":"GI bleeding."}}],"contraindications":[{"ar":"تناول مثبطات MAO خلال 14 يوماً","en":"MAO inhibitor within 14 days"},{"ar":"الاستعمال المتزامن مع بيموزيد","en":"Concurrent pimozide"}]},
   {"sci":"Escitalopram","ar":"إسيتالوبرام","atc":"N06AB10","form":"tablet","doses":["5 mg","10 mg","20 mg"],"notes":{"ar":"الجرعة القصوى 10 ملغ فوق 65 سنة بسبب QT. لا يُوقف فجأة.","en":"Maximum 10 mg over 65 because of QT. Do not stop abruptly."},"interactions":[{"with":"Amiodarone","severity":"serious","note":{"ar":"إطالة QT مضاعفة.","en":"Additive QT prolongation."}},{"with":"Tramadol","severity":"serious","note":{"ar":"متلازمة السيروتونين.","en":"Serotonin syndrome."}},{"with":"Omeprazole","severity":"warning","note":{"ar":"يرفع الإسيتالوبرام.","en":"Raises escitalopram."}}],"contraindications":[{"ar":"تناول مثبطات MAO خلال 14 يوماً","en":"MAO inhibitor within 14 days"},{"ar":"إطالة QT معروفة","en":"Known QT prolongation"}]},
-  {"sci":"Diazepam","ar":"ديازيبام","atc":"N05BA01","form":"tablet","doses":["2 mg","5 mg","10 mg","10 mg/2 mL"],"notes":{"ar":"مادة خاضعة للرقابة. أسبوعان كحدّ أقصى — الاعتماد يبدأ بعدها. لا قيادة ولا كحول.","en":"A controlled substance. Two weeks maximum — dependence starts after that. No driving, no alcohol."},"interactions":[{"with":"Tramadol","severity":"critical","note":{"ar":"تثبيط تنفسي — يُتجنّب الجمع.","en":"Respiratory depression — avoid the combination."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع الديازيبام ويطيل التنويم.","en":"Raises diazepam and prolongs sedation."}}],"contraindications":[{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"توقّف تنفس نومي","en":"Sleep apnoea"},{"ar":"الوهن العضلي الوبيل","en":"Myasthenia gravis"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
-  {"sci":"Alprazolam","ar":"ألبرازولام","atc":"N05BA12","form":"tablet","doses":["0.25 mg","0.5 mg","1 mg"],"notes":{"ar":"مادة خاضعة للرقابة وأسرع البنزوديازيبينات إحداثاً للاعتماد. لا يُوقف فجأة بعد استعمال منتظم.","en":"A controlled substance and the fastest of the benzodiazepines to create dependence. Never stopped abruptly after regular use."},"interactions":[{"with":"Tramadol","severity":"critical","note":{"ar":"تثبيط تنفسي.","en":"Respiratory depression."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع الألبرازولام كثيراً.","en":"Substantially raises alprazolam."}},{"with":"Fluconazole","severity":"serious","note":{"ar":"يرفع الألبرازولام.","en":"Raises alprazolam."}}],"contraindications":[{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"توقّف تنفس نومي","en":"Sleep apnoea"},{"ar":"الزرق ضيّق الزاوية","en":"Angle-closure glaucoma"}]},
+  {"sci":"Diazepam","ar":"ديازيبام","atc":"N05BA01","form":"tablet","controlled":true,"doses":["2 mg","5 mg","10 mg","10 mg/2 mL"],"notes":{"ar":"مادة خاضعة للرقابة. أسبوعان كحدّ أقصى — الاعتماد يبدأ بعدها. لا قيادة ولا كحول.","en":"A controlled substance. Two weeks maximum — dependence starts after that. No driving, no alcohol."},"interactions":[{"with":"Tramadol","severity":"critical","note":{"ar":"تثبيط تنفسي — يُتجنّب الجمع.","en":"Respiratory depression — avoid the combination."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع الديازيبام ويطيل التنويم.","en":"Raises diazepam and prolongs sedation."}}],"contraindications":[{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"توقّف تنفس نومي","en":"Sleep apnoea"},{"ar":"الوهن العضلي الوبيل","en":"Myasthenia gravis"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
+  {"sci":"Alprazolam","ar":"ألبرازولام","atc":"N05BA12","form":"tablet","controlled":true,"doses":["0.25 mg","0.5 mg","1 mg"],"notes":{"ar":"مادة خاضعة للرقابة وأسرع البنزوديازيبينات إحداثاً للاعتماد. لا يُوقف فجأة بعد استعمال منتظم.","en":"A controlled substance and the fastest of the benzodiazepines to create dependence. Never stopped abruptly after regular use."},"interactions":[{"with":"Tramadol","severity":"critical","note":{"ar":"تثبيط تنفسي.","en":"Respiratory depression."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع الألبرازولام كثيراً.","en":"Substantially raises alprazolam."}},{"with":"Fluconazole","severity":"serious","note":{"ar":"يرفع الألبرازولام.","en":"Raises alprazolam."}}],"contraindications":[{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"توقّف تنفس نومي","en":"Sleep apnoea"},{"ar":"الزرق ضيّق الزاوية","en":"Angle-closure glaucoma"}]},
   {"sci":"Carbamazepine","ar":"كاربامازيبين","atc":"N03AF01","form":"tablet","take":["withFood"],"doses":["100 mg/5 mL","200 mg","400 mg"],"notes":{"ar":"محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. طفح جلدي في الأسابيع الأولى يستوجب التوقف الفوري.","en":"A powerful enzyme inducer — it undermines the contraceptive pill and much else. A rash in the first weeks means stop immediately."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"يخفض INR ويفقد الحماية.","en":"Lowers INR and loses the protection."}},{"with":"Clarithromycin","severity":"serious","note":{"ar":"يرفع الكاربامازيبين إلى حدّ السميّة.","en":"Raises carbamazepine to toxic levels."}},{"with":"Rivaroxaban","severity":"serious","note":{"ar":"يخفض المستوى ويفقد الحماية.","en":"Lowers levels and loses the protection."}},{"with":"Sertraline","severity":"warning","note":{"ar":"يقلّل فعالية السيرترالين.","en":"Reduces sertraline’s effect."}}],"contraindications":[{"ar":"حصار أذيني بطيني","en":"Atrioventricular block"},{"ar":"تثبيط نقي عظم سابق","en":"Previous bone marrow depression"},{"ar":"بورفيريا","en":"Porphyria"}]},
   {"sci":"Sodium valproate","ar":"فالبروات الصوديوم","atc":"N03AG01","form":"tablet","take":["afterFood"],"doses":["200 mg","500 mg","200 mg/5 mL"],"notes":{"ar":"ممنوع في الحمل وعند أي امرأة في سنّ الإنجاب دون برنامج منع حمل موثّق — خطر تشوّه واضطراب نمو عصبي عالٍ جداً.","en":"Contraindicated in pregnancy and in any woman of childbearing potential without a documented pregnancy-prevention plan — the malformation and neurodevelopmental risk is very high."},"interactions":[{"with":"Carbamazepine","severity":"serious","note":{"ar":"تغيّر متبادل في المستويات.","en":"Each one shifts the other’s level."}},{"with":"Aspirin","severity":"serious","note":{"ar":"يرفع الفالبروات الحر.","en":"Raises free valproate."}},{"with":"Lamotrigine","severity":"critical","note":{"ar":"يضاعف اللاموتريجين وخطر الطفح الشديد.","en":"Doubles lamotrigine and the risk of a severe rash."}}],"contraindications":[{"ar":"الحمل","en":"Pregnancy"},{"ar":"النساء في سنّ الإنجاب دون برنامج منع حمل","en":"Women of childbearing potential without a pregnancy-prevention plan"},{"ar":"مرض كبدي فعّال","en":"Active liver disease"},{"ar":"اضطرابات دورة اليوريا","en":"Urea cycle disorders"}]},
-  {"sci":"Pregabalin","ar":"بريغابالين","atc":"N03AX16","form":"capsule","doses":["25 mg","75 mg","150 mg","300 mg"],"notes":{"ar":"مادة خاضعة للرقابة ويُساء استعمالها. لا يُوقف فجأة. الدوار والنعاس في الأيام الأولى يزولان.","en":"A controlled substance and widely misused. Not stopped abruptly. The dizziness and drowsiness of the first days settle."},"interactions":[{"with":"Tramadol","severity":"serious","note":{"ar":"تثبيط تنفسي وتنويم مضاعف.","en":"Respiratory depression and compounded sedation."}},{"with":"Diazepam","severity":"serious","note":{"ar":"تنويم شديد.","en":"Marked sedation."}}],"contraindications":[]},
+  {"sci":"Pregabalin","ar":"بريغابالين","atc":"N03AX16","form":"capsule","controlled":true,"doses":["25 mg","75 mg","150 mg","300 mg"],"notes":{"ar":"مادة خاضعة للرقابة ويُساء استعمالها. لا يُوقف فجأة. الدوار والنعاس في الأيام الأولى يزولان.","en":"A controlled substance and widely misused. Not stopped abruptly. The dizziness and drowsiness of the first days settle."},"interactions":[{"with":"Tramadol","severity":"serious","note":{"ar":"تثبيط تنفسي وتنويم مضاعف.","en":"Respiratory depression and compounded sedation."}},{"with":"Diazepam","severity":"serious","note":{"ar":"تنويم شديد.","en":"Marked sedation."}}],"contraindications":[]},
   {"sci":"Levothyroxine","ar":"ليفوثيروكسين","atc":"H03AA01","form":"tablet","take":["emptyStomach","beforeBreakfast"],"doses":["25 mcg","50 mcg","75 mcg","100 mcg"],"notes":{"ar":"على معدة فارغة قبل الفطور بنصف ساعة، وبعيداً عن الحديد والكالسيوم بأربع ساعات. لا يُبدّل بين الشركات بلا داعٍ.","en":"Empty stomach, thirty minutes before breakfast, and four hours away from iron and calcium. Do not switch between manufacturers without reason."},"interactions":[{"with":"Ferrous sulfate","severity":"serious","note":{"ar":"يمنع الامتصاص — باعد أربع ساعات.","en":"Blocks absorption — space by four hours."}},{"with":"Calcium carbonate","severity":"serious","note":{"ar":"يمنع الامتصاص — باعد أربع ساعات.","en":"Blocks absorption — space by four hours."}},{"with":"Omeprazole","severity":"warning","note":{"ar":"يقلّل الامتصاص.","en":"Reduces absorption."}},{"with":"Warfarin","severity":"serious","note":{"ar":"يزيد أثر الوارفارين مع تحسّن الحالة الدرقية.","en":"Warfarin’s effect grows as the thyroid state corrects."}}],"contraindications":[{"ar":"انسمام درقي غير معالج","en":"Untreated thyrotoxicosis"},{"ar":"قصور كظر غير معالج","en":"Untreated adrenal insufficiency"}]},
   {"sci":"Prednisolone","ar":"بريدنيزولون","atc":"H02AB06","form":"tablet","take":["morning","withFood"],"doses":["5 mg","20 mg","25 mg"],"notes":{"ar":"صباحاً مع الطعام. لا يُوقف فجأة بعد أكثر من ثلاثة أسابيع — قصور كظر. بطاقة الستيرويد ضرورية.","en":"In the morning, with food. Never stopped abruptly after more than three weeks — adrenal crisis. They need a steroid card."},"interactions":[{"with":"Ibuprofen","severity":"serious","note":{"ar":"خطر قرحة ونزف هضمي مضاعف.","en":"Compounded ulcer and GI bleeding risk."}},{"with":"Insulin glargine","severity":"serious","note":{"ar":"يرفع سكر الدم — قد تلزم زيادة الجرعة.","en":"Raises glucose — the dose may need to go up."}},{"with":"Warfarin","severity":"warning","note":{"ar":"قد يرفع INR.","en":"May raise INR."}}],"contraindications":[{"ar":"إنتان جهازي غير معالج","en":"Untreated systemic infection"},{"ar":"اللقاحات الحية بالجرعات المثبّطة للمناعة","en":"Live vaccines at immunosuppressive doses"}]},
   {"sci":"Allopurinol","ar":"ألوبيورينول","atc":"M04AA01","form":"tablet","take":["afterFood"],"doses":["100 mg","300 mg"],"notes":{"ar":"لا يُبدأ أثناء نوبة نقرس حادة — يُفاقمها. سوائل وفيرة. طفح جلدي يستوجب التوقف الفوري.","en":"Never started during an acute gout attack — it makes it worse. Plenty of fluid. A rash means stop at once."},"interactions":[{"with":"Azathioprine","severity":"critical","note":{"ar":"تثبيط نقي مهدّد للحياة — تُخفّض جرعة الآزاثيوبرين إلى الربع.","en":"Life-threatening marrow suppression — the azathioprine dose drops to a quarter."}},{"with":"Amoxicillin/Clavulanic acid","severity":"warning","note":{"ar":"يزيد احتمال الطفح.","en":"Raises the chance of a rash."}},{"with":"Warfarin","severity":"warning","note":{"ar":"قد يرفع INR.","en":"May raise INR."}}],"contraindications":[{"ar":"نوبة نقرس حادة فعّالة","en":"An acute gout attack in progress"}]},
@@ -2293,7 +2497,7 @@ const DRUGS = [
   {"sci":"Gentamicin","ar":"جنتامايسين","atc":"J01GB03","form":"injection","doses":["40 mg/mL","80 mg/2 mL","0.3% drops"],"notes":{"ar":"سميّة أذنية وكلوية تعتمد على المستوى — يستوجب قياس المستويات ووظيفة الكلية. الطنين وعدم التوازن علامات إنذار.","en":"Level-dependent ear and kidney toxicity — needs level and renal monitoring. Tinnitus and unsteadiness are the warning signs."},"interactions":[{"with":"Furosemide","severity":"serious","note":{"ar":"سميّة أذنية وكلوية مضاعفة.","en":"Compounded ear and kidney toxicity."}},{"with":"Ibuprofen","severity":"serious","note":{"ar":"خطر كلوي مضاعف.","en":"Compounded renal risk."}}],"contraindications":[{"ar":"الوهن العضلي الوبيل","en":"Myasthenia gravis"},{"ar":"الحمل","en":"Pregnancy"},{"ar":"اضطراب سمعي سابق","en":"Pre-existing hearing loss"}]},
   {"sci":"Levodopa","ar":"ليفودوبا","atc":"N04BA01","form":"tablet","doses":["100 mg","250 mg"],"notes":{"ar":"التوقيت أهم من الجرعة — التأخير عشرين دقيقة يُحدث فرقاً ملموساً. يُباعد عن الوجبات الغنية بالبروتين.","en":"Timing matters more than dose — twenty minutes late is felt. Kept away from protein-heavy meals."},"interactions":[{"with":"Metoclopramide","severity":"serious","note":{"ar":"تضاد متبادل في الأثر.","en":"Each one blocks the other."}},{"with":"Haloperidol","severity":"serious","note":{"ar":"يلغي أثر الليفودوبا.","en":"Cancels levodopa’s effect."}},{"with":"Ferrous sulfate","severity":"warning","note":{"ar":"يقلّل الامتصاص — باعد ساعتين.","en":"Reduces absorption — space by two hours."}}],"contraindications":[{"ar":"الزرق ضيّق الزاوية","en":"Angle-closure glaucoma"},{"ar":"ميلانوما مشتبهة","en":"Suspected melanoma"},{"ar":"تناول مثبطات MAO غير الانتقائية","en":"Non-selective MAO inhibitors"}]},
   {"sci":"Haloperidol","ar":"هالوبيريدول","atc":"N05AD01","form":"tablet","doses":["0.5 mg","5 mg","5 mg/mL"],"notes":{"ar":"أعراض خارج هرمية شائعة ومبكّرة. إطالة QT. تصلّب مع حمّى وتخليط: متلازمة خبيثة — إسعاف.","en":"Extrapyramidal effects are common and early. Prolongs QT. Rigidity with fever and confusion is neuroleptic malignant syndrome — emergency."},"interactions":[{"with":"Metoclopramide","severity":"serious","note":{"ar":"أعراض خارج هرمية مضاعفة.","en":"Compounded extrapyramidal effects."}},{"with":"Amiodarone","severity":"critical","note":{"ar":"إطالة QT — يُتجنّب الجمع.","en":"QT prolongation — avoid the combination."}},{"with":"Escitalopram","severity":"serious","note":{"ar":"إطالة QT مضاعفة.","en":"Additive QT prolongation."}}],"contraindications":[{"ar":"داء باركنسون","en":"Parkinson’s disease"},{"ar":"إطالة QT معروفة","en":"Known QT prolongation"},{"ar":"تثبيط الجهاز العصبي المركزي","en":"CNS depression"}]},
-  {"sci":"Phenobarbital","ar":"فينوباربيتال","atc":"N03AA02","form":"tablet","doses":["15 mg","30 mg","60 mg","100 mg"],"notes":{"ar":"محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. لا يُوقف فجأة — خطر حالة صرعية.","en":"A powerful enzyme inducer — it undermines the contraceptive pill and much else. Never stopped abruptly: status epilepticus."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"يخفض INR ويفقد الحماية.","en":"Lowers INR and loses the protection."}},{"with":"Montelukast","severity":"warning","note":{"ar":"يقلّل مستوى المونتيلوكاست.","en":"Lowers montelukast levels."}},{"with":"Diazepam","severity":"serious","note":{"ar":"تثبيط تنفسي مضاعف.","en":"Compounded respiratory depression."}}],"contraindications":[{"ar":"بورفيريا","en":"Porphyria"},{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
+  {"sci":"Phenobarbital","ar":"فينوباربيتال","atc":"N03AA02","form":"tablet","controlled":true,"doses":["15 mg","30 mg","60 mg","100 mg"],"notes":{"ar":"محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. لا يُوقف فجأة — خطر حالة صرعية.","en":"A powerful enzyme inducer — it undermines the contraceptive pill and much else. Never stopped abruptly: status epilepticus."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"يخفض INR ويفقد الحماية.","en":"Lowers INR and loses the protection."}},{"with":"Montelukast","severity":"warning","note":{"ar":"يقلّل مستوى المونتيلوكاست.","en":"Lowers montelukast levels."}},{"with":"Diazepam","severity":"serious","note":{"ar":"تثبيط تنفسي مضاعف.","en":"Compounded respiratory depression."}}],"contraindications":[{"ar":"بورفيريا","en":"Porphyria"},{"ar":"قصور تنفسي شديد","en":"Severe respiratory insufficiency"},{"ar":"قصور كبدي شديد","en":"Severe hepatic impairment"}]},
   {"sci":"Lamotrigine","ar":"لاموتريجين","atc":"N03AX09","form":"tablet","doses":["25 mg","50 mg","100 mg","200 mg"],"notes":{"ar":"يُرفع ببطء شديد — التسريع هو سبب الطفح الخطير. أي طفح جلدي يعني التوقف والمراجعة فوراً.","en":"Titrated very slowly — going faster is what causes the serious rash. Any rash means stop and be seen the same day."},"interactions":[{"with":"Sodium valproate","severity":"critical","note":{"ar":"يضاعف اللاموتريجين وخطر الطفح الشديد — تُنصّف الجرعة.","en":"Doubles lamotrigine and the risk of a severe rash — halve the dose."}},{"with":"Carbamazepine","severity":"serious","note":{"ar":"يخفض اللاموتريجين ويفقد السيطرة.","en":"Lowers lamotrigine and loses control."}}],"contraindications":[{"ar":"طفح جلدي شديد سابق مع اللاموتريجين","en":"Previous severe rash with lamotrigine"}]},
   {"sci":"Azathioprine","ar":"آزاثيوبرين","atc":"L04AX01","form":"tablet","take":["afterFood"],"doses":["25 mg","50 mg"],"notes":{"ar":"يستوجب تعداد دم منتظماً. أي حمّى أو التهاب حلق يستوجب فحص التعداد قبل أي شيء آخر.","en":"Needs regular blood counts. Any fever or sore throat means check the count before anything else."},"interactions":[{"with":"Allopurinol","severity":"critical","note":{"ar":"تثبيط نقي مهدّد للحياة — تُخفّض الجرعة إلى الربع أو يُتجنّب الجمع.","en":"Life-threatening marrow suppression — quarter the dose or avoid the combination."}},{"with":"Trimethoprim/Sulfamethoxazole","severity":"serious","note":{"ar":"تثبيط نقي مضاعف.","en":"Compounded marrow suppression."}},{"with":"Warfarin","severity":"warning","note":{"ar":"يقلّل أثر الوارفارين.","en":"Reduces warfarin’s effect."}}],"contraindications":[{"ar":"الحمل","en":"Pregnancy"},{"ar":"تثبيط نقي العظم","en":"Bone marrow suppression"},{"ar":"إنتان فعّال","en":"Active infection"}]},
   {"sci":"Phenytoin","ar":"فينيتوين","atc":"N03AB02","form":"capsule","doses":["30 mg/5 mL","50 mg","100 mg"],"notes":{"ar":"حرائك غير خطية — زيادة صغيرة في الجرعة ترفع المستوى كثيراً. تضخّم اللثة شائع: العناية بالفم من يوم البدء.","en":"Non-linear kinetics — a small dose rise moves the level a long way. Gum overgrowth is common: mouth care from day one."},"interactions":[{"with":"Warfarin","severity":"serious","note":{"ar":"تغيّر غير متوقّع في INR في الاتجاهين.","en":"Unpredictable INR movement in both directions."}},{"with":"Folic acid","severity":"serious","note":{"ar":"يخفض مستوى الفينيتوين.","en":"Lowers phenytoin levels."}},{"with":"Omeprazole","severity":"warning","note":{"ar":"يرفع الفينيتوين.","en":"Raises phenytoin."}},{"with":"Trimethoprim/Sulfamethoxazole","severity":"serious","note":{"ar":"يرفع الفينيتوين إلى حدّ السميّة.","en":"Raises phenytoin to toxic levels."}}],"contraindications":[{"ar":"بطء قلب جيبي أو حصار قلبي","en":"Sinus bradycardia or heart block"},{"ar":"بورفيريا","en":"Porphyria"}]},
@@ -2574,7 +2778,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0012.1';
+const VERSION = 'App_v0.0013';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -2625,6 +2829,7 @@ function setFlag(k, on) {
    because an incident is filed against a booking, and with the marketplace off
    there are no bookings to file against. */
 const MARKET_SCREENS = ['shifts', 'handoff', 'earnings', 'applicants', 'incidents'];
+const STOCK_SCREENS = ['stock', 'count', 'import', 'orders', 'order', 'suppliers', 'register'];
 const PLACEMENT_SCREENS = ['placement', 'logbook', 'trainees'];
 
 /* The single gate. Navigation, the sidebar, Profile's links and render() all
@@ -2640,6 +2845,8 @@ function screenAllowed(screen, role) {
      employed pharmacist sells when the owner lets them, and that grant does
      not exist yet. Not a marketplace screen — it is on with everything off. */
   if (screen === 'till') return role === 'owner';
+  /* Stock is the owner's until permissions make it grantable (v0.0017). */
+  if (STOCK_SCREENS.includes(screen)) return role === 'owner';
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -2760,6 +2967,24 @@ const S = {
           given:'', ref:'', ack:{}, unknown:null, needPrice:null, note:null, query:'',
           cashManual:false, cashConfirmed:false },
   scanKeep: false,
+  /* v0.0013 — stock. Movements are the only record of quantity; everything
+     else here is batches (what, which expiry, which shelf), the operations
+     that produced movements, and the owner's own settings. */
+  movements: [],
+  batches: [],
+  countSessions: [],
+  imports: [],
+  orders: [],
+  suppliers: [],
+  supplierRequests: [],
+  shelves: {},
+  shelfOf: {},
+  minLevels: {},
+  unknownNames: {},
+  openCount: null, openImport: null, openOrder: null,
+  stockNote: null, importNote: null, supplierQuery: '', countQuery: '',
+  clockShift: 0,
+  scanTarget: 'till',
   sales: [],
   prices: {},
   tillLog: [],
@@ -3958,9 +4183,14 @@ function setPharmacy(id) {
     tillLog('cleared', { lines:S.till.lines.length });
     S.till = tillReset();
   }
+  /* A count in progress belongs to its shelf in its pharmacy: switching tabs
+     saves it, to be continued there. */
+  const open = typeof openCountSession === 'function' && openCountSession();
+  if (open && (id || null) !== open.pharmacy) { open.state = 'saved'; open.savedAt = nowIso(); S.openCount = null; saveDrafts(); }
   S.pharmacyTab = id || null;
   S.receiptFor = null;
-  S.screen = S.screen === 'till' ? 'till' : 'dashboard';
+  S.screen = S.screen === 'till' ? 'till' : ['stock', 'count', 'import', 'orders', 'suppliers', 'register'].includes(S.screen) ? S.screen
+           : S.screen === 'order' ? 'orders' : 'dashboard';
   S.modal = null; render(); scrollTop();
 }
 
@@ -4386,7 +4616,11 @@ function tillAdd(code) {
   /* No price and no reference: the till does not guess. Somebody who may set
      prices sets one, and it is the pharmacy's price from then on. */
   if (price == null) { T.needPrice = code; render(); return; }
-  T.lines.push(tillLineFromProduct(p, price));
+  const line2 = tillLineFromProduct(p, price);
+  /* Never a block (S1): a line whose recorded stock is only expired says so. */
+  const st = stockOf(ph.id, code);
+  if (st.available <= 0 && st.expired > 0) line2.onlyExpired = true;
+  T.lines.push(line2);
   T.needPrice = null; T.note = null;
   render();
 }
@@ -4619,6 +4853,7 @@ function completeSale() {
     coverage:tillCoverage(T.lines), refunded:null
   };
   S.sales.unshift(sale);
+  stockSale(sale);
   tillLog('sale', { sale:sale.id, total });
   S.till = tillReset();
   S.receiptFor = sale.id;
@@ -4633,8 +4868,11 @@ function refundSale(id) {
   const reason = ((document.getElementById('refund-reason') || {}).value || '').trim();
   if (!sale || sale.refunded) return;
   if (!reason) { S.till.note = { kind:'needReason' }; render(); return; }
-  sale.refunded = { at:new Date().toISOString(), by:S.email, reason };
-  tillLog('refund', { sale:id, total:sale.total, reason });
+  /* S5: back to stock is chosen already; set aside is one tap away. */
+  const dest = ((document.querySelector('input[name="rf-dest"]:checked') || {}).value) || 'stock';
+  sale.refunded = { at:new Date().toISOString(), by:S.email, reason, dest };
+  stockRefund(sale, dest, reason);
+  tillLog('refund', { sale:id, total:sale.total, reason, dest });
   render();
 }
 function openReceipt(id) { S.receiptFor = id; S.receiptLang = 'ar'; render(); scrollTop(); }
@@ -4943,12 +5181,13 @@ async function cameraScan() {
     else if (code) {
       lastCode = code; lastAt = now;
       scanFeedback();
+      const deliver = S.scanTarget === 'count' ? countScan : tillScan;
       if (S.scanKeep) {
-        tillScan(code);
+        deliver(code);
         const p = productByCode(code);
         m.last = p ? L(p.name) : code; m.status = 'added'; cameraStatus();
       } else {
-        stop(); S.modal = null; renderModal(); tillScan(code); return;
+        stop(); S.modal = null; renderModal(); deliver(code); return;
       }
     }
     setTimeout(tick, det ? 150 : 120);
@@ -5052,6 +5291,7 @@ function screenTill() {
           ? '<button class="link-btn" onclick="tillToggleLine(' + i + ')">' + esc(t('till.instructions')) + '</button>' : '') +
         '<button class="link-btn till-void" onclick="tillVoid(' + i + ')">' + esc(t('till.remove')) + '</button>' +
       '</div>' +
+      (l.onlyExpired ? '<p class="till-line-instr till-onlyexp">' + esc(t('till.onlyExpired')) + '</p>' : '') +
       /* What will print, visible without opening anything. */
       (l.mapping !== 'nondrug' && instructionText(l, lang)
         ? '<p class="till-line-instr">' + esc(instructionText(l, lang)) + '</p>' : '') +
@@ -5163,7 +5403,7 @@ function screenTill() {
     '</div>' +
     /* Always offered. Whether the camera will open is found out by trying,
        and a refusal is explained rather than hidden. */
-    '<button class="btn-scan till-cam" onclick="cameraScan()" aria-label="' + esc(t('till.camera')) + '">' +
+    '<button class="btn-scan till-cam" onclick="cameraScanFor(\'till\')" aria-label="' + esc(t('till.camera')) + '">' +
       icon('camera') + '<span>' + esc(t('scan.button')) + '</span></button></div>' +
     (hits.length
       ? '<div class="card">' + hits.map(p => '<button class="row" style="width:100%;text-align:start;" onclick="tillQuery(\'\');tillAdd(' + attr(p.barcode) + ')">' +
@@ -5196,6 +5436,9 @@ function tillReceiptScreen(tabs) {
       ? '<div class="banner banner-amber">' + icon('alert') + '<p>' + esc(t('till.refundedOn', { reason:sale.refunded.reason })) + '</p></div>'
       : canRefund()
         ? '<div class="card card-pad"><p class="urgent-t" style="margin-bottom:8px;">' + esc(t('till.refundT')) + '</p>' +
+            '<p class="field-label" style="margin-bottom:6px;">' + esc(t('rf.where')) + '</p>' +
+            '<div class="rf-dest"><label class="checkbox-row"><input type="radio" name="rf-dest" value="stock" checked><span>' + esc(t('rf.stock')) + '</span></label>' +
+            '<label class="checkbox-row"><input type="radio" name="rf-dest" value="quarantine"><span>' + esc(t('rf.quarantine')) + '</span></label></div>' +
             '<div class="till-inline"><input id="refund-reason" placeholder="' + esc(t('till.refundReason')) + '">' +
             '<button class="btn-small" onclick="refundSale(' + attr(sale.id) + ')">' + esc(t('till.refund')) + '</button></div>' +
             (S.till.note && S.till.note.kind === 'needReason'
@@ -5267,6 +5510,1314 @@ function logoField(ph) {
       'onchange="uploadLogo(' + attr(ph.id) + ', this)" hidden></label>' +
     '<span class="inline-note" style="margin:0;">' + esc(t('rc.logoNote')) + '</span></div>';
 }
+
+/* ==========================================================================
+   STOCK (v0.0013, W17) — a ledger of movements
+
+   Stock is never a number somebody types. It is the sum of MOVEMENTS — a
+   count, an import, a receipt, a sale, a refund, a write-off, an undo — each
+   one appended and never edited, and every level on every screen is worked out
+   from them. Two phones selling the last box offline both append "−1"; they
+   never both write "9" (v0.0014 proves it). addMovement() is the only writer.
+
+   What was decided, and where it lives here:
+   - Held BY BATCH, each with its expiry, and linked to the SHELF it was
+     counted on. Available = unexpired batches only; an expired batch is
+     quarantined — counted, never available — and leaves only by a write-off
+     with a reason (W17).
+   - The till sells FIRST-EXPIRING FIRST. A sale is never refused over a stock
+     figure (S1): past what is recorded it goes below zero, and the product
+     joins "Count this".
+   - Every batch carries what it cost (owner-only); a distributor's bonus
+     units arrive at zero cost (S3).
+   - A whole count or a whole import can be undone until the end of the next
+     day, and never once a later count or import has touched the same
+     products (Q3). An undo is itself movements: nothing is deleted.
+   ========================================================================== */
+
+/* The clock, shiftable so the check can walk past the undo window. */
+const nowMs = () => Date.now() + (S.clockShift || 0);
+const nowIso = () => new Date(nowMs()).toISOString();
+
+/* Expiry is a month, 'YYYY-MM': medicines are dated to the month and good to
+   its last day. */
+const ymNum = ym => Number(ym.slice(0, 4)) * 100 + Number(ym.slice(5, 7));
+const monthNow = () => { const d = new Date(nowMs()); return d.getFullYear() * 100 + d.getMonth() + 1; };
+const isExpired = ym => !!ym && ymNum(ym) < monthNow();
+const expiryEnd = ym => new Date(Number(ym.slice(0, 4)), Number(ym.slice(5, 7)), 0, 23, 59, 59).getTime();
+const NEAR_EXPIRY_DAYS = 90;
+const isNearExpiry = ym => !!ym && !isExpired(ym) && expiryEnd(ym) - nowMs() <= NEAR_EXPIRY_DAYS * 864e5;
+const fmtExpiry = ym => ym ? ym.slice(5, 7) + '/' + ym.slice(0, 4) : '—';
+
+/* "03/27", "3/2027", "2027-03", "2027-03-31", "31/03/2027", Arabic-Indic
+   digits, an Excel date serial — to 'YYYY-MM', or null. */
+function parseExpiry(v) {
+  if (v == null) return null;
+  let s = String(v).trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  if (!s) return null;
+  const mk = (y, m) => { y = Number(y); m = Number(m); if (y < 100) y += 2000;
+    return (m >= 1 && m <= 12 && y >= 2000 && y <= 2099) ? y + '-' + String(m).padStart(2, '0') : null; };
+  let m;
+  if (/^\d{5}(\.\d+)?$/.test(s)) {                          // an Excel serial date
+    const d = new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(s)) * 864e5);
+    return mk(d.getUTCFullYear(), d.getUTCMonth() + 1);
+  }
+  if ((m = s.match(/^(\d{4})[-/.](\d{1,2})(?:[-/.]\d{1,2})?(?:[T ].*)?$/))) return mk(m[1], m[2]);
+  if ((m = s.match(/^\d{1,2}[-/.](\d{1,2})[-/.](\d{2,4})$/))) return mk(m[2], m[1]);
+  if ((m = s.match(/^(\d{1,2})[-/.](\d{2,4})$/))) return mk(m[2], m[1]);
+  return null;
+}
+
+let MOVE_SEQ = 0, BATCH_SEQ = 0;
+/* THE ONLY WRITER. Nothing anywhere assigns a stock level. */
+function addMovement(m) {
+  const mv = Object.assign({ id:'M' + String(++MOVE_SEQ).padStart(5, '0'), at:nowIso(), by:S.email }, m);
+  S.movements.push(mv);
+  return mv;
+}
+function newBatch(ph, code, props) {
+  const b = Object.assign({ id:'B' + String(++BATCH_SEQ).padStart(4, '0'), pharmacy:ph, code,
+    kind:'stock', expiry:null, shelf:null }, props || {});
+  S.batches.push(b);
+  return b;
+}
+/* One batch per product for what was sold past the record (negative until a
+   count settles it), and one for returns set aside. */
+function specialBatch(ph, code, kind) {
+  return S.batches.find(b => b.pharmacy === ph && b.code === code && b.kind === kind) || newBatch(ph, code, { kind });
+}
+const batchQty = id => S.movements.reduce((n, m) => m.batch === id ? n + m.qty : n, 0);
+
+/* The level, always derived. */
+function stockOf(ph, code) {
+  const batches = S.batches.filter(b => b.pharmacy === ph && b.code === code)
+    .map(b => Object.assign({}, b, { qty:batchQty(b.id), expired:b.kind === 'stock' && isExpired(b.expiry) }));
+  const sum = f => batches.filter(f).reduce((n, b) => n + b.qty, 0);
+  const stock = sum(b => b.kind === 'stock' && !b.expired);
+  const unbatched = sum(b => b.kind === 'unbatched');
+  return {
+    batches, unbatched,
+    available: stock + unbatched,
+    expired: sum(b => b.expired),
+    quarantine: sum(b => b.kind === 'quarantine'),
+    onHand: sum(() => true),
+    recorded: batches.some(b => b.kind === 'stock')
+  };
+}
+const stockCodes = ph => [...new Set(S.batches.filter(b => b.pharmacy === ph).map(b => b.code))];
+const productName = code => { const p = productByCode(code); return p ? L(p.name) : ((S.unknownNames || {})[code] || code); };
+
+/* Average cost of a batch: what came in, over how many units came in. Bonus
+   units come in at zero, which is exactly how they lower it. */
+function batchCost(id) {
+  const ins = S.movements.filter(m => m.batch === id && m.qty > 0 && m.unitCost != null);
+  const units = ins.reduce((n, m) => n + m.qty, 0);
+  return units ? ins.reduce((n, m) => n + m.qty * m.unitCost, 0) / units : null;
+}
+function stockValue(ph) {
+  return S.batches.filter(b => b.pharmacy === ph && b.kind === 'stock' && !isExpired(b.expiry))
+    .reduce((n, b) => { const q = batchQty(b.id), c = batchCost(b.id); return q > 0 && c != null ? n + q * c : n; }, 0);
+}
+
+/* ---------- Selling, and refunds ---------- */
+
+/* First-expiring first, from unexpired stock only. Past what is recorded the
+   sale still goes through (S1) and the shortfall lands on the product's
+   unbatched line, below zero. */
+function stockSale(sale) {
+  sale.lines.forEach(l => {
+    let left = l.qty;
+    const st = stockOf(sale.pharmacy, l.barcode);
+    st.batches.filter(b => b.kind === 'stock' && !b.expired && b.qty > 0)
+      .sort((a, b) => ymNum(a.expiry) - ymNum(b.expiry))
+      .forEach(b => {
+        if (!left) return;
+        const take = Math.min(left, b.qty);
+        addMovement({ pharmacy:sale.pharmacy, code:l.barcode, batch:b.id, qty:-take, kind:'sale', ref:sale.id });
+        left -= take;
+      });
+    if (left) addMovement({ pharmacy:sale.pharmacy, code:l.barcode, batch:specialBatch(sale.pharmacy, l.barcode, 'unbatched').id,
+                            qty:-left, kind:'sale', ref:sale.id });
+  });
+}
+/* S5: back to stock (the default) returns each unit to the batch it left;
+   quarantine sets it aside. */
+function stockRefund(sale, dest, reason) {
+  S.movements.filter(m => m.ref === sale.id && m.kind === 'sale').forEach(m => {
+    const batch = dest === 'quarantine' ? specialBatch(sale.pharmacy, m.code, 'quarantine').id : m.batch;
+    addMovement({ pharmacy:sale.pharmacy, code:m.code, batch, qty:-m.qty, kind:'refund', ref:sale.id, reason, dest });
+  });
+}
+
+/* ---------- Counts and imports: committing, and undoing ---------- */
+
+/* A sale made before a product was counted is already off the shelf the count
+   saw. So a count or an import settles the product's below-zero line. */
+function settleUnbatched(ph, code, ref) {
+  const u = S.batches.find(b => b.pharmacy === ph && b.code === code && b.kind === 'unbatched');
+  const q = u ? batchQty(u.id) : 0;
+  if (q < 0) addMovement({ pharmacy:ph, code, batch:u.id, qty:-q, kind:'settle', ref, reason:'soldBeforeCounted' });
+}
+
+/* A count is the truth about ONE shelf: per product, what is on it now, by
+   expiry. The difference from what was recorded on that shelf is what moves. */
+function commitCount(sess) {
+  const ph = sess.pharmacy, by = {};
+  sess.items.forEach(it => { (by[it.code] = by[it.code] || {})[it.expiry] = (by[it.code][it.expiry] || 0) + it.qty; });
+  Object.keys(by).forEach(code => {
+    const shelfBatches = S.batches.filter(b => b.pharmacy === ph && b.code === code && b.kind === 'stock' && b.shelf === sess.shelf);
+    Object.entries(by[code]).forEach(([expiry, qty]) => {
+      const b = shelfBatches.find(x => x.expiry === expiry) || newBatch(ph, code, { expiry, shelf:sess.shelf });
+      const delta = qty - batchQty(b.id);
+      if (delta) addMovement({ pharmacy:ph, code, batch:b.id, qty:delta, kind:'count', ref:sess.id });
+    });
+    shelfBatches.filter(b => !(b.expiry in by[code])).forEach(b => {
+      const q = batchQty(b.id);
+      if (q) addMovement({ pharmacy:ph, code, batch:b.id, qty:-q, kind:'count', ref:sess.id });
+    });
+    settleUnbatched(ph, code, sess.id);
+    if (!(S.shelfOf[ph] = S.shelfOf[ph] || {})[code]) S.shelfOf[ph][code] = [];
+    if (!S.shelfOf[ph][code].includes(sess.shelf)) S.shelfOf[ph][code].push(sess.shelf);
+  });
+  /* Recorded on this shelf and not found on it now: it has left the shelf.
+     The count screen lists these before confirming, so nothing leaves by
+     surprise. */
+  const gone = notYetCounted(sess);
+  gone.forEach(code => S.batches.filter(b => b.pharmacy === ph && b.code === code && b.kind === 'stock' && b.shelf === sess.shelf)
+    .forEach(b => { const q = batchQty(b.id); if (q) addMovement({ pharmacy:ph, code, batch:b.id, qty:-q, kind:'count', ref:sess.id }); }));
+  sess.codes = Object.keys(by).concat(gone);
+  sess.state = 'committed'; sess.committedAt = nowIso(); sess.committedBy = S.email;
+}
+
+/* What the record says is on this shelf that this count has not reached yet —
+   a checklist while counting, and what leaves the shelf if confirmed as is. */
+function notYetCounted(sess) {
+  const seen = new Set(sess.items.map(it => it.code));
+  return [...new Set(S.batches.filter(b => b.pharmacy === sess.pharmacy && b.kind === 'stock' && b.shelf === sess.shelf && batchQty(b.id) > 0)
+    .map(b => b.code))].filter(c => !seen.has(c));
+}
+
+/* Until the end of the day after, and never once a later count or import has
+   touched the same products — after that a correction is an adjustment with
+   a reason, not an undo. */
+function undoState(rec) {
+  if (rec.state !== 'committed') return { ok:false, why:rec.state === 'undone' ? 'undone' : 'notCommitted' };
+  const d = new Date(rec.committedAt);
+  const end = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, 23, 59, 59, 999).getTime();
+  if (nowMs() > end) return { ok:false, why:'window' };
+  const later = stockOps().find(o => o !== rec && o.state === 'committed' && o.pharmacy === rec.pharmacy &&
+    o.committedAt > rec.committedAt && o.codes.some(c => rec.codes.includes(c)));
+  if (later) return { ok:false, why:'later', by:later.id };
+  return { ok:true, until:end };
+}
+function undoOp(id) {
+  const rec = stockOps().find(o => o.id === id);
+  if (!rec || !canManageStock() || !undoState(rec).ok) return;
+  S.movements.filter(m => m.ref === rec.id && m.kind !== 'undo').forEach(m =>
+    addMovement({ pharmacy:m.pharmacy, code:m.code, batch:m.batch, qty:-m.qty, kind:'undo', ref:rec.id }));
+  rec.state = 'undone'; rec.undoneAt = nowIso(); rec.undoneBy = S.email;
+  tillLog(rec.id[0] === 'C' ? 'countUndone' : 'importUndone', { op:rec.id, pharmacy:rec.pharmacy });
+  toast(t('st.undone'));
+  render();
+}
+
+/* ---------- The controlled register — a view, not a log ---------- */
+
+const isControlled = code => { const p = productByCode(code);
+  return !!p && p.molecules.some(m => m.ref !== false && (drugBySci(m.sci) || {}).controlled); };
+/* Every movement of a controlled product, in order, with its running balance.
+   It is the ledger filtered, so it cannot disagree with the ledger. */
+function controlledRegister(ph) {
+  const bal = {};
+  return S.movements.filter(m => m.pharmacy === ph && isControlled(m.code))
+    .map(m => { bal[m.code] = (bal[m.code] || 0) + m.qty; return Object.assign({}, m, { balance:bal[m.code] }); });
+}
+
+/* ---------- What needs the owner ---------- */
+
+function stockPrompts(ph) {
+  const codes = stockCodes(ph);
+  const countThis = codes.map(c => ({ code:c, short:-stockOf(ph, c).unbatched })).filter(x => x.short > 0)
+    .sort((a, b) => b.short - a.short);
+  const near = [], expired = [];
+  S.batches.filter(b => b.pharmacy === ph && b.kind === 'stock').forEach(b => {
+    const q = batchQty(b.id);
+    if (q <= 0) return;
+    if (isExpired(b.expiry)) expired.push({ b, q });
+    else if (isNearExpiry(b.expiry)) near.push({ b, q });
+  });
+  near.sort((a, b) => ymNum(a.b.expiry) - ymNum(b.b.expiry));
+  const mins = S.minLevels[ph] || {};
+  const low = Object.keys(mins).filter(c => stockOf(ph, c).available < mins[c]).map(c => ({ code:c, min:mins[c], have:stockOf(ph, c).available }));
+  const quarantined = codes.map(c => ({ code:c, q:stockOf(ph, c).quarantine })).filter(x => x.q > 0);
+  return { countThis, near, expired, low, quarantined };
+}
+/* Products counted, by distinct product — the honest measure of progress,
+   since nothing can know how many boxes a shelf holds. */
+function countedSummary(ph) {
+  const live = stockOps().filter(o => o.pharmacy === ph && o.state === 'committed');
+  const codes = new Set(); const shelves = {};
+  live.forEach(o => o.codes.forEach(c => codes.add(c)));
+  live.filter(o => o.id[0] === 'C').forEach(o => {
+    const sh = shelves[o.shelf] = shelves[o.shelf] || { codes:new Set(), boxes:0 };
+    o.items.forEach(it => { sh.codes.add(it.code); sh.boxes += it.qty; });
+  });
+  return { drugs:codes.size, shelves };
+}
+
+/* Owner-only until permissions (v0.0017) make it grantable. */
+const canManageStock = () => S.role === 'owner';
+
+const stockOps = () => S.countSessions.concat(S.imports);
+
+/* The demo's starting shelf at Al-Rahma: one shelf counted three days ago —
+   past its undo window — with one batch near its expiry, one expired, and a
+   controlled substance, so every prompt has something in it. And its
+   suppliers: one linked, one the CRM team has proposed a link for. */
+const ymOffset = k => { const d = new Date(nowMs()); d.setDate(1); d.setMonth(d.getMonth() + k);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+function seedStock() {
+  const keepMail = S.email;
+  S.email = 'rahma@example.com'; S.clockShift = -3 * 864e5;
+  S.shelves.P1 = ['Shelf 1 — painkillers', 'Fridge'];
+  const sess = { id:'C001', pharmacy:'P1', shelf:'Shelf 1 — painkillers', state:'open', startedAt:nowIso(), startedBy:S.email,
+    items:[{ code:'5000000001002', expiry:ymOffset(14), qty:12 }, { code:'5000000001033', expiry:ymOffset(2), qty:6 },
+           { code:'7600000001040', expiry:ymOffset(-1), qty:3 }, { code:'3000000001455', expiry:ymOffset(10), qty:10 }] };
+  S.countSessions.push(sess);
+  commitCount(sess);
+  S.clockShift = 0; S.email = keepMail;
+  S.suppliers.push(
+    { id:'SP1', pharmacy:'P1', name:'Iraqi Drug Agency Co.', linked:'CO4', suggest:null },
+    { id:'SP2', pharmacy:'P1', name:'مخزن الشفاء', linked:null, suggest:'CO8' },
+    { id:'SP3', pharmacy:'P7', name:'Rafidain Pharma Distribution', linked:'CO5', suggest:null });
+}
+
+/* ---------- Reading a spreadsheet: CSV and Excel (.xlsx) ----------
+
+   A placeholder reader, written into the file rather than pulled from a
+   library. CSV in any of the usual shapes (comma, semicolon or tab; quoted;
+   with or without a byte-order mark). An .xlsx is a zip of XML files: it is
+   unzipped with the browser's own decompressor and its first sheet read. The
+   older binary .xls is not read — the owner is told to save it as .xlsx or
+   CSV. Karmasoft-specific recognition follows once a real export is seen. */
+
+function parseCsv(text) {
+  text = text.replace(/^﻿/, '');
+  const first = text.split(/\r?\n/, 1)[0] || '';
+  const count = ch => (first.match(new RegExp('\\' + ch, 'g')) || []).length;
+  const sep = [',', ';', '\t'].sort((a, b) => count(b) - count(a))[0];
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === sep) { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else cell += c;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(x => String(x).trim() !== ''));
+}
+
+async function unzipEntries(buf) {
+  const dv = new DataView(buf), u8 = new Uint8Array(buf);
+  let eocd = -1;
+  for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error('notZip');
+  const n = dv.getUint16(eocd + 10, true);
+  let p = dv.getUint32(eocd + 16, true);
+  const out = {};
+  const dec = new TextDecoder('utf-8');
+  for (let k = 0; k < n; k++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error('badZip');
+    const method = dv.getUint16(p + 10, true), size = dv.getUint32(p + 20, true);
+    const nameLen = dv.getUint16(p + 28, true), extra = dv.getUint16(p + 30, true), comment = dv.getUint16(p + 32, true);
+    const local = dv.getUint32(p + 42, true);
+    const name = dec.decode(u8.subarray(p + 46, p + 46 + nameLen));
+    const lName = dv.getUint16(local + 26, true), lExtra = dv.getUint16(local + 28, true);
+    const data = u8.subarray(local + 30 + lName + lExtra, local + 30 + lName + lExtra + size);
+    out[name] = { method, data };
+    p += 46 + nameLen + extra + comment;
+  }
+  const read = async name => {
+    const e = out[name];
+    if (!e) return null;
+    if (e.method === 0) return dec.decode(e.data);
+    if (e.method !== 8 || typeof DecompressionStream !== 'function') throw new Error('noInflate');
+    const s = new Blob([e.data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    return dec.decode(await new Response(s).arrayBuffer());
+  };
+  return { names:Object.keys(out), read };
+}
+
+async function parseXlsx(buf) {
+  const z = await unzipEntries(buf);
+  const xml = s => new DOMParser().parseFromString(s, 'application/xml');
+  const shared = [];
+  const ss = await z.read('xl/sharedStrings.xml');
+  if (ss) xml(ss).querySelectorAll('si').forEach(si => shared.push([...si.querySelectorAll('t')].map(t => t.textContent).join('')));
+  /* The first sheet in the workbook's order, found through its relationship. */
+  let sheetPath = 'xl/worksheets/sheet1.xml';
+  const wb = await z.read('xl/workbook.xml'), rels = await z.read('xl/_rels/workbook.xml.rels');
+  if (wb && rels) {
+    const first = xml(wb).querySelector('sheet');
+    const rid = first && (first.getAttribute('r:id') || first.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id'));
+    const rel = rid && [...xml(rels).querySelectorAll('Relationship')].find(r => r.getAttribute('Id') === rid);
+    if (rel) { const tgt = rel.getAttribute('Target'); sheetPath = tgt.startsWith('/') ? tgt.slice(1) : 'xl/' + tgt.replace(/^\.\//, ''); }
+  }
+  const sheet = await z.read(sheetPath);
+  if (!sheet) throw new Error('noSheet');
+  const colIdx = ref => { let n = 0; for (const ch of ref.replace(/\d+/g, '')) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
+  const rows = [];
+  xml(sheet).querySelectorAll('sheetData > row').forEach(r => {
+    const row = [];
+    r.querySelectorAll('c').forEach(c => {
+      const ref = c.getAttribute('r'), type = c.getAttribute('t');
+      const v = c.querySelector('v'), is = c.querySelector('is');
+      let val = '';
+      if (type === 's' && v) val = shared[Number(v.textContent)] || '';
+      else if (type === 'inlineStr' && is) val = [...is.querySelectorAll('t')].map(t => t.textContent).join('');
+      else if (v) val = v.textContent;
+      row[ref ? colIdx(ref) : row.length] = val;
+    });
+    for (let i = 0; i < row.length; i++) if (row[i] == null) row[i] = '';
+    rows.push(row);
+  });
+  return rows.filter(r => r.some(x => String(x).trim() !== ''));
+}
+
+/* Which column is which, by its heading first (Arabic or English), and by
+   what is in it when the heading says nothing. */
+const COLUMN_WORDS = {
+  barcode:['barcode', 'bar code', 'ean', 'gtin', 'باركود', 'الباركود', 'رمز', 'كود'],
+  name:   ['name', 'item', 'product', 'description', 'drug', 'اسم', 'الاسم', 'المادة', 'الصنف', 'المنتج', 'الدواء'],
+  qty:    ['qty', 'quantity', 'stock', 'balance', 'count', 'units', 'الكمية', 'كمية', 'العدد', 'الرصيد', 'رصيد'],
+  expiry: ['expiry', 'expiration', 'exp', 'expire', 'انتهاء', 'الانتهاء', 'الصلاحية', 'صلاحية', 'تاريخ الانتهاء'],
+  cost:   ['cost', 'purchase', 'buy', 'price', 'الكلفة', 'التكلفة', 'كلفة', 'سعر الشراء', 'الشراء', 'السعر', 'سعر']
+};
+const IMPORT_FIELDS = ['barcode', 'name', 'qty', 'expiry', 'cost'];
+function detectColumns(header, rows) {
+  const norm = s => String(s || '').toLowerCase().trim();
+  const cols = {};
+  const taken = new Set();
+  /* Headings: expiry before cost, because "تاريخ الانتهاء" and "سعر" never
+     collide but "price" and "purchase date" could. */
+  ['barcode', 'expiry', 'qty', 'cost', 'name'].forEach(f => {
+    const i = header.findIndex((h, k) => !taken.has(k) && COLUMN_WORDS[f].some(w => norm(h) === w || norm(h).includes(w)));
+    if (i >= 0) { cols[f] = i; taken.add(i); }
+  });
+  /* Content, for whatever the headings did not settle. */
+  const sample = rows.slice(0, 30);
+  const share = (k, test) => { const xs = sample.map(r => String(r[k] == null ? '' : r[k]).trim()).filter(Boolean);
+    return xs.length ? xs.filter(test).length / xs.length : 0; };
+  const width = Math.max(header.length, ...sample.map(r => r.length));
+  const free = () => [...Array(width).keys()].filter(k => !taken.has(k));
+  const pick = (f, test, min) => {
+    if (cols[f] != null) return;
+    const best = free().map(k => ({ k, s:share(k, test) })).sort((a, b) => b.s - a.s)[0];
+    if (best && best.s >= min) { cols[f] = best.k; taken.add(best.k); }
+  };
+  pick('barcode', x => /^\d{8,14}$/.test(x), 0.6);
+  pick('expiry', x => !!parseExpiry(x) && !/^\d{1,4}$/.test(x), 0.6);
+  pick('qty', x => /^\d{1,4}$/.test(x), 0.6);
+  pick('cost', x => /^\d+(\.\d+)?$/.test(x) && Number(x) >= 50, 0.6);
+  pick('name', x => /[A-Za-z؀-ۿ]{3,}/.test(x), 0.5);
+  return cols;
+}
+
+/* ---------- The import: read, review, confirm — or save and come back ----------
+
+   Nothing from a file is in stock until the owner has seen it and confirmed.
+   Every row lands in one of five piles: matched (its barcode is known),
+   probably matched (no barcode match, but its name is close to one product —
+   the owner says yes or no), not found, duplicates (merged into the first
+   row with the same product and expiry), and errors (no quantity, or no
+   expiry — an expiry is required, as it is at the count). */
+
+/* Names compared as words: Arabic letter forms folded, strengths kept. */
+function nameTokens(s) {
+  return String(s || '').toLowerCase()
+    .replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي')
+    .replace(/(\d)\s*(mg|ملغ|mcg|g|غ|ml|مل)\b/g, '$1')
+    .split(/[^a-z0-9؀-ۿ.]+/).filter(w => w && !['mg', 'ملغ', 'tab', 'tabs', 'tablets', 'caps', 'capsules', 'قرص', 'اقراص', 'كبسول'].includes(w));
+}
+function matchByName(name) {
+  const a = nameTokens(name);
+  if (!a.length) return null;
+  const scored = PRODUCTS.map(p => {
+    const best = [p.name.en, p.name.ar].map(n => {
+      const b = nameTokens(n); const inter = a.filter(w => b.includes(w)).length;
+      /* A strength that disagrees is a different product, whatever the rest says. */
+      const numsA = a.filter(w => /^\d/.test(w)), numsB = b.filter(w => /^\d/.test(w));
+      if (numsA.length && numsB.length && !numsA.some(x => numsB.includes(x))) return 0;
+      return inter / new Set(a.concat(b)).size;
+    }).sort((x, y) => y - x)[0];
+    return { p, s:best };
+  }).sort((x, y) => y.s - x.s);
+  if (!scored[0] || scored[0].s < 0.34) return null;
+  if (scored[1] && scored[1].s === scored[0].s) return null;      // a tie is not a match
+  return scored[0].p;
+}
+
+function isHeaderRow(row) {
+  return row.some(c => Object.values(COLUMN_WORDS).some(ws => ws.some(w => String(c || '').toLowerCase().includes(w)))) ||
+    row.filter(c => /^[\d.\s/-]*$/.test(String(c || ''))).length < row.length / 2;
+}
+
+async function readImportFile(input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const ph = currentPharmacy();
+  if (!ph || !canManageStock()) return;
+  const ext = (f.name.split('.').pop() || '').toLowerCase();
+  let rows;
+  try {
+    if (ext === 'xls') throw new Error('xls');
+    if (ext === 'xlsx') rows = await parseXlsx(await f.arrayBuffer());
+    else if (ext === 'csv' || ext === 'txt') rows = parseCsv(await f.text());
+    else throw new Error('type');
+  } catch (e) {
+    S.importNote = { kind:e.message === 'xls' ? 'xls' : e.message === 'type' ? 'type' : 'unreadable', file:f.name };
+    render(); return;
+  }
+  if (!rows.length) { S.importNote = { kind:'empty', file:f.name }; render(); return; }
+  const hasHeader = isHeaderRow(rows[0]);
+  const header = hasHeader ? rows[0].map(String) : rows[0].map((_, i) => t('im.column', { n:i + 1 }));
+  const body = hasHeader ? rows.slice(1) : rows;
+  const imp = {
+    id:nextOpId('I', S.imports), pharmacy:ph.id, file:f.name, state:'review',
+    header, rows:body, cols:detectColumns(header, body), decide:{}, startedAt:nowIso(), startedBy:S.email
+  };
+  S.imports.push(imp);
+  S.importNote = null;
+  tillLog('importStarted', { op:imp.id, file:f.name, rows:body.length });
+  S.openImport = imp.id; S.screen = 'import';
+  saveDrafts(); render(); scrollTop();
+}
+
+/* Every row, classified. Recomputed from the raw rows each time, so a column
+   the owner re-points changes the piles at once. */
+function classifyImport(imp) {
+  const c = imp.cols, cell = (r, f) => c[f] == null ? '' : String(r[c[f]] == null ? '' : r[c[f]]).trim();
+  const seen = {};
+  return imp.rows.map((r, i) => {
+    const raw = { barcode:cell(r, 'barcode').replace(/\s/g, ''), name:cell(r, 'name'), qty:cell(r, 'qty'),
+                  expiry:cell(r, 'expiry'), cost:cell(r, 'cost') };
+    const qty = Math.round(Number(raw.qty.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))));
+    const expiry = parseExpiry(raw.expiry);
+    const cost = raw.cost === '' ? null : Number(raw.cost.replace(/,/g, ''));
+    const row = { i, raw, qty, expiry, cost:isFinite(cost) ? cost : null };
+    if (!raw.qty || !isFinite(qty) || qty <= 0) return Object.assign(row, { pile:'error', why:'qty' });
+    if (!expiry) return Object.assign(row, { pile:'error', why:'expiry' });
+    let p = raw.barcode && productByCode(raw.barcode);
+    if (p) row.code = p.barcode, row.pile = 'matched';
+    else {
+      const guess = raw.name && matchByName(raw.name);
+      if (guess) {
+        const d = imp.decide[i];
+        row.guess = guess.barcode;
+        if (d === 'yes') row.code = guess.barcode, row.pile = 'matched', row.confirmed = true;
+        else if (d === 'no') row.pile = 'notFound';
+        else row.pile = 'probable';
+      } else row.pile = 'notFound';
+      /* Not in the catalogue but with a real barcode: it can still come in by
+         its name, and goes for mapping — the owner decides. */
+      if (row.pile === 'notFound' && ean13Valid(raw.barcode)) row.code = raw.barcode, row.unknown = true;
+    }
+    if (row.code) {
+      const k = row.code + '|' + expiry;
+      if (seen[k] != null) return Object.assign(row, { pile:'duplicate', into:seen[k] });
+      seen[k] = i;
+      row.expired = isExpired(expiry);
+      row.already = stockOf(imp.pharmacy, row.code).recorded;
+    }
+    return row;
+  });
+}
+const importIncluded = (imp, row) =>
+  row.pile === 'matched' ? imp.decide['x' + row.i] !== 'exclude' :
+  row.pile === 'notFound' && row.unknown ? imp.decide['x' + row.i] === 'include' : false;
+
+function importDecide(id, key, v) {
+  const imp = S.imports.find(x => x.id === id);
+  if (!imp || imp.state === 'committed' || imp.state === 'undone') return;
+  imp.decide[key] = v; saveDrafts(); render();
+}
+function importColumn(id, field, v) {
+  const imp = S.imports.find(x => x.id === id);
+  if (!imp) return;
+  if (v === '') delete imp.cols[field]; else imp.cols[field] = Number(v);
+  saveDrafts(); render();
+}
+
+function commitImport(id) {
+  const imp = S.imports.find(x => x.id === id);
+  if (!imp || !canManageStock() || (imp.state !== 'review' && imp.state !== 'saved')) return;
+  const rows = classifyImport(imp);
+  const take = rows.filter(r => importIncluded(imp, r));
+  if (!take.length) { S.importNote = { kind:'nothing' }; render(); return; }
+  if (rows.some(r => r.pile === 'probable')) { S.importNote = { kind:'probableLeft' }; render(); return; }
+  const qtyFor = r => r.qty + rows.filter(d => d.pile === 'duplicate' && d.into === r.i).reduce((n, d) => n + d.qty, 0);
+  const codes = new Set();
+  take.forEach(r => {
+    const b = newBatch(imp.pharmacy, r.code, { expiry:r.expiry, shelf:null });
+    addMovement({ pharmacy:imp.pharmacy, code:r.code, batch:b.id, qty:qtyFor(r), kind:'import', ref:imp.id, unitCost:r.cost });
+    if (r.unknown) {
+      (S.unknownNames = S.unknownNames || {})[r.code] = r.raw.name || r.code;
+      if (!S.mappingRequests.some(m => m.barcode === r.code)) S.mappingRequests.push({ barcode:r.code, times:1, first:TODAY_ISO });
+    }
+    codes.add(r.code);
+  });
+  codes.forEach(c => settleUnbatched(imp.pharmacy, c, imp.id));
+  imp.codes = [...codes];
+  imp.state = 'committed'; imp.committedAt = nowIso(); imp.committedBy = S.email;
+  imp.added = take.length;
+  tillLog('import', { op:imp.id, file:imp.file, products:imp.codes.length });
+  S.importNote = null;
+  saveDrafts(); toast(t('im.done', { n:imp.codes.length })); S.screen = 'stock'; render(); scrollTop();
+}
+function saveImport(id) {
+  const imp = S.imports.find(x => x.id === id);
+  if (!imp || imp.state !== 'review') return;
+  imp.state = 'saved'; imp.savedAt = nowIso();
+  tillLog('importSaved', { op:imp.id });
+  saveDrafts(); S.screen = 'stock'; render(); scrollTop();
+}
+function resumeImport(id) {
+  const imp = S.imports.find(x => x.id === id);
+  if (!imp) return;
+  if (imp.state === 'saved') imp.state = 'review';
+  S.openImport = id; S.screen = 'import'; render(); scrollTop();
+}
+function discardImport(id) {
+  const i = S.imports.findIndex(x => x.id === id);
+  if (i < 0 || S.imports[i].state === 'committed' || S.imports[i].state === 'undone') return;
+  tillLog('importDiscarded', { op:id });
+  S.imports.splice(i, 1); saveDrafts(); S.screen = 'stock'; render();
+}
+
+/* Our template, for a pharmacy starting from nothing. */
+function downloadTemplate() {
+  const csv = '﻿Barcode,Name,Quantity,Expiry (MM/YYYY),Unit cost (IQD)\r\n4000000001065,Aspirin Protect 100 mg,12,03/2027,2750\r\n';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
+  a.download = 'saydali-stock-template.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* Saved counts and imports survive closing the app — on this device in the
+   prototype, on the owner's account in production. */
+function saveDrafts() {
+  try {
+    const keep = x => x.state === 'saved' || x.state === 'open' || x.state === 'review';
+    localStorage.setItem('saydali.drafts.' + S.email, JSON.stringify({
+      counts:S.countSessions.filter(keep), imports:S.imports.filter(keep) }));
+  } catch (e) { /* storage full or blocked: the session still holds them */ }
+}
+function restoreDrafts() {
+  try {
+    const d = JSON.parse(localStorage.getItem('saydali.drafts.' + S.email) || 'null');
+    if (!d) return;
+    (d.counts || []).forEach(c => { if (!S.countSessions.some(x => x.id === c.id)) { c.state = 'saved'; S.countSessions.push(c); } });
+    (d.imports || []).forEach(c => { if (!S.imports.some(x => x.id === c.id)) { c.state = 'saved'; S.imports.push(c); } });
+  } catch (e) { /* nothing remembered */ }
+}
+
+/* A new id past every id already used — including ones restored from a
+   saved draft. */
+const nextOpId = (p, list) => p + String(list.reduce((n, x) => Math.max(n, Number(x.id.slice(1)) || 0), 0) + 1).padStart(3, '0');
+
+/* ---------- Counting, shelf by shelf ----------
+
+   The app cannot know where anything sits, so a count starts by naming the
+   shelf — typed once, then offered from the pharmacy's own list. Every box
+   counted is linked to that shelf, and the product remembers where it lives.
+   Scanning with keep-scanning on adds a box per scan; a quantity can be typed
+   instead; expiry is a month and year, with the last box's one tap away. */
+
+function startCount(shelfArg) {
+  const ph = currentPharmacy();
+  if (!ph || !canManageStock()) return;
+  const typed = document.getElementById('shelf-new');
+  const shelf = String(shelfArg != null ? shelfArg : (typed ? typed.value : '')).trim();
+  if (!shelf) { S.stockNote = { kind:'needShelf' }; render(); return; }
+  const list = S.shelves[ph.id] = S.shelves[ph.id] || [];
+  if (!list.includes(shelf)) list.push(shelf);
+  const sess = { id:nextOpId('C', S.countSessions), pharmacy:ph.id, shelf, state:'open', items:[],
+                 lastExpiry:'', startedAt:nowIso(), startedBy:S.email };
+  S.countSessions.push(sess);
+  S.openCount = sess.id; S.stockNote = null; S.screen = 'count';
+  tillLog('countStarted', { op:sess.id, shelf });
+  saveDrafts(); render(); scrollTop();
+}
+const openCountSession = () => S.countSessions.find(x => x.id === S.openCount && x.state === 'open' && (!currentPharmacy() || x.pharmacy === currentPharmacy().id));
+
+function countKey(ev) { if (ev.key === 'Enter') { ev.preventDefault(); countScan(ev.target.value); } }
+function countScan(raw) {
+  const sess = openCountSession();
+  if (!sess) return;
+  const code = String(raw || '').replace(/[\s-]/g, '');
+  S.countQuery = '';
+  if (!/^\d+$/.test(code) || !ean13Valid(code)) { S.stockNote = { kind:'misread', code }; render(); return; }
+  if (!productByCode(code)) {
+    if (!S.mappingRequests.some(r => r.barcode === code)) S.mappingRequests.push({ barcode:code, times:1, first:TODAY_ISO });
+  }
+  S.stockNote = null;
+  /* The same product and the same expiry as a line already open adds a box to
+     it; a product not seen yet in this session takes the expiry last typed
+     for it, or none — and a line with no expiry cannot be confirmed. */
+  const mine = sess.items.filter(it => it.code === code);
+  const expiry = mine.length ? mine[mine.length - 1].expiry : '';
+  const line = mine.find(it => it.expiry === expiry);
+  if (line) { line.qty++; sess.focus = sess.items.indexOf(line); }
+  else { sess.items.push({ code, expiry, qty:1 }); sess.focus = sess.items.length - 1; }
+  saveDrafts(); render();
+}
+function countQty(i, v) {
+  const sess = openCountSession(); const it = sess && sess.items[i];
+  if (!it) return;
+  const n = Math.round(Number(v));
+  if (!isFinite(n) || n < 0) return;
+  if (n === 0) sess.items.splice(i, 1); else it.qty = n;
+  saveDrafts(); render();
+}
+function countStep(i, d) { const sess = openCountSession(); const it = sess && sess.items[i]; if (it) countQty(i, it.qty + d); }
+function countExpiry(i, v) {
+  const sess = openCountSession(); const it = sess && sess.items[i];
+  if (!it) return;
+  const ym = parseExpiry(v);
+  if (!ym) { S.stockNote = { kind:'badExpiry' }; render(); return; }
+  /* A second expiry for the same product is a second line, not a rewrite. */
+  const twin = sess.items.find((x, k) => k !== i && x.code === it.code && x.expiry === ym);
+  if (twin) { twin.qty += it.qty; sess.items.splice(i, 1); }
+  else it.expiry = ym;
+  sess.lastExpiry = ym; S.stockNote = null;
+  saveDrafts(); render();
+}
+function countSameAsLast(i) { const sess = openCountSession(); if (sess && sess.lastExpiry) countExpiry(i, sess.lastExpiry); }
+/* Another box of the same product with a different date. */
+function countSplit(i) {
+  const sess = openCountSession(); const it = sess && sess.items[i];
+  if (!it) return;
+  sess.items.splice(i + 1, 0, { code:it.code, expiry:'', qty:1 }); sess.focus = i + 1;
+  saveDrafts(); render();
+}
+function saveCount() {
+  const sess = openCountSession();
+  if (!sess) return;
+  sess.state = 'saved'; sess.savedAt = nowIso();
+  tillLog('countSaved', { op:sess.id, shelf:sess.shelf, lines:sess.items.length });
+  saveDrafts(); S.openCount = null; S.screen = 'stock'; render(); scrollTop();
+}
+function resumeCount(id) {
+  const sess = S.countSessions.find(x => x.id === id && x.state === 'saved');
+  if (!sess) return;
+  sess.state = 'open'; S.openCount = id; S.screen = 'count'; render(); scrollTop();
+}
+function discardCount(id) {
+  const i = S.countSessions.findIndex(x => x.id === id && (x.state === 'open' || x.state === 'saved'));
+  if (i < 0) return;
+  tillLog('countDiscarded', { op:id });
+  S.countSessions.splice(i, 1); saveDrafts(); S.screen = 'stock'; render();
+}
+function confirmCount() {
+  const sess = openCountSession();
+  if (!sess || !canManageStock()) return;
+  if (!sess.items.length) { S.stockNote = { kind:'emptyCount' }; render(); return; }
+  if (sess.items.some(it => !it.expiry)) { S.stockNote = { kind:'needExpiry' }; render(); return; }
+  commitCount(sess);
+  tillLog('count', { op:sess.id, shelf:sess.shelf, products:sess.codes.length });
+  S.openCount = null; S.stockNote = null;
+  saveDrafts(); toast(t('ct.done', { n:sess.codes.length, shelf:sess.shelf })); S.screen = 'stock'; render(); scrollTop();
+}
+
+/* ---------- Write-offs ---------- */
+
+/* An expired batch, or a return set aside, leaves stock only this way: a
+   movement with a reason, a date and a name — what an inspector or the
+   supplier will ask for. */
+function writeOff(batchId) {
+  if (!canManageStock()) return;
+  const b = S.batches.find(x => x.id === batchId);
+  const sel = document.getElementById('wo-' + batchId);
+  const reason = sel ? sel.value : '';
+  if (!b || !reason) { S.stockNote = { kind:'needReason' }; render(); return; }
+  const q = batchQty(b.id);
+  if (q <= 0) return;
+  addMovement({ pharmacy:b.pharmacy, code:b.code, batch:b.id, qty:-q, kind:'writeoff', reason });
+  tillLog('writeoff', { code:b.code, batch:b.id, qty:q, reason });
+  S.stockNote = null; render();
+}
+function setMinLevel(code) {
+  const ph = currentPharmacy(); const el = document.getElementById('min-level');
+  if (!ph || !el || !canManageStock()) return;
+  const n = Math.round(Number(el.value));
+  const mins = S.minLevels[ph.id] = S.minLevels[ph.id] || {};
+  if (!el.value || !isFinite(n) || n <= 0) delete mins[code]; else mins[code] = n;
+  tillLog('minLevel', { code, min:mins[code] || null });
+  toast(t('st.minSaved')); render();
+}
+
+/* ---------- Suppliers ---------- */
+
+/* The CRM's distributors and storage houses (the Externals with those
+   licences). A supplier an owner adds that is not here stays private to their
+   pharmacy and goes to the CRM's queue; it is never linked without them. */
+const CRM_SUPPLIERS = [
+  { id:'CO1', name:{ ar:'سامراء لصناعة الأدوية', en:'Samarra Drug Industries' } },
+  { id:'CO4', name:{ ar:'الوكيل العراقي للأدوية', en:'Iraqi Drug Agency Co.' } },
+  { id:'CO5', name:{ ar:'الرافدين للتوزيع الدوائي', en:'Rafidain Pharma Distribution' } },
+  { id:'CO7', name:{ ar:'مخازن بغداد الدوائية', en:'Baghdad Pharmaceutical Stores' } },
+  { id:'CO8', name:{ ar:'مذخر الشفاء للأدوية', en:'Al-Shifa Drug Store' } }
+];
+/* Words that say what a supplier IS rather than which one it is: a match on
+   "store" alone is no match. The Arabic ones cover the ways one storage house
+   gets written — مذخر، مخزن، مستودع. */
+const SUPPLIER_GENERIC = new Set(['store', 'stores', 'storage', 'house', 'warehouse', 'drugstore', 'drug', 'drugs', 'pharma',
+  'pharmaceutical', 'pharmaceuticals', 'distribution', 'distributor', 'company', 'co', 'for', 'of', 'the', 'and', 'industries',
+  'مذخر', 'مخزن', 'مخازن', 'مستودع', 'ادويه', 'للادويه', 'الادويه', 'دوائيه', 'الدوائيه', 'شركه', 'الشركه', 'للتوزيع', 'توزيع',
+  'الدوائي', 'دوائي', 'لصناعه', 'صناعه']);
+/* The same name, spelt the two usual ways. */
+const SUPPLIER_ALIAS = { shifa:'شفا', 'شفاء':'شفا', 'الشفاء':'شفا', 'الشفا':'شفا', rafidain:'رافدين', 'الرافدين':'رافدين',
+  baghdad:'بغداد', samarra:'سامراء', iraqi:'عراقي', 'العراقي':'عراقي', agency:'وكيل', 'الوكيل':'وكيل' };
+function supplierTokens(s) {
+  return String(s || '').toLowerCase()
+    .replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي')
+    .replace(/\bal[- ]/g, ' ').split(/[^a-z0-9؀-ۿ]+/).filter(Boolean)
+    .map(w => SUPPLIER_ALIAS[w] || (w.length > 3 && w.startsWith('ال') ? (SUPPLIER_ALIAS[w.slice(2)] || w.slice(2)) : w))
+    .map(w => SUPPLIER_ALIAS[w] || w)
+    .filter(w => !SUPPLIER_GENERIC.has(w));
+}
+function supplierMatches(name) {
+  const a = supplierTokens(name);
+  if (!a.length) return [];
+  return CRM_SUPPLIERS.map(c => {
+    const s = Math.max(...[c.name.ar, c.name.en].map(n => { const b = supplierTokens(n); return a.filter(w => b.includes(w)).length; }));
+    return { c, s };
+  }).filter(x => x.s > 0).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.c);
+}
+const suppliersOf = ph => S.suppliers.filter(s => s.pharmacy === ph);
+const supplierLabel = s => s.linked ? L((CRM_SUPPLIERS.find(c => c.id === s.linked) || {}).name || { ar:s.name, en:s.name }) : s.name;
+
+function supplierQuery(v) {
+  S.supplierQuery = v; render();
+  const el = document.getElementById('sup-q');
+  if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+function addSupplier(linkTo) {
+  const ph = currentPharmacy();
+  const name = String(S.supplierQuery || '').trim();
+  if (!ph || !canManageStock() || (!name && !linkTo)) return;
+  if (linkTo && suppliersOf(ph.id).some(s => s.linked === linkTo)) { S.supplierQuery = ''; render(); return; }
+  const sup = { id:'SP' + (S.suppliers.length + 1), pharmacy:ph.id, name:name || L(CRM_SUPPLIERS.find(c => c.id === linkTo).name),
+                linked:linkTo || null, suggest:null, addedAt:nowIso(), addedBy:S.email };
+  S.suppliers.push(sup);
+  /* Not in the CRM: private, and a task for the team. */
+  if (!linkTo) S.supplierRequests.push({ name, pharmacy:ph.id, at:nowIso() });
+  tillLog(linkTo ? 'supplierLinked' : 'supplierAdded', { supplier:sup.id, crm:linkTo || null, name:sup.name });
+  S.supplierQuery = ''; render();
+}
+/* The CRM team found the record: the owner is asked, never told. */
+function answerSupplierLink(id, yes) {
+  const s = S.suppliers.find(x => x.id === id);
+  if (!s || !s.suggest || !canManageStock()) return;
+  tillLog(yes ? 'supplierLinked' : 'supplierLinkRefused', { supplier:id, crm:s.suggest });
+  if (yes) s.linked = s.suggest;
+  s.suggest = null; s.refused = !yes;
+  render();
+}
+
+/* ---------- Purchase orders ----------
+
+   Draft → sent → received, with partial receipt. "Sent" records that it was
+   sent — the order text can be copied into WhatsApp — and nothing passes
+   through the platform. Receiving writes the batches: quantity, bonus units
+   at zero cost, expiry, and what each unit cost. */
+
+function newOrder() {
+  const ph = currentPharmacy();
+  if (!ph || !canManageStock()) return;
+  const o = { id:nextOpId('P', S.orders), pharmacy:ph.id, supplier:(suppliersOf(ph.id)[0] || {}).id || null,
+              state:'draft', lines:[], createdAt:nowIso(), createdBy:S.email, receipts:[] };
+  S.orders.push(o);
+  tillLog('orderCreated', { order:o.id });
+  S.openOrder = o.id; S.screen = 'order'; render(); scrollTop();
+}
+const openOrderRec = () => S.orders.find(o => o.id === S.openOrder);
+function openOrder(id) { S.openOrder = id; S.screen = 'order'; render(); scrollTop(); }
+function orderSupplier(v) { const o = openOrderRec(); if (o && o.state === 'draft') { o.supplier = v || null; render(); } }
+function orderKey(ev) { if (ev.key === 'Enter') { ev.preventDefault(); orderAdd(ev.target.value); } }
+function orderAdd(raw) {
+  const o = openOrderRec();
+  if (!o || o.state !== 'draft') return;
+  const v = String(raw || '').trim();
+  const p = productByCode(v.replace(/\s/g, '')) || matchByName(v);
+  if (!p) { S.stockNote = { kind:'notFound', code:v }; render(); return; }
+  const l = o.lines.find(x => x.code === p.barcode);
+  if (l) l.qty++; else o.lines.push({ code:p.barcode, qty:1, bonus:0, cost:null, received:0, bonusReceived:0 });
+  S.stockNote = null; S.orderQuery = ''; render();
+}
+function orderLine(i, field, v) {
+  const o = openOrderRec(); const l = o && o.lines[i];
+  if (!l || o.state !== 'draft') return;
+  const n = v === '' ? (field === 'cost' ? null : 0) : Math.round(Number(v));
+  if (n != null && (!isFinite(n) || n < 0)) return;
+  if (field === 'qty' && n === 0) o.lines.splice(i, 1); else l[field] = n;
+  render();
+}
+function sendOrder() {
+  const o = openOrderRec();
+  if (!o || o.state !== 'draft') return;
+  if (!o.supplier) { S.stockNote = { kind:'needSupplier' }; render(); return; }
+  if (!o.lines.length) { S.stockNote = { kind:'emptyOrder' }; render(); return; }
+  o.state = 'sent'; o.sentAt = nowIso(); o.sentBy = S.email;
+  o.lines.forEach(l => { l.recv = { qty:l.qty, bonus:l.bonus, expiry:'', cost:l.cost == null ? '' : l.cost }; });
+  tillLog('orderSent', { order:o.id, supplier:o.supplier });
+  S.stockNote = null; render();
+}
+function orderText(o) {
+  const s = S.suppliers.find(x => x.id === o.supplier);
+  return [t('po.textHead', { id:o.id, ph:L(PHARMACIES[o.pharmacy].name) }), s ? supplierLabel(s) : '']
+    .concat(o.lines.map(l => '• ' + productName(l.code) + ' × ' + l.qty + (l.bonus ? ' (+' + l.bonus + ' ' + t('po.bonus') + ')' : '')))
+    .filter(Boolean).join('\n');
+}
+function copyOrder() {
+  const o = openOrderRec(); if (!o) return;
+  try { navigator.clipboard.writeText(orderText(o)); toast(t('po.copied')); } catch (e) { toast(t('po.copyFailed')); }
+}
+function orderRecv(i, field, v) { const o = openOrderRec(); const l = o && o.lines[i]; if (l && l.recv) l.recv[field] = v; }
+function receiveOrder() {
+  const o = openOrderRec();
+  if (!o || !canManageStock() || (o.state !== 'sent' && o.state !== 'partial')) return;
+  const got = [];
+  for (const l of o.lines) {
+    const r = l.recv || {};
+    const qty = Math.round(Number(r.qty || 0)), bonus = Math.round(Number(r.bonus || 0));
+    if (!qty && !bonus) continue;
+    if (!isFinite(qty) || !isFinite(bonus) || qty < 0 || bonus < 0) { S.stockNote = { kind:'badReceive' }; render(); return; }
+    const expiry = parseExpiry(r.expiry);
+    if (!expiry) { S.stockNote = { kind:'needExpiry' }; render(); return; }
+    const cost = r.cost === '' || r.cost == null ? null : Math.round(Number(r.cost));
+    got.push({ l, qty, bonus, expiry, cost:isFinite(cost) ? cost : null });
+  }
+  if (!got.length) { S.stockNote = { kind:'nothingReceived' }; render(); return; }
+  const rec = { at:nowIso(), by:S.email, lines:[] };
+  got.forEach(g => {
+    const b = newBatch(o.pharmacy, g.l.code, { expiry:g.expiry, shelf:null });
+    if (g.qty) addMovement({ pharmacy:o.pharmacy, code:g.l.code, batch:b.id, qty:g.qty, kind:'receipt', ref:o.id, unitCost:g.cost });
+    /* Bonus units: received, at nothing. */
+    if (g.bonus) addMovement({ pharmacy:o.pharmacy, code:g.l.code, batch:b.id, qty:g.bonus, kind:'bonus', ref:o.id, unitCost:0 });
+    g.l.received += g.qty; g.l.bonusReceived += g.bonus;
+    g.l.recv = { qty:Math.max(0, g.l.qty - g.l.received), bonus:Math.max(0, g.l.bonus - g.l.bonusReceived), expiry:'', cost:g.l.recv.cost };
+    rec.lines.push({ code:g.l.code, qty:g.qty, bonus:g.bonus, expiry:g.expiry, cost:g.cost, batch:b.id });
+  });
+  o.receipts.push(rec);
+  o.state = o.lines.every(l => l.received >= l.qty && l.bonusReceived >= l.bonus) ? 'received' : 'partial';
+  tillLog('orderReceived', { order:o.id, lines:rec.lines.length, state:o.state });
+  S.stockNote = null; toast(t('po.receivedToast')); render();
+}
+function closeOrder() {
+  const o = openOrderRec();
+  if (!o || o.state !== 'partial') return;
+  o.state = 'closed'; o.closedAt = nowIso();
+  tillLog('orderClosed', { order:o.id });
+  render();
+}
+
+/* ---------- Stock screens ---------- */
+
+/* Every stock screen belongs to one pharmacy, as the till does. */
+function stockChooser(tabs, next) {
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<p class="section-eyebrow">' + esc(t('st.choose')) + '</p><div class="card">' +
+    myPharmacies().map(p => '<button class="row" style="width:100%;text-align:start;" onclick="setPharmacy(' + attr(p.id) + ')">' +
+      '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(L(p.district)) + '</span></span>' +
+      icon('chevron', 'more-chevron') + '</button>').join('') + '</div></div></div>';
+}
+const stockNoteHtml = () => !S.stockNote ? '' :
+  '<div class="banner banner-amber st-note">' + icon('alert') + '<p>' + esc(t('st.note.' + S.stockNote.kind, { code:S.stockNote.code || '' })) + '</p></div>';
+const fmtWhen = iso => { const d = new Date(iso), p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); };
+const personName = mail => L(accountName(mail));
+
+function screenStock() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs);
+  const pr = stockPrompts(ph.id);
+  const sum = countedSummary(ph.id);
+  const importedCodes = new Set(S.imports.filter(o => o.pharmacy === ph.id && o.state === 'committed').flatMap(o => o.codes));
+  const countedCodes = new Set(S.countSessions.filter(o => o.pharmacy === ph.id && o.state === 'committed').flatMap(o => o.codes));
+
+  const listRow = (code, sub, badge) =>
+    '<button class="row" style="width:100%;text-align:start;" onclick="openProduct(' + attr(code) + ')">' +
+      '<span class="row-body"><span class="row-title" style="display:block;">' + esc(productName(code)) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(sub) + '</span></span>' + (badge || '') +
+      icon('chevron', 'more-chevron') + '</button>';
+  const prompt = (cls, key, n, rows) => !n ? '' :
+    '<details class="card st-prompt ' + cls + '"><summary><span class="st-prompt-n figure">' + fmt(n) + '</span>' +
+      '<span>' + esc(t(key + 'H')) + '</span></summary>' + rows + '</details>';
+
+  const prompts =
+    prompt('st-count', 'st.countThis', pr.countThis.length,
+      pr.countThis.map(x => listRow(x.code, t('st.soldPast', { n:x.short }))).join('')) +
+    prompt('st-expired', 'st.expired', pr.expired.length,
+      pr.expired.map(x => listRow(x.b.code, t('st.expiredRow', { n:x.q, exp:fmtExpiry(x.b.expiry) }))).join('')) +
+    prompt('st-near', 'st.near', pr.near.length,
+      pr.near.map(x => listRow(x.b.code, t('st.nearRow', { n:x.q, exp:fmtExpiry(x.b.expiry) }))).join('')) +
+    prompt('st-low', 'st.low', pr.low.length,
+      pr.low.map(x => listRow(x.code, t('st.lowRow', { have:x.have, min:x.min }))).join('')) +
+    prompt('st-quar', 'st.quarantined', pr.quarantined.length,
+      pr.quarantined.map(x => listRow(x.code, t('st.quarRow', { n:x.q }))).join(''));
+
+  const drafts = S.countSessions.filter(o => o.pharmacy === ph.id && (o.state === 'saved' || o.state === 'open'))
+    .map(o => '<div class="row st-draft"><span class="row-body"><span class="row-title" style="display:block;">' +
+      esc(t('st.draftCount', { shelf:o.shelf })) + '</span><span class="row-sub" style="display:block;">' +
+      esc(t('st.draftCountSub', { n:o.items.reduce((a, it) => a + it.qty, 0), when:fmtWhen(o.savedAt || o.startedAt) })) + '</span></span>' +
+      '<button class="btn-small" onclick="resumeCount(' + attr(o.id) + ')">' + esc(t('st.resume')) + '</button></div>')
+    .concat(S.imports.filter(o => o.pharmacy === ph.id && (o.state === 'saved' || o.state === 'review'))
+    .map(o => '<div class="row st-draft"><span class="row-body"><span class="row-title" style="display:block;">' +
+      esc(t('st.draftImport', { file:o.file })) + '</span><span class="row-sub" style="display:block;">' +
+      esc(t('st.draftImportSub', { n:o.rows.length, when:fmtWhen(o.savedAt || o.startedAt) })) + '</span></span>' +
+      '<button class="btn-small" onclick="resumeImport(' + attr(o.id) + ')">' + esc(t('st.resume')) + '</button></div>')).join('');
+
+  const ops = stockOps().filter(o => o.pharmacy === ph.id && (o.state === 'committed' || o.state === 'undone'))
+    .sort((a, b) => (b.committedAt || '').localeCompare(a.committedAt || ''));
+  const opRow = o => {
+    const u = undoState(o);
+    return '<div class="row st-op" data-op="' + esc(o.id) + '"><span class="row-body">' +
+      '<span class="row-title" style="display:block;">' + esc(o.id[0] === 'C' ? t('st.opCount', { shelf:o.shelf }) : t('st.opImport', { file:o.file })) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(t('st.opSub', { n:o.codes.length, who:personName(o.committedBy), when:fmtWhen(o.committedAt) })) +
+        (o.state === 'undone' ? ' · ' + esc(t('st.opUndone', { who:personName(o.undoneBy) })) :
+         !u.ok ? ' · ' + esc(t('st.noUndo.' + u.why)) : ' · ' + esc(t('st.undoUntil', { when:fmtWhen(new Date(u.until).toISOString()) }))) +
+      '</span></span>' +
+      (u.ok ? '<button class="btn-ghost st-undo" onclick="undoOp(' + attr(o.id) + ')">' + esc(t('st.undo')) + '</button>' : '') +
+    '</div>';
+  };
+  const openOrders = S.orders.filter(o => o.pharmacy === ph.id && ['draft', 'sent', 'partial'].includes(o.state)).length;
+  const toConfirm = suppliersOf(ph.id).filter(s => s.suggest).length;
+  const shelves = Object.entries(sum.shelves);
+
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="st-summary card card-pad"><p class="st-big">' + esc(t('st.drugsCounted', { n:countedCodes.size })) + '</p>' +
+      (importedCodes.size ? '<p class="st-small">' + esc(t('st.drugsImported', { n:importedCodes.size })) + '</p>' : '') +
+      (shelves.length ? '<div class="st-shelves">' + shelves.map(([s, v]) =>
+        '<span class="chip st-shelf">' + esc(s) + ' · ' + esc(t('st.shelfCount', { n:v.codes.size, boxes:v.boxes })) + '</span>').join('') + '</div>' : '') +
+      /* Only once something has a cost: purchases carry it, a count does not. */
+      (canManageStock() && stockValue(ph.id) > 0 ? '<p class="st-small st-value">' + esc(t('st.value', { v:iqd(stockValue(ph.id)) })) + '</p>' : '') +
+    '</div>' +
+    prompts +
+    '<div class="st-actions">' +
+      '<button class="btn-primary st-count-btn" onclick="goto(\'count\')">' + icon('barcode') + esc(t('st.countShelf')) + '</button>' +
+      '<button class="btn-secondary st-import-btn" onclick="goto(\'import\')">' + esc(t('st.importSheet')) + '</button>' +
+    '</div>' +
+    (drafts ? '<p class="section-eyebrow">' + esc(t('st.saved')) + '</p><div class="card">' + drafts + '</div>' : '') +
+    '<div class="card">' +
+      linkRow('st.orders', openOrders ? t('st.ordersOpen', { n:openOrders }) : '', "goto('orders')") +
+      linkRow('st.suppliers', toConfirm ? t('st.suppliersConfirm', { n:toConfirm }) : '', "goto('suppliers')") +
+      linkRow('st.register', '', "goto('register')") +
+      linkRow('st.catalogue', '', "goto('products')") +
+    '</div>' +
+    (ops.length ? '<p class="section-eyebrow">' + esc(t('st.history')) + '</p><div class="card st-ops">' + ops.map(opRow).join('') + '</div>' : '') +
+    '</div></div>';
+}
+const linkRow = (key, sub, go) =>
+  '<button class="row" style="width:100%;text-align:start;" onclick="' + go + '"><span class="row-body">' +
+    '<span class="row-title" style="display:block;">' + esc(t(key)) + '</span>' +
+    (sub ? '<span class="row-sub" style="display:block;">' + esc(sub) + '</span>' : '') + '</span>' +
+    icon('chevron', 'more-chevron') + '</button>';
+
+/* ---------- The count ---------- */
+
+function screenCount() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs);
+  const sess = openCountSession();
+  if (!sess) {
+    const shelves = S.shelves[ph.id] || [];
+    return '<div class="screen-body">' + tabs + '<div class="constrain stack">' + stockNoteHtml() +
+      '<div class="card card-pad"><p class="urgent-t">' + esc(t('ct.whichShelf')) + '</p>' +
+        '<p class="urgent-s" style="margin-bottom:10px;">' + esc(t('ct.whichShelfS')) + '</p>' +
+        (shelves.length ? '<div class="take-chips" style="margin-bottom:10px;">' + shelves.map(s =>
+          '<button class="chip st-shelf-pick" onclick="startCount(' + attr(s) + ')">' + esc(s) + '</button>').join('') + '</div>' : '') +
+        '<div class="till-inline"><input id="shelf-new" placeholder="' + esc(t('ct.shelfPh')) + '">' +
+        '<button class="btn-small" onclick="startCount()">' + esc(t('ct.start')) + '</button></div>' +
+      '</div></div></div>';
+  }
+  const boxes = sess.items.reduce((a, it) => a + it.qty, 0);
+  const codes = new Set(sess.items.map(it => it.code)).size;
+  const itemRow = (it, i) =>
+    '<div class="till-line ct-line' + (sess.focus === i ? ' ct-focus' : '') + (it.expiry ? '' : ' ct-noexp') + '">' +
+      '<div class="till-line-top"><span class="till-line-name">' + esc(productName(it.code)) +
+        (productByCode(it.code) ? '' : ' <span class="badge badge-alert">' + esc(t('ct.unknown')) + '</span>') + '</span></div>' +
+      '<div class="till-line-bottom">' +
+        '<span class="qty"><button class="qty-btn" onclick="countStep(' + i + ',-1)">−</button>' +
+          '<input class="ct-qty figure" type="number" inputmode="numeric" value="' + it.qty + '" onchange="countQty(' + i + ', this.value)">' +
+          '<button class="qty-btn" onclick="countStep(' + i + ',1)">+</button></span>' +
+        '<input class="ct-exp" dir="ltr" inputmode="numeric" placeholder="MM/YY" value="' + esc(it.expiry ? fmtExpiry(it.expiry).replace(/\/20(\d\d)$/, '/$1') : '') + '" ' +
+          'onchange="countExpiry(' + i + ', this.value)">' +
+        (!it.expiry && sess.lastExpiry
+          ? '<button class="btn-ghost ct-same" onclick="countSameAsLast(' + i + ')">' + esc(t('ct.same', { exp:fmtExpiry(sess.lastExpiry) })) + '</button>' : '') +
+        '<button class="link-btn" onclick="countSplit(' + i + ')">' + esc(t('ct.otherDate')) + '</button>' +
+      '</div></div>';
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="till-head"><span class="till-ph">' + esc(t('ct.counting', { shelf:sess.shelf })) + '</span>' +
+      '<span class="till-by ct-progress">' + esc(t('ct.progress', { n:codes, boxes })) + '</span></div>' +
+    '<div class="till-scanrow"><div class="searchbox">' + icon('barcode') +
+      '<input id="count-q" type="search" autocomplete="off" inputmode="numeric" placeholder="' + esc(t('ct.scan')) + '" onkeydown="countKey(event)"></div>' +
+      '<button class="btn-scan" onclick="cameraScanFor(\'count\')">' + icon('camera') + '<span>' + esc(t('scan.button')) + '</span></button></div>' +
+    stockNoteHtml() +
+    (sess.items.length ? '<div class="card till-cart">' + sess.items.map(itemRow).join('') + '</div>'
+      : '<div class="card card-pad till-empty">' + esc(t('ct.empty')) + '</div>') +
+    (notYetCounted(sess).length
+      ? '<details class="card ct-left" open><summary>' + esc(t('ct.notYet', { n:notYetCounted(sess).length })) + '</summary>' +
+          notYetCounted(sess).map(c => '<div class="row"><span class="row-body"><span class="row-title" style="display:block;">' + esc(productName(c)) + '</span></span></div>').join('') +
+          '<p class="inline-note ct-leave" style="padding:0 14px 12px;">' + esc(t('ct.willLeave')) + '</p></details>' : '') +
+    '<p class="inline-note">' + esc(t('ct.howto')) + '</p>' +
+    '<button class="btn-primary ct-confirm" onclick="confirmCount()">' + esc(t('ct.confirm', { n:codes })) + '</button>' +
+    '<div class="till-receipt-bar"><button class="btn-secondary ct-save" onclick="saveCount()">' + esc(t('ct.save')) + '</button>' +
+      '<button class="btn-secondary" onclick="discardCount(' + attr(sess.id) + ')">' + esc(t('ct.discard')) + '</button></div>' +
+    '</div></div>';
+}
+
+/* ---------- The import ---------- */
+
+function screenImport() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs);
+  const imp = S.imports.find(x => x.id === S.openImport && x.state === 'review');
+  const note = !S.importNote ? '' :
+    '<div class="banner banner-amber im-note">' + icon('alert') + '<p>' + esc(t('im.note.' + S.importNote.kind, { file:S.importNote.file || '' })) + '</p></div>';
+  if (!imp) {
+    return '<div class="screen-body">' + tabs + '<div class="constrain stack">' + note +
+      '<div class="card card-pad"><p class="urgent-t">' + esc(t('im.title')) + '</p>' +
+        '<p class="urgent-s" style="margin-bottom:12px;">' + esc(t('im.sub')) + '</p>' +
+        '<label class="btn-primary im-pick">' + esc(t('im.pick')) +
+          '<input id="im-file" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ' +
+          'onchange="readImportFile(this)" hidden></label>' +
+        '<button class="link-btn im-template" style="display:block;margin:12px auto 0;" onclick="downloadTemplate()">' + esc(t('im.template')) + '</button>' +
+      '</div>' +
+      '<p class="inline-note">' + esc(t('im.karmasoft')) + '</p>' +
+      '</div></div>';
+  }
+  const rows = classifyImport(imp);
+  const piles = ['matched', 'probable', 'notFound', 'duplicate', 'error'];
+  const count = k => rows.filter(r => r.pile === k).length;
+  const included = rows.filter(r => importIncluded(imp, r)).length;
+  const colSel = f => '<label class="im-col"><span>' + esc(t('im.f.' + f)) + '</span><select onchange="importColumn(' + attr(imp.id) + ',' + attr(f) + ', this.value)">' +
+    '<option value="">' + esc(t('im.none')) + '</option>' +
+    imp.header.map((h, k) => '<option value="' + k + '"' + (imp.cols[f] === k ? ' selected' : '') + '>' + esc(h || t('im.column', { n:k + 1 })) + '</option>').join('') +
+    '</select></label>';
+  const rowHtml = r => {
+    const label = r.code && productByCode(r.code) ? L(productByCode(r.code).name) : (r.raw.name || r.raw.barcode || '—');
+    const bits = [r.qty > 0 ? t('im.qty', { n:r.qty }) : '', r.expiry ? fmtExpiry(r.expiry) : r.raw.expiry, r.cost != null ? iqd(r.cost) : ''].filter(Boolean).join(' · ');
+    const flags = (r.expired ? ' <span class="badge badge-alert">' + esc(t('im.expired')) + '</span>' : '') +
+                  (r.already ? ' <span class="badge badge-pending">' + esc(t('im.already')) + '</span>' : '');
+    let act = '';
+    if (r.pile === 'matched') act = '<label class="im-inc"><input type="checkbox" ' + (importIncluded(imp, r) ? 'checked ' : '') +
+      'onchange="importDecide(' + attr(imp.id) + ',' + attr('x' + r.i) + ', this.checked ? \'include\' : \'exclude\')"></label>';
+    if (r.pile === 'probable') act = '<span class="im-yn"><button class="btn-small im-yes" onclick="importDecide(' + attr(imp.id) + ',' + r.i + ',\'yes\')">' +
+      esc(t('im.yes')) + '</button><button class="btn-ghost im-no" onclick="importDecide(' + attr(imp.id) + ',' + r.i + ',\'no\')">' + esc(t('im.no')) + '</button></span>';
+    if (r.pile === 'notFound' && r.unknown) act = '<label class="im-inc"><input type="checkbox" ' + (importIncluded(imp, r) ? 'checked ' : '') +
+      'onchange="importDecide(' + attr(imp.id) + ',' + attr('x' + r.i) + ', this.checked ? \'include\' : \'exclude\')"></label>';
+    const sub = r.pile === 'probable' ? t('im.isIt', { name:L(productByCode(r.guess).name) }) :
+                r.pile === 'duplicate' ? t('im.mergedInto', { n:r.into + 1 }) :
+                r.pile === 'error' ? t('im.err.' + r.why) :
+                r.pile === 'notFound' ? (r.unknown ? t('im.byName') : t('im.noBarcode')) : bits;
+    return '<div class="row im-row" data-pile="' + r.pile + '" data-row="' + r.i + '"><span class="row-body">' +
+      '<span class="row-title" style="display:block;">' + esc(t('im.rowN', { n:r.i + 1 })) + ' · ' + esc(label) + flags + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(sub) + (r.pile !== 'matched' && bits && r.pile !== 'error' ? ' · ' + esc(bits) : '') + '</span></span>' + act + '</div>';
+  };
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' + note +
+    '<div class="till-head"><span class="till-ph">' + esc(imp.file) + '</span><span class="till-by">' + esc(t('im.rows', { n:rows.length })) + '</span></div>' +
+    '<details class="card card-pad im-cols"><summary>' + esc(t('im.columns')) + '</summary><div class="im-colgrid">' +
+      IMPORT_FIELDS.map(colSel).join('') + '</div></details>' +
+    piles.map(k => !count(k) ? '' :
+      '<details class="card im-pile im-' + k + '"' + (k === 'probable' || k === 'error' ? ' open' : '') + '><summary>' +
+        '<span class="st-prompt-n figure">' + count(k) + '</span><span>' + esc(t('im.pile.' + k)) + '</span></summary>' +
+        rows.filter(r => r.pile === k).map(rowHtml).join('') + '</details>').join('') +
+    '<button class="btn-primary im-confirm" onclick="commitImport(' + attr(imp.id) + ')">' + esc(t('im.confirm', { n:included })) + '</button>' +
+    '<div class="till-receipt-bar"><button class="btn-secondary im-save" onclick="saveImport(' + attr(imp.id) + ')">' + esc(t('im.save')) + '</button>' +
+      '<button class="btn-secondary" onclick="discardImport(' + attr(imp.id) + ')">' + esc(t('im.discard')) + '</button></div>' +
+    '<p class="inline-note">' + esc(t('im.undoNote')) + '</p>' +
+    '</div></div>';
+}
+
+/* ---------- Orders ---------- */
+
+const orderStateChip = s => '<span class="badge ' + (s === 'received' ? 'badge-verified' : s === 'draft' ? 'badge-stage' : 'badge-pending') +
+  ' po-state">' + esc(t('po.s.' + s)) + '</span>';
+function screenOrders() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs);
+  const list = S.orders.filter(o => o.pharmacy === ph.id).slice().reverse();
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<button class="btn-primary po-new" onclick="newOrder()">' + esc(t('po.new')) + '</button>' +
+    (list.length ? '<div class="card">' + list.map(o => {
+      const s = S.suppliers.find(x => x.id === o.supplier);
+      return '<button class="row" style="width:100%;text-align:start;" onclick="openOrder(' + attr(o.id) + ')"><span class="row-body">' +
+        '<span class="row-title" style="display:block;">' + esc(o.id) + ' · ' + esc(s ? supplierLabel(s) : t('po.noSupplier')) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(t('po.lines', { n:o.lines.length })) + '</span></span>' +
+        orderStateChip(o.state) + icon('chevron', 'more-chevron') + '</button>'; }).join('') + '</div>'
+      : '<div class="card card-pad till-empty">' + esc(t('po.none')) + '</div>') +
+    '</div></div>';
+}
+function screenOrder() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  const o = openOrderRec();
+  if (!ph || !o || o.pharmacy !== ph.id) return screenOrders();
+  const sups = suppliersOf(ph.id);
+  const draft = o.state === 'draft', receiving = o.state === 'sent' || o.state === 'partial';
+  const num = (i, f, v, ph2) => '<input class="po-in po-' + f + '" type="number" inputmode="numeric" dir="ltr" value="' + (v == null ? '' : v) +
+    '" placeholder="' + esc(ph2) + '" onchange="orderLine(' + i + ',' + attr(f) + ', this.value)">';
+  const line = (l, i) => '<div class="till-line po-line">' +
+    '<div class="till-line-top"><span class="till-line-name">' + esc(productName(l.code)) + '</span>' +
+      (!draft ? '<span class="till-line-unit figure">' + esc(t('po.got', { n:l.received, of:l.qty, b:l.bonusReceived, bof:l.bonus })) + '</span>' : '') + '</div>' +
+    (draft
+      ? '<div class="po-grid"><label>' + esc(t('po.qty')) + num(i, 'qty', l.qty, '') + '</label>' +
+          '<label>' + esc(t('po.bonus')) + num(i, 'bonus', l.bonus, '0') + '</label>' +
+          '<label>' + esc(t('po.cost')) + num(i, 'cost', l.cost, t('po.costPh')) + '</label></div>'
+      : receiving && l.recv
+        ? '<div class="po-grid po-recv"><label>' + esc(t('po.recvQty')) +
+            '<input class="po-in po-rq" type="number" inputmode="numeric" dir="ltr" value="' + esc(l.recv.qty) + '" oninput="orderRecv(' + i + ',\'qty\', this.value)"></label>' +
+            '<label>' + esc(t('po.bonus')) + '<input class="po-in po-rb" type="number" inputmode="numeric" dir="ltr" value="' + esc(l.recv.bonus) + '" oninput="orderRecv(' + i + ',\'bonus\', this.value)"></label>' +
+            '<label>' + esc(t('po.expiry')) + '<input class="po-in po-re" dir="ltr" placeholder="MM/YY" value="' + esc(l.recv.expiry) + '" oninput="orderRecv(' + i + ',\'expiry\', this.value)"></label>' +
+            '<label>' + esc(t('po.cost')) + '<input class="po-in po-rc" type="number" inputmode="numeric" dir="ltr" value="' + esc(l.recv.cost) + '" oninput="orderRecv(' + i + ',\'cost\', this.value)"></label></div>'
+        : '') +
+    '</div>';
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="till-head"><span class="till-ph">' + esc(o.id) + '</span>' + orderStateChip(o.state) + '</div>' +
+    stockNoteHtml() +
+    '<div class="field"><label>' + esc(t('po.supplier')) + '</label>' +
+      (draft
+        ? '<select class="po-supplier" onchange="orderSupplier(this.value)"><option value="">' + esc(t('po.pickSupplier')) + '</option>' +
+            sups.map(s => '<option value="' + esc(s.id) + '"' + (o.supplier === s.id ? ' selected' : '') + '>' + esc(supplierLabel(s)) + '</option>').join('') + '</select>' +
+          '<button class="link-btn" style="margin-top:6px;" onclick="goto(\'suppliers\')">' + esc(t('po.addSupplier')) + '</button>'
+        : '<p class="row-title">' + esc(supplierLabel(S.suppliers.find(x => x.id === o.supplier))) + '</p>') + '</div>' +
+    (draft ? '<div class="searchbox">' + icon('barcode') + '<input id="po-q" type="search" autocomplete="off" placeholder="' + esc(t('po.addLine')) + '" onkeydown="orderKey(event)"></div>' : '') +
+    (o.lines.length ? '<div class="card till-cart">' + o.lines.map(line).join('') + '</div>' : '<div class="card card-pad till-empty">' + esc(t('po.empty')) + '</div>') +
+    (draft ? '<button class="btn-primary po-send" onclick="sendOrder()">' + esc(t('po.send')) + '</button>' +
+             '<p class="inline-note">' + esc(t('po.sendNote')) + '</p>' : '') +
+    (receiving ? '<button class="btn-primary po-receive" onclick="receiveOrder()">' + esc(t('po.receive')) + '</button>' +
+                 '<p class="inline-note">' + esc(t('po.receiveNote')) + '</p>' +
+                 '<button class="btn-secondary" onclick="copyOrder()">' + esc(t('po.copy')) + '</button>' : '') +
+    (o.state === 'partial' ? '<button class="btn-secondary po-close" onclick="closeOrder()">' + esc(t('po.close')) + '</button>' : '') +
+    '<button class="link-btn" onclick="goto(\'orders\')">' + esc(t('po.back')) + '</button>' +
+    '</div></div>';
+}
+
+/* ---------- Suppliers ---------- */
+
+function screenSuppliers() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs);
+  const mine = suppliersOf(ph.id);
+  const q = S.supplierQuery || '';
+  const sugg = q.trim() ? supplierMatches(q) : [];
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    mine.filter(s => s.suggest).map(s => {
+      const c = CRM_SUPPLIERS.find(x => x.id === s.suggest);
+      return '<div class="card card-pad sp-confirm" data-sp="' + esc(s.id) + '"><p class="urgent-t">' +
+        esc(t('sp.same', { mine:s.name, crm:L(c.name) })) + '</p><p class="urgent-s" style="margin:4px 0 10px;">' + esc(t('sp.sameS')) + '</p>' +
+        '<div class="till-inline"><button class="btn-small sp-yes" onclick="answerSupplierLink(' + attr(s.id) + ', true)">' + esc(t('sp.yes')) + '</button>' +
+        '<button class="btn-ghost sp-no" onclick="answerSupplierLink(' + attr(s.id) + ', false)">' + esc(t('sp.no')) + '</button></div></div>';
+    }).join('') +
+    '<div class="card card-pad"><p class="urgent-t" style="margin-bottom:8px;">' + esc(t('sp.add')) + '</p>' +
+      '<div class="searchbox"><input id="sup-q" autocomplete="off" value="' + esc(q) + '" placeholder="' + esc(t('sp.addPh')) + '" oninput="supplierQuery(this.value)"></div>' +
+      (sugg.length ? '<p class="section-eyebrow" style="margin-top:10px;">' + esc(t('sp.suggested')) + '</p>' +
+        sugg.map(c => '<div class="row sp-sugg" data-crm="' + c.id + '"><span class="row-body"><span class="row-title" style="display:block;">' + esc(L(c.name)) + '</span>' +
+          '<span class="row-sub" style="display:block;">' + esc(t('sp.inCrm')) + '</span></span>' +
+          '<button class="btn-small sp-pick" onclick="addSupplier(' + attr(c.id) + ')">' + esc(t('sp.thisOne')) + '</button></div>').join('') : '') +
+      (q.trim() ? '<button class="btn-secondary sp-own" style="margin-top:10px;" onclick="addSupplier()">' + esc(t('sp.addOwn', { name:q.trim() })) + '</button>' +
+        '<p class="inline-note" style="margin-top:6px;">' + esc(t('sp.ownNote')) + '</p>' : '') +
+    '</div>' +
+    (mine.length ? '<p class="section-eyebrow">' + esc(t('sp.yours')) + '</p><div class="card">' + mine.map(s =>
+      '<div class="row sp-row" data-sp="' + esc(s.id) + '"><span class="row-body"><span class="row-title" style="display:block;">' + esc(supplierLabel(s)) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(s.linked ? t('sp.linked') : s.suggest ? t('sp.waiting') : t('sp.private')) + '</span></span></div>').join('') + '</div>' : '') +
+    '</div></div>';
+}
+
+/* ---------- The controlled register ---------- */
+
+function screenRegister() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs);
+  const reg = controlledRegister(ph.id);
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<p class="inline-note">' + esc(t('rg.note')) + '</p>' +
+    (reg.length ? '<div class="card rg-table">' + reg.slice().reverse().map(m =>
+      '<div class="row rg-row"><span class="row-body"><span class="row-title" style="display:block;">' + esc(productName(m.code)) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(fmtWhen(m.at)) + ' · ' + esc(t('mv.' + m.kind)) + ' · ' + esc(personName(m.by)) + (m.ref ? ' · ' + esc(m.ref) : '') + '</span></span>' +
+        '<span class="rg-q figure' + (m.qty < 0 ? ' neg' : '') + '">' + (m.qty > 0 ? '+' : '') + m.qty + '</span>' +
+        '<span class="rg-bal figure">' + esc(t('rg.bal', { n:m.balance })) + '</span></div>').join('') + '</div>'
+      : '<div class="card card-pad till-empty">' + esc(t('rg.empty')) + '</div>') +
+    '</div></div>';
+}
+
+/* ---------- On a product: its stock, where it lives, and its history ---------- */
+
+function stockCard(p) {
+  const ph = currentPharmacy();
+  if (!canManageStock() || !ph) return '';
+  const st = stockOf(ph.id, p.barcode);
+  const where = ((S.shelfOf[ph.id] || {})[p.barcode] || []);
+  const min = (S.minLevels[ph.id] || {})[p.barcode];
+  const reasons = ['destroyed', 'returnedToSupplier', 'other'];
+  const batchRow = b => {
+    const cost = batchCost(b.id);
+    const writeable = (b.expired || b.kind === 'quarantine') && b.qty > 0;
+    return '<div class="row sk-batch" data-kind="' + (b.expired ? 'expired' : b.kind) + '"><span class="row-body">' +
+      '<span class="row-title" style="display:block;">' + esc(b.kind === 'unbatched' ? t('sk.unbatched') : b.kind === 'quarantine' ? t('sk.quarantine') :
+        t('sk.batch', { exp:fmtExpiry(b.expiry) })) +
+        (b.expired ? ' <span class="badge badge-alert">' + esc(t('sk.expired')) + '</span>' : '') + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc([b.shelf, cost != null ? t('sk.cost', { c:iqd(cost) }) : ''].filter(Boolean).join(' · ')) + '</span>' +
+      (writeable ? '<span class="till-inline sk-wo"><select id="wo-' + b.id + '"><option value="">' + esc(t('sk.why')) + '</option>' +
+        reasons.map(r => '<option value="' + r + '">' + esc(t('sk.r.' + r)) + '</option>').join('') + '</select>' +
+        '<button class="btn-small" onclick="writeOff(' + attr(b.id) + ')">' + esc(t('sk.writeOff')) + '</button></span>' : '') +
+      '</span><span class="figure sk-q' + (b.qty < 0 ? ' neg' : '') + '">' + b.qty + '</span></div>';
+  };
+  const hist = S.movements.filter(m => m.pharmacy === ph.id && m.code === p.barcode).slice(-15).reverse();
+  return '<p class="section-eyebrow">' + esc(t('sk.title', { ph:L(ph.name) })) + '</p>' +
+    '<div class="card card-pad sk-card">' +
+      '<div class="sk-figs"><span><b class="figure sk-avail">' + st.available + '</b> ' + esc(t('sk.available')) + '</span>' +
+        (st.expired ? '<span><b class="figure">' + st.expired + '</b> ' + esc(t('sk.expiredQ')) + '</span>' : '') +
+        (st.quarantine ? '<span><b class="figure">' + st.quarantine + '</b> ' + esc(t('sk.quarantineQ')) + '</span>' : '') + '</div>' +
+      (st.available <= 0 && st.expired ? '<p class="inline-note sk-onlyexp">' + esc(t('sk.onlyExpired', { n:st.expired })) + '</p>' : '') +
+      (where.length ? '<p class="sk-where">' + icon('pin') + esc(t('sk.where', { shelves:where.join(' · ') })) + '</p>' : '') +
+      '<div class="till-inline" style="margin-top:10px;"><input id="min-level" type="number" inputmode="numeric" dir="ltr" value="' + (min || '') + '" placeholder="' +
+        esc(t('sk.minPh')) + '"><button class="btn-small" onclick="setMinLevel(' + attr(p.barcode) + ')">' + esc(t('sk.minSave')) + '</button></div>' +
+    '</div>' +
+    stockNoteHtml() +
+    (st.batches.length ? '<div class="card sk-batches">' + st.batches.filter(b => b.qty !== 0 || b.kind === 'stock').map(batchRow).join('') + '</div>' : '') +
+    (hist.length ? '<details class="card sk-hist"><summary>' + esc(t('sk.history', { n:S.movements.filter(m => m.pharmacy === ph.id && m.code === p.barcode).length })) + '</summary>' +
+      hist.map(m => '<div class="row sk-mv"><span class="row-body"><span class="row-title" style="display:block;">' + esc(t('mv.' + m.kind)) +
+        (m.reason ? ' · ' + esc(t('sk.r.' + m.reason) === 'sk.r.' + m.reason ? m.reason : t('sk.r.' + m.reason)) : '') + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(fmtWhen(m.at)) + ' · ' + esc(personName(m.by)) + (m.ref ? ' · ' + esc(m.ref) : '') + '</span></span>' +
+        '<span class="figure sk-q' + (m.qty < 0 ? ' neg' : '') + '">' + (m.qty > 0 ? '+' : '') + m.qty + '</span></div>').join('') + '</details>' : '');
+}
+
+/* The owner's home: what the shelf needs, in one card, only when it needs
+   something. */
+function stockHomeCard() {
+  const ph = currentPharmacy();
+  if (!ph || !screenAllowed('stock')) return '';
+  const pr = stockPrompts(ph.id);
+  const bits = [pr.countThis.length ? t('st.countThis', { n:pr.countThis.length }) : '',
+                pr.expired.length ? t('st.expired', { n:pr.expired.length }) : '',
+                pr.near.length ? t('st.near', { n:pr.near.length }) : '',
+                pr.low.length ? t('st.low', { n:pr.low.length }) : ''].filter(Boolean);
+  const counted = countedSummary(ph.id).drugs;
+  return linkCard('barcode', t('d.stockT'), bits.length ? bits.join(' · ') : counted ? t('st.drugsCounted', { n:counted }) : t('d.stockStart'), "goto('stock')");
+}
+
+/* The camera, pointed at the count rather than the till. */
+function cameraScanFor(target) { S.scanTarget = target; cameraScan(); }
 
 function screenProducts() {
   const q = drugNorm(S.productQuery);
@@ -5361,6 +6912,7 @@ function screenProduct() {
       kv(t('pd.pack'), L(p.pack)) +
     '</div>' +
     priceCard(p) +
+    stockCard(p) +
     '<button class="btn-secondary" onclick="goto(\'products\')">' + esc(t('pd.back')) + '</button>' +
     '</div></div>';
 }
@@ -5382,6 +6934,7 @@ function dashboardDark(lead) {
       esc(t('fee.trialDays', {n:22})) + '</p></div>' : '') +
     bannerFor('home') +
     tillCard() +
+    stockHomeCard() +
     linkCard('barcode', t('d.catalogueT', { n:sum.total }), t('d.catalogueS', { n:sum.uncheckable }), "goto('products')") +
     (hasTrainee
       ? linkCard('cap', ready ? t('d.traineeReady', { n:ready }) : t('d.traineeOn'),
@@ -6401,6 +7954,13 @@ const SCREENS = {
   checkin:       { eyebrow:()=>greeting(), title:()=>currentName(), body:screenCheckin },
   tasks:         { eyebrow:()=>currentName(), title:()=>t('nav.tasks'), body:screenTasks },
   products:      { eyebrow:()=>currentName(), title:()=>t('nav.products'), body:screenProducts },
+  stock:         { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('nav.stock'), body:screenStock },
+  count:         { eyebrow:()=>t('nav.stock'), title:()=>t('st.countShelf'), body:screenCount },
+  import:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.importSheet'), body:screenImport },
+  orders:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.orders'), body:screenOrders },
+  order:         { eyebrow:()=>t('st.orders'), title:()=>S.openOrder || '', body:screenOrder },
+  suppliers:     { eyebrow:()=>t('nav.stock'), title:()=>t('st.suppliers'), body:screenSuppliers },
+  register:      { eyebrow:()=>t('nav.stock'), title:()=>t('st.register'), body:screenRegister },
   till:          { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); },
                    title:()=>S.receiptFor ? t('till.receipt') : t('nav.till'), body:screenTill },
   addPharmacy:   { eyebrow:()=>currentName(), title:()=>t('ap.title'), body:screenAddPharmacy },
@@ -6487,7 +8047,9 @@ const NAV_DARK = {
                ['cv','clipboard','nav.cv'],['profile','user','nav.profile']],
   /* The till takes the trainee's slot on the bar: it is used every few
      minutes, the trainee once a month, and the dashboard links there. */
-  owner:      [['dashboard','home','nav.dashboard'],['till','till','nav.till'],['products','barcode','nav.products'],
+  /* v0.0013: Stock takes the catalogue's slot. The catalogue and its prices
+     are one tap inside it, and in the sidebar. */
+  owner:      [['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],
                ['drugs','pill','nav.drugs'],['profile','user','nav.profile']]
 };
 
@@ -6516,7 +8078,7 @@ function sidebarGroups() {
    somebody owes is not a simplification. */
 function ownerGroups() {
   const groups = [
-    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['till','till','nav.till'],['products','barcode','nav.products'],
+    { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],['products','barcode','nav.products'],
                                  ['post','plus','nav.post'],
                                  ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
                                  /* The pharmacy's own consumption. Commercial, not
@@ -6958,7 +8520,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0012.1.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0013.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -7014,6 +8576,8 @@ function signInAs(mail){
   S.pharmacyTab = null;
   S.till = tillReset();
   S.receiptFor = null;
+  S.openCount = null; S.openImport = null; S.openOrder = null; S.stockNote = null; S.importNote = null;
+  restoreDrafts();
   S.signedIn = true;
   S.screen = navFor(S.role)[0][0];
   authError = null;
@@ -7288,6 +8852,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.modal) c
 
 readFlags();
 restoreLogos();
+seedStock();
 render();
 </script>
 </body>
