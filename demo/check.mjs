@@ -2575,7 +2575,11 @@ console.log('\nsearch by any name, and stock without barcodes (v0.0013.3)');
      await dk.evaluate(() => { goto('count'); countQueryInput('Rosewater 100 ml'); document.querySelector('.own-offer').click();
        document.querySelector('.own-add').click(); return S.localItems.length === 2 && openCountSession().items.some(i => i.code === 'L-P1-002'); }));
   ok('a pharmacist who is not the owner is not offered to add items (until permissions, v0.0015)',
-     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); return ownOffer('till', 'something new') === '' && createLocalItem('P1', 'x') === null; }));
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en');
+       /* Pinned to the pharmacy, so only the role can be what refuses. */
+       const real = window.currentPharmacy; window.currentPharmacy = () => PHARMACIES.P1;
+       const r = ownOffer('till', 'something new') === '' && createLocalItem('P1', 'x') === null;
+       window.currentPharmacy = real; return r; }));
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('import'); });
   await dk.setInputFiles('#im-file', { name:'no-barcodes.csv', mimeType:'text/csv',
     buffer:Buffer.from('Name,Qty,Expiry\nZaatar herbal tea,5,06/2027\nOud incense sticks,3,01/2028\n') });
