@@ -77,7 +77,7 @@ ok('the file states the build its name claims',
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
-ok('twelve tabs: home, the ten modules, and reports', await p.locator('.tab').count() === 12);
+ok('thirteen tabs: home, the eleven modules, and reports', await p.locator('.tab').count() === 13);
 ok('the document is English, left to right', await p.evaluate(() =>
    document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
 ok('there is no language toggle left to press',
@@ -802,6 +802,38 @@ ok('three spellings are one row of the report, with how many owners confirmed',
      return !!shifa && shifa.pharmacies === 3 && shifa.confirmed === 1 && r.rows.length === 2; }));
 ok('the CRM holds no way to confirm a link for an owner',
    await p.evaluate(() => !/confirmed\s*=\s*true/.test([...document.scripts].map(s => s.textContent).join('\n'))));
+/* v0.0013.2 — the Ministry's register and the Essential Drugs List. */
+ok('the Ministry’s register is here, every row of it',
+   await p.evaluate(() => DATA.register.length === 5214 && DATA.register.every(r => r.id && (r.trade || r.sci))));
+ok('its list draws the first 300 and says how to narrow the rest',
+   await p.evaluate(() => { S.record = null; S.tab = 'register'; S.view.register = 'all'; render();
+     const rows = document.querySelectorAll('table.grid tbody tr').length;
+     return rows === 300 && /first 300 of 5,214/.test(document.querySelector('.cap-note').innerText); }));
+ok('the top search finds a registered product by trade name, quickly',
+   await p.evaluate(() => { const t0 = performance.now(); search('aspirin protect'); const ms = performance.now() - t0;
+     const hit = [...document.querySelectorAll('.tb-result')].some(b => /Aspirin/i.test(b.innerText) && /Register/.test(b.innerText));
+     search(''); return hit && ms < 1500; }));
+ok('catalogue products are linked to their registration — by name and strength, and only when one row clearly fits',
+   await p.evaluate(() => { const linked = DATA.catalogue.filter(x => x.reg);
+     const asp = DATA.catalogue.find(x => x.barcode === '4000000001065');
+     const r = findRecord('register', asp.reg);
+     return linked.length >= 20 && /aspirin/i.test(r.trade) && /100/.test(r.trade) &&
+       DATA.register.filter(x => x.linked.length).length === linked.length; }));
+ok('a registration opens, with its holder, number, and the catalogue product it is',
+   await p.evaluate(() => { const asp = DATA.catalogue.find(x => x.barcode === '4000000001065'); openRecord('register', asp.reg);
+     const t = document.getElementById('main').innerText; S.record = null;
+     return /Bayer/i.test(t) && /483\/8-9-2015/.test(t) && /Aspirin Protect 100 mg/.test(t); }));
+ok('the catalogue record shows its registration',
+   await p.evaluate(() => { openRecord('catalogue', '4000000001065'); const t = document.getElementById('main').innerText; S.record = null;
+     return /483\/8-9-2015/.test(t); }));
+ok('a drug record shows where the Essential Drugs List has it, with the national codes and the source',
+   await p.evaluate(() => { openRecord('drugs', 'Furosemide'); const t = document.querySelector('.edl-panel').innerText; S.record = null;
+     return /01-B00-007/.test(t) && /Diuretics/.test(t) && /Essential Drugs List, 25 Jul 2023/.test(t); }));
+ok('mapping an unknown barcode, the register is searched as the operator types, and a pick fills the name',
+   await p.evaluate(() => { const code = DATA.catalogue.find(x => x.mapping === 'unmapped').barcode; openMapProduct(code);
+     mapRegSearch('glucophage 850'); const hits = document.querySelectorAll('#m-reg-results .reg-hit');
+     hits[0].click(); const name = document.getElementById('m-name-en').value; const chosen = !!document.querySelector('.reg-chosen');
+     closeModal(); return hits.length >= 1 && /glucophage/i.test(name) && chosen; }));
 ok('and the report that reads it agrees',
    await p.evaluate(() => {
      const r = runReport(reportById('R20'));

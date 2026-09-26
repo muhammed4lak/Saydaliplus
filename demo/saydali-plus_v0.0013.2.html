@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0013.1">
+<meta name="version" content="App_v0.0013.2">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -984,6 +984,46 @@
   .take-chip{ font-size:12px; }
   .till-confirm{ margin-top:4px; }
   .till-other{ display:block; margin:10px auto 0; }
+  /* v0.0013.2 — the owner's home, simpler */
+  :root{ --spark:#B9B6D3; }
+  .hm-hero{ padding:18px 18px 14px; }
+  .hm-label{ font-size:13px; color:var(--ink-soft); }
+  .hm-fig{ font-family:var(--font-body); font-weight:600; font-size:44px; line-height:1.1; color:var(--indigo-dark); margin-top:4px; }
+  html[dir="rtl"] .hm-fig{ font-family:var(--font-body); }
+  .hm-fig small{ font-size:16px; font-weight:500; color:var(--ink-soft); margin-inline-start:6px; }
+  .hm-delta{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:13px; color:var(--ink-soft); margin-top:6px; }
+  .hm-up{ color:var(--palm); font-weight:600; }
+  .hm-down{ color:var(--clay); font-weight:600; }
+  .hm-spark{ display:block; width:100%; height:54px; margin-top:12px; }
+  .hm-days{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-faint); margin-top:4px; }
+  .hm-actions{ display:grid; grid-template-columns:1.4fr 1fr; gap:10px; }
+  .hm-actions button{ display:flex; align-items:center; justify-content:center; gap:8px; }
+  .hm-actions button[disabled]{ opacity:.45; }
+  .hm-actions .ico{ width:18px; height:18px; flex:none; }
+  .hm-needs-t{ font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-faint); margin:4px 4px 0; }
+  .hm-row{ display:flex; align-items:center; gap:12px; padding:13px 14px; border-bottom:1px solid var(--border); width:100%; text-align:start; }
+  .hm-row:last-child{ border-bottom:none; }
+  .hm-dot{ width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; background:var(--mist); color:var(--indigo); }
+  .hm-dot.warn{ background:var(--amber-tint); color:var(--amber); }
+  .hm-dot.bad{ background:var(--clay-tint); color:var(--clay); }
+  .hm-dot .ico{ width:16px; height:16px; }
+  .hm-row-t{ flex:1; min-width:0; font-size:14px; font-weight:500; }
+  .hm-row-t span{ display:block; font-size:12px; color:var(--ink-soft); font-weight:400; margin-top:2px; }
+  /* H4: the same labelled slot, drawn as one quiet line. */
+  .hm-ann .banner-slot{ margin:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; padding:9px 13px; border-radius:12px; }
+  .hm-ann .banner-tag{ margin:0; font-size:10.5px; padding:2px 7px; }
+  .hm-ann .banner-t{ font-size:12.5px; font-weight:600; margin:0; }
+  .hm-ann .banner-s{ display:none; }
+  .hm-ph{ display:flex; align-items:center; gap:12px; padding:14px; border-bottom:1px solid var(--border); width:100%; text-align:start; }
+  .hm-ph:last-child{ border-bottom:none; }
+  .hm-ph-t{ flex:1; min-width:0; font-size:14.5px; font-weight:600; }
+  .hm-ph-t > span{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12px; font-weight:400; color:var(--ink-soft); margin-top:3px; }
+  .hm-ph-fig{ text-align:end; flex:none; font-size:15px; }
+  .hm-ph-fig span{ display:block; font-size:11.5px; font-weight:500; margin-top:2px; }
+  .hm-cant{ color:var(--ink-faint); }
+  .hm-badge{ font-size:11.5px; font-weight:600; padding:2px 8px; border-radius:100px; background:var(--amber-tint); color:#8A5610; }
+  .hm-badge.bad{ background:var(--clay-tint); color:var(--clay); }
+  .hm-badge.ok{ background:var(--mist); color:var(--ink-soft); }
   /* v0.0013.1 — the till and the Helper as one */
   .till-wrap.has-bar{ padding-bottom:84px; }
   .till-mode{ margin-bottom:0; }
@@ -1600,6 +1640,24 @@ const STRINGS = {
 };
 
 let lang = 'ar';
+Object.assign(STRINGS.ar, {
+  /* v0.0013.2 */
+  'hm.salesToday':'مبيعات اليوم','hm.salesTodayAll':'مبيعات اليوم · {n} صيدليات','hm.today':'اليوم','hm.weekLabel':'المبيعات خلال سبعة أيام',
+  'hm.vsYesterday':'عن أمس · {n} عمليات بيع','hm.noneYet':'لا مبيعات بعد اليوم · أمس {y}','hm.openTill':'افتح الكاشير',
+  'hm.needs':'بانتظارك · {n}','hm.needsNone':'لا شيء بانتظارك الآن.','hm.needsN':'{n} بانتظارك','hm.nothingNeeds':'لا شيء بانتظارك',
+  'hm.suppliers':'موردون بانتظار تأكيدك: {n}','hm.pending':'الصيدلية قيد المراجعة','hm.pendingS':'تُفتح بالكامل عند التوثيق.',
+  'hm.noResponsibleS':'لا يُصرف دواء حتى يُضاف صيدلي مسؤول.','hm.yourPharmacies':'صيدلياتك','hm.cantSell':'لا يمكنها البيع','hm.noSalesShort':'لا مبيعات بعد',
+  'pd.reg':'مسجّل في العراق','edl.title':'في قائمة الأدوية الأساسية','edl.none':'ليس في قائمة الأدوية الأساسية.','edl.source':'المصدر: {src}.'
+});
+Object.assign(STRINGS.en, {
+  'hm.salesToday':'Sales today','hm.salesTodayAll':'Sales today · {n} pharmacies','hm.today':'Today','hm.weekLabel':'Sales over seven days',
+  'hm.vsYesterday':'vs yesterday · {n} sales','hm.noneYet':'No sales yet today · yesterday {y}','hm.openTill':'Open the till',
+  'hm.needs':'Needs you · {n}','hm.needsNone':'Nothing needs you right now.','hm.needsN':'{n} need you','hm.nothingNeeds':'nothing needs you',
+  'hm.suppliers':'Suppliers to confirm: {n}','hm.pending':'This pharmacy is under review','hm.pendingS':'It opens fully once verified.',
+  'hm.noResponsibleS':'Nothing can be dispensed until a responsible pharmacist is added.','hm.yourPharmacies':'Your pharmacies','hm.cantSell':'can’t sell','hm.noSalesShort':'no sales yet',
+  'pd.reg':'Registered in Iraq','edl.title':'On the Essential Drugs List','edl.none':'Not on the Essential Drugs List.','edl.source':'Source: {src}.'
+});
+
 Object.assign(STRINGS.ar, {
   /* v0.0013.1 */
   'tl.sell':'بيع','tl.checkOnly':'فحص فقط','tl.checkOnlyNote':'فحص فقط — البيع يمنحه المالك (مع الصلاحيات).',
@@ -2656,6 +2714,119 @@ const PRODUCTS = [
   {"barcode":"3000000001585","name":{"ar":"واقي شمس SPF 50","en":"Sunscreen SPF 50"},"form":null,"strength":"","pack":{"ar":"50 مل","en":"50 mL"},"price":15000,"mapping":"nondrug","molecules":[]}
 ];
 /* PRODUCTS:END */
+/* SOURCES:BEGIN */
+const EDL_SOURCE = "NCDS Essential Drugs List, 25 Jul 2023 (list 1188)";
+const EDL_BY_DRUG = {
+  "Paracetamol":[{"code":"04-G00-020","item":"Paracetamol 125mg Suppository piece (infant)","cls":"Central Nervous System"},{"code":"04-G00-036","item":"Paracetamol 10 mg /ml . I.V. Infusion (100 ml container) 100 ml","cls":"Central Nervous System"},{"code":"04-G00-037","item":"Paracetamol 10 mg /ml . I.V. Infusion (50 ml vail ) vial","cls":"Central Nervous System"},{"code":"04-G00-038","item":"Paracetamol 120mg/5ml or 125mg/5ml suspension or syrup 100ml bottle 975","cls":"Central Nervous System"},{"code":"04-G00-021","item":"Paracetamol 250mg Suppository piece (child)","cls":"Central Nervous System"},{"code":"04-G00-027","item":"Paracetamol 500mg Tablet tablet","cls":"Central Nervous System"}],
+  "Ibuprofen":[{"code":"10-AA0-011","item":"Ibuprofen 200mg Tablet tablet","cls":"Nsaid"},{"code":"10-AA0-013","item":"Ibuprofen 100mg/5ml Oral liquid dosage form bottle","cls":"Nsaid"}],
+  "Diclofenac":[{"code":"10-AA0-001","item":"Diclofenac sodium enteric coated 25mg Tablet tablet","cls":"Nsaid"},{"code":"10-AA0-005","item":"Diclofenac sodium 25mg/ml (3ml) Ampoule I.M. Injection only Ampoul","cls":"Nsaid"}],
+  "Aspirin":[{"code":"04-G00-002","item":"Acetylsalicylic acid 100mg (enteric coated)Tablet tablet \\1070","cls":"Central Nervous System"}],
+  "Meloxicam":[{"code":"10-AA0-044","item":"Meloxicam 7.5mg Tablet tablet","cls":"Nsaid"}],
+  "Tramadol":[{"code":"04-H00-012","item":"Tramadol hydrochloride 50mg / 1ml (2 ml) Ampoule or vial I.M.;S .C","cls":"Analgesics Used For Severe Pain (Opioid Analgesics)"}],
+  "Amoxicillin":[{"code":"05-AA0-002","item":"Amoxycillin (as trihydrate) 500mg Capsule or tablet capsule","cls":"Penicillins"},{"code":"05-AA0-004","item":"Amoxycillin (as trihydrate) 250mg/5ml Powder for oral suspension100 ml bottle Access","cls":"Penicillins"},{"code":"05-AA0-007","item":"Amoxycillin (as sodium) 500mg Vial. (I.V,I.M) vial Access","cls":"Penicillins"}],
+  "Amoxicillin/Clavulanic acid":[{"code":"05-AA0-029","item":"Amoxycillin (as trihydrate) 500mg+ Clavulanic acid (as potassium salt)","cls":"Penicillins"},{"code":"05-AA0-031","item":"Amoxycillin (as trihydrate) 250mg+ Clavulanic acid (as potassium salt)","cls":"Penicillins"}],
+  "Azithromycin":[{"code":"05-AG0-049","item":"Azithromycin (as dihydrate)or (as monohydrate)eq. To anhydrous","cls":"Others"}],
+  "Ciprofloxacin":[{"code":"05-AG0-005","item":"Ciprofloxacin as hydrochloride or Ciprofloxacin as hydrochloride","cls":"Others"},{"code":"05-AG0-051","item":"Ciprofloxacin (as lactate or as hydrochloride) 2mg/ml in sodium cloride","cls":"Others"},{"code":"11-A00-005","item":"Ciprofloxacin (as Hydrochloride) 0.3% Eye Drop","cls":"Anti-Infective Preparations"}],
+  "Levofloxacin":[{"code":"05-AG0-012","item":"Levofloxacin 500mg Scored Tablet Tablet 1154","cls":"Others"}],
+  "Cephalexin":[{"code":"05-AB0-013","item":"Cephalexin ( as monohydrate ) eq. to 500 mg anhydrous ( Cephalexin 500","cls":"Cephalosporins"},{"code":"05-AB0-015","item":"Cephalexin (as monohydrate) 250mg/5ml,Powder for oral suspension 100ml bottle Access","cls":"Cephalosporins"}],
+  "Ceftriaxone":[{"code":"05-AB0-031","item":"Ceftriaxone (as Sodium) or (as disodium salt ) or(Disodium","cls":"Cephalosporins"}],
+  "Doxycycline":[{"code":"05-AD0-001","item":"Doxycycline ( as hyclate )100 mg tablet or capsule Tablet","cls":"Tetracyclines"}],
+  "Metronidazole":[{"code":"05-D00-012","item":"Metronidazole 500 mg coated tablet tablet Access","cls":"Antiprotozal Drugs"},{"code":"05-D00-013","item":"Metronidazole 5mg/ml, (100ml) I.V. Infusion Vial","cls":"Antiprotozal Drugs"},{"code":"05-D00-014","item":"Metronidazole (as benzoate) 200mg/5ml,Suspension bottle Access","cls":"Antiprotozal Drugs"}],
+  "Nitrofurantoin":[{"code":"05-AJ0-006","item":"Nitrofurantoin 100mg Tablet or capsule Tablet","cls":"Drugs For Uti"}],
+  "Trimethoprim/Sulfamethoxazole":[{"code":"05-AF0-001","item":"Co-trimoxazole 480mg Tablet tablet Access","cls":"Antibacterial Drugs"},{"code":"05-AF0-003","item":"Co-trimoxazole 240mg/5ml, Suspension bottle Access","cls":"Antibacterial Drugs"}],
+  "Clindamycin":[{"code":"05-AG0-025","item":"Clindamycin (as phosphate) 150mg/ml, (2ml) Ampoule or vial I.V.,I.M vial or","cls":"Others"},{"code":"13-G00-004","item":"Clindamycin as phosphate 1% topical Solution. bottle","cls":"Antibacterial Skin Preparations"}],
+  "Fluconazole":[{"code":"05-C00-019","item":"Fluconazole 150mg Tablet or capsule Tablet","cls":"Antifungal Drugs"}],
+  "Acyclovir":[{"code":"05-B00-001","item":"Acyclovir (as sodium salt) 250mg Vial I.V. Infusion vial","cls":"Antiviral Drugs"},{"code":"05-B00-003","item":"Acyclovir 200mg/5ml Suspension bottle","cls":"Antiviral Drugs"},{"code":"05-B00-002","item":"Acyclovir 200mg Tablet Tablet","cls":"Antiviral Drugs"},{"code":"11-A00-001","item":"Acyclovir 3% Eye Ointment tube","cls":"Anti-Infective Preparations"},{"code":"13-J00-001","item":"Acyclovir 5% Cream tube","cls":"Antiviral Skin Preparations"}],
+  "Clotrimazole":[{"code":"07-C00-004","item":"Clotrimazole 1% topical cream tube","cls":"Treatment Of Vulval And Vaginal Diseases"}],
+  "Amlodipine":[{"code":"01-F00-002","item":"Amlodipine ( as besylate ) 5 mg tablet or capsule","cls":"Vasodilators"}],
+  "Lisinopril":[{"code":"01-E00-018","item":"Lisinopril (as base or anhydrous or as dihydrate , the same drug with or","cls":"Cardiovascular System"}],
+  "Losartan":[{"code":"01-E00-020","item":"Losartan potassium 50mg Tablet Tablet","cls":"Cardiovascular System"}],
+  "Metoprolol":[{"code":"01-C00-017","item":"Metoprolol tartrate 1mg/1ml (5ml Ampoule) I.V Ampoul","cls":"Beta-Adrenocepter Blocking Drugs"},{"code":"01-C00-015","item":"Metoprolol tartrate 50mg Tablet Tablet 986","cls":"Beta-Adrenocepter Blocking Drugs"}],
+  "Carvedilol":[{"code":"01-C00-008","item":"Carvedilol 6.25mg Tablet Tablet 976","cls":"Beta-Adrenocepter Blocking Drugs"},{"code":"01-C00-010","item":"Carvedilol 25mg Tablet Tablet \\1070","cls":"Beta-Adrenocepter Blocking Drugs"}],
+  "Hydrochlorothiazide":[{"code":"01-B00-013","item":"Hydrochlorothiazide 50mg scroed Tablet Tablet","cls":"Diuretics"}],
+  "Furosemide":[{"code":"01-B00-005","item":"Furosemide(Frusemide) 20mg/2ml Ampoule ,IV ,IM/or slow IV ,IM Ampoul","cls":"Diuretics"},{"code":"01-B00-007","item":"Furosemide(Frusemide) 40mg Tablet Tablet","cls":"Diuretics"}],
+  "Spironolactone":[{"code":"01-B00-016","item":"Spironolactone 25mg Tablet Tablet","cls":"Diuretics"}],
+  "Atorvastatin":[{"code":"06-K00-022","item":"Atorvastatin calcium trihydrate or Atorvastatin calcium eq. Atorvastatin40mg","cls":"Drugs Used In Hyperlipidaemia Potent Statin"},{"code":"06-K00-002","item":"Atorvastatin calcium trihydrate or Atorvastatin calcium eq. Atorvastatin 20mg","cls":"Drugs Used In Hyperlipidaemia Potent Statin"}],
+  "Rosuvastatin":[{"code":"06-K00-019","item":"Rosuvastatin (as calcium salt) 10mg coated Tablet tablet","cls":"Drugs Used In Hyperlipidaemia Potent Statin"}],
+  "Clopidogrel":[{"code":"08-E00-005","item":"Clopidogrel 75 mg as Bisulphate tablet( Clopidogrel as Bisulphate =","cls":"Antiplatelet Drugs"}],
+  "Warfarin":[{"code":"08-D00-009","item":"Warfarin sodium 1mg Tablet Tablet","cls":"Anticoagulants And Protamine"},{"code":"08-D00-010","item":"Warfarin sodium 3mg Tablet Tablet \\1070","cls":"Anticoagulants And Protamine"},{"code":"08-D00-011","item":"Warfarin sodium 5mg Tablet Tablet","cls":"Anticoagulants And Protamine"}],
+  "Digoxin":[{"code":"01-AA0-004","item":"Digoxin 250 mcg scored Tablet Tablet","cls":"Digitalis Glycoside"},{"code":"01-AA0-006","item":"Digoxin 250 mcg/ml (2ml) Ampoule Ampoul","cls":"Digitalis Glycoside"},{"code":"17-000-017","item":"Digoxin specific antibody Fargments (FAB) 40mg Vial vial","cls":"Emergency Tretment Of Poisoning (For Hospital And Poisoning"}],
+  "Isosorbide dinitrate":[{"code":"01-F00-034","item":"Isosorbide dinitrate 10mg Tablet tablet 1184","cls":"Vasodilators"}],
+  "Glyceryl trinitrate":[{"code":"01-F00-024","item":"Glyceryl trinitrate 0.5mg sublingual Tablet tablet","cls":"Vasodilators"},{"code":"01-F00-073","item":"Glyceryl trinitrate 5mg/ml (5ml )Ampoule or vial","cls":"Vasodilators"}],
+  "Amiodarone":[{"code":"01-D00-001","item":"Amiodarone hydrochloride 50mg/ml (3ml) Ampoule Ampoul","cls":"Anti-Arrhythmic Drugs"},{"code":"01-D00-002","item":"Amiodarone hydrochloride 200mg Tablet Tablet","cls":"Anti-Arrhythmic Drugs"}],
+  "Metformin":[{"code":"06-AB0-014","item":"Metformin hydrochloride 500mg Tablet tablet","cls":"Hypoglycemic Agents"},{"code":"06-AB0-019","item":"Metformin hydrochloride 1000mg ordinary Tablet tablet \\1070","cls":"Hypoglycemic Agents"}],
+  "Glimepiride":[{"code":"06-AB0-010","item":"Glimepiride 2mg Tablet tablet \\1070","cls":"Hypoglycemic Agents"}],
+  "Glibenclamide":[{"code":"06-AB0-008","item":"Glibenclamide 5mg Tablet tablet \\1070","cls":"Hypoglycemic Agents"}],
+  "Sitagliptin":[{"code":"06-AB0-024","item":"Sitagliptin (as phosphate monohydrate or hydrochloride monohydrate","cls":"Hypoglycemic Agents"}],
+  "Empagliflozin":[{"code":"06-AB0-047","item":"Empagliflozin 10 mg tablet tablet","cls":"Hypoglycemic Agents"}],
+  "Insulin glargine":[{"code":"06-AA0-022","item":"Each 1ml solution contains:- 100U (3.64mg ) of Insluin glargine (r-DNA)","cls":"Insulins (Human)( Each Insulin Vial"}],
+  "Omeprazole":[{"code":"02-C00-035","item":"Omeprazole (as sodium salt) 40mg powder for reconstitution with or without","cls":"Drugs That Promote Healing Of Peptic Ulcers"},{"code":"02-C00-015","item":"Omeprazole 20mg Enteric Coated pellets in capsule or Enteric Coated","cls":"Drugs That Promote Healing Of Peptic Ulcers"}],
+  "Esomeprazole":[{"code":"02-C00-038","item":"Esomeprazole( as sodium) 40mg powder for solution vial IV or IV infusion vial 1147","cls":"Drugs That Promote Healing Of Peptic Ulcers"}],
+  "Metoclopramide":[{"code":"02-L00-008","item":"Metoclopramide 5mg/ml, (2ml)( Ampoule or vial )IM, IV","cls":"Motility Stimulant (Prokinetic Drug)"},{"code":"02-L00-005","item":"Metoclopramide hydrochloride 10mg Tablet or Scored Tablet tablet _","cls":"Motility Stimulant (Prokinetic Drug)"}],
+  "Ondansetron":[{"code":"04-F00-019","item":"Ondansetron (as hydrochloride) or ( as hydrochloride dihydrate) 2mg/ml","cls":"Drugs Used In Nausea And Vertigo"},{"code":"04-F00-016","item":"Ondansetron 8mg orodispersible or lyophylisates oral Tablet or film coated","cls":"Drugs Used In Nausea And Vertigo"}],
+  "Lactulose":[{"code":"02-F00-014","item":"Lactulose 3.1- 3.7g/5ml, Syrup bottle","cls":"Laxatives"}],
+  "Mebeverine":[{"code":"02-K00-002","item":"Mebeverine hydrochloride 135mg Tablet Tablet","cls":"Direct Acting Spasmolytic"}],
+  "Hyoscine butylbromide":[{"code":"02-B00-008","item":"Hyoscine butylbromide 1mg/ml Syrup bottle","cls":"Antispasmodics"},{"code":"02-B00-009","item":"Hyoscine butylbromide 20mg/ml, (1ml) Ampoule I.M , slow I.V , S.C OR I.M ,","cls":"Antispasmodics"},{"code":"02-B00-007","item":"Hyoscine butylbromide 10mg Tablet tablet 1119","cls":"Antispasmodics"}],
+  "Salbutamol":[{"code":"03-A00-024","item":"Salbutamol Nebules (Respirator solution)0.5% w/v 20ml or 30ml Note:Home","cls":"Bronchodilators"},{"code":"03-A00-025","item":"Salbutamol (as sulphate ) 2mg/5ml Syrup","cls":"Bronchodilators"},{"code":"03-A00-044","item":"Salbutamol aerosol (as a base) 100mcg / metered","cls":"Bronchodilators"}],
+  "Montelukast":[{"code":"03-J00-002","item":"Montelukast (as sodium ) 4mg cheweble Tablet tablet","cls":"Leukotriene Receptor Antagonists"},{"code":"03-J00-003","item":"Montelukast (as sodium ) 10mg Tablet tablet","cls":"Leukotriene Receptor Antagonists"}],
+  "Xylometazoline":[{"code":"12-B00-024","item":"Xylometazoline Hydrochloride 0.1% Nasal spray spray","cls":"Drugs Acting On The Nose"}],
+  "Amitriptyline":[{"code":"04-CA0-002","item":"Amitriptyline hydrochloride 25mg Tablet tablet","cls":"Tricyclic And Related Antidepressant Drugs"}],
+  "Fluoxetine":[{"code":"04-CC0-002","item":"Fluoxetine (as hydrochloride) 20mg film coated Tablet or capsule capsule","cls":"Selective Serotonin Re-Up Take Inhibitors"}],
+  "Escitalopram":[{"code":"04-CC0-016","item":"Escitalopram (as oxalate) tablet 10mg tablet","cls":"Selective Serotonin Re-Up Take Inhibitors"}],
+  "Diazepam":[{"code":"04-A00-013","item":"Diazepam 5mg/ml, (2ml) Ampoule ampoul","cls":"Hypnotics And Anxiolytics"},{"code":"04-A00-021","item":"Diazepam 5mg Tablet tablet","cls":"Hypnotics And Anxiolytics"}],
+  "Carbamazepine":[{"code":"04-J00-002","item":"Carbamazepine 200mg Tablet Tablet","cls":"Antiepileptics"},{"code":"04-J00-005","item":"Carbamazepine 100mg/5ml liquid bottle \\1070","cls":"Antiepileptics"}],
+  "Sodium valproate":[{"code":"04-J00-034","item":"Sodium valproate 200 mg Tablet or (enteric coated ) Tablet 1012","cls":"Antiepileptics"},{"code":"04-J00-061","item":"Sodium valproate (Powder) 400mg Vial with 4ml ampoule water for injection vial","cls":"Antiepileptics"},{"code":"04-J00-031","item":"Sodium valproate solution 200mg/ml Drop drop","cls":"Antiepileptics"}],
+  "Levothyroxine":[{"code":"06-D00-007","item":"Thyroxine sodium or anhydrous Levothyroxin Sodium 50mcg tablet tablet","cls":"Thyroid Hormones And Antithyroid Drugs"},{"code":"06-D00-008","item":"Thyroxine sodium or anhydrous Levothyroxin Sodium 100mcg Tablet tablet","cls":"Thyroid Hormones And Antithyroid Drugs"}],
+  "Prednisolone":[{"code":"06-E00-033","item":"Prednisolone 5mg Tablet or Enteric Coated Tablet tablet 1012","cls":"Corticosteroids"}],
+  "Allopurinol":[{"code":"10-B00-001","item":"Allopurinol 100mg Tablet tablet","cls":"Musculoskeletal Disorders"}],
+  "Colchicine":[{"code":"10-B00-003","item":"Colchicine 500mcg Tablet tablet","cls":"Musculoskeletal Disorders"}],
+  "Ferrous sulfate":[{"code":"08-AA0-005","item":"Ferrous sulphate 200mg Tablet Tablet","cls":"Anaemia& Some Other Blood Disorders"}],
+  "Folic acid":[{"code":"08-B00-010","item":"Folic acid 5mg Tablet Tablet","cls":"Blood Formation And Coagulation"},{"code":"08-B00-025","item":"Folic acid 400 mcg tablet Tablet 1057 1042","cls":"Blood Formation And Coagulation"}],
+  "Cholecalciferol":[{"code":"09-AD0-001","item":"Alphacalcidol 0.25mcg (1alphahydroxy cholecalciferol) soft gelatin Capsule","cls":"Vitamin D"},{"code":"09-AD0-002","item":"Alphacalcidol 1mcg (1alphahydroxy cholecalciferol) soft gelatin Capsule or","cls":"Vitamin D"},{"code":"09-AD0-028","item":"Vit D3 (cholecalciferol) 2.5mg oral drop (10.000 IU/ml) drop 1100","cls":"Vitamin D"}],
+  "Tamsulosin":[{"code":"01-E00-063","item":"Tamsulosin Hydrochloride 0.4mg equivalent 0.367mg Tamsulosin modified","cls":"Cardiovascular System"}],
+  "Methotrexate":[{"code":"15-AB0-010","item":"Methotrexate 2.5mg Tablet tablet","cls":"Antimetabolites"},{"code":"15-AB0-015","item":"Methotrexate 50mg (10 mg / ml or 25 mg /ml (lyophylized powder or","cls":"Antimetabolites"}],
+  "Lithium":[{"code":"04-B00-033","item":"Lithium carbonate 400mg controlled release Tablet tablet","cls":"Antipsychotics"}],
+  "Verapamil":[{"code":"01-D00-022","item":"Verapamil hydrochloride 2.5mg/ml (2ml) Ampoule slow I.V Ampoul","cls":"Anti-Arrhythmic Drugs"}],
+  "Calcium carbonate":[{"code":"09-CE0-004","item":"Calcium carbonate 500mg Tablet tablet used for renal","cls":"Drugs Used In Hypocalcemia"}],
+  "Potassium chloride":[{"code":"09-CA0-001","item":"potassium chloride 15% w/v (approximately 2 mmol/ml) or 14.9% w/v","cls":"Drugs Used In Hypokalaemia"}],
+  "Isotretinoin":[{"code":"13-F00-005","item":"Isotretinoin 10mg Capsule or soft gelatin capsule Capsule 1084 1079","cls":"Preparations For Acne"}],
+  "Erythromycin":[{"code":"05-AG0-037","item":"Erythromycin (as ethyl succinate) 250mg/5ml Powder for oral suspension bottle Watch","cls":"Others"}],
+  "Gentamicin":[{"code":"05-AC0-003","item":"Gentamicin (as sulphate) 40mg/ml, (2ml) Vial or Ampoule I.V.,I.M. vial or","cls":"Antibacterial Drugs"},{"code":"05-AC0-005","item":"Gentamicin (as sulphate) 10mg/ml, (2ml Vial or Ampoule) I.M , I.V vial or","cls":"Antibacterial Drugs"}],
+  "Haloperidol":[{"code":"04-B00-023","item":"Haloperidol 5mg Tablet tablet","cls":"Antipsychotics"},{"code":"04-B00-025","item":"Haloperidol 5mg/ml (1ml ampoule) ampoul","cls":"Antipsychotics"}],
+  "Phenobarbital":[{"code":"04-J00-017","item":"Phenobarbitone sodium 200mg/ml (1ml) Ampoule I.M , I.V. or (SC. IM","cls":"Antiepileptics"},{"code":"04-J00-018","item":"Phenobarbitone 15mg Tablet Tablet","cls":"Antiepileptics"}],
+  "Azathioprine":[{"code":"15-B00-001","item":"Azathioprine 50mg Tablet tablet","cls":"Drugs That Alter Immune Responses (Drugs Affecting The Immune"}],
+  "Phenytoin":[{"code":"01-D00-014","item":"Phenytoin sodium 50mg/ml (5ml) Ampoule Ampoul","cls":"Anti-Arrhythmic Drugs"}],
+  "Calcium gluconate":[{"code":"09-CB0-001","item":"Calcium gluconate injection 10% w/v ( 10 ml ) ampoule or vial each ml","cls":"Drugs Used In Hyperkalaemia"}]
+};
+const PRODUCT_REG = {
+  "5000000001033":{"id":"R4624","trade":"Brufen® 400mg film coated tablet","reg":"4575/3-2-2020","regNote":"الموافقه على التسجيل النهائي المستحضر","holder":"Abbott laboratories ltd abbott hous e /UK","country":"Greece"},
+  "4000000001065":{"id":"R0010","trade":"Aspirin®protect 100mg ( enteric –coated tab. )","reg":"483/8-9-2015","regNote":null,"holder":"Bayer consumer care AG /switzerland (M.A.H for iraq & middle east)","country":"Germany"},
+  "4000000001102":{"id":"R0778","trade":"CIPROBAY 500","reg":"291/7-2-2013","regNote":null,"holder":"Bayer Schering pharma AG/ Germany","country":"Germany"},
+  "3000000001110":{"id":"R4994","trade":"Flagyl® 500 film-coated tablets","reg":"528C/15-11-2020","regNote":null,"holder":"Sanofi-Aventis france. Address: 82 avenue raspail 94250 gentilly, France.","country":"Spain"},
+  "3000000001134":{"id":"R1297","trade":"DIFLUCAN 150 mg hard capsule","reg":"714/7-10-2019","regNote":null,"holder":"Pfizer limited /UK","country":"France"},
+  "3000000001158":{"id":"R0098","trade":"Norvasc 5mg capsule","reg":"147/20-4-2020","regNote":null,"holder":"PFIZER HOLDING FRANCE /FRANCE","country":"France"},
+  "5000000001170":{"id":"R1837","trade":"COZAAR 50mg","reg":"460/26-2-2015","regNote":null,"holder":"Merck sharp &Dohm B.V/Netherlands","country":"UK"},
+  "5000000001194":{"id":"R0295","trade":"Lipitor™ 20 mg film coated tablet","reg":"77D/24-9-2017","regNote":null,"holder":"Pfizer pharma PFE GmbH /Linkstr 20, 10785, Berlin / Germany","country":"usa - germany"},
+  "5000000001200":{"id":"R2594","trade":"CRESTOR 10MG TAB.","reg":"55/19-9-2017","regNote":null,"holder":"Astrazeneca uk limited /U.K","country":"pureto rico - u.k"},
+  "3000000001219":{"id":"R0881","trade":"Plavix 75mg film coated tablest","reg":"716/20-10-2019","regNote":null,"holder":"SANOFI CLIR SNC /FRANCE.","country":"France"},
+  "4000000001232":{"id":"R1069","trade":"XARELTO 20 MG film - coated tablets","reg":"264C/31-5-2017","regNote":null,"holder":"Bayer AG/Germany","country":"Germany"},
+  "5000000001248":{"id":"R1119","trade":"LANOXIN","reg":"Need Re-reg.","regNote":null,"holder":"Glaxo Smith Kline (B. Wellcome)","country":"U.K."},
+  "3000000001257":{"id":"R1967","trade":"GLUCOPHAGE 850 mg tab","reg":"599/8-3-2018","regNote":null,"holder":"1-MERCK SANTE S.A.S Lyon Cedex / FRANCE,, 2- Merck Serono Middle East LLC / UAE","country":"Center de production – 2 rue du Pressior Vert – 45400 Semoy )-FRANCE ,, Abu Dhabi -UAE"},
+  "3000000001264":{"id":"R1430","trade":"Diamicron MR 60","reg":"108C/24-5-2016","regNote":null,"holder":"Les lab. Servier / france","country":"France"},
+  "5000000001286":{"id":"R2694","trade":"JANUMET 50MG/1000MG TAB.","reg":"143C/1-9-2016","regNote":null,"holder":"MSD Corp /USA","country":"USA + Netherland"},
+  "4000000001294":{"id":"R3643","trade":"Jardiance 10mg f.c. Tablet","reg":"580B/31-8-2020","regNote":null,"holder":"Boehringer Ingelheim International Gmbh/ Germany","country":"Germany"},
+  "3000000001301":{"id":"R1607","trade":"Lantus®SoloStar® / Solution for injection in a pre-filled pen","reg":"475B/16-9-2018","regNote":null,"holder":"Sanofi-Aventis Deutschland GmbH,","country":"Germany"},
+  "5000000001316":{"id":"R1244","trade":"Nexium 40 mg Tablet","reg":"113/14-2-2019","regNote":null,"holder":"AstraZeneca AB / Sweden","country":"Sweeden"},
+  "5000000001378":{"id":"R0455","trade":"Symbicort ( 60, 120 doses) tubuhalar (160/4.5µg/dose)","reg":"571/24-8-2017","regNote":null,"holder":"Astra Zenca AB","country":"Sweeden"},
+  "5000000001385":{"id":"R2132","trade":"SINGULAIR 10mg TAB.","reg":"409/27-3-2014","regNote":null,"holder":"Merck sharp and Dohme (MSD)","country":"UK"},
+  "4000000001409":{"id":"R1820","trade":"CLARITINE TAB.","reg":"52/22-8-2017","regNote":null,"holder":"bayer consumer care / switzerland","country":"Belgium"},
+  "3000000001448":{"id":"R2465","trade":"LYRICA CAP. 75MG","reg":"636/24-9-2018","regNote":null,"holder":"PFIZER LIMITED RAMSAGATE ROAD SANDWICH KENT, CT139NJ/ UNITED KINGDOM","country":"Germany"},
+  "3000000001455":{"id":"R0055","trade":"XANAX 0.5 mg","reg":"539/6-12-2016","regNote":null,"holder":"Pfizer S.A./ Belgium","country":"Belgium"},
+  "4000000001461":{"id":"R2876","trade":"Euthyrox 50 mcg tablets","reg":"212D/7-2-2019","regNote":null,"holder":"Merck KGaA , Frank furter strasse 250 , 64293 / Darmstadt / Germany","country":"Germany"},
+  "6250000001499":{"id":"R3697","trade":"Venaturea vitamin D3 Drop","reg":"38F/12-3-2020","regNote":"لموافقه على التسجيل السريع الاولي للمستحضر على ان يتم اكمال كافة متطلبات التسجيل خلال سنة واحدة وبخلافه سيتم تعليق تسجيل المستحضر.","holder":"Vefa ILAC SAN. VE Tic Ltd. Sti","country":"Turkey"},
+  "5000000001538":{"id":"R0066","trade":"GAVISCON PEPPERMINT LIQUID / Suspension","reg":"390C/20-5-20-2018","regNote":null,"holder":"Reckitt Benckiser Healthcare /UK","country":"uk"}
+};
+/* SOURCES:END */
 
 const DATA = {
   listings: [
@@ -2865,7 +3036,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0013.1';
+const VERSION = 'App_v0.0013.2';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -4031,7 +4202,9 @@ function screenDrug() {
   return '<div class="screen-body"><div class="constrain stack">' +
     '<div class="rec-actions">' +
       '<button class="btn-ghost" onclick="backToReference()">' + esc(t('common.back')) + '</button>' +
-      (S.basket.indexOf(d.sci) >= 0
+      /* With the Helper in the till there is no separate basket to add to. */
+      (helperInTill() ? ''
+        : S.basket.indexOf(d.sci) >= 0
         ? '<span class="pill-tag">' + esc(t('dc.added')) + '</span>'
         : '<button class="btn-secondary" onclick="addToBasket(' + attr(d.sci) + ')">' +
           icon('plus') + esc(t('dc.addToCheck')) + '</button>') +
@@ -4051,6 +4224,15 @@ function screenDrug() {
       kv('badge', t('dx.atc'), '<span class="figure" dir="ltr">' + esc(d.atc) + '</span>') +
       kv('check', t('dx.doses'), '<span class="figure" dir="ltr">' + esc(d.doses.join('  ·  ')) + '</span>') +
     '</div>' +
+    /* v0.0013.2 — the Essential Drugs List's entries for it, as the list
+       names them (the list is in English). */
+    '<p class="section-eyebrow">' + esc(t('edl.title')) + '</p>' +
+    ((EDL_BY_DRUG[d.sci] || []).length
+      ? '<div class="card edl-card">' + EDL_BY_DRUG[d.sci].map(e => '<div class="row"><span class="row-body">' +
+          '<span class="row-title" style="display:block;" dir="ltr">' + esc(e.item) + '</span>' +
+          '<span class="row-sub" style="display:block;" dir="ltr"><span class="figure">' + esc(e.code) + '</span> · ' + esc(e.cls || '') + '</span></span></div>').join('') + '</div>'
+      : '<div class="card card-pad edl-card" style="color:var(--ink-faint);font-size:13px;">' + esc(t('edl.none')) + '</div>') +
+    '<p class="inline-note">' + esc(t('edl.source', { src:EDL_SOURCE })) + '</p>' +
 
     '<p class="section-eyebrow">' + esc(t('dx.interactions')) +
       (inter.length ? ' (' + fmt(inter.length) + ')' : '') + '</p>' +
@@ -4452,9 +4634,149 @@ function submitAddPharmacy() {
 
 /* The owner's home: the overview for an owner of several on the All tab,
    otherwise the home of the one pharmacy on screen. */
+/* ==========================================================================
+   v0.0013.2 — THE OWNER'S HOME, SIMPLER (H1–H5)
+
+   One headline figure — today's sales — with the change against yesterday,
+   named, and a week's line in a muted colour with only today marked (the
+   data-visualisation rule: a number is shown as a number; one hero per
+   screen; the trend de-emphasised, the current point accented). Then the two
+   things an owner does, and ONE list of what needs them, each row one tap
+   from doing it. The announcement is a quiet line; the trial moves to Profile.
+   ========================================================================== */
+
+/* The six days before today, per pharmacy. In production these are the
+   pharmacy's own sales; the prototype has no past, so they are a fixture. */
+function salesHistory(phId) {
+  let h = 0; for (const c of phId) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const base = 120000 + (h % 60) * 1000;
+  return [...Array(6)].map((_, i) => { h = (h * 1103515245 + 12345) >>> 0;
+    const total = Math.round((base + (h % 70000) - 25000) / 500) * 500; return { total, n:Math.max(3, Math.round(total / 24000)) }; });
+}
+function salesToday(phId) {
+  const s = S.sales.filter(x => x.pharmacy === phId && !x.refunded);
+  return { total:s.reduce((a, x) => a + x.total, 0), n:s.length };
+}
+function salesWeek(phId) { return salesHistory(phId).concat([salesToday(phId)]); }
+
+const WEEKDAYS = { en:['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ar:['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] };
+function sparkline(values) {
+  const w = 320, h = 54, pad = 6, max = Math.max(...values, 1), min = Math.min(...values) * 0.8;
+  const rtl = lang === 'ar';
+  const pts = values.map((v, i) => { const x = pad + i * (w - 2 * pad) / (values.length - 1);
+    return [rtl ? w - x : x, h - pad - (max === min ? 0.5 : (v - min) / (max - min)) * (h - 2 * pad)]; });
+  const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const last = pts[pts.length - 1];
+  const day = k => { const dt = new Date(); dt.setDate(dt.getDate() - k); return WEEKDAYS[lang][dt.getDay()]; };
+  return '<svg class="hm-spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" role="img" aria-label="' + esc(t('hm.weekLabel')) + '">' +
+      '<path d="' + d + '" fill="none" stroke="var(--spark)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+      '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="4.5" fill="var(--indigo)" stroke="#fff" stroke-width="2"/></svg>' +
+    '<div class="hm-days">' + [6, 5, 4, 3, 2, 1].map(k => '<span>' + esc(day(k)) + '</span>').join('') + '<span>' + esc(t('hm.today')) + '</span></div>';
+}
+/* The change against yesterday, with its sign in words and an arrow — never
+   colour alone. */
+function deltaHtml(today, yesterday) {
+  if (!today.n) return '<p class="hm-delta">' + esc(t('hm.noneYet', { y:iqd(yesterday.total) })) + '</p>';
+  const pct = yesterday.total ? Math.round((today.total - yesterday.total) / yesterday.total * 100) : 0;
+  const up = pct >= 0;
+  return '<p class="hm-delta"><span class="' + (up ? 'hm-up' : 'hm-down') + '">' + (up ? '▲ ' : '▼ ') + Math.abs(pct) + '%</span>' +
+    '<span>' + esc(t('hm.vsYesterday', { n:today.n })) + '</span></p>';
+}
+function heroCard(label, today, yesterday, week) {
+  return '<div class="card hm-hero"><p class="hm-label">' + esc(label) + '</p>' +
+    '<p class="hm-fig">' + fmt(today.total) + '<small>' + esc(t('common.iqd')) + '</small></p>' +
+    deltaHtml(today, yesterday) + (week ? sparkline(week.map(x => x.total)) : '') + '</div>';
+}
+
+/* Everything that needs the owner at one pharmacy, worst first. */
+function needsYou(ph) {
+  const rows = [];
+  const row = (tone, ic, title, sub, go) => rows.push({ tone, ic, title, sub, go });
+  if (ph.verification === 'pending') row('warn', 'hourglass', t('hm.pending'), t('hm.pendingS'), "goto('profile')");
+  if (!ph.responsible) row('bad', 'alert', t('g.noResponsible'), t('hm.noResponsibleS'), "goto('profile')");
+  const pr = stockPrompts(ph.id);
+  const first = (list, f) => list.length ? f(list[0]) : '';
+  if (pr.expired.length) row('bad', 'alert', t('st.expired', { n:pr.expired.length }),
+    first(pr.expired, x => productName(x.b.code) + ' · ' + t('st.expiredRow', { n:x.q, exp:fmtExpiry(x.b.expiry) })), "goto('stock')");
+  if (pr.countThis.length) row('warn', 'barcode', t('st.countThis', { n:pr.countThis.length }),
+    first(pr.countThis, x => productName(x.code) + ' · ' + t('st.soldPast', { n:x.short })), "goto('stock')");
+  if (pr.near.length) row('warn', 'clock', t('st.near', { n:pr.near.length }),
+    first(pr.near, x => productName(x.b.code) + ' · ' + t('st.nearRow', { n:x.q, exp:fmtExpiry(x.b.expiry) })), "goto('stock')");
+  if (pr.low.length) row('warn', 'chart', t('st.low', { n:pr.low.length }),
+    first(pr.low, x => productName(x.code) + ' · ' + t('st.lowRow', { have:x.have, min:x.min })), "goto('stock')");
+  if (pr.quarantined.length) row('', 'badge', t('st.quarantined', { n:pr.quarantined.length }), productName(pr.quarantined[0].code), "goto('stock')");
+  const sup = suppliersOf(ph.id).filter(s => s.suggest);
+  if (sup.length) row('', 'users', t('hm.suppliers', { n:sup.length }),
+    t('sp.same', { mine:sup[0].name, crm:L(CRM_SUPPLIERS.find(c => c.id === sup[0].suggest).name) }), "goto('suppliers')");
+  if (FLAGS.placements && ph.id === TRAINEE_AT) {
+    const ready = Object.keys(S.months).find(m => S.months[m] === 'ready');
+    if (ready) row('', 'cap', t('d.traineeReady', { n:ready }), t('d.traineeReadySub'), "goto('trainees')");
+  }
+  return rows;
+}
+function needsList(rows) {
+  if (!rows.length) return '<p class="hm-needs-t">' + esc(t('hm.needsNone')) + '</p>';
+  return '<p class="hm-needs-t">' + esc(t('hm.needs', { n:rows.length })) + '</p><div class="card hm-needs">' +
+    rows.map(r => '<button class="hm-row" onclick="' + r.go + '"><span class="hm-dot ' + r.tone + '">' + icon(r.ic) + '</span>' +
+      '<span class="hm-row-t">' + esc(r.title) + (r.sub ? '<span>' + esc(r.sub) + '</span>' : '') + '</span>' +
+      icon('chevron', 'more-chevron') + '</button>').join('') + '</div>';
+}
+/* The platform's announcement, as a quiet line. Still the same slot — it is
+   counted and labelled exactly as before (W15). */
+const annLine = () => { const b = bannerFor('home'); return b ? '<div class="hm-ann">' + b + '</div>' : ''; };
+
+function homeOne(lead) {
+  const ph = currentPharmacy();
+  const week = salesWeek(ph.id), today = week[6], yesterday = week[5];
+  const canTill = ph.verification === 'verified' && !!ph.responsible;
+  return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack home2">' +
+    heroCard(t('hm.salesToday'), today, yesterday, week) +
+    '<div class="hm-actions">' +
+      '<button class="btn-primary hm-till"' + (canTill ? '' : ' disabled') + ' onclick="goto(\'till\')">' + icon('till') + esc(t('hm.openTill')) + '</button>' +
+      '<button class="btn-secondary hm-count" onclick="goto(\'count\')">' + icon('barcode') + esc(t('st.countShelf')) + '</button></div>' +
+    needsList(needsYou(ph)) +
+    annLine() +
+    '</div></div>';
+}
+
+/* An owner of several, on All: the pharmacies together, then each one. */
+function homeAll(lead) {
+  const mine = myPharmacies();
+  const sum = (f) => mine.reduce((a, p) => a + f(p), 0);
+  const today = { total:sum(p => salesToday(p.id).total), n:sum(p => salesToday(p.id).n) };
+  const yesterday = { total:sum(p => salesHistory(p.id)[5].total) };
+  const row = p => {
+    const tdy = salesToday(p.id), y = salesHistory(p.id)[5];
+    const needs = needsYou(p).length;
+    const cant = !p.responsible || p.verification !== 'verified';
+    const badge = !p.responsible ? '<span class="hm-badge bad">' + esc(t('g.noResponsible')) + '</span>'
+      : needs ? '<span class="hm-badge">' + esc(t('hm.needsN', { n:needs })) + '</span>'
+      : '<span class="hm-badge ok">' + esc(t('hm.nothingNeeds')) + '</span>';
+    const pct = tdy.n && y.total ? Math.round((tdy.total - y.total) / y.total * 100) : null;
+    return '<button class="hm-ph branch-row" onclick="setPharmacy(' + attr(p.id) + ')"><span class="hm-ph-t">' + esc(L(p.name)) +
+      '<span>' + (p.responsible ? esc(L(p.responsible)) + ' · ' : '') + badge + '</span></span>' +
+      '<span class="hm-ph-fig">' + (cant ? '—<span class="hm-cant">' + esc(t('hm.cantSell')) + '</span>'
+        : '<b class="figure">' + fmt(tdy.total) + '</b>' + (pct == null ? '<span class="hm-cant">' + esc(t('hm.noSalesShort')) + '</span>'
+          : '<span class="' + (pct >= 0 ? 'hm-up' : 'hm-down') + '">' + (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%</span>')) + '</span>' +
+      icon('chevron', 'more-chevron') + '</button>';
+  };
+  return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack home2">' +
+    heroCard(t('hm.salesTodayAll', { n:mine.length }), today, yesterday, null) +
+    '<p class="hm-needs-t">' + esc(t('hm.yourPharmacies')) + '</p>' +
+    '<div class="card">' + pharmacyBoard().map(row).join('') + '</div>' +
+    '<p class="inline-note">' + esc(t('g.licenceNote')) + '</p>' +
+    annLine() +
+    '</div></div>';
+}
+
 function screenDashboard() {
   const mine = myPharmacies();
   const tabs = pharmacyTabs();
+  /* v0.0013.2 — with the market off, the simpler home (H1–H5). */
+  if (!FLAGS.marketplace) {
+    if (mine.length > 1 && !currentPharmacy()) return homeAll(tabs);
+    return homeOne(tabs + (mine.length > 1 ? '<div class="constrain stack" style="margin-bottom:14px;">' + pharmacyHeader(currentPharmacy()) + '</div>' : ''));
+  }
   if (mine.length > 1 && !currentPharmacy()) return screenPharmacies(tabs);
   const lead = tabs + (mine.length > 1
     ? '<div class="constrain stack" style="margin-bottom:14px;">' + pharmacyHeader(currentPharmacy()) + '</div>'
@@ -7127,6 +7449,8 @@ function screenProduct() {
       kv(t('pd.barcode'), p.barcode, 'code') +
       (p.form ? kv(t('pd.form'), t('df.' + p.form) + (p.strength ? ' · ' + p.strength : '')) : '') +
       kv(t('pd.pack'), L(p.pack)) +
+      /* v0.0013.2 — its registration, from the Ministry's register. */
+      (PRODUCT_REG[p.barcode] ? kv(t('pd.reg'), PRODUCT_REG[p.barcode].reg + ' · ' + PRODUCT_REG[p.barcode].holder, 'code') : '') +
     '</div>' +
     priceCard(p) +
     stockCard(p) +
@@ -8753,7 +9077,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0013.1.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0013.2.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

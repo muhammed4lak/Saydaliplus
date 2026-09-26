@@ -21,6 +21,17 @@ import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+/* v0.0013.2 — the Ministry sources, read by scripts/read-sources.py. Both
+   builds get what is small and per-item: each reference drug's entries on the
+   Essential Drugs List, and each catalogue product's registration. Only the
+   CRM gets the whole register — 5,214 rows is an operator's reference, not
+   something a phone should carry. */
+const EDL = JSON.parse(readFileSync(join(root, 'data', 'edl.json'), 'utf8'));
+const PRODUCT_REG = JSON.parse(readFileSync(join(root, 'data', 'product-registrations.json'), 'utf8'));
+const REGISTER = JSON.parse(readFileSync(join(root, 'data', 'register.json'), 'utf8'));
+const S_BEGIN = '/* SOURCES:BEGIN */', S_END = '/* SOURCES:END */';
+const R_BEGIN = '/* REGISTER:BEGIN */', R_END = '/* REGISTER:END */';
 const BEGIN = '/* DRUGS:BEGIN */';
 const END = '/* DRUGS:END */';
 const P_BEGIN = '/* PRODUCTS:BEGIN */';
@@ -98,6 +109,29 @@ const block = BEGIN + '\n' +
   DRUGS.map(d => '  ' + JSON.stringify(d)).join(',\n') +
   '\n];\n' + END;
 
+const edlItems = Object.fromEntries(EDL.items.map(i => [i.code, i]));
+const edlByDrug = Object.fromEntries(Object.entries(EDL.byDrug).map(([sci, codes]) =>
+  [sci, codes.map(c => ({ code:c, item:edlItems[c].item, cls:edlItems[c].class }))]));
+for (const sci of Object.keys(edlByDrug)) if (!DRUGS.some(d => d.sci === sci)) problems.push(`EDL names a drug not in the reference: ${sci}`);
+for (const b of Object.keys(PRODUCT_REG)) if (!PRODUCTS.some(p => p.barcode === b)) problems.push(`a registration links an unknown barcode: ${b}`);
+const sourcesBlock = S_BEGIN + '\n' +
+  'const EDL_SOURCE = ' + JSON.stringify(EDL.source) + ';\n' +
+  'const EDL_BY_DRUG = {\n' + Object.entries(edlByDrug).map(([k, v]) => '  ' + JSON.stringify(k) + ':' + JSON.stringify(v)).join(',\n') + '\n};\n' +
+  'const PRODUCT_REG = {\n' + Object.entries(PRODUCT_REG).map(([k, v]) => '  ' + JSON.stringify(k) + ':' + JSON.stringify(v)).join(',\n') + '\n};\n' + S_END;
+/* The register as arrays, one row per line — a third of the size of objects.
+   Order: id, national code, scientific name, trade name, pack, maker, country,
+   authorisation holder, registration, notes, shelf life. */
+const REG_FIELDS = ['id', 'code', 'sci', 'trade', 'pack', 'maker', 'country', 'mah', 'reg', 'notes', 'shelfLife'];
+const registerBlock = R_BEGIN + '\n' +
+  'const REGISTER_FIELDS = ' + JSON.stringify(REG_FIELDS) + ';\n' +
+  'const REGISTER_ROWS = [\n' + REGISTER.map(r => '  ' + JSON.stringify(REG_FIELDS.map(k =>
+    k === 'reg' ? (r.reg || r.regOld || null) : k === 'notes' && r.notes ? r.notes.slice(0, 240) : k === 'pack' && r.pack ? r.pack.slice(0, 120) : r[k]))).join(',\n') +
+  '\n];\n' + R_END;
+if (problems.length) {
+  console.error('the Ministry sources did not validate:\n  ' + problems.join('\n  '));
+  process.exit(1);
+}
+
 /* One product per line, for the same reason. */
 const productBlock = P_BEGIN + '\n' +
   'const MAPPING_STATES = ' + JSON.stringify(MAPPING_STATES) + ';\n' +
@@ -137,6 +171,12 @@ for (const rel of targets) {
     process.exit(1);
   }
   out = out.slice(0, pa) + productBlock + out.slice(pb + P_END.length);
+  const sa = out.indexOf(S_BEGIN), sb = out.indexOf(S_END);
+  if (sa < 0 || sb < 0) { console.error(`${rel}: no ${S_BEGIN} … ${S_END} markers — nothing written`); process.exit(1); }
+  out = out.slice(0, sa) + sourcesBlock + out.slice(sb + S_END.length);
+  /* Only a build that asks for the register gets it. */
+  const ra = out.indexOf(R_BEGIN), rb = out.indexOf(R_END);
+  if (ra >= 0 && rb >= 0) out = out.slice(0, ra) + registerBlock + out.slice(rb + R_END.length);
   writeFileSync(path, out);
-  console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded`);
+  console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : ''));
 }

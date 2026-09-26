@@ -680,7 +680,8 @@ default. Scheduled with v0.0014.
   reference, and the real schedule is still needed. *Proposed uses of the two
   files* (not built): the register as a reference table in the CRM, with
   each catalogue product linked to its registration; the EDL's national code
-  on each molecule. Both wait on a go.
+  on each molecule. **Go given 26 Sep 2026 ("use them for what they are good
+  for") — built in v0.0013.2.**
 
 ### Proposed — the till and the Helper as one, and simpler (26 Sep 2026)
 
@@ -719,9 +720,9 @@ and UI amendments continue (v0.0013.2, …) until the UI is approved; the
 pharmacist's bar becomes Check-in · Tasks · Till · Drugs · Profile. See
 "v0.0013.1 as built" under Amendments.
 
-### Proposed — a simpler home screen (26 Sep 2026)
+### A simpler home screen (26 Sep 2026) — built as v0.0013.2
 
-Mockups made, not built — for v0.0013.2 if approved:
+Mocked up, then built as shown:
 - **H1. One headline figure:** today's sales at the pharmacy on screen, with
   the change against yesterday (named) and the number of sales, and a
   seven-day line in a muted colour with only today marked.
@@ -1011,6 +1012,46 @@ camera, not for a barcode across a room.
   W8's dispensing tally lives. Folding that tally into the till (check-only
   records nothing today) is to be done before W21 switches the market on.
 
+### v0.0013.2 as built — the simpler home, and the Ministry sources
+
+- **Home (H1–H5)**, with the marketplace off. One headline figure — today's
+  sales at the pharmacy on screen — with the change against yesterday (named,
+  with an arrow as well as a colour), the number of sales, and a seven-day
+  line in a muted colour with only today marked; the six days before today
+  are a fixture until real history exists. *Open the till* and *Count a shelf*
+  (the till button is disabled where the pharmacy cannot sell). **Needs you ·
+  N**: one list — under review, no responsible pharmacist, expired batches,
+  count this, near expiry, below minimum, returns set aside, suppliers to
+  confirm, a trainee's month — each row one tap from doing it. The
+  announcement is one quiet line (the same labelled slot); the trial is on
+  Profile. On All, an owner of several sees the pharmacies together, then a
+  row per pharmacy with its sales and change, whether anything needs them,
+  and "can't sell" where nobody can sign.
+- **The Ministry's register** (`data/sources/moh-register.csv`, read by
+  `scripts/read-sources.py` into `data/register.json`): all 5,214 rows are in
+  the **CRM** as a new **Register** module — list capped at 300 drawn rows
+  with a note to search or filter, views (all / in our catalogue / with
+  notes), a country filter, the top search reaching it, and a record page per
+  registration. **26 of the 59 catalogue products are linked** to their
+  registration — by brand, strength and dosage form, only when one row clearly
+  fits (Neurobion's injection was refused for its tablets) — shown on the
+  CRM's catalogue record and, as *Registered in Iraq*, on the app's product
+  screen. **Mapping an unknown barcode** in the CRM starts with *Find it in
+  the Ministry's register*: suggestions as the operator types; a pick fills
+  the name and pack and records the registration. The phone app does **not**
+  carry the register — only its 26 links.
+- **The Essential Drugs List** (`data/sources/ncds-essential-drugs-list-2023.pdf`,
+  its text extracted once): 597 items in 154 classes; **80 of the 119
+  reference drugs** found on it, matched by name and the list's own spellings
+  (Amoxycillin, Frusemide, Phenobarbitone, Thyroxine, Acetylsalicylic acid,
+  Co-trimoxazole), a single drug never claiming a combination. Each drug record
+  — app and CRM — shows its entries (national code, item, class) and the
+  source, or says it is not on the list.
+- The drug record's *Add to check* is gone with the Helper in the till.
+- **Still true:** neither source is a controlled-substance schedule; the
+  register has no barcodes, so it cannot be scanned against; both are "for
+  now", and `scripts/read-sources.py` re-reads replacements in one command.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -1061,9 +1102,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **The home screen (H1–H5)** — approve, change, or not; see "Proposed — a
-  simpler home screen". **The two files (L2)** — whether to use them as
-  proposed. Nothing blocks v0.0014.
+- **UI amendments continue** (v0.0013.3, …) until the UI is approved.
+  **A controlled-substance schedule** is still needed before production.
+  Nothing blocks v0.0014.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.

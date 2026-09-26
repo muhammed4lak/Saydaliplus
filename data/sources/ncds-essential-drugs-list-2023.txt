@@ -1,0 +1,3653 @@
+=== page 1
+NATIONAL 
+CODE ITEMS UNIT
+DOSE NOTE
+قائمة
+العيادات 
+الطبية 
+الشعبية
+الرعاية الصحية 
+الاولية
+الرعاية الصحية
+ الفرعية
+1 CARDIOVASCULAR SYSTEM  
+1A Positive inotropic drugs
+1AA Digitalis glycoside
+01-AA0-004 Digoxin  250 mcg scored Tablet Tabletمزمنة
+01-AA0-006 Digoxin  250 mcg/ml  (2ml) Ampoule Ampoul
+e
+1B DIURETICS
+01-B00-005 Furosemide(Frusemide) 20mg/2ml  Ampoule ,IV ,IM/or slow IV ,IM Ampoul
+e
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌةطبٌب 
+01-B00-007 Furosemide(Frusemide) 40mg Tablet Tabletتامٌن
+صحً
+طبٌب و ملاكات 
+صحٌة
+01-B00-013 Hydrochlorothiazide 50mg scroed Tablet Tabletمزمنةالرعاٌة الصحٌة  
+الاولٌة
+01-B00-016 Spironolactone  25mg Tablet Tabletتامٌن
+صحً
+1C BETA-ADRENOCEPTER BLOCKING DRUGS
+01-C00-008 Carvedilol   6.25mg Tablet Tablet 976مزمنة
+01-C00-023 Propranolol hydrochloride 1mg/ml slow IV   (1ml Ampoule ) Ampoul
+e
+وٌؤخذ بنظر الاعتبار
+استخدامه فً التخدٌر ( 
+976)
+01-C00-025 Propranolol hydrochloride 40mg Tablet or scored Tablet Tabletج\1070  
+01-C00-012 Labetalol hydrochloride  5mg/ml (20ml Ampoule) or Vial 
+ vial or 
+Ampoul
+e
+ ج/ 1157 
+وتستخدم اٌضا" 
+للتخدٌر من لبل وحدات 
+اللجنة الوطنٌة لانتقاء الادوٌة
+National Committee for Drug Selection\NCDS
+(25\7\2023,Eessential  drugs List  ,1188)
+
+=== page 2
+01-C00-017 Metoprolol  tartrate 1mg/1ml (5ml  Ampoule)  I.V Ampoul
+e
+وتستخدم اٌضا" للتخدٌر من لبل وحدات التخدٌر
+01-C00-015 Metoprolol  tartrate 50mg  Tablet Tabletج986
+1070مزمنةالرعاٌة الصحٌة  
+الاولٌة
+01-C00-010 Carvedilol 25mg Tablet   Tabletج\1070
+ان ٌتم تثبٌت احتٌاجها
+من لبل دابرة العٌادات 
+مزمنة
+01-C00-043 labetalol hydrochloride 100 mg Tablet
+1D ANTI-ARRHYTHMIC DRUGS
+01-D00-027 Adenosine  3mg/ml (2ml )Vial or Ampoule vial or 
+Ampoul
+e
+01-D00-001 Amiodarone hydrochloride 50mg/ml (3ml) Ampoule  Ampoul
+e
+ ٌؤخذ بنظر الاعتبار
+ضمن لابمة التخدٌر ( 
+976)
+01-D00-002 Amiodarone  hydrochloride 200mg Tablet Tablet
+01-D00-022 Verapamil  hydrochloride 2.5mg/ml (2ml) Ampoule slow I.V Ampoul
+e
+01-D00-034 Lidocaine hydrochloride 2% 20mg /ml 2ml Ampoule Ampoul
+e
+ ٌدرج ضمن لوابم
+التخدٌر    ٌستخدم فً 
+وحدة العناٌة المركزة 
+11471E ANTI-HYPERTENSIVE DRUGS  
+01-E00-003 Captopril  25mg Tablet Tabletج\1070  
+01-E00-014 Hydralazine hydrochloride 20mg/ Ampoule I.V. Infusion or slow I.V Ampoul
+e
+-965
+01-E00-024 Methyldopa  250mgTablet Tabletج\1070  الرعاٌة الصحٌة
+الاولٌة
+01-E00-020 Losartan potassium  50mg Tablet Tabletمزمنة
+01-E00-088 Bosentan (as monohydrate) 125mg tablet Tabletالجلسة981
+01-E00-018 Lisinopril (as base or anhydrous or as dihydrate , the same drug with or 
+without water of hydration) 10mg tablet
+Tabletمزمنة
+01-E00-060 Candesartan cilexetil 16mg  Tablet   Tabletج\1070
+ان ٌتم تثبٌت احتٌاجها
+من لبل دابرة العٌادات 
+مزمنة
+1F VASODILATORS
+01-F00-002
+Amlodipine ( as besylate ) 5 mg tablet or capsule
+tablet 
+or 
+capsule
+                
+ج(1019)مزمنةالرعاٌة الصحٌة  
+الاولٌة
+01-F00-007
+Diltiazem hydrochloride  60 mg  tablet or capsule
+tablet 
+or 
+capsule
+                
+ج(1019)تامٌن
+صحً
+01-F00-024 Glyceryl trinitrate  0.5mg sublingual Tablet tabletمزمنةالرعاٌة الصحٌة  
+الاولٌة
+01-F00-038 Isosorbide  mononitrate  10mg Tablet tablet 1012مزمنة
+01-F00-060 Nimodipine    30mg Tablet tablet                            
+مراكز الجملة العصبٌة
+=== page 3
+01-F00-073 Glyceryl trinitrate 5mg/ml  (5ml )Ampoule or vial
+احتٌاج واحد مع المادة 
+(01-F00-069)
+vial OR 
+Ampoul
+e
+01-F00-069 Glyceryl trinitrate  1mg/1ml (10ml)  Ampoule or vial
+احتٌاج واحد مع المادة 
+(01-F00-073)
+vial OR 
+Ampoul
+e
+01-F00-034 Isosorbide  dinitrate  10mg Tablet tablet 1184
+1012
+1158
+الرعاٌة الصحٌة
+الاولٌة
+1G SYMPATHOMIMETIC DRUGS
+01-G00-001 Dobutamine (as hydrochloride) 250 mg/vial or Ampoule (12.5 mg/ml 20 ml) 
+i.v infusion 
+vial OR 
+Ampoul
+e
+ٌتم الاخذ بنظر
+الاعتباراستخدامه فً 
+لوابم التخدٌر
+01-G00-002 Dopamine hydrochloride 40mg/ml, (5ml) Ampoule or vial vial OR 
+Ampoul
+e
+ٌتم الاخذ بنظر
+الاعتباراستخدامه فً 
+حالات( التخدٌر والملبٌة 
+والسموم)
+01-G00-009 Ephedrine  hydrochloride 3% (30 mg / ml)  1ml ampoule slow I.V. injection ampoul
+e
+  وتستخدم فً الملبٌة
+اٌضا"   تستخدم ضمن 
+مجموعة التخدٌر بعد 
+التخفٌف ( 01-G00-014 Noradrenaline Acid Tartrate/Noradrenaline  Tartrate/Norepinephrine 
+Bitartrate 2mg/ml (equivalent toNoradrenaline1mg/ml (2 ml or 4ml ampoule) 
+الافعهُح نهحجى الالم
+ampoul
+e
+  1157
+    ٌستعمل فً مراكز 
+العناٌة المركزة 
+والتخدٌر  فً 
+المستشفٌات الربٌسٌة 
+فً بغداد و المحافظات 
+01-G00-008 phenylephrine hydrochloride 50 µg / ml solution for   IV injection  (10 ml ampoule)  ampoul
+e
+1157
+1184
+2 GASTRO-INTESTINAL SYSTEM
+2A ANTACIDS
+02-A00-003 Aluminium hydroxide 225mg +Magnesium hydroxide 200mg + Simethicone 
+25mg -30 /5ml  Suspension
+bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+2B ANTISPASMODICS
+02-B00-008 Hyoscine butylbromide  1mg/ml Syrup bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+02-B00-009 Hyoscine butylbromide 20mg/ml, (1ml) Ampoule I.M , slow I.V , S.C OR I.M , 
+slow I.V 
+ampoul
+e
+ اضافة طرٌمة الزرق
+بالجلسة 867 الواردة
+فً 18\12\2013
+ج/1026 1083
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌةطبٌب 
+02-B00-007 Hyoscine butylbromide 10mg Tablet tablet 1119تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+2C DRUGS THAT PROMOTE HEALING OF  PEPTIC ULCERS
+02-C00-035 Omeprazole (as sodium salt) 40mg powder for reconstitution with or without  
+solvent vial for IV injection over 5 minutes or IV infusion over 20 – 30 minutes
+vial 1147
+حسب قاعدة اقل 
+الاسعار ج 972
+1178
+(  احتٌاج واحد- 
+وٌؤخذ بنظر الاعتبار 
+استخدامه ضمن لوابم 
+التخدٌر                   
+- فً حالة عدم توفر أو 
+تسجٌل المادة بالتركٌز 
+=== page 4
+02-C00-038 Esomeprazole( as sodium)  40mg  powder for solution  vial  IV or IV infusion vial 1147
+02-C00-015 Omeprazole 20mg  Enteric Coated  pellets in capsule  or   Enteric Coated  
+Tablet
+tablet 
+or 
+capsule
+1012
+1119تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+2D ANTIDIARRHOEAL DRUGS
+02-D00-002 Diphenoxylate hydrochloride 2.5mg + Atropine sulphate 25mcg Tablet Tablet simple diarrheaتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌةطبٌب 
+02-D00-008 Glucose anhydrous 13.5g + Sodium Chloride 2.6g+Tri sodium citrate 
+dihydrate 2.9g + Potassium chloride 1.5g  to be dissolved in Sufficient  water 
+to produce 1liter (providing Sodium Chloride 75 mmol + Potassium chloride 
+20 mmol+chloride  65 mmol +citrate 10 mmol +glucose 75 mmol /Litre) (Oral 
+powder)
+sachet
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+2E TREATMENT OF CHRONIC DIARRHEA
+02-E00-011 Mesalazine enema  (suspension  1gm/100ml or foam 1gm/application) suspen
+sion or 
+foam 
+enema
+ج987
+1129
+02-E00-006 Mesalazine 500mg  modified release tablet or   extended release capsule tablet 
+or 
+capsule
+1113
+2F LAXATIVES
+02-F00-002 Bisacodyl 10mg  Suppository (adult) pieceتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌةطبٌب 
+02-F00-003 Bisacodyl   5mg enteric coated Tablet tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+02-F00-014 Lactulose 3.1- 3.7g/5ml, Syrup bottle
+2H DRUGS AFFECTING INTESTINAL SECRETIONS
+02-H00-016 Ursodeoxycholic acid  300mg Tablet or Capsule tablet 
+or 
+capsule
+2K DIRECT ACTING SPASMOLYTIC
+02-K00-002 Mebeverine hydrochloride 135mg Tablet Tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌةطبٌب 
+2L MOTILITY STIMULANT (PROKINETIC DRUG) 
+02-L00-008 Metoclopramide  5mg/ml, (2ml)(  Ampoule or vial )IM, IV 
+ٌكون التركٌز مكافا الى 
+( Metoclopramide 5 mg / ml ( as base )
+ampoul
+e or vial
+1178
+تحدٌدات استخدام 
+metoclopramide 
+ا_منع استخدام مادة      
+  
+تامٌن 
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+02-L00-005 Metoclopramide hydrochloride 10mg Tablet or Scored Tablet tablet ا_منع استخدام مادة
+metoclopramide 
+   للاطفال الل من سنة
+واحدة وذلن لزٌادة 
+تامٌن 
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+3 RESPIRATORY SYSTEM
+=== page 5
+3A BRONCHODILATORS       لامانع من اعتماد
+المادة الفعالة بشكل 
+sulphate or 
+base لمستحضرات
+Salbutamol 
+وبأشكالها الصٌدلانٌة
+وحسب الممر  دستورٌاً
+03-A00-001 Aminophylline dihydrate  25mg/1ml  (eq.Theophyline  Anhydrous 19.7 
+mg/1ml)   ( 10 ml  amp. )(plastic or glass ampoule) IV injection
+مطالبة الشركة المنتجة بتمدٌم ما ٌثبت عدم تفاعل المادة (Aminophyllin) مع العبوة المصنوعة من 
+البلاستن
+ampoul
+e
+1161
+1030الرعاٌة الصحٌة
+الاولٌة
+03-A00-024 Salbutamol  Nebules (Respirator solution)0.5% w/v 20ml or 30ml Note:Home 
+Nebuliser (port Neb home compressor Nebuliser with solution (Salbutamol )
+لامانع من اعتماد المادة الفعالة بشكلsulphate or base لمستحضراتSalbutamol وبأشكالها 
+الصٌدلانٌة وحسب الممر  دستورٌاً -أن ٌكون( as sulphate or as base) بما ٌعادل100 mcg
+bottle 1104
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+03-A00-025 Salbutamol  (as sulphate ) 2mg/5ml Syrup
+لامانع من اعتماد المادة الفعالة بشكلsulphate or base لمستحضراتSalbutamol وبأشكالها 
+الصٌدلانٌة وحسب الممر  دستورٌاً -أن ٌكون( as sulphate or as base) بما ٌعادل100 mcg
+bottle
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+03-A00-044 Salbutamol aerosol (as a base) 100mcg / metered  
+inhalation
+ لامانع من اعتماد المادة الفعالة بشكلsulphate or base لمستحضراتSalbutamol وبأشكالها
+الصٌدلانٌة وحسب الممر  دستورٌاً -أن ٌكون(as sulphate or as base) بما ٌعادل100mcg _    
+ٌفصل الSPACER عنNEBULIZER وٌكونSPACER ضمن المستلزمات وٌكون استٌراد ال
+SPACER(بنسبه20/1) من كمٌة الاحتٌاج الكلً للبخاخاتAerosol
+aerosol  ج/505   Using 
+of propellant 
+134a  CFC -free 
+is approved in 
+these 
+preparations
+ -Salbutamol 
+aerosol
+ -
+مزمنةالرعاٌة الصحٌة  
+الاولٌة
+3B CORTICOSTEROIDS
+03-B00-015 Beclomethasone dipropionate  250mcg/ each actuation (For adults only) oral 
+inhaler
+ aerosol +مزمنةالرعاٌة الصحٌة  
+الاولٌة
+3D ALLERGIC DISORDERS
+03-D00-003 Chlorpheniramine maleate  2 mg/5ml Syrup bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+03-D00-004 Chlorpheniramine maleate 4mg Tablet tablet تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+03-D00-015 Diphenhydramine hydrochloride 10mg/ml  IM,IV(1ml)Ampoule ampoul
+e
+1012تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+3E RESPIRATORY STIMULANTS
+03-E00-002 caffeine citrate 10mg/ml, equivalent to caffeine 5mg/ml ampoule of 1ml or 
+2ml for I.V. infusion 
+ampoul
+e
+1161
+ج986
+03-E00-001 Doxapram Hydrochloride 20mg/ml,( 5ml) Ampoule ampoul
+e
+ٌؤخذ بنظر الاعتبار
+ضمن لابمة التخدٌر
+=== page 6
+3F MUCOLYTICS
+03-F00-002 Bromhexine hydrochloride 4mg/5ml Syrup bottleتامٌن
+صحً
+3G ANTITUSSIVES DEMULCENTS EXPECTORANTS    
+03-G00-016 Glyceryl guaiacolate 50mg+ Chlorpheniramine maleate 1mg+ Phenylephrine 
+hydrochloride 2.5mg/5ml  Syrup
+bottle 1119تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+3I OTHERS
+03-I00-006 Phospholipids 25 mg ( derived from bovine lung lipid extract) Beractant + 
+sodium chloride  9mg  in water for inj/1ml  (single dose vial  of 4ml ) 
+intratracheal use only
+حسب لاعدة الل الاسعار 
+03-i00-007
+03-i00-006
+                      
+vialج972
+03-I00-007 Calfactant 35mg/ml  suspension 3ml vial for intratracheal instillation only 
+intratracheal use only
+حسب لاعدة الل الاسعار 
+03-i00-006
+03-i00-007
+bottleج972
+  
+1161
+3J Leukotriene Receptor antagonists
+03-J00-002 Montelukast (as sodium  ) 4mg cheweble Tablet  tablet 
+03-J00-003 Montelukast (as sodium  ) 10mg   Tablet        tablet 
+4 CENTRAL NERVOUS SYSTEM
+4A HYPNOTICS AND ANXIOLYTICS
+04-A00-007 Chlordiazepoxide   5mg Tablet tablet تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+04-A00-013 Diazepam  5mg/ml, (2ml) Ampoule ampoul
+e
+تستخدم  فً صالات
+الولادة وردهة الطوارئالرعاٌة الصحٌة  
+الاولٌة
+04-A00-021 Diazepam   5mg Tablet tablet تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+04-A00-025 Lorazepam  2mg scored  Tablet tablet 
+04-A00-041 Chloralhydrate 500 mg / 5 ml  10%  oral  solution bottele of (200 ml) bottle 1100
+4B ANTIPSYCHOTICS
+04-B00-004 Chlorpromazine  hydrochloride 100mg  Tablet tablet 
+04-B00-008 Chlorpromazine hydrochloride  25mg/ml, (2ml) Ampoule I.V ,I.M ampoul
+e
+_    يدتعسل للزرق
+العزلي IM العسيق
+بسعدل 25-50 ملغم04-B00-018 Fluphenazine  decanoate  depot injection 25mg/ml, (1ml) Ampoule ampoul
+eمزمنة
+=== page 7
+04-B00-023 Haloperidol     5mg Tablet tablet 
+04-B00-025 Haloperidol    5mg/ml    (1ml ampoule) ampoul
+e
+     ج1010
+04-B00-034 Olanzapine  5mg Tablet tablet 
+04-B00-050 Risperidone 2mg Tablet tablet 
+04-B00-082 Risperidone liquid oral solution 1mg/ml. bottle
+04-B00-033 Lithium carbonate  400mg controlled release Tablet tablet التأكٌد على ضرورة توفٌر الاجهزة
+المختبرٌة لفحص نسبة اللٌثٌوم فً 
+الدم
+04-B00-032 Olanzapine 10mg Tablet tablet 1119
+4C ANTIDEPRESSANT DRUGS
+4CA TRICYCLIC AND RELATED ANTIDEPRESSANT DRUGS
+04-CA0-002 Amitriptyline hydrochloride  25mg Tablet tablet لمرضى الشلل والمعالٌنتامٌن  
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+04-CA0-007 Clomipramine hydrochloride  25mg Tablet tablet 
+4CC Selective serotonin re-up take inhibitors
+04-CC0-002 Fluoxetine (as hydrochloride)  20mg film coated  Tablet or capsule capsule 
+ or  
+Tablet
+1012الرعاٌة الصحٌة
+الاولٌة
+04-CC0-016 Escitalopram (as oxalate) tablet 10mg                                                           tablet 
+4CD Selective serotonin nor adrenaline re-up take inhibitors 
+04-CD0-001 Mirtazapine 30mg Tablet tablet    للمستشفٌات
+التخصصٌة فً الطب 
+النفسً فمط
+4F DRUGS USED IN NAUSEA AND VERTIGO
+04-F00-004 Prochlorperazine maleate  5mg Tablet tablet -976تامٌن
+صحً
+04-F00-023 Cinnarizine  25mg Tablet  tablet تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+04-F00-019 Ondansetron  (as hydrochloride)  or ( as hydrochloride dihydrate) 2mg/ml 
+(4ml) Ampoule  or vial I.M , slow I.V ,I.V infusion 
+Ampoul
+e  or 
+vial
+مراكز سرطانٌه ٌؤخذ
+بنظر الاعتبار لابمة 
+ادوٌةالتخدٌر واستخدام 
+المادة لعلاج ومنع 
+التمٌا والغثٌان بعد 04-F00-016 Ondansetron 8mg  orodispersible or  lyophylisates oral Tablet or film coated 
+Tablet
+tablet مراكز سرطانٌه ٌؤخذ
+بنظر الاعتبار لائ
+مة ادوٌة التخدٌر 
+واستخدام المادة لعلاج 
+=== page 8
+04-F00-025 One packet contains :
+Aprepitant 1 Capsule : 125mg/Capsule 
+Aprepitant 2 Capsule : 80 mg /Capsule 
+ تلتزم الشركة المجهزة بتوفٌر(50 %)  من الاحتٌاج الكلً للعراق كبضاعة مجانٌة على ان لا ٌكون          
+السعر لممدم فً المنالصة اعلى من الكلفة التخمٌنٌة او سعر التسجٌل
+packetج/1043
+ان تلتزم الشركة
+المجهزة بتوفٌر(50 %
+)  من الاحتٌاج الكلً
+للعراق كبضاعة مجانٌة 
+على ان لا ٌكون         
+السعر لممدم فً 
+المنالصة اعلى من 4G ANALGESICS USED FOR MILD, MODERATE PAIN
+04-G00-020 Paracetamol   125mg  Suppository piece (infant)تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+04-G00-036 Paracetamol   10 mg /ml . I.V.  Infusion  (100 ml container) 100 ml 
+contain
+er
+وتعطى للكبار
+بالاسترواء الورٌدي و 
+للصغار حسب وزن 
+الطفل04-G00-037 Paracetamol   10 mg /ml . I.V.  Infusion  (50 ml vail ) vialٌستعمل لحدٌثً الولادة
+والرضع والاطفال الذي 
+04-G00-038 Paracetamol  120mg/5ml or 125mg/5ml suspension  or syrup 100ml bottle   الجلسة975تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+04-G00-002 Acetylsalicylic acid  100mg  (enteric coated)Tablet tabletج\1070
+1092مزمنة
+04-G00-021 Paracetamol   250mg  Suppository piece (child)تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+04-G00-027 Paracetamol  500mg Tablet tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+04-G00-041 Nefopam hydrochloride 20 mg / 2ml ampoule IM,IV injection Ampoul
+e
+1161
+1109
+       1155 
+1042
+4H ANALGESICS USED FOR SEVERE PAIN  (opioid analgesics)
+04-H00-007 Morphine sulphate 10mg/ml (1ml Ampoule) I.V , I.M ,S.C Ampoul
+e
+تدرج ضمن لابمة
+التخدٌر
+04-H00-010 Pethidine hydrochloride  50mg/ml, (2ml) Ampoule Ampoul
+e
+تدرج ضمن لابمة
+التخدٌر
+04-H00-012 Tramadol hydrochloride    50mg /  1ml  (2 ml)    Ampoule or vial  I.M.;S .C 
+.,slow iv.iv. Infusion
+Ampoul
+e or vial
+بالامكان ان تكون جمٌع
+الطرق مذكوره على 
+المستحضر او بشكل 
+منفصل (جزء منها) 04-H00-003 Morphine sulphate   10mg (sustained release) Capsule or tablet Tablet 
+or 
+capsule
+1012      ( ٌحصر صرفه  فً المراكز السرطانٌة )
+04-H00-004 Morphine sulphate 30mg (sustained release) Capsule or tablet Tablet 
+or 
+capsule
+1051    
+  ( ٌحصر صرفه  فً 
+المراكز السرطانٌة )
+04-H00-035 Morphine  sulphate  10mg/5ml syrup bottle 1051
+4J ANTIEPILEPTICS
+04-J00-002 Carbamazepine  200mg Tablet Tablet مزمنةالرعاٌة الصحٌة  
+الاولٌة
+=== page 9
+04-J00-010 Clonazepam   0.5mg Tablet Tablet تامٌن
+صحً
+04-J00-053 Gabapentin 300mg Capsule  or Tablet Tablet 
+or 
+capsule
+1012
+04-J00-017 Phenobarbitone sodium  200mg/ml (1ml) Ampoule    I.M  , I.V. or  (SC. IM  
+or IV)  
+Ampoul
+e
+المادة دواء طواريء
+ولا ٌعطى (الا بالورٌد 
+بعد التخفٌف بنسبة 
+واحد فً عشرة (مل 04-J00-018 Phenobarbitone  15mg Tablet Tablet تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+01-D00-014 Phenytoin sodium 50mg/ml  (5ml) Ampoule Ampoul
+e  
+ادوٌة الطوارى
+04-J00-034 Sodium  valproate 200 mg  Tablet or (enteric coated ) Tablet 1012مزمنة
+04-J00-061 Sodium  valproate (Powder) 400mg Vial with 4ml ampoule water for injection  vial
+04-J00-031 Sodium valproate solution  200mg/ml Drop dropمزمنة
+04-J00-005 Carbamazepine   100mg/5ml  liquid bottleج\1070
+1119
+-963
+مزمنة
+04-J00-044 Topiramate 50mg tablet Tablet 1158
+4K DRUG USED IN PARKINSONISM
+04-K00-008 Levodopa 250mg + Carbidopa (as monohydrat)or (anhydrous) 25mg Tablet Tablet مزمنة
+04-K00-016  Procyclidine hydrochloride 5mg Tablet                                                                                                                                                                                                                                  Tablet يختص بسرض الذلل الرعاشي(مرض باركدن) 
+4M skeletal Muscle relaxants( drugs used in trigeminal neuralgia ) 
+04-M00-001 Baclofen  10mg Tablet Tablet لمرضى الشلل والمعالٌن
+4N Drugs used in Substance Dependence
+4 NA Drugs used in alcohol dependence 
+04-NA0-003 Acamprosate calcium 333mg tablet Tablet 1079
+4NC Opioid dependence
+04-NC0-001 Naltrexone hydrochloride 50mg tablet Tablet ٌحصر استخدامها فً
+مراكز علاج الادمان
+4P Others
+4Q DRUG FOR DEMENTIA
+04-Q00-001 Memantine hydrochloride 10mg Tablet Tablet (for moderate & 
+sever dementia 
+in 4R Immunomodulater
+04-R00-001 Fingolimod (as hydrochloride) 0.5 mg capsule 
+ capsuleٌستخدم كعلاج ثانى فً
+حاله فشل علاج الخط 
+الاول وحسب الضوابط 
+=== page 10
+5 DRUGS USED IN TREATMENT OF INFECTIONSاعتماد  اداة تصنيف
+المضادات الحيوية 
+AWaRe = Access 
+ ,Watch & 
+Reserve )) 1126
+5A ANTIBACTERIAL DRUGS 
+((For Antibiotic {as syrup} ,it will be /powder for suspension/ if it is as 
+apowder) )تعتبر عبارةas anhydrous هً نفسهاas base
+5AA Penicillins
+05-AA0-002 Amoxycillin  (as trihydrate)   500mg Capsule or tablet capsule 
+ or  
+Tablet
+1178
+Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-AA0-004 Amoxycillin  (as trihydrate)    250mg/5ml Powder for oral suspension100 ml bottle Access
+1186 
+الجلسة975
+1077
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-AA0-007 Amoxycillin  (as sodium)  500mg   Vial. (I.V,I.M) vial Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-AA0-029 Amoxycillin (as trihydrate) 500mg+ Clavulanic acid (as potassium salt)  
+125mg Tablet  (co amoxiclav 500 /125)
+Tablet Accessتامٌن
+صحً
+05-AA0-031 Amoxycillin (as trihydrate)  250mg+ Clavulanic acid (as potassium salt) 
+62.5mg/5ml Powder for oral suspension (co amoxiclav 250 /62.5)
+bottle Access
+1186تامٌن
+صحً
+05-AA0-071 Tazobactam (as sodium salt) 500mg + piperacillin (as sodium salt) 4gm   I.V 
+infusion (with or without EDTA)
+vial Watch
+05-AA0-043 Flucloxacillin (as sodium)  500mg Vial,I.M , I.V with or without other route vial Access
+870, 1036
+1102
+تامٌن
+صحً
+5AB Cephalosporins                                                                                         
+05-AB0-013 Cephalexin  ( as monohydrate ) eq. to  500 mg anhydrous ( Cephalexin  500 
+mg ) capsule
+capsule Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-AB0-015 Cephalexin (as monohydrate) 250mg/5ml,Powder for oral suspension 100ml bottle Access
+1077
+1186
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+05-AB0-024 Ceftazidime (as pentahydrate)  1g I.V. Injection +solvent water for injection 
+(Carbonate or Arginine formula)
+vial Watch
+1127
+05-AB0-031 Ceftriaxone  (as Sodium)  or (as disodium salt ) or(Disodium 
+sesquarterhydrate )  1g I.V. Injection +(10 ml )solvent water for injection         
+                                                                                                        مفاتحة 
+الشركات لدرجbox warning على الغلاف الخارجً(ٌجب عدم اعطاء السفترٌاكسون مع الادوٌة  
+والمحالٌل الحاوٌة على الكالسٌوم) واضافة تحذٌراتFDA الى النشرات الداخلٌة لجمٌع الشركات المسجلة 
+فً العراق وبخط غامك(Bold)
+vial 1173
+Watch
+نؤكد ضرورة عدم 
+استخدام او محدودٌة 
+استخدامه وذلن  لما 
+ٌسببه من عوارض 
+=== page 11
+05-AB0-008 Cefotaxime (as sodium salt ) 500mg   + solvent (10ml) water for injection vial 
+injection IV& IM   
+vial 1175
+ٌحصر استخدامها فً 
+ردهات الخدج 
+وللاستطبابات الاتٌة
+Meningitis and 
+late onset sepsis5AC Aminoglycosides
+05-AC0-001 Amikacin (as sulphate)   250mg/ml, (2ml)  Vial  or Ampoule for  I.M , slow I.V 
+or I.V infusion 
+vial or 
+ampoul
+e
+Access
+05-AC0-003 Gentamicin (as sulphate) 40mg/ml, (2ml)  Vial  or Ampoule I.V.,I.M. vial or 
+ampoul
+e
+Accessتامٌن
+صحً
+05-AC0-005 Gentamicin (as sulphate)  10mg/ml, (2ml Vial  or Ampoule) I.M , I.V vial or 
+ampoul
+e
+Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+5AD Tetracyclines
+05-AD0-001 Doxycycline ( as hyclate )100 mg tablet or capsule  Tablet 
+or 
+capsule
+Access   
+        ج(1001)تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+05-AD0-008 Tigecycline  50 mg  vial I.V. infusion  vial Reserve
+ٌحصر صرفه فً 
+ردهات العناٌة المركزة5AF Sulphonamide and trimethoprim
+05-AF0-001 Co-trimoxazole  480mg Tablet tablet Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+05-AF0-003 Co-trimoxazole  240mg/5ml, Suspension bottle Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+5AG Othersملاحظة حول
+Vancomycin -: 
+تبلغ المؤسسات الصحٌة
+بإمكانٌة أستعمال cap 
+أوvial كـsusp من
+لبل شعب الصٌدلة 
+للمرضى الرالدٌن فً  
+المستشفٌات:- 500 
+ملغم لكل6سم3 من
+الماء الممطر 
+Distilled  water
+05-AG0-005 Ciprofloxacin as hydrochloride  or Ciprofloxacin as hydrochloride  
+monohydrate  500mg Tablet
+tablet Watchتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+05-AG0-037 Erythromycin (as ethyl succinate)  250mg/5ml Powder for oral suspension bottle Watch
+1186
+1043
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+=== page 12
+05-AG0-059 Meropenem (as trihydrate) 1gm Vial I.V , I.V infusion vial  
+1179
+وتعتمد التعلٌمات
+الصادرة من دابرة 
+الامور الفنٌة
+05-AG0-015 Meropenem (as trihydrate or  anhydrous)  500mg I.V.,I.V  Infusion Vial vial 1179
+وتعتمد التعلٌمات
+الصادرة من دابرة 
+الامور الفنٌة 05-AG0-049 Azithromycin (as dihydrate)or (as monohydrate)eq. To anhydrous 
+Azithromycin 500mg  base  capsule  or tablet
+tablet or capsule                          
+                          
+    Watch            
+                     
+تحذٌر صادر عن 05-AG0-063 Vancomycin (as hydrochloride) 1gm  Vial. vial Watch
+05-AG0-025 Clindamycin (as phosphate) 150mg/ml,   (2ml) Ampoule or vial I.V.,I.M vial or 
+ampoul
+e
+1178
+Access
+05-AG0-051 Ciprofloxacin (as lactate or as hydrochloride) 2mg/ml in sodium cloride  
+0.9%100ml(200mg  ) I.V. infusion  (Electrolyte Na+ 15.4 mmol/100ml )  
+bottle 1167
+Watch
+05-AG0-079 Colistimethate sodium 1000000 IU powder for solution for injection or 
+inhalation
+vial Reserve
+وٌحدد صرفها فً 
+وحدات العناٌة المركزة 
+فمط بعد اجراء فحص 
+حساسٌة البكترٌا 5AH Antitubercular drugs                                                       ٌستعملRifampicin 
+فً-: 
+ -(Brucellosis, Endocarditis, Legionnaires disease in combination with 
+other drugs, Leprosy, Prophylaxis of meningococcal meningitis & H. 
+influenza Type (b) infection)  
+  منع تداول
+ISONIAZID ,
+ETHAMBUTOL,
+PYRAZINAMID 
+فً المطاع الخاص و
+حصر تداولها فً 
+المراكز الصحٌة 
+المعنٌة(المراكز 
+التخصصٌة للامراض 
+الصدرٌة )
+تم تعدٌل لابمة التدرن 
+جلسة 1094
+05-AH0-039 Rifampicin 150 mg + Isoniazid 75mg +Ethambutol 275mg+pyrzinamid 
+400mg (RHEZ)=KIT
+kit Watch
+خط اول
+05-AH0-040 Rifampicin 150 mg + Isoniazid 75mg (RH)=KIT kit Watch
+خط اول
+05-AH0-003 Ethambutol hydrochloride  400mg Tablet Tabletخط اول
+05-AH0-043 Pyrazinamide  400mg Tablet Tabletخط ثانً
+05-AH0-008 Isoniazid  100mg Tablet Tabletخط اول
+05-AH0-002 Cycloserine  250mg Tablet or capsule Tabletخط ثانً
+1108
+05-AG0-012 Levofloxacin   500mg Scored Tablet Tablet    1154 ٌتم اضافة 
+الاستطبابات الخاصة 
+بمركز زرع نخاع 
+=== page 13
+05-AH0-050 Rifampicin 60mg + Isoniazid 30mg + Pyrazinamide150  mg or Rifampicin 75 
+mg + Isoniazid 50 mg  Pyrazinamide 150 mg disperable tablet  or  tablet
+ Tablet Watch
+ج1005  ج1012
+خط اول اطفال
+05-AH0-051 Rifampicin60mg + Isoniazid 30mg   or Rifampicin 75 mg + Isoniazid 50 mg  
+disperable tablet  or  tablet
+ Tablet Watch
+ج1005  ج1012
+خط اول اطفال
+05-AH0-042 Para-aminosalicylic acid (PAS) 4gm/ sachet oral sachetٌحصر استخدامه فً
+مراكز التدرن لعلاج 
+مرض السل المماوم 
+/خط ثانً
+05-AH0-046 Ethambutol hydrochloride 100mg  film coated Tablet  Tablet خط اول وثانً
+05-AH0-013 Prothionamide 250mg tablet  Tablet خط ثانً
+الجلسة 981
+05-AI0-003 Clofazimine 100mg Capsule capsuleخط ثانً
+وتسخدم اٌظا فً Anti-
+leprosy drugs05-AH0-056 Bedaquiline 100mg tablet  Tablet خط ثانً
+05-AH0-060 Linezolid  600 mg tablet  Tablet  1154 ٌتم اضافة
+الاستطبابات الخاصة 
+05-AH0-057 Delamanid 50mg tablet  Tablet خط ثانً
+1108
+05-AH0-070 Pretomanid 200mg tablet 
+توفر مجانا من لبل المنظمات الاممٌة والدولٌة ذات العلالة والمعتمدة من لبل وزارة الصحة
+Tablet 1175
+وٌحصر استخدامها
+لاستطباب التدرن 
+المماوم وفً معهد 
+التدرن الوطنً مع 
+05-AH0-071 Rifapentine 150 mg tablet  
+توفر مجانا من لبل المنظمات الاممٌة والدولٌة ذات العلالة والمعتمدة من لبل وزارة الصحة
+Tablet 1175
+وٌحصر استخدامها
+لاستطباب التدرن 
+المماوم وفً معهد 
+التدرن الوطنً مع 
+وضع ضوابط والٌة 
+05-AH0-072 Bedaquiline 20 mg dispersable tablet 
+ توفر بشكل مجانً من الجهات المانحة
+Tablet 1175
+05-AH0-073 Linezolid 150mg dispersable tablet
+توفر بشكل مجانً من الجهات المانحة
+Tablet 1175
+5AJ Drugs for UTI
+05-AJ0-006 Nitrofurantoin   100mg Tablet or capsule  Tablet 
+or 
+capsule
+1178
+Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+5B ANTIVIRAL DRUGS
+05-B00-001 Acyclovir (as sodium salt)   250mg  Vial I.V. Infusion vial
+05-B00-003 Acyclovir 200mg/5ml Suspension bottle
+05-B00-007 Ganciclovir 500mg  Vial  I.V. Infusion vialج987
+05-B00-037 Oseltamivir as phosphate 75mg capsule Capsule
+05-B00-050 Ribavirin 200mg/5ml (100 ml) oral solution                         bottle 1139
+=== page 14
+05-B00-059 Ribavirin 200mg tablet or capsule  Tablet 
+or 
+capsule
+1101
+05-B00-055 Entecavir  (as monohydrate)  0.5  mg tablet  Tablet 1161
+تُظثح20 %يٍ احتُاج  
+انًادج تانزيش انىغٍُ 05-B00-071 Tenofovir alafenamide (as Tenofovir alafenamide fumarate) 25 mg tablet
+بنسبة20 %من احتٌاج المادة بالرمز الوطنً  
+(05-B00-055)
+1161
+تُظثح20 %يٍ احتُاج  
+انًادج تانزيش انىغٍُ 
+(05-B00-055)
+05-B00-057 Entecavir )as monohydrate( 50μg / ml oral solution bottleػهً اٌ َكىٌ صزفّ فٍ يزاكش انجهاس انهعًٍ و انكثذ انتخصصُح
+05-B00-067 Sofosbuvir 400mg/Velpatasvir 100mg film coated tablet  Tablet 
+or 
+capsule
+1150
+1128
+05-B00-002 Acyclovir  200mg Tablet  Tablet 
+05-B00-070 Zidovudine + lamivudine 60mg/30mg dispersible tablet tablet
+05-B00-069 Lopinavir + Ritonavir 80/20mg/ml syrup syrup
+05-B00-068 Tenofovir disoproxil fumarate + Lamivudine +Dolutegravir 
+300mg/300mg/50mg tablet
+tabletادوٌة العوز المناعً
+ٌستخدم كعلاج متكامل 
+لفبة ( المتعاٌشٌٌن من 
+5C ANTIFUNGAL DRUGS
+05-C00-019 Fluconazole  150mg Tablet  or capsule Tablet  
+or 
+capsule
+1012تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+05-C00-012 Nystatin  500000 U Tablet tabletتامٌن
+صحً
+05-C00-013 Nystatin  100000 U/ml Suspension (30 ml) bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-C00-036 Amphotericin lipid complex 100mg vial
+لاعدة الل الاسعار
+ ( 05-C00-041)
+( 05-C00-036)
+vialتصرف المادة من لبل
+مركز نخاع العظم 
+ومراكز زرع الكلى 
+ومراكز وردهات 
+امراض الدم .    ـ 
+05-C00-041 liposomal  Amphotericin 50mg vial
+لاعدة الل الاسعار
+ ( 05-C00-041)
+( 05-C00-036)
+vial 972
+لاعدة الل الاسعار مع
+المادة بالرمز الوطنً ( 
+05-C00-036)
+ج\1146
+05-C00-039 Micafungin (as Sodium) 50 mg / vial I.V infusion
+لاعدة الل الاسعار
+(05-C00-032)
+(05-C00-039)
+vialج\1093
+لاعدة الل الاسعار مع
+المادة بالرمز الوطنً 
+(05-C00-032)
+1118
+ادوٌة العوز المناعً 
+ٌستخدما معا كعلاج 
+=== page 15
+05-C00-032 Caspofungin (as acetate) I.V infusion : 50mg – vial (powder for 
+reconstitution)                                
+لاعدة الل الاسعار
+(05-C00-032)
+(05-C00-039)
+vialج\1093
+لاعدة الل الاسعار مع
+المادة بالرمز الوطنً 
+(05-C00-039)
+ •ٌكون البروتكول
+المعتمد لاستخدام 05-C00-035 Voriconazole 200 mg vial: 1 vial powder for solution for infusion  ≡   to 10 
+mg/ml when reconstituted as recommended
+vial
+05-C00-033 Voriconazole 200 mg tablet tabletج/1043
+أ-حصر صرفه فً 
+مراكز امراض الدم 
+ومراكز زراعة نخاع 
+5D ANTIPROTOZAL DRUGS
+05-D00-008 Hydroxychloroquine  sulphate 200mg Tablet tablet 1100
+05-D00-012 Metronidazole 500 mg coated  tablet tablet Access
+ج987
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-D00-013 Metronidazole  5mg/ml, (100ml) I.V. Infusion Vial 
+لا مانع من ألرار( العبوة البلاستٌكٌة) اضافة الى الممر    وعدم تأثٌرها على المادة الفعالة
+bottle Access   
+05-D00-014 Metronidazole  (as benzoate)  200mg/5ml,Suspension bottle Accessتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-D00-023 Sodium stibogluconate inj equivalent to pentavalant.antimony 100mg/ml  
+(100ml)  Vial or sodium antimony gluconate 100mg/ml
+vial 1146
+05-D00-044 paromomycin 15%+ methylbenzethonium chloride 12%  ointment tube 1146 تحصر لعلاج 
+اللشمانٌا الجلدٌة
+05-D00-043 Artemether 20 mg +Lumefantrine 120 mg tablet    tablet  الخبٌثة وبعض انواع
+الملارٌا 
+Falciparamمن5E ANTIHELMINTHIC DRUGS
+05-E00-002 Albendazole  100mg/5ml Suspension bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-E00-006 Mebendazole  100mg tablet or chewable  Tablet tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+05-E00-015 Mebendazole  500mg  Tablet tablet 1138وتستخدم ضمن  
+برنامج منظمة الصحة 
+العالمٌة
+05-E00-014 Triclabendazole 250mg tablet tablet 1128
+لعلاج دودة الكبد
+6 DRUGS FOR ENDOCRINE AND METABOLIC DISORDERS
+6A DRUGS USED IN DIABETES
+6AA Insulins (human)( Each insulin vial = 3.3 pen
+06-AA0-001 insulin Human  (rDNA) ( isophane ,NPH) suspention  100IU\ml(  (eq. 3.5mg) 
+10ml  vial SC
+vialتم حذف  جمٌع النسب
+بالجلسة994
+    ٌتم صرفه ضمن
+ادوٌة الامراض 
+مزمنة
+=== page 16
+06-AA0-002 insulin Human  (soluble,regular) (rDNA) 100 IU\ml  (eq. 3.5mg) 10mlvial SC. 
+injection, IV infusion, IM injection.   
+vial حسب الحاجة- ٌتم 
+صرفه ضمن ادوٌة 
+الامراض المزمنة فً 
+العٌادات الشعبٌة و 
+المراكز التخصصٌة و 
+عٌادات السكري فً  
+مزمنة
+06-AA0-003 insulin Human suspention (rDNA) as( 30% soluble+70% isophane ) 
+100IU\ml   (3.5mg)     10ml vial SC 
+vial .
+ ( 814) -ٌتم صرفه
+ضمن ادوٌة الامراض 
+المزمنة فً العٌادات 
+الشعبٌة و المراكز 
+مزمنة
+06-AA0-022 Each 1ml solution contains:- 100U   (3.64mg ) of Insluin glargine  (r-DNA)  
+3ml pre- Filled pen   S.C   use or its approved biosimilar
+ لاعدة الل الاسعار مع المادة بالرمز الوطنً
+(06-AA0-017)
+(06-AA0-022)
+penحسب لاعدة الل
+الاسعار (ج 972 )
+1094
+06-AA0-017 insulin Detemir (r-DNA)   100IU\ml (eq.14.2 mg) solution  3ml pre- Filled pen 
+S.C use (3ml)
+ لاعدة الل الاسعار مع المادة بالرمز الوطنً
+(06-AA0-017)
+(06-AA0-022)
+pen
+6AB  hypoglycemic agents
+06-AB0-008 Glibenclamide  5mg Tablet tabletج\1070  الرعاٌة الصحٌة
+الاولٌة
+06-AB0-014 Metformin hydrochloride  500mg Tablet tabletٌتم صرفها ضمن ادوٌة
+الامراض المزمنة فً مزمنةالرعاٌة الصحٌة  
+الاولٌة
+06-AB0-019 Metformin hydrochloride  1000mg ordinary Tablet tabletج\1070
+ان ٌتم تثبٌت احتٌاجها
+من لبل دابرة العٌادات 
+مزمنة
+06-AB0-010 Glimepiride 2mg  Tablet        tabletج\1070
+ان ٌتم تثبٌت احتٌاجهامزمنة 
+06-AB0-024 Sitagliptin (as phosphate monohydrate or hydrochloride monohydrate 
+)100mg  film coated tablet
+film 
+coated 
+tablet
+06-AB0-047 Empagliflozin 10 mg tablet tablet
+06-AB0-045 Dapagliflozin ( as propanediol) 5 mg tablet tablet
+06-AB0-046 Dapagliflozin ( as propanediol) 10 mg tablet tablet
+6B TREATMENT OF HYPOGLYCAEMIA
+06-B00-001 Glucagon 1mg ≡  1  I.U )as hydrochloride( Biosynthetic /ml with solvent S.C, 
+I.M , I.V (inj- vial )
+vial
+6C HYPOTHALAMIC AND PITUITARY HORMONES
+06-C00-043 Desmopressin acetate  150 mcg/dose  metered nasal spray  delivering 25 
+doses
+bottle 1161
+ٌخصص هذا التركٌز 
+للامراض النزفٌة 
+الوراثٌة فمط             
+=== page 17
+06-C00-010 Somatropin (Recombinant Human Growth Hormone,rhGH)  vial or pen   Each 
+1.33mg= 4 unit
+or  it‘s approved Biosimilar
+vial or 
+pen
+1161
+تحتدب الكسية على 
+اساس اوزان السرضى 
+06-C00-044 Urofollitropin (highly purified human postmenopausal urinary  follicle stimulating 
+hormone,HP-uFSH) 75 IU
+vial or ampoule im or sc injection  
+يٍ يصذر تشزٌ ػهً اٌ تهتشو  انشزكح انًجهشج  تتمذَى الادنح والاثثاتاخ  انؼهًُح وانتمُُح فٍ كم يا َاتٍ  :
+خهى انًُتىج يٍ انفاَزوطاخ وانثكتُزَا وانثزوتُُاخ انغزَثح
+انكفاءج ػهً اٌ تماص تطزَمح 
+priuns filled by mass
+لاػذج الم الاطؼار  
+(06-C00-044) 
+(06-C00-011)  
+ 
+vial or 
+ampoul
+e
+1161
+1158
+حسب لاعدة الل 
+الاسعار بٌن  المادة 
+بالرمز الوطنً  
+(06-C00-011) 
+06-C00-011 Follitropin alfa (recombinant human follicle stimulating hormone ,r-hFSH) 75 
+IU vial S.C , I.M  injection  or its approved biosimilar
+لاعدة الل الاسعار  
+(06-C00-044) 
+(06-C00-011)
+vial 1161 
+(ج972 )
+ (ج1158 )
+حسب لاعدة الل
+الاسعار بٌن  المادة 
+بالرمز الوطنً  
+(06-C00-044) 
+06-C00-045 menotrophin 75 (human menopausal gonadotrophin, HMG) corresponding to highly 
+purified human postmenopausal urinary  follicle stimulating hormone,FSH 75 IU 
++highly purified human postmenopausal urinary  luteinising hormone,LH 75 IU  
+powder+solvent ampoule or vial  I.M ,S.C   
+يٍ يصذر تشزٌ ػهً اٌ تهتشو  انشزكح انًجهشج  تتمذَى الادنح والاثثاتاخ  انؼهًُح وانتمُُح فٍ كم يا َاتٍ  :
+خهى انًُتىج يٍ انفاَزوطاخ وانثكتُزَا وانثزوتُُاخ انغزَثح
+انكفاءج ػهً اٌ تماص تطزَمح 
+priuns filled by mass
+vial or 
+ampoul
+e
+1161
+06-C00-046 higly purified  Urinary human chorionic gonadotrophin (HCG) 5000 IU powder  + 
+solvent   vial or ampoule  ,I.M, S.C injection
+يٍ يصذر تشزٌ ػهً اٌ تهتشو  انشزكح انًجهشج  تتمذَى الادنح والاثثاتاخ  انؼهًُح وانتمُُح فٍ كم يا َاتٍ  :
+خهى انًُتىج يٍ انفاَزوطاخ وانثكتُزَا وانثزوتُُاخ انغزَثح
+انكفاءج ػهً اٌ تماص تطزَمح 
+priuns filled by mass
+ لاػذج الم الاطؼار 
+(06-C00-021)
+(06-C00-046)
+vial or 
+ampoul
+e
+1161
+حسب لاعدة الل 
+الاسعار (972)
+=== page 18
+06-C00-021 Choriogonadotropin alfa( Recombinant  human choriogonadotropin alfa,r-
+hCG ) 250mcg (6500 IU )     pre-filled syring S.C injection     
+ لاعدة الل الاسعار 
+(06-C00-021)
+(06-C00-046)  
+                           
+pfs 1161
+حسب لاعدة الل 
+الاسعار (972)
+06-C00-033 thyrotropin alfa (Recombinant human thyroid stimulating hormone; rhTSH ) 
+0.9 mg vial IM injection
+vial 1161 
+ ج1014
+6D THYROID HORMONES AND ANTITHYROID DRUGS
+06-D00-001 Carbimazole  5mg Tablet tabletمزمنة
+06-D00-007 Thyroxine sodium or anhydrous  Levothyroxin Sodium 50mcg tablet tabletمزمنة
+06-D00-008 Thyroxine sodium or anhydrous  Levothyroxin Sodium 100mcg Tablet tabletمزمنة
+6E CORTICOSTEROIDS  ٌؤخذ بنظر الاعتبار
+استخدامه فً المفاصل
+06-E00-009 Dexamethasone phosphate (as disodium salt or as sodium salt )  8mg/2ml 
+(2ml Ampoule or Vial) I.V . I.M or I.V infusion
+ ٌثبت التحذٌر الاتً على العبوة الخارجٌة والنشرة الداخلٌة  للمستحظرات الحاوٌة على مادة ( Sodium 
+Metabisulfite)
+Caution To be written if the products contain metabisulphite as  following 
+(Caution: this product contain metabisulphite  may cause broncho spasm in 
+atopic & Asthmatic subjects).
+ولا ٌعتبر وجود مادة
+ ( Sodium Metabisulfite) 
+فً المستحضرات شرطا مانعا لتسجٌلها
+Ampoul
+e or Vial
+1105
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+06-E00-018 Hydrocortisone (as sodium succinate or  Hydrogen succinate)  eq. to  100mg  
+ hydrocortisone Vial with 2 ml ampoule of  solvent for solution for injection  or 
+Act-o-vial system , I.M. , , slow I.V, I.V. Infusion
+Vial   
+Act-o-
+vial 
+system
+ج990
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+06-E00-033 Prednisolone  5mg Tablet  or  Enteric Coated Tablet tablet 1012تامٌن
+صحً
+06-E00-021 Methylprednisolone acetate  80mg/2ml  I.M, intra-articular, injection (2ml) 
+Vial or Ampoule
+   Note: It is preferable to mark by red colour  (Not for I.V use) on the:   - 
+Outer pack - Package insert  Vial or amp { If it's aqueous suspention , Route 
+of administration will be I.M, intra-articular,.&into soft tissue (i-e intra 
+lesional)}
+Ampoul
+e or Vial
+تامٌن
+صحً
+6F FEMALE SEX HORMONES tablet
+06-F00-020 Norethisterone  5mg Tablet  tablet 1012
+=== page 19
+06-F00-017 Medroxyprogesterone acetate  150mg/ml deep I.M inj, (1ml) Vial vial 1064الرعاٌة الصحٌة
+الاولٌة
+6G MALE SEX HORMONES AND ANTI-ANDROGENS                                                      
+06-G00-007 Finasteride 5mg Tablet tablet
+06-G00-008 Goserelin acetate implant 3.6mg in syringe  application                     syringe 903    /نحصر
+بسرطان الثدي / 
+سرطان 
+البروستات/بطانة الرحم 
+6I DRUGS AFFECTING  BONE METABOLISM
+6IA Calcitonin
+06-IA0-005 Cinacalcet as hydrochloride ) 30 mg tablet   
+ تموم الشركة المجهزة بتوفٌر
+( kit ) المستخدم لتحلٌل نسبة
+ ( parathyroid hormones ) 
+ مجانا"
+tablet 1141
+ج986,1018
+وتكون الٌة الصرف 
+كما ٌلً-: 
+1- مرضى المصور 
+الكلوي المزمن المتمدم 
+على برنامج الدٌلزة 06-IA0-006 Cinacalcet as hydrochloride  60 mg tablet   
+ تموم الشركة المجهزة بتوفٌر
+( kit ) المستخدم لتحلٌل نسبة
+ ( parathyroid hormones ) 
+ مجانا"
+tablet 1141
+ج,1018,986
+وتكون الٌة الصرف 
+كما ٌلً-: 
+1- مرضى المصور 
+الكلوي المزمن المتمدم 6IB Bisphosphonates and other drug affecting bone metabolism
+06-IB0-010 Zoledronic acid 4mg/ 5ml concentrate for I.V infution vial
+06-IB0-011 Ibandronic acid (as mono sodium salt monohydrate) 150mg tablet
+6J OTHER ENDOCRINE DRUGS
+06-J00-003 cabergoline 0.5mg tablet tablet 1042
+06-J00-004 Clomiphene citrate 50mg Tablet tablet
+6K DRUGS USED IN HYPERLIPIDAEMIA                         potent statin      
+                          
+                          
+                ملاحظة 
+حول مجموعة        1 -
+ تصرف للمرضى من 
+ذوي الخطورة العالٌة  
+للاصابة    بالنوبات 
+الملبٌة والدماغٌة  
+cardiovascular 
+events
+06-K00-022 Atorvastatin calcium trihydrate or Atorvastatin calcium  eq. Atorvastatin40mg 
+coatedTablet
+tablet ج1014
+ج\1070  
+=== page 20
+06-K00-002 Atorvastatin calcium trihydrate or Atorvastatin calcium eq. Atorvastatin 20mg 
+coatedTablet
+tablet ج1014
+ج\1070
+ان ٌتم تثبٌت احتٌاجها
+من لبل دابرة العٌادات 
+مزمنة
+06-K00-019 Rosuvastatin (as calcium salt)  10mg coated Tablet tabletتامٌن
+صحً
+7 GENITO-URINARY DISORDERS
+7A UTERINE STIMULANTS
+07-A00-009 Methylergometrine (Methylergonovine) maleate injection 200mcg/ml  (1ml) 
+Ampoule
+ampoul
+e
+مراكز رعاٌة صحٌة
+اولٌة + احتٌاج 
+المستشفٌات ج 986    
+مراكز الرعاٌة الصحٌة
+الرعاٌة الصحٌة 
+الاولٌة
+07-A00-012 Oxytocin 10units/ml I.V.,I.M.&slow I.V. infusion injection (1ml)  Ampoule ampoul
+e
+02-C00-013 Misoprostol 200 mcg (synthetic prostaglandin analogue) Scored or plain 
+Tablet
+tabletٌمتصر استعماله فً
+السام النسابٌة والتولٌد 
+فً المستشفٌات 
+(التعلٌمٌة وغٌر 
+7B UTERINE RELAXANTS
+07-B00-004 Atosiban (as acetate)7.5mg /ml (5ml Vial) vial
+7C TREATMENT OF VULVAL AND VAGINAL DISEASES
+07-C00-004 Clotrimazole 1% topical  cream  tubeتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+07-C00-021 Miconazole nitrate 400mg Vaginal Suppository  or  ovules piece 1012تامٌن
+صحً
+07-C00-027 Nystatin 100000 units/g Topical Ointment tubeتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+7D CONTRACEPTIVES
+7DA Combined contraceptives
+07-DA0-004 Ethinyloestradiol 30mcg+ levonorgestrel 150 mcg  Tablet   Tabletالرعاٌة الصحٌة
+الاولٌة
+7DB Progesterone only - Contraceptive
+07-DB0-005 Desogestrel 75mcg Tablet Tablet 1158الرعاٌة الصحٌة
+الاولٌة
+7E DRUGS USED IN URINARY TRACT DISORDERS
+01-E00-063 Tamsulosin Hydrochloride 0.4mg equivalent 0.367mg Tamsulosin modified 
+release Capsule or tablet
+capsule  
+  or 
+tablet
+( 1012 )(976 )  (  
+968) (  
+ٌحصراستخدامه 
+لجراحة المسالن البولٌة 
+)
+8 BLOOD FORMATION AND COAGULATION
+8A ANAEMIA& SOME OTHER BLOOD Disorders 
+8Aa DRUG THERAPY FOR IRON DEFICIENCY ANAEMIAS
+=== page 21
+08-AA0-003 Ferrous gluconate 400mg/15ml Syrup bottleتامٌن
+صحً
+08-AA0-005 Ferrous sulphate  200mg Tablet Tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+08-AA0-009 Iron (as Iron dextran) 50mg/ml  (2ml Ampoule) by deep I.M or slow I.V or by 
+Slow I.V infusion    
+ampoul
+e
+1161تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+08-AA0-014 Iron (as Iron sucrose) 20 mg/ 1ml   (5ml) Ampoule or vial SLOW 
+INTRAVENOUS INJECTION, OR BY INTRAVENOUS
+INFUSION
+vial or 
+ampoul
+e
+1178
+1161
+ج\1074
+للمستشفٌات فمط
+8AB Drugs used in platletes disorders   
+08-AB0-002 Romiplostim 250 mcg/ vial powder for solution for s.c vial 831 / ان ٌحدد 
+استعماله كخط ثانً 
+لعلاج مرض تكسر 8B DRUG THERAPY OF MEGALOBLASTIC ANAEMIA                           
+ٌحصر استعمالها أو
+استخدامها فً المراكز 
+السرطانٌة   لكل 
+التراكٌز                  
+   Folinic acid     
+مادة
+08-B00-010 Folic acid 5mg Tablet Tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+08-B00-015 folinic acid 15mg (as calcium folinate or as calcium leucovorin)Capsule  or 
+tablet
+tablet 
+or 
+capsule
+ ٌحصر استخدامه فً
+مراكز امراض الدم  و 
+المراكز السرطانٌة      
+08-B00-019 Folinic acid 50mg/5ml (as calcium folinate or as calcium leucovorin) 
+ampoule or vial
+ampoul
+e or vial
+ج986
+1123
+08-B00-005 Hydroxocobalamin or Hydroxocobalamin chloride or Hydroxocobalamin 
+acetate or Hydroxocobalamin sulphate  equivalent to  Hydroxocobalamin  
+1000mcg/ml  (1ml) Ampoule I.M injection 
+ampoul
+e
+1179تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+08-B00-025 Folic acid 400 mcg tablet Tablet  1057       1042الرعاٌة الصحٌة
+الاولٌة
+8C DRUG THERAPY OF OTHER TYPES OF ANAEMIAS  
+  Note:- Pharmaceutical dosage form for (alfa rh Epo) will be as 
+following (Vial and / or prefilled syring) 
+08-C00-001 Recombinant human erythropoietin (alfa rh Epo) 2000 I.U per vial or PFS  solution 
+for injection 
+or its approved biosimilar (alfa orZeta)
+لاػذج الم الاطؼار
+08-C00-001
+08-C00-015
+pfs or 
+vial
+ج987,  ج1012 
+,ج1019   ج/1049
+1183
+=== page 22
+08-C00-015 Darbepoetin alfa 20 mcg prefilled syrige or  device injection SC,IV
+ػهً اٌ لاَتجاوس انكهفح انشهزَح نهؼلاج كهفح يادجerythropoietinفٍ اخز ػمذ
+لاػذج الم الاطؼار
+08-C00-001
+08-C00-015
+pfs 1183
+08-C00-004 Recombinant human erythropoietin(alfa rh Epo) 4000 IU per PFS or vial 
+solution for injection or its approved biosimilar (alfa orZeta)
+لاعدة الل الاسعار
+08-C00-004
+08-C00-016
+pfs or 
+vial
+ج987,  ج1012 
+,ج1019   ج/1049
+1183
+08-C00-016 Darbepoetin alfa 40 mcg prefilled syrige or  device injection SC,IV
+ػهً اٌ لاَتجاوس انكهفح انشهزَح نهؼلاج كهفح يادجerythropoietinفٍ اخز ػمذ
+لاػذج الم الاطؼار
+08-C00-004
+08-C00-016
+pfs 1183
+08-C00-009 Epoetin α 10000IU/1ml prefilled Syringe  for S.C&I.V injection
+لاعدة الل الاسعار
+08-C00-017
+08-C00-009
+pfs
+08-C00-017 Darbepoetin alfa 300 mcg pfs or  prefilled disposable
+injection device s.c , i.v 
+لاعدة الل الاسعار
+08-C00-017
+08-C00-009
+pfs
+8D ANTICOAGULANTS AND PROTAMINE
+08-D00-002 Heparin sodium  5000 IU/ml  SC.,I.V.( 5ml) Vial  vial ٌتم التأكٌد على
+الموسسات الصحٌة 
+على حساب الجرعة 08-D00-003 Protamine sulphate 10mg/ml (with minimum of  90 anti-heparin IU/mg) (5ml) 
+Ampoule or Vial  slow I.V. over 10 minutes  IVor  I.V. and S.C  
+ampoul
+e or Vial
+1091
+    over 10 
+minutes  and 
+the giving 
+quantity    
+08-D00-009 Warfarin sodium   1mg Tablet Tabletمزمنة
+08-D00-010 Warfarin sodium  3mg Tablet Tabletج\1070  
+08-D00-011 Warfarin sodium  5mg Tablet Tabletمزمنة
+08-D00-014 Enoxaparin sodium 60mg  (6000 IU anti Xa(anti thrombotic effect)) /0.6ml 
+prefilled syringe S.C  Or its approved biosimilar
+pfsج\1088
+1100
+8E ANTIPLATELET DRUGS
+08-E00-020 Ticagrelor 90 mg film coated tablet Tabletج/1042
+ وللاستطبابات التالٌة:-
+أ- التداخل المسطاري 
+حسب لاعدة الل 
+الاسعار (ج 972 )
+ج\1075
+ ٌحصر فً
+الاستطبابات 
+الاتٌة(امراض الدم ) :-
+أ-مرضى اعتلال نخاع 
+العظم (MDS-Low 
+risk) بشرط ان تكون
+نسبة 
+erythropoietin الل
+=== page 23
+08-E00-005 Clopidogrel 75 mg  as Bisulphate tablet( Clopidogrel  as Bisulphate  = 
+Clopidogrel as Hydrogen sulphate or Clopidogrel as Besilate or Clopidogrel 
+as Hydrochloride  )
+(Dose :- 75mg  Clopidogrl as a base tablet)
+Tablet (limited  use in 
+special center )   
+                           
+  ج/1042
+ج\1070
+ج\1071
+  Clopidogrel 
+75mg للمرضى ممن 
+مزمنة
+8F FIBRINOLYTICS   
+08-F00-009 Recombinant human tissue type plasminogen  activator  50mg/ Vial 
+(Alteplase) set=2vial
+set=2vi
+al
+ set=2vial
+8G ANTIFIBRINOLYTIC AGENTS
+08-G00-002 Tranexamic acid  100mg/ml  (5ml)  Ampoule or vial ampoul
+e or Vial
+1121الرعاٌة الصحٌة
+الاولٌة
+08-G00-001 Tranexamic acid  500mg Tablet Tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+8H PLASMA FRACTION FOR SPECIFIC USES
+08-H00-008 Recombinant Factor VIII, 500 IU (HSA Free)
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة
+recombinant Foctor vIII 250 IU
+ كونها تعتبر جرع تكمٌلٌة  بنسبة10 %من احتٌاج الكلً   
+من المادة (recombinant Foctor vIII 500 IU)
+vialج986   توفٌر
+كبضاعة مجانٌة 
+(FOC) 
+(recombinant 
+Foctor vIII 250 
+IU)كونها تعتبر جرع
+تكمٌلٌة  بنسبة 10 %
+من احتٌاج08-H00-014 VonWillebrand Factor / Coagulation Factor VIII Complex (Human)  powder 
+and solvent for solution for injection or infusion in percent as follow:- 
+Vwf\Factor VIII 1:1 to 2:1 
+- ضرورة توفر الفحوصات المختبرٌة المرفمة بكتاب دابرة مدٌنة الطب29454 فً11/9/2012 وحسب  
+الجلسة 828 ) 
+vialوٌحصراستخدامه
+للحالات التالٌة 
+Indicated in 
+sever cases of   
+VonWillebrand  
+disease 
+A- Lifethreating  
+condition ( CNS  
+bleeding , GIT  
+08-H00-006 Recombinant   Factor VII a  (Eptacog alfa )(Activated)      I.V. inj,  1mg  vial   
+inject slowly over 2 to 5 minutes  or its approved biosimilar 
+  لامانع من اعتماد الشكل الجدٌد(سرنجة تحتوي على المذٌب ) لضمان سرعة حقن العقار عند حالات  
+النزف الشدٌدة
+vialج/1025
+ج/1029
+تعدل دواعً الاستعمال
+الممرة للعامل السابع 
+وٌحصر كالاتً :-
+1  -نمص العامل
+السابع الوراثً  .08-H00-007 Plasma protein fraction (human) 5% i.v. infusion  i-e   1ml contains: Human 
+serum protein 50mg of which: Albumin approx 31mg    Human 
+Immunoglobumin approx 10mg   (Ig G  , Ig A,   Ig M) vial                                                                                                                    
+vial -976
+=== page 24
+08-H00-005 Factor IX 500 IU  ( Recombinant coagulation factor IX ,SHL)
+جمٌع المواد الممرة كعامل تاسع لصٌر الامد تدخل ضمن   تنافس سعري
+فٌما بٌنها
+ 
+vial 1129
+ٌحدد استخدامه للفبات 
+العمرٌة دون 14 سنة  
+العامل التاسع لصٌر 
+الامد
+08-H00-026 Factor IX  500 IU  ( Recombinant coagulation factor IX ,EHL) vial 1129
+ٌحدد استخدامه للفبات 
+العمرٌة 14 سنة فما  
+فوق العامل التاسع 08-H00-015 Anti-Inhibitor Coagulant Compelx Nanofilterd &Vapor Heated:-   500 Units 
+per Vial    
+(  Factor VIII inhibitor Bypassing Activity powder and solvent for solution for 
+intravenous injection )                                                
+vial  - For Control 
+spontaneous 
+bleeding 
+episodes or to 
+cover surgical 
+intervention in 
+08-H00-017 Factor XIII concentrate ( Human) Lyophilized concentrate  for reconstitution:-
+1000- 1600 units for reconstitution in 20 ml . 
+vial Indicated for 
+routine 
+prophylactic 
+treatment of 
+congenital 08-H00-016 Fibrinogen concentrate(Human):-  Lyophilized powder for reconstitution 900 
+mg to 1300 mg for reconstitution with 50 ml of sterile water for injection
+ضرورة توفر الفحوصات المختبرٌة المرفمة بكتاب دابرة مدٌنة الطب29454 فً11/9/2012 وحسب  
+الجلسة 828 ) 
+vial For  Treatment 
+of acute 
+bleeding 
+episodes in 
+patients with 
+congenital 
+fibrinogen 
+deficiency 08-H00-022 Human Prothrombin complex  powder and solvent for soluion for infusion 
+  Human coagulation factor IX       500IU
+   Human coagulation factor II       280-760IU
+ Human coagulation factor VII       180-480IU
+  Human coagulation factor X       360-600IU
+   Human protein C                         260-620IU
+  Human protein S                         240-640IU
+ لاعدة الل الاسعار
+08-H00-020
+08-H00-022
+vial  
+تمر الماده ادناه وعلى
+لاعدة الل الاسعار مع ( 
+Coagulation 
+Factor X ( 
+Human ) 250 I.U 
+,I.V) وٌحصر صرفها
+لعلاج نمص العامل 
+العاشر 1092 لاعدة
+الل الاسعار مع (  08-
+H00-020  )
+08-H00-020 Coagulation Factor X ( Human ) 250 I.U ,I.V 
+لاعدة الل الاسعار
+08-H00-020
+08-H00-022
+مع التأكد من كل المعاٌٌر العالمٌة التً تؤٌد خلو المادة من الامراض الانتمالٌة ٌتم تمدٌر احتٌاجه من لبل 
+مراكز وشعب الامراض النزفٌة وٌراجع من لبل لجنة الامراض النزفٌة ولسم تمدٌر الحاجة اعتمادا على 
+اعداد المرضى المسجلٌن لنمص العامل العاشر (on demand) وٌطلب من
+ الشركة المجهزة بتوفٌر الكشف عن العامل العاشر مجانا"
+vialمع التأكد من كل
+المعاٌٌر العالمٌة التً 
+تؤٌد خلو المادة من 
+الامراض الانتمالٌة ٌتم 
+تمدٌر احتٌاجه من لبل 
+مراكز وشعب 
+الامراض النزفٌة 
+وٌراجع من لبل لجنة 08-H00-023 Emicizumab 30mg vial solution for injection
+تلزم الشركة بتوفٌر الفحص الاتً مجانا اعتمادا على اعداد المرضىchromogenic assay for 
+factor VIII
+vial 1092
+وٌحصر صرفها كعلاج 
+ولائً لمرضى 
+الهٌموفٌلٌاA   مع 
+وجود مثبطات  على ان 
+=== page 25
+08-H00-024 Emicizumab 150mg vial solution for injection
+تلزم الشركة بتوفٌر الفحص الاتً مجانا اعتمادا على اعداد المرضىchromogenic assay for 
+factor VIII
+vial 1092
+وٌحصر صرفها كعلاج 
+ولائً لمرضى 
+الهٌموفٌلٌاA   مع 
+8I OTHERS
+08-I00-002 Sodium chloride 0.8766g (15mmol/l)+Potassium chloride 
+0.6710g(9mmol/l)+Potassium hydrogen 2-Ketoglutarate0.1842g 
+(1mmol/l)+Magnesium  chloride 6H2O 0.8132g (4mmol/l)+Histidine Hcl .H2O 
+3.7733g(18mmol/l)+Histidine 27.9289g(180mmol/l)+Tryptophan 
+0.4085g(2mmol/l)+Mannitol 5.4651g(30mmol/l)+Calcium chloride .2H2O 
+0.0022g(0.015mmol/l)for inj in1000ml  Water  Osmolality 310mosmol/Kg ,An 
+ion CL- 50mEq ,2000ml
+bottle
+08-I00-003 Cardioplegia infusion 20 ml ampoule: containing in 20 ml : : magnesium 
+chloride  hexahydrate 3.253 g , potassium chloride BP 1.193 g , procaine 
+hydrochloride BP 272.8 mg , also present :disodium  edentate BP. sodium 
+hydroxide BP and water for injection
+ampoul
+e
+1145
+9 NUTRITION    
+9A VITAMINS
+9AA Vitamin A Retinol
+09-AA0-008 Vitamin  A 100000 I.U Capsule capsuleج987الرعاٌة الصحٌة
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+09-AA0-009 Vitamin  A 200000 I.U  Capsule capsuleالرعاٌة الصحٌة
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+9AB Vitamin B group
+09-AB0-002 Vitamin  B1 (Thiamine Hydrochloride)  50mg/ml, (2ml) Ampoule ampoul
+e
+تامٌن
+صحً
+09-AB0-004 Vitamin  B6 (Pyridoxine Hydrochloride) 50mg/ml, (2ml) Ampoule ampoul
+e
+تامٌن
+صحً
+9AD Vitamin D
+09-AD0-001 Alphacalcidol 0.25mcg (1alphahydroxy cholecalciferol) soft gelatin  Capsule 
+or tablet
+capsule 
+ or  
+Tablet
+1178تامٌن
+صحً
+09-AD0-002 Alphacalcidol 1mcg (1alphahydroxy cholecalciferol) soft gelatin  Capsule or 
+tablet
+capsule  
+  or 
+tablet
+1178
+ج\1070
+ان ٌتم تثبٌت احتٌاجها 
+من لبل دابرة العٌادات 
+مزمنة
+09-AD0-028 Vit D3 (cholecalciferol) 2.5mg   oral drop (10.000 IU/ml) drop 1100الرعاٌة الصحٌة
+الاولٌة
+9AF Vitamin K
+09-AF0-006 Vitamin K1- (Phytomenadione) mixed micelles (Vitamin K1-MM) inj 
+2mg/0.2ml oral and I.M.&I.V.(0.2ml) Ampoule 
+ampoul
+e
+Paediatric الرعاٌة الصحٌة
+الاولٌة
+09-AF0-007 Vitamin K1-(Phytomenadione) mixed micelles (Vitamin K1-MM) 10mg/ml 
+(1ml) Ampoule (I.V.or slow I.V. injection  (withen 30 sec) 
+ampoul
+e
+9AG Multivitamin preparations
+=== page 26
+09-AG0-001 element iron ) 45 – 50 ( mg + folic 0,5 mg or element iron ) 60 – 65 ( mg + 
+folic 0.25   mg tablet or capsule 
+tablet 
+or 
+capsule
+1065
+1012تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+9B PARENTERAL NUTRITION 
+09-B00-025 500 ml container ( 20%)  contain Energy as following :-
+ُElectrolyte                            --------------
+- Energy                                8000   ±  500          Kj/L
+-Nitrogen                               ---------------
+Other components may contain soya oil, glycerol , purified egg 
+phospholipids, phosphate, omega-3 acid triglycerides, fish oil, palm oil , or 
+coconut oil.
+فً التركٌبة الواحدة ٌمكن أن تحتوي التركٌبة على كلها أو جزء منهاother components ملاحظة -: 
+المواد التً أدرجت تحت تسمٌة 
+contain
+er
+(ج989 )
+09-B00-023 500 ml container contain Nitrogen, Electrolyte as following :-
+- Energy*                                     ---------
+- Nitrogen                                  7.5-16.5        g/L
+- K+                                           25-60          mmol/L
+- Mg+2                                       2 .5-8           mmol/L
+- Na+                                         43-100        mmol/L
+- Acet-                                       35-150        mmol/L
+- Cl-                                           0-100        mmol/L
+Other components as following :-
+- Ca+2                                          0-5               mmol/L 
+- Malic acid or dihydro phosphate or acid phosphate.
+ي التركيبة الواحدة يمكن أن تحتوي التركيبة على كلها أو جزء منها other components ملاحظة:- المواد  
+التري أدرجت تحت تسمية . 
+ = *Exclude protein or amino acids derived energy
+contain
+er
+( 973) الجلسة    
+1100
+=== page 27
+09-B00-022 1000-2500 ml Triple compartment bag contain the following :-
+-Amino acids and electrolyte    300-1000             ml
+-Glucose                         500- 1300            ml
+-Lipid emulsion              200-500               ml
+Or 20% according to BNF
+- Nitrogen                   2.5-25.7                   g/L
+- Energy                     1300-12600           Kj/L
+- K+                              5-60               mmol/L
+- Mg+2                         1.8-8                   mmol/L
+- Na+                           20-140                mmol/L
+- Acet-                     19.5-150            mmol/L 
+- Cl-                             19-100                mmol/L
+Other components as following :-
+- Ca+2                             1 .4-5                  mmol/L 
+- Phosphate                 5- 30                mmol/L
+- Anhydrous glucose   50-240               g/L
+- Soya oil           16-300                               g/L
+- Triglycerides      0-100                            g/L
+- Zn+2                    0-32                         µmol/L   
+ملاحظة:- المواد التً أدرجت تحت تسمٌة  
+other components     
+ٌعنً بالتركٌبة الواحدة ٌمكن ان تحتوي على كل المكونات المدرجة فً الجدول او جزء منها او لد تحتوي 
+على مواد اضافٌة اخرى حسب حاجة المرٌض
+contain
+er
+1099
+1083
+09-B00-024 500 ml container contain Nitrogen as following :-
+-Electrolyte                                   
+-Energy *                                      -------
+- Nitrogen                                     9-18                g/L
+- Acet-                                         0-110           mmol/L
+- Cl-                                             0-40             mmol/L
+فً التركٌبة الواحدة ٌمكن أن تحتوي التركٌبة على كلها أو جزء منهاother components ملاحظة -: 
+المواد التً أدرجت تحت تسمٌة 
+ = *Exclude protein or amino acids derived energy
+contain
+er
+09-B00-026 100 ml container contain Nitrogen , (used only for  neonate and children) 
+as following :-
+-Energy                                   --------
+-Nitrogen                                  9- 15                    g/L
+-Electrolyte                              --------
+- Cl-                                          0-20                  mmol/L 
+  ي التركيبة الواحدة يمكن أن تحتوي التركيبة على كلها أو جزء منها 
+ف other components ملاحظة:- المواد  
+التري أدرجت تحت تسمية .   
+contain
+er
+9C ELECTROLYTES and Water for  Injection
+9CA drugs used in hypokalaemia
+=== page 28
+09-CA0-001 potassium chloride 15% w/v (approximately 2 mmol/ml) or 14.9% w/v 
+=2mmol/ml (10 ml ) Vial or ampoule
+vial or 
+ampoul
+e
+9CB drugs used in hyperkalaemia
+09-CB0-001 Calcium gluconate injection 10%  w/v ( 10 ml )  ampoule or vial each ml 
+contain anhydrous Calcium gluconate ) usp ( ) approximately 0,233 mmol ═ 
+0.465 meq. of Calcium ) or Calcium gluconate monohydrate  ( Bp ) 
+)approximately 0,225 mmol ═ 0.450 meq. of Calcium ( ) I.V infusion ( or ) 
+slow I.V injection , deep I.M ) or ( slow I.V inj. ) ( I.M use not for children & 
+adolesecent
+ampoul
+e or Vial
+1037
+9CE drugs used in hypocalcemia
+09-CE0-004 Calcium carbonate  500mg Tablet  tablet used for renal 
+failure patients
+الرعاٌة الصحٌة
+الاولٌة
+09-CE0-008 Calcium chloride 10%  (10 ml )   ampoule or  prefilled syring ampoul
+e or pfs
+(in cardiac Resuscitation centers)             (1012)
+9CF MAGNESIUM  
+09-CF0-001 50% Magnesium Sulphate 7 H2O  2 mmole Mg+2/ ml   (5ml Ampoule) ampoul
+e
+طرٌمة الزرق هً
+Slow I.V  بعد
+التخفيف , ولكن يسكن 
+الرعاٌة الصحٌة 
+الاولٌة
+09-CF0-003 Magnesium sulphate 20%  (10 or 20ml) Ampoule ampoul
+e
+1086
+9CG Water   for  injection
+09-CG0-001 Distilled Water For injection (5 ml) ampoule ampoul
+e
+ج986تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+9D INTRAVENOUS FLUIDS          
+Note:ٌؤخذ بنظر الاعتبار قائمة ادوٌة التخدٌر
+ٌكون  glucose 
+بالشكلٌنhydrous 
+or anhydrous(  
+مع الاحتفاظ بنفس نسبة
+الكلوكوز المثبته )اٌنما 
+وجد الكلوكوز فً 
+المحالٌل الورٌدٌة 794
+09-D00-021 Mannitol 20% I.V. infusion 500ml container bottle 1147
+09-D00-062 Sodium chloride  0.9%, 100ml  I.V. Infusion bottle 1177
+َعاف انً لائًح 
+انزػاَح انصحُح الاونُح 
+نهًزاكش انصحُح انتٍ 
+لاتحتىٌ ػهً صانح 
+ولادج او صانح غىارئ
+1042
+1062
+ ج\1071
+الرعاٌة الصحٌة
+الاولٌة
+=== page 29
+09-D00-063 Glucose (dextrose) hydrous or anhydrous 5 % 100 ml  I.V. Infusion bottleج987وتحعز نغزض
+يشج الادوَح انكًُُاوَح 
+فٍ يظتشفُاخ ويزاكش 
+ػلاج الاوراو وايزاض 09-D00-007 Glucose (dextrose) hydrous or anhydrous    5%, 500ml I.V. Infusion   bottle 1179الرعاٌة الصحٌة
+الاولٌة
+09-D00-011 Glucose (dextrose) hydrous or anhydrous   50% , (20ml) Ampoule ampoul
+e
+1179
+09-D00-014 Hartmann's solution I.V. infusion, (Ringer lactate or lactated Ringer or 
+compoumd sodium lactate solution ) :Sodium chloride 0.6% ,  sodium lactate 
+0.32%or SodiumLactate 0.25% Calculated as lactic acid , potassium 
+chloride 0.04%,calcium chloride 0.027%.containing the following ions in 
+mmol/ L: Na+131, K+5, Ca+2 2, HC03-  (as lactate) 29, CL-111.  (500ml)
+Label Not to be use for lactic acidosis
+bottle  Label Not to be 
+use for lactic 
+acidosis
+الرعاٌة الصحٌة
+الاولٌة
+09-D00-015 Human albumin  200mg/ml, 100ml low salts- aids free I.V.Infusion bottle
+09-D00-023 Ringer solution for injection U.S.P  sodium chloride 8.6g + potassium 
+chloride 0.3 g + calcium chloride 0.33g water for injection  Q.S 1000ml 
+containing the following ions conc. In  meq / L  :- Ca ++ 4.5 , Cl – 156, K+ 4 
+,Na + 147.5 . (500 ml)
+bottle
+09-D00-070 Sodium bicarbonate 8.4% 100ml Vial  slow I.V. ,  I.V. infusion Vialٌؤخذ بنظر الاعتبار
+عند تثبٌت ادوٌة السموم
+09-D00-033 Sodium chloride  0.9%, 500ml  I.V. Infusion bottleالرعاٌة الصحٌة
+الاولٌة
+09-D00-034 Sodium chloride 0.45%+glucose (dextrose) hydrous or anhydrous  2.5% ( 
+500ml) I.V. Infusion
+bottle 1179
+09-D00-035 Sodium chloride 0.18%+ glucose (dextrose) hydrous or anhydrous   4%   I.V. 
+infusion (general use as glucose saline solution ) 500ml 
+bottle 1179
+09-D00-045 glucose (dextrose) hydrous or anhydrous  5% +sodium chloride 0.9%  500ml  
+ I .V Infusion    
+bottle 1179الرعاٌة الصحٌة
+الاولٌة
+09-D00-067 Sodium chloride 3% hypretonic saline 200ml  or 250ml bottle or bag
+ٌثبت على العلبةHypertonic   توضع علامات تحذٌرٌة على العلبة لتفرٌمها عن بالً المغذٌات(ٌثبت على  
+العلبة 3 % solution)
+bottle 1134
+ٌثبت على العلبة 
+Hypertonic  او 
+توضع علامات 
+تحذٌرٌة على العلبة 
+لتفرٌمها عن بالً 
+المغذٌات (ٌثبت على  9E  Oral nutrition
+09-Ea0-003 Therapeutic milk formula (75kcal/100ml) for sever acute malnutrition 
+age˃6months
+powder 1178
+09-Ea0-002 Therapeutic milk formula (100kcal/100ml) for sever acute malnutrition age˃6months powder 1178
+=== page 30
+09-Ea0-004 c.m.v therapeutic milk powder
+mean nutritional value per 1 level scoop:
+energy 0 kcal
+proteines 0 g
+carbohydrates 0 g
+lipids  0 g
+moisture  <5%
+potassium    2340mg
+magnesium    146mg
+zinc    40mg
+copper 5.7mg
+iron 0mg
+iodine 154 μg
+selenium  94μg
+vitamin A 3000μg
+vitamin d 60μg
+vitamin e 44mg
+vitamin c 200mg
+vitamin b1 1.4mg
+vitamin b2  4mg
+vitamin b6  1.4mg
+vitamin b12   2μg
+vitamin k 80μg
+biotin 0.2mg
+folic acid 700μg
+pantothenic acid   6mg
+ can 1179
+1178
+9I Phosphate- binding agents
+09-I00-001 Sevelamer  carbonate 800mg Tablet  tabletٌستخدم لعلاج ارتفاع
+الفوسفات عند غسل 
+الكلٌة   For 9F OTHER MINERALS
+09-F00-007 Zinc Sulfate monohydrate 54.9mg eq. 20mg elemental zinc dispersable 
+tablet 
+tabletج1009
+ج\1068
+الرعاٌة الصحٌة
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+10 MUSCULOSKELETAL DISORDERS
+10A DRUGS USED IN CHRONIC RHEUMATIC DISEASES
+10AA NSAID
+تعتمد عبارة تحذٌرات بخصوص الNSAID (للمستحضرات الصٌدلانٌة التً تحتوي علٌها 
+Recommendations : 1- prescribers and patients should continue to 
+use NSAIDs at the lowest effective dose for the shortest possible 
+duration to control symptoms 2- prescribers should continue to select  
+NSAIDs on the basis of the overall safety profile of the product , as set 
+out in the product information , and the patient's individual risk factors 
+. 3- prescribers  should not swich between  NSAIDs without 
+consideration of the overall safety profile of the product  and the  
+patient's individual risk factors as well as patient's preferences
+=== page 31
+10-AA0-001 Diclofenac  sodium enteric coated 25mg Tablet tabletتامٌن
+صحً
+10-AA0-005 Diclofenac sodium 25mg/ml  (3ml)  Ampoule I.M. Injection only Ampoul
+e
+ٌتم ادراجه ضمن لابمة
+التخدٌر
+1098
+تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+10-AA0-011 Ibuprofen  200mg Tablet tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+10-AA0-013 Ibuprofen  100mg/5ml Oral liquid dosage form bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+10-AA0-018 Indomethacin 100mg Suppository pieceتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+10-AA0-044 Meloxicam  7.5mg Tablet tabletتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+10AC Disease modifying drugs   
+10-AC0-009 Infliximab 100mg  Vial  and it‘s approved Biosimilar   
+I.V injection
+vialج/ 1027وتكون
+المادة الاحٌابٌة الاصلٌة 
+( Reference 
+Biological drug ) 
+تّعرف بالاسم العلمً( 10-AC0-011 Adalimumab 40 mg/(0.8 ml or 0,4ml)  prefilled syringe S.C injection  or its 
+approved biosimilars  
+pfs 1121
+ج/ 734
+ج/  856 ٌتم تمدٌر
+الحاجة والصرف من 
+10-AC0-012 Etanercept 50 mg pfs OR prefilled pen OR Vial or it,s approved biosimilars  pfs OR 
+prefilled 
+ pen 
+OR Vial
+1057
+10-AC0-010 Etanercept 25mg  or its approved biosimilars   S.C  vial or PFS                                    Vial or 
+pfs
+1057       PA    :
+Pscoriatic 
+Arythritis./ RA   :
+Rheumatoid 
+10-AC0-029 Ixekizumab  80mg / ml  PFS  for SC use only
+تلزم الشركة المجهزة للعلاج بتوفٌر فحص 
+IGRA 
+مجاناً وحسب اعداد المرضى
+PFS ج/   1140              
+                           
+َحصز اطتخذايها
+نلاطتطثاب 
+Ankylosing 10-AC0-026 ustekinumab 90 mg pfs ,SC.
+ تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة
+ustekinumab 45 mg pfs SC
+بنسسبة%10   
+من احتٌاج الماده بتركٌز
+90mg
+ ولنفس الاستطبابات
+pfs  1122وٌحدد صرفها
+لعلاج
+ moderately to 
+severely active 
+Crohn’s disease 
+وmoderate 
+to severe 
+psoriasis
+10-AC0-027 ustekinumab 130 mg concentrate for solution for infusion vial vial 1122وٌحدد صرفها
+لعلاج
+ moderately to 
+=== page 32
+10-AC0-033 Golimumab 50 mg/0.5ml solution for injection  pre-filled pen S.C 
+-استمرار الشركة المصنعة بتزوٌد المرضى  المشاركٌن بالدراسة 
+مرٌض بالعلاج لحٌن توفٌره من لبل الشركة العامة لتسوٌك الادوٌة (23) 
+- تلتزم الشركة بتوفٌرIGRA test screening for TB وحسب اعداد المرضى  المحددٌن من لبل 
+اللجنة الاستشارٌة وبوالع فحصٌن لكل مرٌض سنوٌاً 
+ ٌعاد النظر فً المرار بعد سنة
+pfs  1153                   
+                           
+                           
+                        
+-ٌحصر استخدامها
+للاستطبابات (( 
+Rheumatoid 
+arthritis , 
+ankylosing 10B Drugs used in the treatment of gout &cytotoxic- induced 
+hyperuricaemia
+10-B00-001 Allopurinol  100mg Tablet tabletتامٌن
+صحً
+10-B00-003 Colchicine  500mcg Tablet tablet
+10C DRUGS USED IN neuromuscular disorder 
+10CA DRUGS that nhance neuromuscular transmission 
+10CAa Anticholinesterase 
+10-CAa-004 Neostigmine metisulphate ( methylsulphate )    2.5mg/ml, (1ml) Ampoule    
+I.V,I.M,S.C                   
+Ampoul
+e 
+تكون طرٌمة الزرق
+I.V,I.M,S.C على
+ان ٌعطى 10-CAa-007 Pyridostigmine Bromide  60mg Tablet tabletمزمنة
+11 DRUGS ACTING ON THE EYE
+11A ANTI-INFECTIVE PREPARATIONS
+11-A00-001 Acyclovir  3% Eye Ointment tube
+11-A00-003 Chloramphenicol 1% Eye Ointment tube
+11-A00-005 Ciprofloxacin (as Hydrochloride)  0.3% Eye Drop
+ٌبمى الرار المادةCiprofloxacin as Hcl   فمط
+drop 
+1136
+تصرف فً   المراكز 
+تامٌن 
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+11-A00-009 fusidic acid 10 mg/g (1%)suspension viscous eye drop drop 1161
+1136
+تصرف فً   المراكز 
+تامٌن 
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+11-A00-010 Gentamycin as sulphate 0.3% Eye/Ear Drop dropتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+11-A00-022 Tetracycline Hydrochloride 1% Eye Ointment tube 1043
+1082 
+الرعاٌة الصحٌة
+الاولٌة
+11B ANTI-INFLAMMATORY PREPARATION  INCLUDING 
+CORTICOSTERIODS:
+11BA Corticosteroids preparations 
+11-BA0-003 Dexamethasone sodium Phosphate 1mg\1ml (0.1% ) or dexamethasone 
+disodium phosphate eq. to dexamethasone phosphate  1mg\1ml  solution  or 
+Dexamethasone ( Base ) 1mg\1ml(0.1% )  suspention (ophthalmic use )
+drop 1127
+1073
+تامٌن
+صحً
+11BC Other anti-inflammatory preparations
+=== page 33
+11-BC0-011 ketorolac tromethamine 0.5 % Eye Drop drop
+11-BC0-001 Sodium Cromoglycate 2% Eye Drop drop  
+11C MYDRIATICS AND CYCLOPLEGICS
+11-C00-001 Atropine sulphate 0.5%  (with or without HydroxyPropylMethyl 
+cellulose(HPM)) Eye Drop
+drop 1136
+تصرف فً   المراكز 
+الصحٌة التً تمدم خدمة 
+( الصحة العٌنٌة 
+الرعاٌة الصحٌة 
+الاولٌة
+11-C00-010 Tropicamide 1% Eye Drop drop  
+11D TREATMENT OF GLAUCOMA
+11-D00-001 Acetazolamide(as sodium salt) 500 mg powder for reconstitution injection 
+Vial
+vial 1100
+1043
+11-D00-022 Timolol (as maleate) 0.5%   Eye Drop drop 1043تامٌن
+صحً
+11-D00-026 Dorzolamide (as hydrochloride) 2%  Drop  drop 1119وتحصر فً  
+المؤسسات التخصصٌة 
+بعلاج امراض العٌون
+  
+11-D00-027 Latanoprost (prostaglandin analogues) Eye drop 50mcg/ml (0.005%) drop
+11E OTHER OPHTHALMIC PREPARATION
+11-E00-023 Amethocaine (tetracaine) hydrochloride Ph.Eur. with purified water and 
+hydrochloric acid 1.0% w/v eye drop
+drop 1136
+11-E00-011 Hydroxypropyl methyl cellulose(HPM) (Hypermellose)  1% Eye Drop drop  
+11EA Anti-VEGF Anti-Vascular Endothelial Growth                                                              (1001 ج)
+11-EA0-004 Aflibercept 40mg/ml vial 
+ تكون نسبةBevacizumab 100 mg )  ) 60% من الاحتٌاج ونسبة(40 ) %لمادتً
+ ( Ranibizumab & Aflibercept ) على  ان تكون(30 %) للالل سعرا" خلال الجرعة السنوٌة و  
+(10% ) المتبمٌة للاعلى سعرا" (  خلال الجرعة السنوٌة  )
+Vial
+11-EA0-001 Ranibizumab 10mg/ml( 2.3 mg/ 0,23 ml )for intravitreal injection only)  vial or 
+prefilled syringe 
+ تكون نسبةBevacizumab 100 mg )  ) 60% من الاحتٌاج ونسبة(40 ) %لمادتً
+ ( Ranibizumab & Aflibercept ) على  ان تكون(30 %) للالل سعرا" خلال الجرعة السنوٌة و  
+(10% ) المتبمٌة للاعلى سعرا" (  خلال الجرعة السنوٌة  )
+vial or 
+pfs
+12 EAR, NOSE AND OROPHARYNX
+12B DRUGS ACTING ON THE NOSE
+12-B00-002 Beclomethasone dipropionate 50mcg/ metered inhalation (Aerosol 
+Inhalation) Nasal Spray
+spray الرعاٌة الصحٌة
+الاولٌة
+12-B00-024 Xylometazoline Hydrochloride 0.1% Nasal spray spray تامٌن
+صحً
+1120
+ تكون نسبة  
+Bevacizumab 
+100 mg )  ) 60% 
+من الاحتٌاج ونسبة 
+(40% ) لمادتً
+ ( Ranibizumab 
+& Aflibercept ) 
+على  ان تكون(30 % 
+) للالل سعرا" خلال  
+الجرعة السنوٌة و 
+(10% ) المتبمٌة 
+للاعلى سعرا" ( خلال  
+=== page 34
+13 SKIN   
+ Note:  Therapeutically there is   no prevention to topical skin preparations to 
+be (solution or lotion) where ever those are avialble in the lists.
+13B EMOLLIENTS AND BARRIER PREPARATIONS
+13-B00-002 Zinc oxide 15% oint in simple Ointment tubeتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+13C ANTIPRURITIC AND LOCAL ANAESTHETIC PREPARATIONS
+13-C00-007 Lidocaine as base 5% ointment tube 1039تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+13-C00-002 Calamine 8% or 10% +Glycerin 10%+Camphor 0.1% Lotion  or solution bottle -1012تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+13D TOPICAL CORTICOSTEROIDS
+13-D00-038 Hydrocortisone   acetate  1%  Cream or Hydrocortisone  1%  Cream tube 1170تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+13-D00-016 Clobetasol propionate 0.05%  Ointment tube (by prescription 
+of sp.only)
+13-D00-044 Triamcinolone acetonide 0.1% + Gramicidin 0.025%+  Neomycin as 
+sulphate 0.25%Ξ 3.8mg + Nystatin 100000 units/1g Ointment
+tubeتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+13E PREPARATIONS FOR ECZEMA AND PSORIASIS
+15-B00-092 Tacrolimus  (as monohydrate) 0.1% ointment tube
+13F PREPARATIONS FOR ACNE
+13-F00-005 Isotretinoin 10mg Capsule  or soft gelatin capsule Capsule 1084     1079
+13-F00-010 Tretinoin (Retinoic Acid)  0.025% Cream tubeتامٌن
+صحً
+13G ANTIBACTERIAL SKIN PREPARATIONS
+13-G00-004 Clindamycin as phosphate 1% topical Solution. bottleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+13-G00-016 Sodium fusidate 2% Ointment tube 1042تامٌن
+صحً
+13-G00-015 Silver sulphadiazine 1% Cream tubeتامٌن
+صحً
+13J ANTIVIRAL SKIN PREPARATIONS
+13-J00-001 Acyclovir 5% Cream tubeتامٌن
+صحً
+13K ANTIPARASITIC SKIN PREPARATIONS
+13-K00-006 Permethrin  dermal 5% cream tube 731الرعاٌة الصحٌة
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+13-K00-005 permethrin1% shampoo or rinse solution or lotion  وٌفضل ان ٌكون بشكل
+( lotion)
+bottleج1006الرعاٌة الصحٌة
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+=== page 35
+14 DRUGS USED IN ANAESTHESI+ ICU + PAIN MANGEMENT    
+14A General anaesthesia
+14AA Intarveenous anaesthesia 
+14-AA0-036 Ketamine (as Hydrochloride)  50mg/ml,  (10ml) Vial or ampoule I.V ,I.M vial or 
+ampoul
+e
+1147
+14-AA0-043 Propofol 1% Propofol 10 mg/1 ml (20ml) ampoule or vial for slow IV injection 
+or infusion
+الافضلٌة للمستحضر الذي ٌحتوي على مادة حافظة
+vial or 
+ampoul
+e
+1178
+1161
+1033
+(( الافضلٌة للمستحضر 
+الذي ٌحتوي على مادة 14AB Inhalational anaesthetics drugs
+14-AB0-009 Isoflurane 1 ml per 1 ml volatile liquid for inhalation vapour 100 ml bottle
+احتٌاج واحد ٌمسم الى
+ 80% Isoflurane و
+20%Sevoflurane
+ على ان تجهز فً ولت واحد
+bottle  
+وٌخصص
+sevoflorane 
+لعملٌات الاطفال
+والحالات التً لاٌمكن 
+فٌها استخدام 
+Isoflorane
+14-AB0-011 sevoflurane 1 ml per 1 ml volatile liquid for inhalation vapour  bottle
+احتٌاج واحد ٌمسم الى
+ 80% Isoflurane و
+20%Sevoflurane
+على ان تجهز فً ولت واحد
+تطلب مادة ل ( Adaptor ) بنفس كمٌة مادة  ( Sevoflurane ) وتجهز بصورة مجانٌة من لبل الشركة 
+المجهزة للمادة انفا" وبشكل سنوي وٌكون نوع  ( Adaptor ) حسب نوع ( Vaporizer )   وحسب رأي 
+اللجنة الاستشارٌة للتخدٌر وتثبت الملاحظة بالمابمة الاساسٌة. 
+ج\1068
+bottle 1161
+احتياج واحد يقسم ا
+80% Isoflurane 
+و20 %Sevoflurane 
+ي وقت 
+على ان تجهز ف 
+ واحد
+ويخصص 
+sevoflorane 
+لعمليات الاطفال 
+والحالات التري لايمكن  
+فيها استخدام 
+14-AB0-010 Nitrous oxide 1 ml per 1 ml Nitrous oxide  Inhalation gas cylinder BY 
+INHALATION
+▶ Adult: 50–66 %, to be administered using suitable
+anaesthetic apparatus in oxygen
+cylinder 1161
+14AC  Muscle relaxants and it's  antagonists
+14-AC0-008 Atracurium( besilate or Besylate )10mg/ml (5ml) Ampoule or vial IV
+احتٌاج واحد ٌمسم الى 
+50%Atracurium
+و50 %Rocuronium 
+على ان تجهز فً ولت واحد
+ampoul
+e or vial
+1178
+1176
+1161
+احتٌاج واحد ٌمسم الى 
+50%Atracurium
+و50 %Rocuroniu
+m 
+14-AC0-011 Rocuronium bromide  10mg/ml (5ml) Vial or ampoule IV
+احتٌاج واحد ٌمسم الى 
+50%Atracurium
+و50 %Rocuronium 
+على ان تجهز فً ولت واحد
+ampoul
+e or vial
+1161
+1182
+احتٌاج واحد ٌمسم الى 
+50%Atracurium
+و50 %Rocuroniu
+m 
+=== page 36
+14-AC0-012 Suxamethonium chloride 100mg/2ml or 100mg/5ml  Ampoule IV ampoul
+e
+14-AC0-017 Sugammadex (as sodium) 100mg/ml(2ml vial)  IV vial 1129
+وٌحدد احتٌاجة بنسبة 14AD Analgesic and it's antagonists
+14-AD0-029 Fentanyl (as citrate)50mcg/ml ( 2ml) Ampoule IV, IV infusion,  IM ampoul
+e
+1181
+14-AD0-034 ketorolac tormetamol 30mg/ml (1ml ampoule) I.V infusion I.M IM, slow  I.V  
+لاٌمل عن15 ثانٌةinjection
+ampoul
+e
+14-AD0-032 Remifentanil (as Hydrochloride )2mg/ vial IV.injection vial
+14B LOCAL ANAESTHESIA
+14-B00-055 Anhydrous  Lidocaine Hydrochloride (20mg/ml) IV or (I.V , I.M  )  (50 ml vial) vial 1121الرعاٌة الصحٌة
+الاولٌة
+طبٌب و ملاكات 
+صحٌة
+07-E00-010 Lidocaine Hydrochloride 2% gel tubeج/1042
+ٌصرف من لبل طبٌب
+الرعاٌة الصحٌة 
+الاولٌة
+14-B00-038 Anhydrous Bupivacain Hydrochloride 5mg + glucose( monohydrate or 
+anhydrous)  80mg/ml (4ml ) Vial or Ampoule for spinal anesthesia
+ملاحظة:تستعمل المادة للزرق داخل المناة الشوكٌة وتحت مستوى الحبل الشوكً نهاٌتهSpinal 
+anesthesia  ولٌس عن طرٌكspinal cord   (690) { according to the pharmacopeia 
+that limited it's specifications)
+   ملاحظة:تستعمل 
+المادة للزرق داخل 
+المناة الشوكٌة وتحت 
+مستوى الحبل الشوكً 
+(نهاٌته) Spinal 
+anesthesia ولٌس
+عن  طرٌك spinal 
+cord
+14-B00-023 Lidocaine Hydrochloride 20mg/ml (2%) IV or (I.V , I.M  ) (5ml Ampoule)          ampoule           (الطوارئ 
+والجراحه العامه)
+1121
+1050
+14-B00-015 Lidocaine Hydrochloride  2% (20 mg/ml) + Epinephrine (as bitartrate) 1: 80000 
+( 0.0125 mg / ml) cartridges  (1.7- 2.2 ) ml
+carpuleتامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+14-B00-040 Lidocaine Hydrochloride 2% ( 1.8 ml )  carpule carpule  ج1009تامٌن
+صحً
+الرعاٌة الصحٌة 
+الاولٌة
+14-B00-044 Anhydrous lidocaine Hydrochloride 20 mg /ml  ( 20 ml vial )  IV or (I.V , I.M  ) vial 1121
+14C Drugs  used in ICU (in addition to that used in anasethesisa) 
+14-C00-001 Dexmedetomidine )as Hydrochloride(  100μg /ml)2ml vial or ampoule(I.V 
+injection
+vial or 
+ampoul
+e
+1178
+14-DB0-002 Glycopyrronium Bromide (Glycopyrrolate) 200mcg/ml (3ml Ampoule) ampoule
+14-DB0-004 Adrenaline( as acid tartrate)or(as Hydrochloride)1mg/ml(1/1000), 
+(1ml.Ampoule) s.c,i.m أن مادة الـAdrenaline for  I.V use   after dilution المستخدمة 
+فً مستحضرات الزرق حسب دساتٌر الأدوٌة الأمرٌكٌة والبرٌطانٌة أما تكون بشكل:
+Adrenaline base  أوAdrenaline (as Hcl) أوAdrenaline (as Acid tartarate) وتكون 
+النسبة المطلوبة على ما ٌكافبها من الـAdrenaline base . 
+ أما مادة الـAdrenaline borate694 فلا تستخدم دستورٌاً فً(709مستحضرات الزرق
+ampouleوتستخدم فً
+ALLERGIC 
+DISORDERS  
+ج1012
+1149الرعاٌة الصحٌة
+الاولٌة
+=== page 37
+14-DB0-003 Atropine sulphate 1mg/ml (1ml ampoule) I.M,I.V,S.C Injection ampoule 1092
+وتصرف فً جمٌع 
+المؤسسات الصحٌة 
+بالاضافة الى مراكز 14D Drugs adjunct to anaesthesis, ICU and pain management 
+14DA Benzodiazepens
+14-DA0-001 Midazolam  5mg /ml  (1 ml ampoule) I.V., I.M. injection or rectal 
+adminstration
+ampouleج986 ج1015
+14DB Drugs acting on cardiovascular system 
+15 CHEMOTHERAPY OF CANCER AND IMMUNOSUPPRESSION
+15A CHEMOTHERAPY OF CANCER
+15AA Alkylating agents
+15-AA0-002 Carmustine 100mg  vial I.V. Injection vial ٌخصص فً مركز زراعة نخاع العظم فً مدٌنة الطب
+15-AA0-008 Cyclophosphamide 500mg vial Injection vial ج\1146
+شمول الاستطبابات
+لمرضى مراكز 15-AA0-010 Dacarbazine 200mg powder for reconstituition  for injection vial (I.V. Infusion  
+or I.V. infusion and   Intra-arterial perfusion)
+Note: the drug after reconstitution and during infusion should  be kept out of 
+light          
+vial the drug after 
+reconstitution 
+and during 
+infusion should 
+be kept out of 
+light
+15-AA0-013 Ifosfamide 2g powder for reconstitution vial  for I.V injection vialج986
+15-AA0-018 Melphalan 2mg Tablet tablet
+15-AA0-020 Mesna  100mg/ml, (4ml) Injection vial or ampoule vial or 
+ampoul
+e
+1161
+15-AA0-024 Melphalan 50 mg (as Hydrochloride) powder for reconstitution vial ( with 
+solvent-diluent )
+vialٌخصص فً مركز زراعة نخاع العظم فً مدٌنة الطب
+15-AA0-028 Temozolomide 100mg capsule capsule
+15-AA0-025 Busulphan 60mg (10 ml vial) I.V Injection vialٌحصر استخدامه فً
+مراكز زرع نخاع العظم
+15-AA0-030 Bendamustine hydrochloride  100mg  powder for reconstitution  vial vial 1018ٌحصر  
+استخدامه فً مراكز 
+امراض الدم
+15AB Antimetabolites
+15-AB0-020 Cladribine ( 2-CDA) 10 mg/vial , 5 ml or 10 ml vialيحرر استخدامه لعلاج اللهكيسيا الذعيرية( Hairy cell leukemia ) ج987
+15-AB0-001 cytarabine  20mg/ml, 5 ml vial for S.C, I.V,intrathecal vial
+15-AB0-022 cytarabine 100mg/ml, 10 ml vial for S.C, I.V vialج986  20mg/ml 
+ٌجب ان ٌكون التركٌز
+هو    Intrathecal 
+فً حالة الاعطاء15-AB0-028 5-Flurouracil 50mg/ml    (10,20,50,100)ml   vial for I.V injection or infusion or 
+intra-arterial infusion  
+vial 933ج
+=== page 38
+15-AB0-019 Fludarabine phosphate 50mg powder for reconsititution for i.v  or 
+concentrate solution for injection  or infusion  Vial
+vial 1145
+15-AB0-008 Gemcitabine (as hydrochloride)   powder for reconstitution or concentrate for 
+solution for infusion (1g )   vial
+vial
+1124
+1051
+15-AB0-009 6 - mercaptopurine 50mg Tablet tablet
+15-AB0-010 Methotrexate  2.5mg Tablet tabletٌصرف  للاستخدام فً
+علاجpsoriasis
+15-AB0-033 Methotrexate1g vial base I.V infusion vialعلى ان لاٌتجاوز
+التركٌز 100mg/ml
+15-AB0-015 Methotrexate 50mg   (10 mg / ml or 25 mg /ml (lyophylized powder or  
+solution 5ml or 2ml vial or ampoule) injection IV, IM , intrathecal
+vial or 
+ampoul
+e
+1188
+15-AB0-034 Pemetrexed (as disodium) 500mg vial   powder for concentrate for solution 
+for infusion  or concentrate for solution for infusion ( IV use after dilution)
+تستورد بكمٌات
+ للٌلة (حصة مرٌض) وٌصرف بموافمة لجنة استشارٌة حصراَ ولمرضىmesothelioma  فمط .. 
+للتوضٌح-:
+حصة مرٌض (On need) بمعنى كمٌات محدودة تودع لدى مخازن الشركة ولاتصرف الا عند الحاجة 
+ومن لبل لجنة استشارٌة حصراً ولمرضىMesothelioma
+vial 1128    
+  ان دواعً الاستخدام 
+فً سرطان الربة هً 
+الاتً-:
+Non Squamous, 
+Non Small Cell 
+Lung 
+Cancer(NSCLC)
+which include 
+the following 
+15-AB0-031 Decitabine   50mg  vial I.V injection                 vialج/848 ٌستخدم فمط
+فً مراكز امراض الدم 
+15AC Antibiotics
+15-AC0-002 Bleomycin  (as sulphate)  15000 Units/ vial dry powder for reconstitution vial
+15-AC0-003 Dactinomycin  500mcg  (Actinomycin D) vial I.V Injection vial
+15-AC0-004 Daunorubicin 20mg I.V. Injection (as Hydrochloride)  solution for injection  or 
+powder for reconsititution vial
+vial 1121
+15-AC0-008 Doxorubicin Hydrochloride 50 mg  powder for reconstitution vial or 
+Doxorubicin Hydrochloride 2mg/ml, 25 ml vial IV, Intravesical    injection
+vial 1181
+15-AC0-014 Mitoxantrone (as Hydrochloride) concentrate for i.v ,infusion 2mg/ml (10ml 
+vial)
+vial
+15-AC0-019 Epirubicin Hydrochloride 2mg/ml, 25 ml vial or Epirubicin Hydrochloride 50 
+mg (powder for reconstitution ) vial.
+vial
+15-AC0-018 Doxorubicin Hydrochloride (pegylated liposomal )conc.for i.v infusion 
+2mg/ml(10ml vial )i.e pegylated   Doxorubicin Hydrochloride 2mg /ml 
+incapsulated in liposomes
+vial
+15AD Vinca alkaloids and etoposide
+15-AD0-004 Etoposide concentrate 20mg/ml, 5 ml vial or ampoule I.V. infusion vial or 
+ampoul
+e
+   
+15-AD0-006 Vinblastine sulphate 1 mg/ml, 10 ml vial or ampoule vial or 
+ampoul
+e
+=== page 39
+15-AD0-007 Vincristine sulphate 1mg/ml , 1 ml  for I.V. adminstration only not for 
+intrathecal adminstration.vial or ampoule
+vial or 
+ampoul
+e
+ٌستعمل عن طرٌك
+الورٌد فمط ولٌس بأي 
+طرٌمة اخرى
+15-AD0-011 Vinorelbine (as tartrate) concentrate for i.v infusion  10mg/1ml 5ml Vial vial
+15-AD0-015 Vinorelbine (as tartrate) 30mg capsule capsule
+15AE Enzymes
+15-AE0-003 Recombinant  asparaginase ( E .coli type ) 10.000 unit vial powder for 
+concentrate for 
+solution for infusion
+vialج1015
+1042
+15AF Miscellaneous agents       فٌما ٌخص
+Cisplatin -:  لا
+ٌوجد مستحضر خاص
+ٌعطى عن طرٌك 
+التسرٌب البرٌتونً .. 
+ونفس المستحضر 
+(sol. or powder) 
+ٌستخدم لكلا الطرٌمتٌن
+أي بمعنى أن 
+المستحضر المثبت علٌه 
+طرٌمة الاعطاء بالزرق 
+الورٌدي ٌمكن استعماله 
+عن طرٌك التسرٌب 
+البرٌتونً
+15-AF0-011 Octreotide  0.05mg/ml Injection vial or ampoule vial or 
+ampoul
+e
+ج987
+15-AF0-003 Cisplatin  50mg/ vial I.V. infusion                                                                                                                                                                     vialج/ 1024
+                           
+                           
+                           15-AF0-008 Carboplatin  10mg/ml (45ml) Vial  i-e 450mg/45ml injection vial
+15-AF0-038 Capecitabine 500mg tablet tablet
+15-AF0-010 Hydroxyurea  500mg Capsule capsule  استخدام العلاج فً
+مراكز امراض الدم 
+الوراثٌة وخاصة فً 
+مرض فمر الدم المنجلً 15-AF0-005 Oxaliplatin 100mg/vial 5mg/ml , 20 ml vial. powder for reconstitution  
+I.V.Infusion or concentrate for I.V. infusion
+vial
+15-AF0-031 Tretinoin 10mg capsule (ALL-trans retinoic acid) capsule
+=== page 40
+15-AF0-036 Trastuzumab ( HER2)( Recombinant ) 440mg or 420mg /Vial   or or its  
+approved biosimilars  
+لاعدة الل الاسعار مع المادة 
+(15-AF0-072)
+ وبنسبة50 %للمادة الالل سعراً وٌتم تأمٌن ال50 %البالٌة من المادة الثانٌة على ان لاٌتجاوز سعرها  
+العرض الارخص وبخلافه تكون الاحالة بنسبة 100 %للعرض الالل سعراً
+ا ٌستورد إلا بعد توفر فحصHER2  الخاصCD)) أي ٌجهز مع الفحص الخاص بالعمارCD 
+(Cluster of difference = CD ) وهً معلمات أورام خاصة على جدار الخلٌة لبٌان تحسس الورم إلى 
+عمار معٌن .. ٌوفر هذا المعلمHER/2/neu فً المختبرات)
+vialج\1146
+لاعدة الل الاسعار بٌن
+المادتٌن بالرمزٌن (15-
+AF0-072) و(15-
+AF0-036) وبنسبة
+50% للمادة الالل
+سعراً وٌتم تأمٌن 
+ال50 %البالٌة من
+المادة الثانٌة على ان 
+لاٌتجاوز سعرها 
+العرض الارخص 
+15-AF0-072 Trastuzumab 600mg / 5 ml solution for injection vial  S.C  
+لاعدة الل الاسعار مع المادة 
+(15-AF0-036)
+ وبنسبة50 %للمادة الالل سعراً وٌتم تأمٌن ال50 %البالٌة من المادة الثانٌة على ان لاٌتجاوز سعرها  
+العرض الارخص وبخلافه تكون الاحالة بنسبة 100 %للعرض الالل سعراً
+ا ٌستورد إلا بعد توفر فحصHER2  الخاصCD)) أي ٌجهز مع الفحص الخاص بالعمارCD 
+(Cluster of difference = CD ) وهً معلمات أورام خاصة على جدار الخلٌة لبٌان تحسس الورم إلى 
+عمار معٌن .. ٌوفر هذا المعلمHER/2/neu فً المختبرات)
+vialج\1087
+ج\1146
+لاعدة الل الاسعار بٌن
+المادتٌن بالرمزٌن (15-
+AF0-072) و(15-
+AF0-036) وبنسبة
+50% للمادة الالل
+سعراً وٌتم تأمٌن 
+ال50 %البالٌة من
+المادة الثانٌة على ان 
+15-AF0-071 Pertuzumab 420 mg  IV  vial
+وتلزم الشركة المجهزة بتوفٌر عمار ( Trastuzumab 600mg / 5 ml solution for injection 
+vial  S.C  ) مجانا بعدد احتٌاج مادة ( Pertuzumab)
+vial 1116ٌحصر صرفها  
+فمط  لعلاج مرضى 
+سرطان الثدي مالبل 
+العملٌة الجراحٌة(Neo-
+adjuvant) وٌتم 
+15-AF0-030 Octreotide as acetate 20mg microspheres powder for suspension  supplied 
+with 2ml or 2.5ml diluent  vial filled syringe.
+لاعدة الل الاسعار مع المادة 
+15-AF0-069
+15-AF0-030
+vialٌخصص لداء العملمة( 
+acromegaly  
+الجلسة(967 )
+ج\1071 
+1107
+15-AF0-069 lanreotide as acetate 90 mg solution for sc Injection (PFS) Autogel
+لاعدة الل الاسعار مع المادة 
+15-AF0-069
+15-AF0-030 
+PFSح\1069
+ لاعدة الل الاسعار مع
+المادة بالرمز الوطنً 
+(15-af0-030)
+15-AF0-059 Octreotide 30 mg (as  acetate) vial  (in form of microspheres) ( microsphere 
+powder for     aqueous suspension) supplied with 2ml or  2.5ml diluent filled 
+syringe
+لاعدة الل الاسعار مع المادة 
+15-AF0-070
+15-AF0-059
+vialلداء العملمة( 
+acromegaly ) 
+استخدامه لاحتٌاج
+مرضى الاورام ( 
+احتٌاج منفصل ) , 
+وٌصرف للمرضى 
+المصابٌن  
+metastatic 
+pancreatic 
+Neuro-
+endocrine tumer 
+=== page 41
+15-AF0-070 lanreotide  as acetate 120 mg solution for sc Injection (PFS) Autogel 
+لاعدة الل الاسعار مع المادة 
+15-AF0-070
+15-AF0-059 
+PFSج\1069
+لاعدة الل الاسعار مع
+المادة بالرمز الوطنً 
+(15-af0-059)
+15-AF0-051 Bortezomib( as mannitol boronic ester )  3.5 mg solution or powder for 
+solution   vial  i.v, 
+ٌجهز احتٌاج العراق مجانا من مادة
+(Bortezomib)
+من لبل الشركة المجهزة لعمار 
+(Daratumumab)
+vial 1173  .
+1115  َظتؼًم نهحالاخ
+ انًؼُذج نهؼلاج انتمهُذٌ 
+وغُز انًُاطثح نغزص 
+َخاع انؼظى فٍ ورو 
+نُفٍ انؼظى انًتؼذد 
+انخلاَا (multiple 
+myloma)    ,           
+15-AF0-044 Bevacizumab 400 mg  25mg/ml, 16 ml vial concentrate for intravenous 
+infusion or its approved biosimilar ;
+vialاَماف اطتؼًانّ
+نظزغاٌ انثذٌ            
+                              
+                              
+ اٌ دواػٍ الاطتخذاو 15-AF0-061 Arsenic trioxide 1 mg/mL, 10-ml ampoule or vial (Concentrate for 
+intravenous infusion)
+ampoul
+e or vial
+1142
+1018 ٌحصر 
+استخدامه فً مراكز 
+امراض الدم15-AF0-062 Brentuximab Vedotin 50mg vial vialج/1043
+ي مراكز 
+ويحصر صرفه ف 
+ي 
+زراعة نخاع العظم ف 
+15-AF0-043 Bevacizumab 100 mg ; 25mg/ml, 4 ml vial concentrate for intravenous 
+infusion 
+ 60% تكون نسبة  
+Bevacizumab 100 mg )  
+ من الاحتٌاج ونسبة(40 %) لمادتً
+ ( Ranibizumab & Aflibercept ) على  ان تكون(30 %) للالل سعرا" خلال الجرعة السنوٌة و  
+(10% ) المتبمٌة للاعلى سعرا" (  خلال الجرعة السنوٌة  )
+ :الزام الشركات الموردة للادوٌة الباٌولوجٌة بتجٌزنا بالاجهزة التالٌة 
+vialج\1071
+وٌحصر استخدامها
+لامراض شبكٌة العٌون 
+وفك البروتوكول 
+العلاجً الممر سابما" .
+ج\1088
+1120
+1 -تكون نسبة
+Bevacizumab 
+100 mg )  ) 60% 15-AF0-020 Methylprednisolone (as sodium succinate or  as hemisuccinate  )500 mg   
+with solvent ( water for injection with Benzyl alcohol 9mg/ml      I.V,I.M 
+injection  vial or ampoule                                                                                                                                                                                       
+vial or 
+ampoul
+e
+(limited use)  
+ج/1157
+=== page 42
+15-AF0-080 Daratumumab 400mg/20ml  vial concentrate for solution for infusion 
+1-تلتزم الشركة بتوفٌراحتٌاج العراق مجانا من عمار 
+ (bortezomib)
+2-الرار مادتًdaratumumab وisatuximab على لاعدة الل الاسعار لعلاج100 مرٌض كخط  
+ثانً، وتلتزم الشركة المنتجة لمادةisatuximab بتجهٌزنا بمادةpomalidomide4mg capsule 
+مجانا ول٠٠١ مرٌض ولسنة كاملة. 
+ :الزام الشركات الموردة للادوٌة الباٌولوجٌة بتجٌزنا بالاجهزة التالٌة 
+1- serum protein electrophoresis and immunofixation 
+2- serum free light chain
+وٌكون العدد خمسة اجهزة لسنة واحدة وٌعاد النظر بهذه الاحهزة مع العمود اللاحمة وتتولى اللجنة الاستشارٌة 
+لوضع مواصفات الاجهزة وتحدٌد اعداد المواد التشغٌلٌة والتً ٌجب ان تتضمنها العمود
+vial 1177
+ج/1131                
+      1121
+1173
+كخط علاجً اول وفك
+البروتكول DRD او
+DVRD اوDVCD 
+،وٌحدد صرفه لعلاج
+٠٠١ مرٌض من الذٌن 
+اعمارهم ٥٦-٥٧ والتً 
+لاٌمكن اجراء زرع 
+النخاع الذاتً
+15-AF0-113 carfilzomib 60 mg vial powder for solution for infusion vial 1173
+الرار مادة
+carfilzomib 15-AF0-112 Isatuximab 20 mg per 1 ml  (500mg/25ml )concentrate for solution for infusion
+الزار يادتٍdaratumumab وisatuximab ػهً لاػذج الم الاطؼار نؼلاج100 يزَط كخػ ثاٍَ ، 
+وتهتشو انشزكح انًُتجح نًادجisatuximab تتجهُشَا تًادجpomalidomide 4mg capsule يجاَا ول 
+٠٠١ يزَط ونظُح كايهح.
+ :انشاو انشزكاخ انًىردج نلادوَح انثاَىنىجُح تتجُشَا تالاجهشج انتانُح 
+1- serum protein electrophoresis and immunofixation 
+2- serum free light chain
+وَكىٌ انؼذد خًظح اجهشج نظُح واحذج وَؼاد انُظز تهذِ الاحهشج يغ انؼمىد انلاحمح وتتىنً انهجُح الاطتشارَح 
+نىظغ يىاصفاخ الاجهشج وتحذَذ اػذاد انًىاد انتشغُهُح وانتٍ َجة اٌ تتعًُها انؼمىد
+vial 1173
+1177
+15AG Hormones and antagonists
+15-AG0-014 Anastrozole  1mg  tablet       
+لاعدة الل  الاسعار  
+15-AG0-008
+15-AG0-014
+tablet  (to be dispence 
+by medical 
+committee for 
+these 
+indications:-  
+Thromboembolic15-AG0-008 Letrozol 2.5mg Tablet                                                  
+لاعدة الل  الاسعار  
+15-AG0-008
+15-AG0-014
+tabletج\1051
+لاعدة الل  الاسعار مع
+( 15-AG-14 )
+15-AG0-013 Tamoxifen (as citrate) 20mg Tablet tablet
+15-AG0-015 Bicalutamide 50mg  tablet   tablet  _لحالات سرطان
+البروستات المتمدم       
+                           15-AG0-021 Abiraterone acetate 250 mg tablet                                                                                                                                                             tabletالرار فً الجلسة981
+1151
+1033
+=== page 43
+15-AG0-023 fulvestrant  250 mg /5 ml  im only pre-filled syringe pfs 1116ٌحصر صرفها  
+لعلاج سرطان الثدي  
+15B  Drugs that alter immune responses (Drugs affecting the immune 
+responses)  
+15-B00-004 Basiliximab 20mg Vial IV vialج986 ج1015
+15-B00-001 Azathioprine 50mg Tablet tabletلا مانع استخدامها لــ
+(Autoimmune 
+disease ) ومنها
+مزمنة
+15-B00-003 Antithymocyte Globulin 100mg/5ml Vial (ATG Rabbit type) vialج/1140 م.تخصصً 
+زرع الكلى اضافة 
+مركز زرع نخاع 
+العظم/مدٌنة الطب 
+15-B00-088 Antithymocyte globulin equine 250 mg in 5 ml ampoule        ampoul
+e 
+ٌستخدم لعلاج فشل
+نخاع العظم المكتسب 
+(Acquired 
+aplastic anemia 15-B00-008 Cyclosporin (Microemulsion)100mg/ml  oral Solution bottleج/1157 
+ج/1140 اضافة مركز
+زرع نخاع العظم/مدٌنة 
+الطب كمنفذ صرف لا 15-B00-033 Peginterferon alfa 2a  (Recombinant) 180mcg/1ml solution 1ml-vial (Human serum 
+albumin free) (1ml) vial or Peginterferon alfa 2a (Recombinant) 180mcg/0.5ml 
+prefilled syringe 
+ تلزم الشركات المنتجة لهذه المادة بتوفتر الفحوصات المختترية  
+(Virusload) كتسهيلات تعاقدية(اجهزة  + كتات)  
+مع تدريب الكوادر الخاصة بالعمل على هذه الاجهزة لمرة واحدة فقط اما الكتات مع كل شحنة  
+vial pfsٌثبت احتٌاج لمرضى
+التهاب الكبد الفٌروسً 
+نوع B  فمط وحسب
+البروتوكولات العلاجٌة 
+الجلسة (967 )  
+مشتركة بٌن الجهاز
+الهضمً , امراض الدم 
+والاورام كلا" حسب 
+احتٌاجه (973 )ٌثبت
+الاحتٌاج لمرضى 
+15-B00-012 Interferon alfa-2a (Recombinant) 9 million units prefilled syringe (HSA free 
+solution) Injection
+PFSتم تحوٌله من المستوى
+الثالث  فً الجلسة 
+973   مشتركة بٌن
+الجهاز الهضمً , 15-B00-023 Mycophenolate mofetil  500mg Tablet tabletج/1157
+ج/1140 اضافة مركز
+زرع نخاع العظم/مدٌنة 15-B00-102 Ibrutinib 140 mg tablet or capsule
+ٌتم تسجٌل المرضى وتثبٌت الاحتٌاج وحسب لاعدة البٌانات فً دابرة مدٌنة الطب/ مركز امراض الدم ولــــ  
+( 80 ) مرٌض وللسنة الاولى على ان لا ٌتجاوز السعر المعروض المخفض. وٌحصر استخدامه فً علاج  
+ابٌضاض الدم اللمفاوي ( CLL ) وللحالات الاتٌة-: 
+1- المرضى اللذٌن ٌحملون الطفرة الوراثٌة ( P17 deletion , P53 )
+2-  كخط ثالث بعد استخدام خطٌن علاجٌٌن. 
+tablet 
+or 
+capsule
+ ج/ 1140  اضافة
+استطباب الاتً (خط 
+علاجً ثالث لمرضى 
+مهاجمة الطعم للمضٌف 
+GVHD) للمادة
+وٌحصر الاستطباب 
+لزرع نخاع العظم فً 
+دابرة مدٌنة الطب \15-B00-050 Imatinib as mesylate (Protein – Tyrosine kinase inhibitor) 400mg Capsule  or 
+tablet
+تضاف الفحوصات التالٌة ضمن الاعلان الخاص بالمفاتحة  وكالاتً-: 
+( PCR      BCR - ABL210 ) ( 3 مرات)  سنوٌا"لكل مرٌض.  
+( FISH        BCR - AB ) لمرة واحدة للمرضى المشخصٌن حدٌثا. "
+tablet 
+or 
+capsule
+(ٌحصر فً مدٌنة
+الطب+المركز الوطنً 
+لامراض الدم 
++بابل+البصرة+نٌنوى+
+النجف+كركون + 
+كربلاء + 
+الكرخ+واسط+الانبار+ا
+ربٌل +سلٌمانٌة )  ج 
+=== page 44
+15-B00-029 Imatinib (as mesylate)  100mg Capsule or Tablet
+ ج/1047
+تضاف الفحوصات التالٌة ضمن الاعلان الخاص بالمفاتحة  وكالاتً-: 
+( PCR      BCR - ABL210 ) ( 3 مرات)  سنوٌا"لكل مرٌض.  
+( FISH        BCR - AB ) لمرة واحدة للمرضى المشخصٌن حدٌثا. "
+tablet 
+or 
+capsule
+ 1118و1085
+التأكٌد على توفٌر 
+الفحوصات اللازمة مع 
+علاجimatinib  باي 
+الٌة تضمن استمرارٌة 
+توفٌر العلاج وتحمٌك 
+المصلحة العامة
+15-B00-036 Rituximab concentrate 10 mg / ml  50 ml vial   or its approved Biosimilar  I.V 
+infusion                                     
+vial المادة تستعمل فً
+حالات :-                
+                          
+_          لا ٌستورد15-B00-024 Tacrolimus 1mg Capsule capsuleج/1140 اضافة مركز
+زرع نخاع العظم/مدٌنة 
+الطب كمنفذ صرف مع 15-B00-053 Mycophenolic acid (as Mycophenolate sodium)
+360 mg
+gastro-resistant  Tablet
+tablet 1109
+1031
+15-B00-068 sorafenib (as tosylsate) 200mg tablet tabletج987 لعلاج سرطان
+الكبد حصرا" 
+المشخص بواسطة15-B00-071 Thalidomide 50mg tablet or capsule tablet  
+or  
+capsule
+   تستعمل المادة وفك
+الضوابط المتعارف 
+علٌها وبصورة مشددة 15-B00-067 sunitinib (as malate) 50mg capsule or  sunitinib 50mg as base capsule
+ توفٌر المواد ادناه كبضاعة مجانٌة  
+Sunitinb 25mg tablet + Sunitinb 12.5mg tablet
+كونها تعتبر جرع تكمٌلٌة   وبنسبة8  %من كل تركٌز من الاحتٌاج الكلً لتركٌز  
+(Sunitinb 50 mg)
+ضرورة تزوٌد الشركات المجهزة للعراق بشهادة (certificate)  على ان تكون اصلٌة و مصدلة تضمن 
+خلو المادة  الداخلة فً جٌلاتٌن الكبسول من مسببات جنون البمر و عدم استخدام الجٌلاتٌن الذي منشأه حٌوانً
+capsule 1151  
+11 ج/1131           
+              توفٌر
+كبضاعة مجانٌة   ( 
+Sunitinb 25 +
+12.5 mg)كونها
+تعتبر جرع تكمٌلٌة   
+وبنسبة 8  %من كل
+تركٌز من الاحتٌاج 
+الكلً لتركٌز 
+(Sunitinb 50 mg) 
+تستخدم المادة أنفاً15-B00-070 Nilotinib  (as hydrochloride monohydrate )200 mg capsule
+تضاف الفحوصات التالٌة ضمن الاعلان الخاص بالمفاتحة  وكالاتً-: 
+( PCR      BCR - ABL210 ) ( 3 مرات)  سنوٌا"لكل مرٌض.  
+( FISH        BCR - AB ) لمرة واحدة للمرضى المشخصٌن حدٌثا. "
+capsule  - (ٌحصر فً مدٌنة
+الطب+المركز الوطنً 
+لامراض الدم 
++بابل+البصرة+نٌنوى+
+النجف+كركون + 
+كربلاء + 
+الكرخ+واسط+الانبار 
++اربٌل +سلٌمانٌة )     
+15-B00-111 bosutinib 100mg film coated tablet
+ 
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة
+bosutinib 400mg
+بنسبة5 %من المادة  
+bosutinib 100mg او توفٌر 
+بنسبة 20 %من المادة  
+1-الزام الشركة بتوفٌر جهازNGS DEVICE (ILLUMINA OR ION TORRENT) and
+tablet 1176
+1178
+تثبت هذه الاجهزة مع
+المادة وتوفر فً احتٌاج 
+عام 2024 بدل
+الاجهزة المطلوبة سابماً
+1133
+تلتزم الشركة المجهزة
+للعلاج  بتوفٌر المادة 
+=== page 45
+15-B00-112 bosutinib 500 mg film coated tablet
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة 
+bosutinib 400mg
+بنسبة5 %من المادة  
+bosutinib 100mg او توفٌر 
+بنسبة 20 %من المادة  
+1-الزام الشركة بتوفٌر جهازNGS DEVICE (ILLUMINA OR ION TORRENT) and
+2- DNA concentration device (Epoch ) biotech  or Qubit 
+tablet 1178
+تثبت هذه الاجهزة مع
+المادة وتوفر فً احتٌاج 
+عام 2024 بدل
+الاجهزة المطلوبة سابماً
+1176 
+1133
+تلتزم الشركة المجهزة
+للعلاج  بتوفٌر المادة 
+ادناه كبضاعة مجانٌة 15-B00-073 Antithymocytic Globulin  (ATG,Rabbit type) for I.V. infusion powder for 
+reconstitution; 25 mg vial or  ampoule
+ مادةATG  ٌجب ان تعامل فً الاستٌراد معاملة الادوٌة الكٌمٌاوٌة
+vial or 
+ampoul
+e
+ٌحدد احتٌاجه من لبل
+مراكز زرع الكلى 
+ومراكز زرع النخاعان
+15-B00-027 Interferon Beta 1a ( Recombinant) 6 million I.U(30mcg) vial   or pre-filled 
+syringe  solution for  I.M  or its approved biosimilars
+على ان ٌتم توفٌر الارخص سعرا
+vial or 
+pfs
+حصر  فً مدٌنة الطب
+-صحة بغداد 
+الرصافة_نٌنوى_البصر
+ة -دهون _اربٌل-
+سلٌمانٌة-النجف -
+كربلاء) 
+ ج986  15-B00-051 Recombinant Interferon Beta 1b  0.3mg(9.6 million IU)  Vial S.C 
+ (Better to be free from Human blood additives)
+vialي مدينة الطب 
+يحصر  ف 
+-صحة بغداد 
+الرصافة_نينوى_البصرة
+-دهوك _اربيل-  
+)سليمانية-النجف -15-B00-037 Interferon Beta 1a (Recombimant) 12millon IU (44mcg) pfs  or its approved 
+biosimilars
+ pfs 1108
+ج986  
+ج\1071   
+ Interferon b -1a 
+15-B00-126 teriflunomide 14 mg  tablet tablet 1174
+1127
+15-B00-081 Natalizumab  20mg/ml, 15 ml vial concentrate for I.V. infusion
+ تموم الشركة باجراء الفحوصات  المتعلمة بفاٌروس  
+JC
+ وحسب الضوابط المعمول بها عالمٌا                       
+vialٌحصر فً دابرة مدٌنة
+الطب واربٌل والنجف  
+                           
+     
+  الرت اللجنة 
+الاستشارٌة لطب 
+15-B00-120 Ocrelizumab 300 mg/10ml vial  vial 1097
+وٌحصر استخدامها 
+15-B00-076 Lenalidomide 10mg capsule or  tablet tablet or
+ 
+capsule
+( ج1015)  
+To 
+be used as 
+maintenance 15-B00-078 Lenalidomide 25mg capsule  or tablet tablet 
+or 
+capsule
+(ج1015) a- as 
+consolideition 
+post bone 
+=== page 46
+15-B00-090 Ruxolitinib 15 mg tablet  
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة
+Ruxolitinib 5 mg tablet  
+15mg بنفس الكمٌة( عدد الحبوب )  لتركٌز     
+ وعلى ان لا ٌكون السعر الممدم فً المنالصة اعلى من الكلفة التخمٌنٌة او سعر التسجٌل
+tablet 1142 /تعتبر
+Ruxolitinib as 
+phosphate مطابمة
+لما هو ممر  
+ج/1043
+وتلزم الشركة المجهزة
+بتوفٌر تركٌز ( 5 mg 
+15-B00-104 Pembrolizumab 100 mg  vial  I.V 
+يىاصفاخ الاجهشج انًختثزَّ فٍ انجهظح1179 تفصُ
+تهتشو انشزكح انًجهشج لاٌ يٍ انؼلاجاخ اَفا تتىفُز الاتٍ وتصىرج يجاَُح
+1-فحصPDL1 يجاَا وداخم انؼزاق وتىالغ1000 فحص يغ كم ػمذ
+2- فحصEGFR    يجاَا وداخم انؼزاق وتىالغ1000 فحص يغ كم ػمذ
+3-فحصALK   يجاَا وداخم انؼزاق وتىالغ1000 فحص يغ كم ػمذ
+4- جهاس فحص يختثزٌ ػذد اثُاٌ  ونًزج واحذ فمػ يغ تذرَة نهكىادر انفُُح وانصحُح يغ ظًاٌ وصُاَح 
+غُم فتزج انؼمذ
+لاحما نهجهظح 1133 انفمزج(2) اولاً/4 اٌ تكىٌ يىاصفاخ الاجهشج انًختثزَح انًطهىتح فٍ انفمزج اَفاً  كًا   
+يزفك تانجهظح1161
+vial مواصفات الاجهزة
+ي الجلسة 
+المختتريه ف 
+1179 تفصي
+1178
+تقر مادة
+Pembrolizumab 
+vial لاستطبابات
+التالية:
+Metastatic 
+melanoma
+Metastatic triple 
+negative breast 
+cancer15-B00-128 Atezolizumab 1200 mg / 20 ml  vial 
+ concentrate for solution for infusion 
+مواصفات الاجهزة المختبرٌه فً الجلسة1179 تفصٌ
+تلتزم الشركة المجهزة لاي من العلاجات انفا بتوفٌر الاتً وبصورة مجانٌة
+1-فحصPDL1 مجانا وداخل العراق وبوالع1000 فحص مع كل عمد
+2- فحصEGFR    مجانا وداخل العراق وبوالع1000 فحص مع كل عمد
+3-فحصALK   مجانا وداخل العراق وبوالع1000 فحص مع كل عمد
+4- جهاز فحص مختبري عدد اثنان  ولمرة واحد فمط مع تدرٌب للكوادر الفنٌة والصحٌة مع ضمان وصٌانة 
+طٌل فترة العمد
+لاحما للجلسة 1133 الفمرة(2) اولاً/4 ان تكون مواصفات الاجهزة المختبرٌة المطلوبة فً الفمرة انفاً  كما   
+مرفك بالجلسة1161
+vialمواصفات الاجهزة
+ي الجلسة 
+المختتريه ف 
+1179 تفصي
+1178
+تقر مادة
+Atezolizumab vial 
+لاستطباب سرطان الرئة
+المنتشر 
+Metastatic Non 
+small Cell lung 
+cancer
+1133
+ 1161
+15-B00-047 Sirolimus 1mg Tablet tablet 1080 1074
+1- تحدٌد صرفه 
+للحالات الاتٌة-: 
+15-B00-099 Gefitinib 250 mg tablet
+تلتزم الشركة المجهزة بتوفٌر الفحوصات الاتٌة مجانا اعتمادا على اعداد المرضى 
+الفحوصات         :EGFR exon19 deletions or exon21(L858R) subsitution
+ tablet 1169
+1147
+ج\1089 وتلتزم
+الشركة المجهزة بتوفٌر 
+الفحوصات الاتٌة مجانا 
+اعتمادا على اعداد 
+المرضى 
+الفحوصات:         
+EGFR exon19 
+deletions or 
+exon21(L858R) 
+=== page 47
+15-B00-113 palbociclib 125mg tablet or Capsule 
+لاعدة الل الاسعار 
+15-b00-114 
+15-b00-113
+ وبنسبة70 %للمادة الالل سعراً وٌتم تأمٌن30 %من المادة الثانٌة على ان لاٌتجاوز سعرها العرض  
+الارخص وبخلافه تكون الاحالة بنسبة 100 %للعرض الالل سعراً  
+تموم الشركة المجهزة للعلاج بتوفٌر الفحوصات الاتٌة مجانا 
+(ER,PR,HER2) اعتمادا على اعداد المرضى
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة
+palbociclib  100mg tablet or capsule
+  وبنسبة10 %من الكمٌة المتعالد علٌها من المادة  
+tablet 
+or 
+Capsule 
+1176
+ج\1141
+ تكون لاعدة الل 
+الاسعار بٌن المادتٌن 
+(palbociclib) و 
+(Abemaciclib) 
+وبنسبة70 %للمادة  
+الالل سعراً وٌتم تأمٌن 
+30% من المادة الثانٌة 
+على ان لاٌتجاوز 
+سعرها العرض 
+الارخص وبخلافه 
+تكون الاحالة بنسبة 
+100% للعرض الالل 
+سعراً 15-B00-114 Abemaciclib  150mg film coated tablet
+لاعدة الل الاسعار 
+15-b00-114 
+15-b00-113
+ وبنسبة70 %للمادة الالل سعراً وٌتم تأمٌن30 %من المادة الثانٌة على ان لاٌتجاوز سعرها العرض  
+الارخص وبخلافه تكون الاحالة بنسبة 100 %للعرض الالل سعراً  
+تموم الشركة المجهزة للعلاج بتوفٌر الفحوصات الاتٌة مجانا
+ (ER,PR,HER2) اعتمادا على اعداد المرضى
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المواد ادناه كبضاعة مجانٌة
+Abemaciclib  100mg  film coated tablet
+  وبنسبة5 %من الكمٌة المتعالد علٌها من المادة   مضافة على الاحتٌاج
+Abemaciclib  50mg  film coated tablet
+tablet 1176
+ج\1141
+ تكون لاعدة الل 
+الاسعار بٌن المادتٌن 
+(palbociclib) و 
+(Abemaciclib) 
+وبنسبة70 %للمادة  
+الالل سعراً وٌتم تأمٌن 
+30% من المادة الثانٌة 
+على ان لاٌتجاوز 
+سعرها العرض 
+الارخص وبخلافه 
+تكون الاحالة بنسبة 
+15-B00-129 Nintedanib 100mg as esilate soft capsule capsule 1133
+وٌحصر استخدامها 
+لعلاج حالات 
+15-B00-130 Nintedanib 150mg (as esilate) soft capsule
+تلتزم الشركة المجهزة بعلاج20 مرٌض مجانا ولمدة عام ولعمد واحد فمط
+capsule 1133
+وٌحصر استخدامها 
+لعلاج حالات 
+(Idiopathic 
+Pulmonary 15-B00-131 Ponatinib 15mg film coated tablet
+-تلتزم الشركة المجهزة للعلاج بتوفٌر الفحوصات للطفرة الوراثٌةt350i مجانا
+-تتنزم الشركة بعلاج  15 مرٌض مجانا مع كل عمد
+-تشكٌل لجنة من ثلاث دوابر تشرف على صرف ومتابعة المرضى
+-ٌطلب للسنة الاولى  احتٌاج لعلاج  50 مرٌض فمط
+tabletج/1139-تمر المواد
+الاتٌة فً المائمة 
+الاساسٌة المستوى 
+الاول كخط اول لعلاج 
+مرضى CML لمن
+ٌحملون الطفرة الوراثٌة 
+t350i وكخط ثالث
+للمرضى الغٌر 15-B00-132 Ponatinib 45mg film coated tablet 
+-تلتزم الشركة المجهزة للعلاج بتوفٌر الفحوصات للطفرة الوراثٌةt350i مجانا
+-تتنزم الشركة بعلاج  15 مرٌض مجانا مع كل عمد
+-تشكٌل لجنة من ثلاث دوابر تشرف على صرف ومتابعة المرضى
+-ٌطلب للسنة الاولى  احتٌاج لعلاج  50 مرٌض فمط
+tabletج/1139-تمر المواد
+الاتٌة فً المائمة 
+الاساسٌة المستوى 
+الاول كخط اول لعلاج 
+مرضى CML لمن
+ٌحملون الطفرة الوراثٌة 
+t350i وكخط ثالث
+للمرضى الغٌر 
+=== page 48
+15-B00-137 Alectinib as hydrochloride 150 mg capsule  
+لاعدة الل الاسعار
+ٌعدل الالرار وتكون لاعدة الل الاسعار بٌن المادتٌن ( Alectinib ) و ( Crizotinib250 ) وبنسبة70 % 
+للمادة الالل سعراً وٌتم تأمٌن30 %من المادة الثانٌة على ان لاٌتجاوز سعرها العرض الارخص وبخلافه  
+تكون الاحالة بنسبة 100 %للعرض الالل سعراً  
+15-B00-122 
+15-B00-137
+ 
+capsule
+1171
+1141
+ تمر المادتٌن الاتٌة  
+وحسب لاعدة الل 
+الاسعار:
+ٌعدل الالرار وتكون 
+لاعدة الل الاسعار بٌن 
+المادتٌن ( Alectinib 15-B00-122 Crizotinib 250 mg  capsule                 
+لاعدة الل الاسعار
+ٌعدل الالرار وتكون لاعدة الل الاسعار بٌن المادتٌن ( Alectinib ) و ( Crizotinib250 ) وبنسبة70 % 
+للمادة الالل سعراً وٌتم تأمٌن30 %من المادة الثانٌة على ان لاٌتجاوز سعرها العرض الارخص وبخلافه  
+تكون الاحالة بنسبة 100 %للعرض الالل سعراً  
+15-B00-122 
+15-B00-137
+ 
+capsule
+1171
+1141
+ تمر المادتٌن الاتٌة  
+وحسب 
+لاعدة الل الاسعار:
+   ٌعدل الالرار وتكون 
+لاعدة الل الاسعار بٌن 
+المادتٌن ( Alectinib 15C DRUGS USED IN NEUTROPENIA
+15-C00-003 Filgrastim   300mcg(30MU) /1ml (solution) Vial or Filgrastim   
+300mcg(30MU) /0.5 ml pfs or its approved biosimilar S.C/I.V infusion             
+            
+لاعدة الل الاسعار 
+15-C00-009  
+ 15-C00-003
+vial or 
+pfs
+15-C00-009 Lenograstim powder for reconstitution , 33.6 million IU ( 263 µg) vial (with 1 
+ml prefilled syringe water for injections)                      
+لاعدة الل الاسعار 
+15-C00-009  
+ 15-C00-003
+vial
+15D TAXANE GROUP
+15-D00-005 Docetaxel 10mg/1ml, 2ml vial or pfs or Docetaxel 20mg/ml, 1 ml vial or pfs  vial or 
+pfs
+(ٌتم الخلط حسب
+النشرة الداخلٌة 
+للمستحضر فً 
+المحالٌل الورٌدٌة وعدم 
+خلطها بالاشكال 
+15-D00-002 Docetaxel (Anhydrous or as Trihydrate )10mg/1ml ,8ml vial or 20mg/1ml ,4ml vial or 
+80mg/2ml Vial (with or without diluent)
+vial 1187
+ٌتم الخلط حسب النشرة
+الداخلٌة للمستحضر فً 
+المحالٌل الورٌدٌة وعدم 
+خلطها بالاشكال 
+الاخرى)
+15-D00-004 Paclitaxel  6mg/ml  50ml vial vial
+15E CYTOSTATIC TOPOISOMERASE (1) INHIBITOR
+15-E00-002 Irinotecan hydrochloride or hydrochloride Trihydrate: 20mg/ml (5ml-vial)  I.V 
+infusion 
+vial
+طة لاػذج الم الاطؼار
+(ج 972 )
+ج/1032
+تانُظثح نهزيش انىغٍُ( 
+15-C00-003 ) َتى
+اختُار احذي انًادتٍُ 
+ايا انــــ (Reference 
+) او انـــ( 
+Biosimilar ) وحظة
+انتُافض انظؼزٌ نهتُافض 
+يغ انزيش انىغٍُ ( 15-
+C00-009 ) وحظة
+لاػذج الم الاطؼار
+=== page 49
+15F  others 
+15-F00-003 SII – ONCO – BCG lyophilized 40mg vial contain 
+Bacillus Calmette-Guerin strain 40mg\ml between 1-19.2 ✕10⁸ colony 
+forming unit CFU
+لاعدة الل الاسعار
+15-F00-004
+15-F00-003
+vial
+15-F00-004 BCG Culture SSI vial
+1 vial contains
+ Mycobacterium bovis , ( BCG ) 
+Danish strain 1331          30 mg 
+Sodium glutamate           40 mg 
+لاعدة الل الاسعار
+15-F00-004
+15-F00-003
+vial
+16 IMMUNOLOGICAL PRODUCTS
+16A vaccines & Antisera(ضرورة ان تكون اللقاحات من مناشئ رصينة)تعدٌل مستوٌات  
+اللماحات بالجلسة 
+1032
+ج\1074
+16-A00-002 MMR VIAL-10 doses 
+ٌكون75 %من الاحتٌاج الكلً السنوي من اللماح بجرعة بجرعة  
+(10 doses)
+vial  
+ج/1143 ج\1146
+ٌكون75 %من
+الاحتٌاج الكلً السنوي 
+من اللماح بجرعة 16-A00-005 MMR VIAL one dose
+ٌكون25 %من الاحتٌاج الكلً السنوي من اللماح بجرعة  
+ (single dose ) 
+vial  
+ج/1143 ج\1146
+ٌكون25 %من
+الاحتٌاج الكلً السنوي 16-A00-003 DT/child vial-10 doses vial
+16-A00-004 Diphtheria & Tetanus (adult) or  Td/Adult vial -10 doses vial
+16-A00-007 Hepatitis B vaccine (adult) 20 mcg / 1 ml vial
+16-A00-011 Rabies vaccine powder(Freeze dried or Lyophilised) in vial + solvent in 
+syringe or ampoule
+vial 1155
+1178
+16-A00-012 Human Rabies Immunoglobulin   syringe-single dose
+ وٌفضل المنشأ البشريcode16-A00-049 تكون باحتٌاج واحد مع
+syringeالرعاٌة الصحٌة
+الاولٌة
+16-A00-049 Equine  Rabies Immunoglobulin   syringe-single dose
+وٌفضل المنشأ البشريcode16-A00-012 تكون باحتٌاج واحد مع
+syringeالرعاٌة الصحٌة
+الاولٌة
+16-A00-014 Tetanus  Immunoglobulin   single  dose  injection ampoul
+e
+ج\1069الرعاٌة الصحٌة
+الاولٌة
+16-A00-020 B.C.G ampoule-20doses ampoul
+e
+16-A00-021 Measles vial-10doses vial
+1133
+لاعدة الل الاسعار
+15-F00-003
+و
+15-F00-004
+(for bladder 
+cancer/bladder 
+carcinoma)
+احتٌاج واحد
+=== page 50
+16-A00-023 Antiscorpion  Ampoule -single dose ampoul
+e
+الرعاٌة الصحٌة
+الاولٌة
+16-A00-024 Polyvalent snake antivenom vial  or ampoule  including  Echis Carinatus – 
+single dose
+ampoul
+e or vial
+1178
+ج/1024
+ج/1029
+الرعاٌة الصحٌة
+الاولٌة
+16-A00-028 Injectable Polio Vaccine (IPV) ج\1071
+1083
+16-A00-031 Influenza seasonal  Vaccine syringe-single dose northren strain   syringe
+16-A00-037 Conjugated Meningococcal  (ACYW 135)  single dose Vaccine
+16-A00-038 Hepatitis B - Immunoglobulin with 50 IU/ ml anti-HBs antibodies  2ml   vial -
+single dose
+vialالرعاٌة الصحٌة
+الاولٌة
+16-A00-039 Hepatitis B - Immunoglobulin with 50 IU/ ml anti-HBs antibodies   10 ml   vial 
+-single dose
+احتٌاج واحد مع المادة 
+16-A00-046
+vial
+الرعاٌة الصحٌة
+الاولٌة
+16-A00-046 Human hepatitis B immunoglobulin:1ml contains:Human   protein 150mg of 
+which at least 96%is IgG with acontent of antibodies to hepatitis  B virus 
+surface antigen(HBs)of 500 IU    IgG subclass distribution:59% IgG 1            
+35% IgG2                 3%IgG3                   3%IgG4        IgA content ≤6mg/ml 
+solution for injection  in PFS (500 IU/ml).s.c. only          
+احتٌاج واحد مع المادة 
+16-A00-039
+pfs
+الرعاٌة الصحٌة
+الاولٌة
+16-A00-040 Hepatitis B vaccine children )10 mcg / 0.5 ml vial
+16-A00-043 conjugated  Pneumococcal  vaccine  لماح عامvial
+16-A00-048 Influenza seasonal  Vaccine syringe-single dose southren  strain   syringe
+16-A00-051 Rota Virus pentavalent  vaccine 
+ وٌتم اختٌار مادة واحدةcode16-A00-052 تكون باحتٌاج مشترن مع
+drop
+16-A00-052 Rota Virus  mono valent  vaccine 
+ وٌتم اختٌار مادة واحدةcode16-A00-051 تكون باحتٌاج مشترن مع
+drop
+16-A00-055 Penta 1  DPwT Hib - Hep- B Vaccine  
+16-A00-019 Diphtheria , Tetanus , Pertusi or D.P.T vial-10 doses
+16-A00-058 Bivalent oral poliomyelitis vaccine type1&3 (10 OR 20 dose / vial ) drop
+16B PASSIVE IMMUNISATION
+16-B00-004 Anti D immunoglobulin ( 1500 IU ) solution for    IV or( IV/ IM) injection vial or 
+ampoule
+(By nanofilteration & SDF method)تكون خاضعة لكافة  المتطلبات والمواصفات العالمٌة 
+المتعلمة بالنماوة وخلوها من الفٌروسات
+vial or 
+ampoul
+e
+ج986 , ج988
+1027
+1161
+16-B00-033 Humman normal immunoglobulin 5% protein ( 200 ml ) or 10% protein ( 100 
+ml ) 
+( 10 gm / container)
+ bottleمراعاة الشركة المصنعة بتوفتر 
+الشروط )995(
+تثبيت الاستطبابات وحسب
+الجلسة 1071و1126
+931
+احتٌاج واحـــــــــــــد
+=== page 51
+17 EMERGENCY TRETMENT OF POISONING (for Hospital and poisoning 
+center only) ANTIDOTES AND DRUGS USED IN TREATMENT OF ACUTE 
+POISINING
+17-000-001 Acetylcysteine10ml ampoule of 20% w/v aqueous solution (each containing 
+2g) i.e(200mg/ml) 
+ampoul
+e
+تكون خاص بوحدات
+العناٌة المركزة 
+ووحدات الطوارئ 
+ومراكز السموم
+17-000-053 Amyl nitrite 0.2ml in crushable glass or  Capsule   or   glass  Ampoule. ampoul
+e
+                      ٌتم
+تثبٌت الاحتٌاج من لبل 
+المركز الاستشاري  
+(1012)لاستعلامات
+17-000-014 Cyanid Antidot Kit.(Hydroxocobalamine) Kit         ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 17-000-015 Desferrioxamine mesylate (Deferoxamine Mesilate) 500mg  Vial vial   ٌتم تثبٌت الاحتٌاج
+للدوابر التً تحتوي 
+مراكز للثلاسٌمٌا17-000-017 Digoxin specific antibody Fargments (FAB)  40mg Vial vial   ٌتم تثبٌت الاحتٌاج
+من لبل وحدات 
+المناطرة الدوابٌة التابعة 
+لشعبة الصٌدلة 17-000-018 Dimercaprol in arachis oil (solvent)  50mg/ml  2ml Ampoule injection ampoul
+e
+ ٌتم تثبٌت الاحتٌاج من
+لبل المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+17-000-031 Obidoxime 250mg/ml Injection vial or ampoule ampoul
+e or vial 
+         ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 
+لاستعلامات السموم 
+حصرا + ذي لار
+17-000-034 Pralidoxime mesylate 1g/5ml (5ml Ampoule) ampoul
+e
+            ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+17-000-077 Potassium ferric hexacyano ferrate (Prussian blue) 0.5 gm capsule  ٌتم تثبٌت الاحتٌاج من
+لبل المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+17-000-039 disodium calcium edetate 1g/5ml  (5ml Ampoule) ampoul
+e
+         ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+=== page 52
+17-000-041 Sodium nitrite 30 mg/ 1 ml (3% ) 10ml ampoule or vial for  IV injection ampoul
+e or vial 
+1161       
+    ٌتم تثبٌت الاحتٌاج 
+من لبل المركز 
+الاستشاري لاستعلامات 
+السموم + ذي لار
+17-000-043 Sodium thiosulphate 50% (500mg/ml)(50ml ampoule) ampoul
+e
+           ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 
+لاستعلامات السموم + 17-000-052 Succimer 100mg Capsule capsule            ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 
+17-000-046 Trivalent botulism antitoxin or pentavalant  20ml Injection vial or ampoule vial or 
+ampoul
+e
+           ٌتم تثبٌت
+الاحتٌاج من لبل 
+المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+10-D00-005 Dantrolene sodium  20 mg / vial Vialٌؤخذ بنظر الاعتبار
+لابمة ادوٌة التخدٌر 
+ والسموم17-000-071 Deferasirox  dispersible 500mg tablet  
+تلتزم الشركة المجهزة للعلاج  بتوفٌر المادة ادناه كبضاعة مجانٌة
+Deferasirox dispersible 125mg Tablet   
+ بنسبة25 %من الكمٌة المتعالد علٌها من المادة
+tablet        ٌتم تثبٌت
+الاحتٌاج للدوابر التً 
+تحتوي مراكز 
+للثلاسٌمٌا  توفٌر 
+كبضاعة مجانٌة 
+(FOC)  (125 ملغم
+17-000-020 Desferrioxamine mesylate 2g vial for Injection Vialٌتم تثبٌت الاحتٌاج من
+لبل المركز الاستشاري 
+لاستعلامات السموم 17-000-016 Dicobalt edetate   300mg / (20ml Ampoule) ampoul
+e
+ٌتم تثبٌت الاحتٌاج من
+لبل المركز الاستشاري 
+لاستعلامات السموم 17-000-033 Physostigmine salicylate  2mg/2ml  I.V.-I.M. inj (2ml Ampoule )         
+Ampoul
+e 
+ٌتم تثبٌت الاحتٌاج من
+لبل المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+17-000-028 Naloxone hydrochloride  400mcg/ml  (1ml) Ampoule or Pfs or vial Ampoul
+e or 
+Pfs, vial
+    مع الاخذ بنظر
+الاعتبار استخدامه 
+ضمن لابمة التخدٌر و 
+لابمة السموم
+1039
+17-000-006 Atropine sulphate 2mg/ml Injection vial or ampoule  vial or 
+ampoul
+e
+ٌتم تثبٌت الاحتٌاج من
+لبل المركز الاستشاري 
+لاستعلامات السموم + 
+ذي لار
+02-M00-001 Macrogol 4000 (polyethlene glycol) 64g+Anhydrous sodium sulfate 
+5,700gm+sodium bicarbonate 1,680gm+sodium chloride 
+1,460gm+potassium chloride 0,750gm (powder for oral  solution in one 
+sachet )
+sachetٌؤخذ بنظر الاعتبار
+استخدامه فً الجهاز 
+الهضمً
+=== page 53
+17-000-076 Activated Charcoal  50g in suspension + sorbitol 96g -240ml bottle 1030
+1116
+الرعاٌة الصحٌة
+الاولٌة
+17-000-027 Methylene blue 1% (10ml) Ampoule  slow I.V.                                    ampoul
+e
+ 
+1116
+1101
+17-000-056 Deferiprone 500mg Tablet  Tablet   1154
+18 CONTRAST MEDIA
+18-000-002 Barium sulphate  Liquid with 100gm/100ml unit pack(150ml bottle) oral bottle
+18-000-010 Gadodiamide  287mg  (0.5mmol)/ml (10ml ) Vial  I.V 
+لاعدة الل الاسعار  
+18-000-008
+18-000-010
+vialج/988قاعدة اقل
+الاسعار مع 
+18-000-008
+18-000-008 gadopentetic acid as dimeglumine salt( gadopentetate dimeglumin)  
+469mg/ml  (0.5 mmol/mL) 10ml Vial for injection
+لاعدة الل الاسعار  
+18-000-008
+18-000-010
+vial 1161
+ج/988قاعدة اقل
+الاسعار مع 
+18-000-010       
+             (دوائر
+18-000-007 Gadodiamide  287mg  (0.5mmol)/ml (20ml )Vial  I.V 
+لاعدة الل الاسعار  
+18-000-059
+18-000-007
+vialج/988قاعدة اقل
+الاسعار مع 
+18-000-059
+18-000-059 gadopentetic acid as dimeglumine salt( gadopentetate dimeglumin)  
+469mg/ml  (0.5 mmol/mL) 20ml Vial for  injection
+لاعدة الل الاسعار  
+18-000-059
+18-000-007
+vial 1161
+ج/988قاعدة اقل
+الاسعار مع 
+18-000-007
+18-000-019 Iohexol equivalent to 350 mg of organic iodine/ mL
+100 ml  vial for IV , intra arterially , intrathecally , orally , rectally or by 
+instillation into body cavities 
+ لاعدة الل الاسعار 
+18-000-075
+18-000-072
+18-000-019
+vial 1178
+1161
+حدب قاعدة اقل 
+الاسعار (ج  972  )
+1158
+18-000-075 Iopromide eq. organic iodine 370 mg /1ml (100ml) vial 
+ لاعدة الل الاسعار 
+18-000-075
+18-000-072
+18-000-019
+vialحسب قاعدة اقل
+الاسعار )ج 972 (
+1158
+=== page 54
+18-000-072 Ioversol  (74%) eq. organic iodine 350 mg/ ml 
+ 100 ml vial  for intravascular use not for intrathecal
+ لاعدة الل الاسعار 
+18-000-075
+18-000-072
+18-000-019
+vialحدب قاعدة اقل
+الاسعار (ج 1158 )

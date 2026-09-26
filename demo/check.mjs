@@ -1328,9 +1328,11 @@ ok('an owner’s bar is their home, the till, stock, the Helper and their profil
   /* v0.0012: what used to be "coming" is here — the till is a link now, not
      a promise. */
   ok('and leads to the till instead, which is no longer “coming”',
-     /Till/.test(txt) && !/on its way/i.test(txt) && await dk.locator('.soon-tag').count() === 0);
-  ok('it counts the catalogue, and how much of it the Helper cannot fully check',
-     await dk.evaluate(t => { const s = catalogueSummary(); return t.includes(s.total + ' products') && t.includes(s.uncheckable + ' of them'); }, txt));
+     /till/i.test(txt) && !/on its way/i.test(txt) && await dk.locator('.soon-tag').count() === 0);
+  /* v0.0013.2 (H3): the catalogue card left the home for the Stock screen. */
+  ok('the catalogue is no longer a card on the home; it is one tap inside Stock',
+     !/products in the catalogue/i.test(txt) &&
+     await dk.evaluate(() => { goto('stock'); const r = /Catalogue and prices/.test(document.getElementById('app-body').innerText); goto('dashboard'); return r; }));
   ok('and still leads to the trainee waiting on a decision', /Zainab/.test(txt));
 }
 ok('nothing in the sidebar leads to the market',
@@ -1619,7 +1621,7 @@ console.log('\nthe till (v0.0012)');
 
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
   ok('the owner’s dashboard carries the till card, and a banner slot (so the next check is not vacuous)',
-     await dk.evaluate(() => /Till/.test(document.getElementById('app-body').innerText) &&
+     await dk.evaluate(() => /Open the till/.test(document.getElementById('app-body').innerText) &&
        document.querySelectorAll('.banner-slot').length > 0));
   await dk.evaluate(() => goto('till'));
   ok('the till opens on the owner’s pharmacy, named, selling',
@@ -2052,7 +2054,7 @@ console.log('\nstock and purchasing (v0.0013)');
        sidebarGroups()[0].items.some(x => x[0] === 'products'); }));
   ok('the home screen says what the shelf needs',
      await dk.evaluate(() => { goto('dashboard'); const t = document.getElementById('app-body').innerText;
-       return /Stock/.test(t) && /Expired batches in quarantine: 1/.test(t) && /Expiring within 90 days: 1/.test(t); }));
+       return /Needs you/i.test(t) && /Expired batches in quarantine: 1/.test(t) && /Expiring within 90 days: 1/.test(t); }));
 
   /* The two things this version's check was promised to prove. */
   ok('NO STOCK LEVEL IS EVER WRITTEN DIRECTLY: one writer of movements, and no level stored anywhere',
@@ -2392,6 +2394,90 @@ console.log('\nthe till and the Helper as one (v0.0013.1)');
      await dk.evaluate(() => { setLang('ar'); tillScan('5000000001224'); tillScan('4000000001065'); openHelper();
        const r = /قبل أن تسلّمها/.test(document.querySelector('.sheet').innerText) && document.documentElement.dir === 'rtl';
        closeModal(); tillClear(); setLang('en'); return r; }));
+}
+
+/* ---------------------------------------------------------------------------
+   v0.0013.2 — the simpler home (H1–H5), and the two Ministry sources.
+   --------------------------------------------------------------------------- */
+console.log('\nthe simpler home, and the Ministry sources (v0.0013.2)');
+{
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
+  ok('H1 — one headline figure: today’s sales, the sum of today’s sales at this pharmacy',
+     await dk.evaluate(() => document.querySelectorAll('#app-body .hm-fig').length === 1 &&
+       Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === salesToday('P1').total));
+  ok('…the change is against yesterday, named, with an arrow as well as a colour',
+     await dk.evaluate(() => { const d = document.querySelector('.hm-delta').innerText;
+       return salesToday('P1').n ? /[▲▼] \d+%/.test(d) && /vs yesterday · \d+ sales/.test(d) : /No sales yet today · yesterday/.test(d); }));
+  ok('…and a week’s line, muted, with only today marked',
+     await dk.evaluate(() => { const svg = document.querySelector('.hm-spark');
+       return !!svg && svg.querySelectorAll('path').length === 1 && svg.querySelectorAll('circle').length === 1 &&
+         (svg.querySelector('path').getAttribute('d').match(/[ML]/g) || []).length === 7 &&
+         document.querySelectorAll('.hm-days span').length === 7 && /Today/.test(document.querySelector('.hm-days').innerText); }));
+  ok('a sale moves the figure',
+     await dk.evaluate(() => { const before = salesToday('P1').total; goto('till'); S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
+       goto('dashboard'); return Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === before + S.sales[0].total &&
+         /vs yesterday/.test(document.querySelector('.hm-delta').innerText); }));
+  ok('H2 — two actions: open the till, count a shelf',
+     await dk.evaluate(() => { document.querySelector('.hm-till').click(); const a = S.screen === 'till'; goto('dashboard');
+       document.querySelector('.hm-count').click(); const b = S.screen === 'count'; goto('dashboard'); return a && b; }));
+  ok('H3 — one list of what needs the owner, its count in its heading, each row leading somewhere',
+     await dk.evaluate(() => { const rows = document.querySelectorAll('.hm-needs .hm-row');
+       return rows.length === needsYou(PHARMACIES.P1).length && rows.length >= 3 &&
+         new RegExp('Needs you · ' + rows.length, 'i').test(document.querySelector('.hm-needs-t').innerText) &&
+         [...rows].every(r => /goto\(/.test(r.getAttribute('onclick'))); }));
+  ok('…instead of the stack of cards: no catalogue card, no separate Helper card, no till card',
+     await dk.evaluate(() => !document.querySelector('#app-body .check-card') && !/products in the catalogue/i.test(document.getElementById('app-body').innerText) &&
+       document.querySelectorAll('#app-body .link-card, #app-body .soon-card').length === 0));
+  ok('H4 — the announcement is a quiet line, still labelled as from Saydali+; the trial lives on Profile',
+     await dk.evaluate(() => { const slot = document.querySelector('.hm-ann .banner-slot.announce');
+       const quiet = !!slot && getComputedStyle(slot.querySelector('.banner-s')).display === 'none' && /from saydali\+/i.test(slot.innerText);
+       const noTrial = !/fee-free trial/i.test(document.getElementById('app-body').innerText);
+       goto('profile'); const onProfile = /trial/i.test(document.getElementById('app-body').innerText); goto('dashboard');
+       return quiet && noTrial && onProfile; }));
+  ok('H5 — an owner of several, on All: the pharmacies together, then one row each',
+     await dk.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); goto('dashboard');
+       const rows = document.querySelectorAll('.hm-ph');
+       const total = myPharmacies().reduce((a, p) => a + salesToday(p.id).total, 0);
+       return rows.length === myPharmacies().length && /3 pharmacies/.test(document.querySelector('.hm-label').innerText) &&
+         Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === total; }));
+  ok('…a pharmacy nobody can sign for says it cannot sell',
+     await dk.evaluate(() => { const r = [...document.querySelectorAll('.hm-ph')].find(x => /Dar Al-Dawa/.test(x.innerText));
+       return !!r && /No responsible pharmacist/i.test(r.innerText) && /can’t sell/.test(r.innerText); }));
+  ok('…and a row opens that pharmacy’s own home',
+     await dk.evaluate(() => { document.querySelectorAll('.hm-ph')[1].click(); return !!currentPharmacy() && !!document.querySelector('.hm-actions'); }));
+  ok('a pharmacy with no responsible pharmacist has no till button to press',
+     await dk.evaluate(() => { setPharmacy('P9'); goto('dashboard'); const r = document.querySelector('.hm-till').disabled; setPharmacy(null); return r; }));
+  {
+    await dk.setViewportSize({ width: 320, height: 700 });
+    const wide = [];
+    for (const dir of ['ar', 'en']) {
+      for (const [who, tab] of [['rahma@example.com', undefined], ['layla@example.com', null]]) {
+        await dk.evaluate(([w, d]) => { signOut(); signInAs(w); setLang(d); goto('dashboard'); }, [who, dir]);
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} home (${dir})`);
+      }
+    }
+    ok(`the home does not scroll sideways at 320px, one pharmacy or several, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
+
+  /* The sources. */
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); });
+  ok('a catalogue product shows its registration in Iraq, from the Ministry’s register',
+     await dk.evaluate(() => { openProduct('4000000001065'); return /Registered in Iraq/.test(document.getElementById('app-body').innerText) &&
+       /483\/8-9-2015/.test(document.getElementById('app-body').innerText) && /Bayer/i.test(document.getElementById('app-body').innerText); }));
+  ok('a drug shows its entries on the Essential Drugs List, with the national code, class and source',
+     await dk.evaluate(() => { openDrug('Furosemide'); const t = document.getElementById('app-body').innerText;
+       return /On the Essential Drugs List/i.test(t) && /01-B00-007/.test(t) && /Diuretics/.test(t) && /NCDS Essential Drugs List, 25 Jul 2023/.test(t); }));
+  ok('a drug that is not on it says so',
+     await dk.evaluate(() => { const d = DRUGS.find(x => !EDL_BY_DRUG[x.sci]); openDrug(d.sci);
+       return /Not on the Essential Drugs List/.test(document.getElementById('app-body').innerText); }));
+  ok('the drug record offers no “add to check” any more — the check is the till',
+     await dk.evaluate(() => { openDrug('Warfarin'); return !/Add to (the )?check/i.test(document.getElementById('app-body').innerText); }));
+  ok('the phone app does not carry the 5,214-row register — only what it shows',
+     await dk.evaluate(() => typeof REGISTER_ROWS === 'undefined' && Object.keys(PRODUCT_REG).length >= 20 && Object.keys(EDL_BY_DRUG).length >= 70));
+  ok('every registration link in the app agrees with the data file',
+     Object.keys(JSON.parse(readFileSync(join(here, '..', 'data', 'product-registrations.json'), 'utf8'))).length ===
+     await dk.evaluate(() => Object.keys(PRODUCT_REG).length));
 }
 
 await dk.setViewportSize({ width: 320, height: 700 });
