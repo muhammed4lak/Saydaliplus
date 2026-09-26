@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import DRUGS, { FORM_KEYS, DUPLICATE_RULES } from '../data/drugs.mjs';
+import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -45,7 +45,9 @@ for (const d of DRUGS) {
   for (const c of d.contraindications || []) {
     if (!c.ar || !c.en) problems.push(`${d.sci}: contraindication needs both languages`);
   }
+  for (const k of d.take || []) if (!TAKE[k]) problems.push(`${d.sci}: unknown take "${k}"`);
 }
+for (const [k, v] of Object.entries(TAKE)) if (!v.ar || !v.en) problems.push(`take ${k}: needs both languages`);
 for (const r of DUPLICATE_RULES) {
   if (!r.id || !r.codes || !r.codes.length) problems.push(`duplicate rule ${r.id}: no codes`);
   if (!['warning', 'serious', 'critical'].includes(r.severity)) problems.push(`duplicate rule ${r.id}: bad severity`);
@@ -87,6 +89,7 @@ if (problems.length) {
    single 60 KB line is not readable by either. */
 const block = BEGIN + '\n' +
   'const DRUG_FORMS = ' + JSON.stringify(FORM_KEYS) + ';\n' +
+  'const TAKE = ' + JSON.stringify(TAKE) + ';\n' +
   'const DUPLICATE_RULES = [\n' +
   DUPLICATE_RULES.map(r => '  ' + JSON.stringify(r)).join(',\n') +
   '\n];\n' +
@@ -104,8 +107,10 @@ const productBlock = P_BEGIN + '\n' +
 function newest(dir, prefix) {
   const found = readdirSync(join(root, dir))
     .filter(f => f.startsWith(prefix) && f.endsWith('.html'))
-    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)/) || [0, 0, 0]).slice(1).map(Number) }))
-    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]));
+    /* v0.0012.1 — an amendment carries a third number, and outranks the
+       version it amends. */
+    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)(?:\.(\d+))?\.html$/) || [0, 0, 0, 0]).slice(1).map(x => Number(x || 0)) }))
+    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]) || (b.v[2] - a.v[2]));
   if (!found.length) throw new Error(`no ${prefix}*.html in ${dir}`);
   return join(dir, found[0].f);
 }

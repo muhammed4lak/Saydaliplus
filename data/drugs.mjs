@@ -32,7 +32,34 @@
      notes  the counselling line — what you say handing it over
      interactions [{ with, severity: warning|serious|critical, note }]
      contraindications [{ ar, en }]
+     take   optional — WHEN and HOW to take it, as keys of TAKE below: before or
+            after food, in the morning, once a week. What the till prints under
+            a medicine by default (v0.0012.1). Only where the timing changes
+            something; a drug with none prints no default line at all, because
+            "swallow with water" tells a patient nothing. Never a dose — the
+            dose is typed by the dispensing pharmacist, every time. Placeholder
+            content until the clinical curator (W19) reviews it.
    ========================================================================== */
+
+/* The fixed vocabulary for `take`, and the quick choices the pharmacist taps
+   at the till. Fixed so that every instruction exists in both languages: a
+   receipt switches to English with one press, and a line typed in one
+   language cannot follow it. */
+export const TAKE = {
+  beforeFood:      { ar:'قبل الأكل',                          en:'Before food' },
+  afterFood:       { ar:'بعد الأكل',                          en:'After food' },
+  withFood:        { ar:'مع الأكل',                           en:'With food' },
+  emptyStomach:    { ar:'على معدة فارغة',                     en:'On an empty stomach' },
+  beforeBreakfast: { ar:'صباحاً قبل الفطور بنصف ساعة',        en:'In the morning, 30 minutes before breakfast' },
+  withBreakfast:   { ar:'صباحاً مع الفطور',                   en:'In the morning with breakfast' },
+  morning:         { ar:'صباحاً',                             en:'In the morning' },
+  evening:         { ar:'مساءً',                              en:'In the evening' },
+  bedtime:         { ar:'قبل النوم',                          en:'At bedtime' },
+  sameTime:        { ar:'في الوقت نفسه كل يوم',               en:'At the same time every day' },
+  weekly:          { ar:'مرة واحدة في الأسبوع فقط',           en:'Once a week only' },
+  noMilk:          { ar:'بعيداً عن الحليب ومضادات الحموضة بساعتين', en:'Two hours apart from milk and antacids' },
+  noAlcohol:       { ar:'تجنّب الكحول',                       en:'No alcohol' }
+};
 
 export const FORM_KEYS = ['tablet', 'capsule', 'syrup', 'injection', 'cream', 'ointment',
   'gel', 'drops', 'inhaler', 'spray', 'suppository', 'sachet', 'solution', 'patch', 'pessary'];
@@ -51,7 +78,7 @@ export default [
   ],
   contraindications:[{ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}] },
 
-{ sci:'Ibuprofen', ar:'إيبوبروفين', atc:'M01AE01', form:'tablet',
+{ sci:'Ibuprofen', ar:'إيبوبروفين', atc:'M01AE01', form:'tablet', take:['afterFood'],
   doses:['100 mg/5 mL','200 mg','400 mg','600 mg'],
   notes:{ar:'يؤخذ مع الطعام ولأقصر مدة ممكنة. يُتجنّب في الثلث الأخير من الحمل.',
          en:'With food, for the shortest course that works. Avoid in the third trimester.'},
@@ -68,7 +95,7 @@ export default [
     {ar:'قصور كلوي (eGFR < 30)', en:'Renal impairment (eGFR < 30)'}
   ] },
 
-{ sci:'Diclofenac', ar:'ديكلوفيناك', atc:'M01AB05', form:'tablet',
+{ sci:'Diclofenac', ar:'ديكلوفيناك', atc:'M01AB05', form:'tablet', take:['afterFood'],
   doses:['1% gel','25 mg','50 mg','75 mg/3 mL','100 mg SR'],
   notes:{ar:'أعلى خطر قلبي وعائي بين مضادات الالتهاب الشائعة — يُتجنّب في مرض القلب الإقفاري. الهلام الموضعي بديل أأمن للألم الموضعي.',
          en:'The highest cardiovascular risk of the common NSAIDs — avoid in ischaemic heart disease. The topical gel is the safer option for local pain.'},
@@ -83,7 +110,7 @@ export default [
     {ar:'الثلث الأخير من الحمل', en:'Third trimester of pregnancy'}
   ] },
 
-{ sci:'Naproxen', ar:'نابروكسين', atc:'M01AE02', form:'tablet',
+{ sci:'Naproxen', ar:'نابروكسين', atc:'M01AE02', form:'tablet', take:['afterFood'],
   doses:['250 mg','500 mg'],
   notes:{ar:'أطول مفعولاً من الإيبوبروفين وأقلّها خطراً على القلب — الخيار المفضّل إذا كان مضاد الالتهاب لا مفرّ منه.',
          en:'Longer acting than ibuprofen and the lowest cardiovascular risk of the group — the one to choose if an NSAID is unavoidable.'},
@@ -98,7 +125,7 @@ export default [
     {ar:'قصور كلوي شديد', en:'Severe renal impairment'}
   ] },
 
-{ sci:'Aspirin', ar:'أسبرين', atc:'B01AC06', form:'tablet',
+{ sci:'Aspirin', ar:'أسبرين', atc:'B01AC06', form:'tablet', take:['afterFood'],
   doses:['75 mg','81 mg','100 mg','300 mg'],
   notes:{ar:'جرعة 75–100 ملغ مضادة للصفيحات لا مسكّنة. لا يُعطى لمن دون 16 سنة مع حمّى — متلازمة راي.',
          en:'75–100 mg is antiplatelet, not analgesic. Never under 16 with a fever — Reye’s syndrome.'},
@@ -114,7 +141,7 @@ export default [
     {ar:'اضطرابات النزف', en:'Bleeding disorders'}
   ] },
 
-{ sci:'Mefenamic acid', ar:'حمض الميفيناميك', atc:'M01AG01', form:'capsule',
+{ sci:'Mefenamic acid', ar:'حمض الميفيناميك', atc:'M01AG01', form:'capsule', take:['afterFood'],
   doses:['250 mg','500 mg'],
   notes:{ar:'خيار شائع لعسر الطمث — يبدأ مع أول إحساس بالألم ويؤخذ مع الطعام.',
          en:'A common first choice for period pain — start at the first twinge, take with food.'},
@@ -141,7 +168,7 @@ export default [
     {ar:'الثلث الأخير من الحمل', en:'Third trimester of pregnancy'}
   ] },
 
-{ sci:'Meloxicam', ar:'ميلوكسيكام', atc:'M01AC06', form:'tablet',
+{ sci:'Meloxicam', ar:'ميلوكسيكام', atc:'M01AC06', form:'tablet', take:['afterFood'],
   doses:['7.5 mg','15 mg'],
   notes:{ar:'مرة واحدة يومياً مع الطعام.', en:'Once daily, with food.'},
   interactions:[
@@ -184,7 +211,7 @@ export default [
     {ar:'كثرة الوحيدات العدائية', en:'Infectious mononucleosis'}
   ] },
 
-{ sci:'Amoxicillin/Clavulanic acid', ar:'أموكسيسيلين/حمض الكلافولانيك', atc:'J01CR02', form:'tablet',
+{ sci:'Amoxicillin/Clavulanic acid', ar:'أموكسيسيلين/حمض الكلافولانيك', atc:'J01CR02', form:'tablet', take:['withFood'],
   doses:['228 mg/5 mL','457 mg/5 mL','625 mg','1 g'],
   notes:{ar:'يؤخذ في بداية الوجبة — الكلافولانيك هو سبب الإسهال، والطعام يخفّفه.',
          en:'Take at the start of a meal — the clavulanate is what causes the diarrhoea, and food blunts it.'},
@@ -228,7 +255,7 @@ export default [
     {ar:'قصور كبدي مع قصور كلوي', en:'Hepatic impairment with renal impairment'}
   ] },
 
-{ sci:'Ciprofloxacin', ar:'سيبروفلوكساسين', atc:'J01MA02', form:'tablet',
+{ sci:'Ciprofloxacin', ar:'سيبروفلوكساسين', atc:'J01MA02', form:'tablet', take:['noMilk'],
   doses:['250 mg','500 mg','750 mg','0.3% drops'],
   notes:{ar:'يُباعد ساعتين قبل أو ست ساعات بعد الحليب ومضادات الحموضة والحديد والزنك — وإلا لن يُمتص.',
          en:'Two hours before or six after milk, antacids, iron or zinc — otherwise it simply will not absorb.'},
@@ -244,7 +271,7 @@ export default [
     {ar:'الحمل والإرضاع', en:'Pregnancy and breastfeeding'}
   ] },
 
-{ sci:'Levofloxacin', ar:'ليفوفلوكساسين', atc:'J01MA12', form:'tablet',
+{ sci:'Levofloxacin', ar:'ليفوفلوكساسين', atc:'J01MA12', form:'tablet', take:['noMilk'],
   doses:['250 mg','500 mg','750 mg'],
   notes:{ar:'مرة واحدة يومياً. نفس قاعدة المباعدة عن الكالسيوم والحديد ومضادات الحموضة.',
          en:'Once daily. Same spacing rule as ciprofloxacin for calcium, iron and antacids.'},
@@ -304,7 +331,7 @@ export default [
     {ar:'الأطفال دون 12 سنة', en:'Children under 12'}
   ] },
 
-{ sci:'Metronidazole', ar:'ميترونيدازول', atc:'J01XD01', form:'tablet',
+{ sci:'Metronidazole', ar:'ميترونيدازول', atc:'J01XD01', form:'tablet', take:['afterFood', 'noAlcohol'],
   doses:['200 mg/5 mL','250 mg','500 mg'],
   notes:{ar:'ممنوع الكحول أثناء الكورس ولمدة 48 ساعة بعده — تفاعل شبيه بالديسلفيرام. طعم معدني شائع وغير مقلق.',
          en:'No alcohol during the course or for 48 hours after — a disulfiram-like reaction. A metallic taste is common and harmless.'},
@@ -317,7 +344,7 @@ export default [
     {ar:'تناول الكحول', en:'Alcohol use'}
   ] },
 
-{ sci:'Nitrofurantoin', ar:'نيتروفورانتوين', atc:'J01XE01', form:'capsule',
+{ sci:'Nitrofurantoin', ar:'نيتروفورانتوين', atc:'J01XE01', form:'capsule', take:['withFood'],
   doses:['50 mg','100 mg'],
   notes:{ar:'مع الطعام. لون البول البنّي طبيعي ولا يستدعي القلق. لا يصلح لالتهاب الكلية — يعمل في المثانة فقط.',
          en:'With food. Brown urine is expected and harmless. No use in kidney infection — it only works in the bladder.'},
@@ -357,7 +384,7 @@ export default [
   ],
   contraindications:[{ar:'التهاب قولون سابق مرتبط بالصادات', en:'Previous antibiotic-associated colitis'}] },
 
-{ sci:'Cefuroxime', ar:'سيفوروكسيم', atc:'J01DC02', form:'tablet',
+{ sci:'Cefuroxime', ar:'سيفوروكسيم', atc:'J01DC02', form:'tablet', take:['afterFood'],
   doses:['125 mg/5 mL','250 mg','500 mg'],
   notes:{ar:'بعد الطعام مباشرة — الامتصاص يعتمد عليه.', en:'Straight after food — absorption depends on it.'},
   interactions:[
@@ -484,7 +511,7 @@ export default [
     {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
   ] },
 
-{ sci:'Bisoprolol', ar:'بيسوبرولول', atc:'C07AB07', form:'tablet',
+{ sci:'Bisoprolol', ar:'بيسوبرولول', atc:'C07AB07', form:'tablet', take:['morning'],
   doses:['1.25 mg','2.5 mg','5 mg','10 mg'],
   notes:{ar:'لا يُوقف فجأة — الإيقاف المفاجئ يسبّب ذبحة أو احتشاء ارتدادياً. يُخفّض تدريجياً.',
          en:'Never stop abruptly — rebound angina or infarction. Taper it down.'},
@@ -511,7 +538,7 @@ export default [
     {ar:'حصار قلبي من الدرجة الثانية أو الثالثة', en:'Second- or third-degree heart block'}
   ] },
 
-{ sci:'Metoprolol', ar:'ميتوبرولول', atc:'C07AB02', form:'tablet',
+{ sci:'Metoprolol', ar:'ميتوبرولول', atc:'C07AB02', form:'tablet', take:['withFood'],
   doses:['25 mg','50 mg','100 mg'],
   notes:{ar:'الشكل الممتد مرة واحدة يومياً والعادي مرتين — تأكد أيّهما بيد المريض.',
          en:'The modified-release form is once daily and the plain one twice — check which they are actually holding.'},
@@ -524,7 +551,7 @@ export default [
     {ar:'قصور قلب غير معاوَض', en:'Decompensated heart failure'}
   ] },
 
-{ sci:'Carvedilol', ar:'كارفيديلول', atc:'C07AG02', form:'tablet',
+{ sci:'Carvedilol', ar:'كارفيديلول', atc:'C07AG02', form:'tablet', take:['withFood'],
   doses:['3.125 mg','6.25 mg','12.5 mg','25 mg'],
   notes:{ar:'مع الطعام لتقليل هبوط الضغط الانتصابي. يُرفع تدريجياً في قصور القلب.',
          en:'With food to blunt the postural drop. Titrated up slowly in heart failure.'},
@@ -538,7 +565,7 @@ export default [
     {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
   ] },
 
-{ sci:'Hydrochlorothiazide', ar:'هيدروكلوروثيازيد', atc:'C03AA03', form:'tablet',
+{ sci:'Hydrochlorothiazide', ar:'هيدروكلوروثيازيد', atc:'C03AA03', form:'tablet', take:['morning'],
   doses:['12.5 mg','25 mg','50 mg'],
   notes:{ar:'صباحاً لا مساءً. يرفع حمض البول وسكر الدم ويخفض البوتاسيوم والصوديوم.',
          en:'Morning, not evening. It raises uric acid and glucose and lowers potassium and sodium.'},
@@ -552,7 +579,7 @@ export default [
     {ar:'فرط الحساسية للسلفوناميدات', en:'Sulfonamide hypersensitivity'}
   ] },
 
-{ sci:'Furosemide', ar:'فوروسيميد', atc:'C03CA01', form:'tablet',
+{ sci:'Furosemide', ar:'فوروسيميد', atc:'C03CA01', form:'tablet', take:['morning'],
   doses:['20 mg','40 mg','20 mg/2 mL'],
   notes:{ar:'صباحاً، والجرعة الثانية قبل الرابعة عصراً — وإلا لن ينام المريض. يُراقب البوتاسيوم.',
          en:'Morning, and a second dose before four in the afternoon — otherwise nobody sleeps. Watch potassium.'},
@@ -566,7 +593,7 @@ export default [
     {ar:'نقص حجم شديد أو تجفاف', en:'Severe hypovolaemia or dehydration'}
   ] },
 
-{ sci:'Spironolactone', ar:'سبيرونولاكتون', atc:'C03DA01', form:'tablet',
+{ sci:'Spironolactone', ar:'سبيرونولاكتون', atc:'C03DA01', form:'tablet', take:['morning'],
   doses:['25 mg','50 mg','100 mg'],
   notes:{ar:'مدرّ حافظ للبوتاسيوم — لا بدائل ملح ولا مكمّلات بوتاسيوم. التثدّي عند الرجال شائع.',
          en:'Potassium-sparing — no salt substitutes and no potassium supplements. Gynaecomastia in men is common.'},
@@ -609,7 +636,7 @@ export default [
     {ar:'اعتلال عضلي', en:'Myopathy'}
   ] },
 
-{ sci:'Simvastatin', ar:'سيمفاستاتين', atc:'C10AA01', form:'tablet',
+{ sci:'Simvastatin', ar:'سيمفاستاتين', atc:'C10AA01', form:'tablet', take:['evening'],
   doses:['10 mg','20 mg','40 mg'],
   notes:{ar:'مساءً — تصنيع الكوليسترول ليلي. أكثر الستاتينات تفاعلاً: راجع الكلاريثرومايسين والأملوديبين.',
          en:'In the evening — cholesterol is made overnight. The most interaction-prone statin: check clarithromycin and amlodipine.'},
@@ -638,7 +665,7 @@ export default [
     {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
   ] },
 
-{ sci:'Warfarin', ar:'وارفارين', atc:'B01AA03', form:'tablet',
+{ sci:'Warfarin', ar:'وارفارين', atc:'B01AA03', form:'tablet', take:['sameTime'],
   doses:['1 mg','2 mg','2.5 mg','5 mg'],
   notes:{ar:'ثبات الخضروات الورقية أهم من تجنّبها. أي صادّ حيوي جديد يستوجب إعادة فحص INR. نفس الوقت يومياً.',
          en:'Consistency with leafy greens matters more than avoiding them. Any new antibiotic means recheck the INR. Same time every day.'},
@@ -655,7 +682,7 @@ export default [
     {ar:'ارتفاع ضغط شديد غير مضبوط', en:'Severe uncontrolled hypertension'}
   ] },
 
-{ sci:'Rivaroxaban', ar:'ريفاروكسابان', atc:'B01AF01', form:'tablet',
+{ sci:'Rivaroxaban', ar:'ريفاروكسابان', atc:'B01AF01', form:'tablet', take:['withFood'],
   doses:['2.5 mg','10 mg','15 mg','20 mg'],
   notes:{ar:'جرعة 15 و20 ملغ مع الطعام وإلا لم تُمتص. لا يحتاج INR لكنه ليس أأمن من الوارفارين مع النزف.',
          en:'The 15 and 20 mg doses must be taken with food or they will not absorb. No INR needed, but no safer than warfarin once bleeding starts.'},
@@ -741,7 +768,7 @@ export default [
 
 /* ---------- Diabetes ---------- */
 
-{ sci:'Metformin', ar:'ميتفورمين', atc:'A10BA02', form:'tablet',
+{ sci:'Metformin', ar:'ميتفورمين', atc:'A10BA02', form:'tablet', take:['withFood'],
   doses:['500 mg','850 mg','1000 mg'],
   notes:{ar:'مع الطعام ويُرفع تدريجياً — الاضطراب المعوي سبب التوقف الأول وهو يزول. يُوقف مؤقتاً قبل التصوير بصبغة اليود.',
          en:'With food and built up slowly — GI upset is the main reason people quit, and it passes. Hold before iodinated contrast imaging.'},
@@ -755,7 +782,7 @@ export default [
     {ar:'قصور كبدي شديد', en:'Severe hepatic impairment'}
   ] },
 
-{ sci:'Gliclazide', ar:'غليكلازيد', atc:'A10BB09', form:'tablet',
+{ sci:'Gliclazide', ar:'غليكلازيد', atc:'A10BB09', form:'tablet', take:['withBreakfast'],
   doses:['30 mg MR','60 mg MR','80 mg'],
   notes:{ar:'مع الفطور. يسبّب نقص سكر — يجب أن يحمل المريض سكّراً سريعاً معه دائماً.',
          en:'With breakfast. It causes hypoglycaemia — they should carry fast sugar at all times.'},
@@ -770,7 +797,7 @@ export default [
     {ar:'قصور كبدي أو كلوي شديد', en:'Severe hepatic or renal impairment'}
   ] },
 
-{ sci:'Glimepiride', ar:'غليميبيريد', atc:'A10BB12', form:'tablet',
+{ sci:'Glimepiride', ar:'غليميبيريد', atc:'A10BB12', form:'tablet', take:['withBreakfast'],
   doses:['1 mg','2 mg','3 mg','4 mg'],
   notes:{ar:'مرة واحدة مع أول وجبة. لا تُفوّت الوجبة بعد أخذه.',
          en:'Once daily with the first meal. Never take it and then skip the meal.'},
@@ -784,7 +811,7 @@ export default [
     {ar:'الحمل والإرضاع', en:'Pregnancy and breastfeeding'}
   ] },
 
-{ sci:'Glibenclamide', ar:'غليبنكلاميد', atc:'A10BB01', form:'tablet',
+{ sci:'Glibenclamide', ar:'غليبنكلاميد', atc:'A10BB01', form:'tablet', take:['withBreakfast'],
   doses:['2.5 mg','5 mg'],
   notes:{ar:'أطول السلفونيل يوريا مفعولاً وأخطرها على كبار السن — نقص السكر قد يطول ساعات.',
          en:'The longest-acting sulfonylurea and the most dangerous in the elderly — a hypo can run for hours.'},
@@ -811,7 +838,7 @@ export default [
     {ar:'التهاب بنكرياس سابق', en:'Previous pancreatitis'}
   ] },
 
-{ sci:'Empagliflozin', ar:'إمباغليفلوزين', atc:'A10BK03', form:'tablet',
+{ sci:'Empagliflozin', ar:'إمباغليفلوزين', atc:'A10BK03', form:'tablet', take:['morning'],
   doses:['10 mg','25 mg'],
   notes:{ar:'يُوقف أيام المرض مع التجفاف. إنتانات تناسلية فطرية شائعة — نظافة وسوائل. حماض كيتوني ممكن مع سكر طبيعي.',
          en:'Hold on sick days with dehydration. Genital thrush is common — hygiene and fluids. Ketoacidosis can happen with a normal glucose.'},
@@ -825,7 +852,7 @@ export default [
     {ar:'الحمل والإرضاع', en:'Pregnancy and breastfeeding'}
   ] },
 
-{ sci:'Insulin glargine', ar:'إنسولين غلارجين', atc:'A10AE04', form:'injection',
+{ sci:'Insulin glargine', ar:'إنسولين غلارجين', atc:'A10AE04', form:'injection', take:['sameTime'],
   doses:['100 U/mL','300 U/mL'],
   notes:{ar:'قاعدي مرة يومياً بنفس الوقت. لا يُخلط مع إنسولين آخر في المحقنة. القلم قيد الاستعمال يُحفظ خارج الثلاجة 28 يوماً.',
          en:'Basal, once daily at the same time. Never mixed with another insulin in the syringe. The pen in use stays out of the fridge for 28 days.'},
@@ -835,7 +862,7 @@ export default [
   ],
   contraindications:[{ar:'نقص سكر الدم', en:'Hypoglycaemia'}] },
 
-{ sci:'Insulin regular', ar:'إنسولين نظامي', atc:'A10AB01', form:'injection',
+{ sci:'Insulin regular', ar:'إنسولين نظامي', atc:'A10AB01', form:'injection', take:['beforeFood'],
   doses:['100 U/mL'],
   notes:{ar:'قبل الوجبة بـ 30 دقيقة — وليس معها. محلول رائق: العكارة تعني التلف.',
          en:'Thirty minutes before the meal, not with it. A clear solution: cloudiness means it has spoiled.'},
@@ -847,7 +874,7 @@ export default [
 
 /* ---------- Gastrointestinal ---------- */
 
-{ sci:'Omeprazole', ar:'أوميبرازول', atc:'A02BC01', form:'capsule',
+{ sci:'Omeprazole', ar:'أوميبرازول', atc:'A02BC01', form:'capsule', take:['beforeBreakfast'],
   doses:['10 mg','20 mg','40 mg'],
   notes:{ar:'قبل الفطور بنصف ساعة على معدة فارغة. الاستعمال الطويل يقلّل امتصاص B12 والمغنيسيوم.',
          en:'Thirty minutes before breakfast, on an empty stomach. Long-term use reduces B12 and magnesium absorption.'},
@@ -857,7 +884,7 @@ export default [
   ],
   contraindications:[{ar:'الاستعمال المتزامن مع كلوبيدوغريل', en:'Concurrent clopidogrel'}] },
 
-{ sci:'Esomeprazole', ar:'إيزوميبرازول', atc:'A02BC05', form:'capsule',
+{ sci:'Esomeprazole', ar:'إيزوميبرازول', atc:'A02BC05', form:'capsule', take:['beforeBreakfast'],
   doses:['20 mg','40 mg'],
   notes:{ar:'قبل الطعام بنصف ساعة. يُبلع كاملاً أو تُنثر الحبيبات على طعام لين دون مضغ.',
          en:'Thirty minutes before food. Swallow whole, or sprinkle the granules on soft food without chewing.'},
@@ -866,7 +893,7 @@ export default [
   ],
   contraindications:[{ar:'الاستعمال المتزامن مع كلوبيدوغريل', en:'Concurrent clopidogrel'}] },
 
-{ sci:'Pantoprazole', ar:'بانتوبرازول', atc:'A02BC02', form:'tablet',
+{ sci:'Pantoprazole', ar:'بانتوبرازول', atc:'A02BC02', form:'tablet', take:['beforeBreakfast'],
   doses:['20 mg','40 mg'],
   notes:{ar:'مثبّط المضخة المفضّل مع كلوبيدوغريل — لا يتداخل مع تفعيله.',
          en:'The proton pump inhibitor to use alongside clopidogrel — it does not block its activation.'},
@@ -882,7 +909,7 @@ export default [
   ],
   contraindications:[{ar:'قصور كلوي شديد دون تعديل الجرعة', en:'Severe renal impairment without dose adjustment'}] },
 
-{ sci:'Domperidone', ar:'دومبيريدون', atc:'A03FA03', form:'tablet',
+{ sci:'Domperidone', ar:'دومبيريدون', atc:'A03FA03', form:'tablet', take:['beforeFood'],
   doses:['10 mg','1 mg/mL'],
   notes:{ar:'قبل الطعام بـ 15–30 دقيقة. أقصر مدة ممكنة — أسبوع عادة — بسبب خطر QT.',
          en:'Fifteen to thirty minutes before food. The shortest course possible — usually a week — because of the QT risk.'},
@@ -897,7 +924,7 @@ export default [
     {ar:'قصور كبدي معتدل إلى شديد', en:'Moderate to severe hepatic impairment'}
   ] },
 
-{ sci:'Metoclopramide', ar:'ميتوكلوبراميد', atc:'A03FA01', form:'tablet',
+{ sci:'Metoclopramide', ar:'ميتوكلوبراميد', atc:'A03FA01', form:'tablet', take:['beforeFood'],
   doses:['10 mg','5 mg/5 mL','10 mg/2 mL'],
   notes:{ar:'خمسة أيام كحد أقصى. الأعراض خارج الهرمية أشيع عند الشباب والنساء — تقلّص عضلي في الرقبة أو العين يستوجب الإسعاف.',
          en:'Five days maximum. Extrapyramidal reactions are commonest in the young and in women — a spasm of the neck or eyes needs urgent care.'},
@@ -948,7 +975,7 @@ export default [
     {ar:'عدم تحمّل الغالاكتوز', en:'Galactose intolerance'}
   ] },
 
-{ sci:'Mebeverine', ar:'ميبيفيرين', atc:'A03AA04', form:'tablet',
+{ sci:'Mebeverine', ar:'ميبيفيرين', atc:'A03AA04', form:'tablet', take:['beforeFood'],
   doses:['135 mg','200 mg MR'],
   notes:{ar:'قبل الطعام بـ 20 دقيقة. لا ينفع كمسكّن عند الطلب — يحتاج انتظاماً.',
          en:'Twenty minutes before food. No use taken when the pain comes — it needs to be regular.'},
@@ -1007,7 +1034,7 @@ export default [
   interactions:[],
   contraindications:[] },
 
-{ sci:'Montelukast', ar:'مونتيلوكاست', atc:'R03DC03', form:'tablet',
+{ sci:'Montelukast', ar:'مونتيلوكاست', atc:'R03DC03', form:'tablet', take:['evening'],
   doses:['4 mg','5 mg','10 mg'],
   notes:{ar:'مساءً. اضطرابات نفسية وكوابيس وتغيّر مزاج أثر معروف — يستوجب الإبلاغ والتوقف.',
          en:'In the evening. Mood change, nightmares and other neuropsychiatric effects are a recognised risk — report them and stop.'},
@@ -1087,7 +1114,7 @@ export default [
 
 /* ---------- Central nervous system ---------- */
 
-{ sci:'Amitriptyline', ar:'أميتريبتيلين', atc:'N06AA09', form:'tablet',
+{ sci:'Amitriptyline', ar:'أميتريبتيلين', atc:'N06AA09', form:'tablet', take:['bedtime'],
   doses:['10 mg','25 mg','50 mg'],
   notes:{ar:'جرعة الألم العصبي أقل بكثير من جرعة الاكتئاب — طمئن المريض أن الوصفة ليست لاكتئاب. تُؤخذ مساءً.',
          en:'The neuropathic-pain dose is far below the antidepressant one — reassure them the prescription is not about depression. Take it in the evening.'},
@@ -1103,7 +1130,7 @@ export default [
     {ar:'تناول مثبطات MAO خلال 14 يوماً', en:'MAO inhibitor within 14 days'}
   ] },
 
-{ sci:'Fluoxetine', ar:'فلوكسيتين', atc:'N06AB03', form:'capsule',
+{ sci:'Fluoxetine', ar:'فلوكسيتين', atc:'N06AB03', form:'capsule', take:['morning'],
   doses:['10 mg','20 mg','40 mg'],
   notes:{ar:'صباحاً. الأثر يحتاج 2–4 أسابيع والقلق قد يزيد في الأيام الأولى — هذه أهم جملة تُقال عند الصرف.',
          en:'In the morning. It takes two to four weeks, and anxiety can worsen in the first days — that is the single most important thing to say at the counter.'},
@@ -1176,7 +1203,7 @@ export default [
     {ar:'الزرق ضيّق الزاوية', en:'Angle-closure glaucoma'}
   ] },
 
-{ sci:'Carbamazepine', ar:'كاربامازيبين', atc:'N03AF01', form:'tablet',
+{ sci:'Carbamazepine', ar:'كاربامازيبين', atc:'N03AF01', form:'tablet', take:['withFood'],
   doses:['100 mg/5 mL','200 mg','400 mg'],
   notes:{ar:'محرّض إنزيمي قوي يُضعف حبوب منع الحمل وكثيراً غيرها. طفح جلدي في الأسابيع الأولى يستوجب التوقف الفوري.',
          en:'A powerful enzyme inducer — it undermines the contraceptive pill and much else. A rash in the first weeks means stop immediately.'},
@@ -1192,7 +1219,7 @@ export default [
     {ar:'بورفيريا', en:'Porphyria'}
   ] },
 
-{ sci:'Sodium valproate', ar:'فالبروات الصوديوم', atc:'N03AG01', form:'tablet',
+{ sci:'Sodium valproate', ar:'فالبروات الصوديوم', atc:'N03AG01', form:'tablet', take:['afterFood'],
   doses:['200 mg','500 mg','200 mg/5 mL'],
   notes:{ar:'ممنوع في الحمل وعند أي امرأة في سنّ الإنجاب دون برنامج منع حمل موثّق — خطر تشوّه واضطراب نمو عصبي عالٍ جداً.',
          en:'Contraindicated in pregnancy and in any woman of childbearing potential without a documented pregnancy-prevention plan — the malformation and neurodevelopmental risk is very high.'},
@@ -1218,7 +1245,7 @@ export default [
   ],
   contraindications:[] },
 
-{ sci:'Levothyroxine', ar:'ليفوثيروكسين', atc:'H03AA01', form:'tablet',
+{ sci:'Levothyroxine', ar:'ليفوثيروكسين', atc:'H03AA01', form:'tablet', take:['emptyStomach', 'beforeBreakfast'],
   doses:['25 mcg','50 mcg','75 mcg','100 mcg'],
   notes:{ar:'على معدة فارغة قبل الفطور بنصف ساعة، وبعيداً عن الحديد والكالسيوم بأربع ساعات. لا يُبدّل بين الشركات بلا داعٍ.',
          en:'Empty stomach, thirty minutes before breakfast, and four hours away from iron and calcium. Do not switch between manufacturers without reason.'},
@@ -1233,7 +1260,7 @@ export default [
     {ar:'قصور كظر غير معالج', en:'Untreated adrenal insufficiency'}
   ] },
 
-{ sci:'Prednisolone', ar:'بريدنيزولون', atc:'H02AB06', form:'tablet',
+{ sci:'Prednisolone', ar:'بريدنيزولون', atc:'H02AB06', form:'tablet', take:['morning', 'withFood'],
   doses:['5 mg','20 mg','25 mg'],
   notes:{ar:'صباحاً مع الطعام. لا يُوقف فجأة بعد أكثر من ثلاثة أسابيع — قصور كظر. بطاقة الستيرويد ضرورية.',
          en:'In the morning, with food. Never stopped abruptly after more than three weeks — adrenal crisis. They need a steroid card.'},
@@ -1247,7 +1274,7 @@ export default [
     {ar:'اللقاحات الحية بالجرعات المثبّطة للمناعة', en:'Live vaccines at immunosuppressive doses'}
   ] },
 
-{ sci:'Allopurinol', ar:'ألوبيورينول', atc:'M04AA01', form:'tablet',
+{ sci:'Allopurinol', ar:'ألوبيورينول', atc:'M04AA01', form:'tablet', take:['afterFood'],
   doses:['100 mg','300 mg'],
   notes:{ar:'لا يُبدأ أثناء نوبة نقرس حادة — يُفاقمها. سوائل وفيرة. طفح جلدي يستوجب التوقف الفوري.',
          en:'Never started during an acute gout attack — it makes it worse. Plenty of fluid. A rash means stop at once.'},
@@ -1296,7 +1323,7 @@ export default [
   ],
   contraindications:[{ar:'فقر دم بعوز B12 غير معالج', en:'Untreated B12 deficiency anaemia'}] },
 
-{ sci:'Cholecalciferol', ar:'كولي كالسيفيرول', atc:'A11CC05', form:'capsule',
+{ sci:'Cholecalciferol', ar:'كولي كالسيفيرول', atc:'A11CC05', form:'capsule', take:['withFood'],
   doses:['1000 IU','5000 IU','50000 IU'],
   notes:{ar:'مع وجبة دسمة — ذائب في الدهن. جرعة الـ 50000 وحدة أسبوعية لا يومية؛ خطأ شائع ومؤذٍ.',
          en:'With a fatty meal — it is fat-soluble. The 50,000 IU capsule is weekly, not daily; the mix-up is common and harmful.'},
@@ -1309,7 +1336,7 @@ export default [
     {ar:'حصيات كلوية كلسية', en:'Calcium renal stones'}
   ] },
 
-{ sci:'Tamsulosin', ar:'تامسولوسين', atc:'G04CA02', form:'capsule',
+{ sci:'Tamsulosin', ar:'تامسولوسين', atc:'G04CA02', form:'capsule', take:['afterFood'],
   doses:['0.4 mg'],
   notes:{ar:'بعد نفس الوجبة يومياً. الجرعة الأولى قد تسبّب دواراً انتصابياً. يجب إخبار طبيب العيون قبل جراحة الساد.',
          en:'After the same meal each day. The first dose can cause postural dizziness. The eye surgeon must be told before cataract surgery.'},
@@ -1333,7 +1360,7 @@ export default [
    no formulary will ever contain it. The screen has to be able to say "checked
    4 of 5" rather than pretend. */
 
-{ sci:'Methotrexate', ar:'ميثوتريكسيت', atc:'L04AX03', form:'tablet',
+{ sci:'Methotrexate', ar:'ميثوتريكسيت', atc:'L04AX03', form:'tablet', take:['weekly'],
   doses:['2.5 mg','10 mg','50 mg/2 mL'],
   notes:{ar:'ONCE A WEEK — الجرعة اليومية خطأ قاتل ومسجّل. حمض الفوليك بيوم مختلف. اذكر يوم الأسبوع بصوت عالٍ عند الصرف.',
          en:'ONCE A WEEK. A daily dose is a documented fatal error. Folic acid on a different day. Say the day of the week out loud when you hand it over.'},
@@ -1382,7 +1409,7 @@ export default [
     {ar:'هبوط ضغط شديد', en:'Severe hypotension'}
   ] },
 
-{ sci:'Calcium carbonate', ar:'كربونات الكالسيوم', atc:'A02AC01', form:'tablet',
+{ sci:'Calcium carbonate', ar:'كربونات الكالسيوم', atc:'A02AC01', form:'tablet', take:['withFood'],
   doses:['500 mg','600 mg','1250 mg'],
   notes:{ar:'يُباعد عن الحديد والليفوثيروكسين والكينولونات والتتراسيكلينات — يمنع امتصاصها. جرعة واحدة لا تزيد عن 600 ملغ عنصري.',
          en:'Spaced away from iron, levothyroxine, quinolones and tetracyclines — it blocks all of them. No more than 600 mg elemental in one dose.'},
@@ -1413,7 +1440,7 @@ export default [
     {ar:'هبوط ضغط شديد', en:'Severe hypotension'}
   ] },
 
-{ sci:'Potassium chloride', ar:'كلوريد البوتاسيوم', atc:'A12BA01', form:'tablet',
+{ sci:'Potassium chloride', ar:'كلوريد البوتاسيوم', atc:'A12BA01', form:'tablet', take:['afterFood'],
   doses:['600 mg MR','20 mEq sachet'],
   notes:{ar:'مع الطعام وكوب ماء كامل وبقاء منتصباً — يقرّح المريء. يُبلع كاملاً دون سحق.',
          en:'With food, a full glass, and sitting upright — it ulcerates the oesophagus. Swallow whole, never crushed.'},
@@ -1454,7 +1481,7 @@ export default [
     {ar:'الصرع غير المضبوط', en:'Uncontrolled epilepsy'}
   ] },
 
-{ sci:'Isotretinoin', ar:'أيزوتريتينوين', atc:'D10BA01', form:'capsule',
+{ sci:'Isotretinoin', ar:'أيزوتريتينوين', atc:'D10BA01', form:'capsule', take:['withFood'],
   doses:['10 mg','20 mg'],
   notes:{ar:'مشوّه للجنين بدرجة قصوى — منع حمل موثّق قبل وأثناء وشهراً بعد العلاج. مع وجبة دسمة. لا تبرّع بالدم أثناء العلاج.',
          en:'Extremely teratogenic — documented contraception before, during and for a month after. With a fatty meal. No blood donation during treatment.'},
@@ -1552,7 +1579,7 @@ export default [
   ],
   contraindications:[{ar:'طفح جلدي شديد سابق مع اللاموتريجين', en:'Previous severe rash with lamotrigine'}] },
 
-{ sci:'Azathioprine', ar:'آزاثيوبرين', atc:'L04AX01', form:'tablet',
+{ sci:'Azathioprine', ar:'آزاثيوبرين', atc:'L04AX01', form:'tablet', take:['afterFood'],
   doses:['25 mg','50 mg'],
   notes:{ar:'يستوجب تعداد دم منتظماً. أي حمّى أو التهاب حلق يستوجب فحص التعداد قبل أي شيء آخر.',
          en:'Needs regular blood counts. Any fever or sore throat means check the count before anything else.'},

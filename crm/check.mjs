@@ -25,8 +25,10 @@ import { dirname, join } from 'node:path';
 function newestBuild(dir, prefix) {
   const found = readdirSync(dir)
     .filter(f => f.startsWith(prefix) && f.endsWith('.html'))
-    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)/) || [0, 0, 0]).slice(1).map(Number) }))
-    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]));
+    /* v0.0012.1 — an amendment carries a third number, and outranks the
+       version it amends. */
+    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)(?:\.(\d+))?\.html$/) || [0, 0, 0, 0]).slice(1).map(x => Number(x || 0)) }))
+    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]) || (b.v[2] - a.v[2]));
   if (!found.length) throw new Error(`no ${prefix}*.html in ${dir}`);
   return found[0].f;
 }
@@ -81,7 +83,7 @@ ok('the document is English, left to right', await p.evaluate(() =>
 ok('there is no language toggle left to press',
    await p.locator('#btn-lang').count() === 0);
 ok('the build states which one it is',
-   /^CRM_v\d+\.\d+$/.test((await p.locator('#build-tag').innerText()).trim()));
+   /^CRM_v\d+\.\d+(\.\d+)?$/.test((await p.locator('#build-tag').innerText()).trim()));
 
 ok('the signed-in account is named in the top bar',
    (await p.locator('#me-avatar').getAttribute('aria-label')).includes('Owner admin'));
@@ -780,6 +782,11 @@ ok('the mapping queue is what is not linked, most-scanned first',
      return shown.length > 0 && shown.every(x => x.mapping === 'unmapped')
        && shown.every((x, i) => !i || shown[i - 1].scannedBy.length >= x.scannedBy.length);
    }));
+/* v0.0012.1 (A3): the version the curator's step arrives in. It said
+   v0.0013 — stock and purchasing — when the Rules module is v0.0015. */
+ok('the catalogue names the right version for the curator’s step (v0.0015, clinical governance)',
+   await p.evaluate(() => { const keys = ['cat.note', 'cat.curatorNote'];
+     return keys.every(k => /Rules module in v0\.0015/.test(t(k))) && !keys.some(k => /v0\.0013/.test(t(k))); }));
 ok('and the report that reads it agrees',
    await p.evaluate(() => {
      const r = runReport(reportById('R20'));

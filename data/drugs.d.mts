@@ -9,6 +9,8 @@ export interface Drug {
   notes: { ar: string; en: string };
   interactions?: { with: string; severity: 'warning' | 'serious' | 'critical'; note: { ar: string; en: string } }[];
   contraindications?: { ar: string; en: string }[];
+  /** Keys of TAKE: when and how to take it. Never a dose. */
+  take?: string[];
 }
 
 export interface DuplicateRule {
@@ -21,6 +23,7 @@ export interface DuplicateRule {
 }
 
 export const FORM_KEYS: string[];
+export const TAKE: Record<string, { ar: string; en: string }>;
 export const DUPLICATE_RULES: DuplicateRule[];
 declare const DRUGS: Drug[];
 export default DRUGS;

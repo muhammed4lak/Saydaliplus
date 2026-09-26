@@ -11,9 +11,10 @@
  *   node demo/check.mjs
  */
 import { chromium } from 'playwright';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import DRUG_DATA, { DUPLICATE_RULES } from '../data/drugs.mjs';
+import DRUG_DATA, { DUPLICATE_RULES, TAKE as TAKE_DATA } from '../data/drugs.mjs';
 import PRODUCT_DATA from '../data/products.mjs';
 import { dirname, join } from 'node:path';
 
@@ -24,8 +25,10 @@ import { dirname, join } from 'node:path';
 function newestBuild(dir, prefix) {
   const found = readdirSync(dir)
     .filter(f => f.startsWith(prefix) && f.endsWith('.html'))
-    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)/) || [0, 0, 0]).slice(1).map(Number) }))
-    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]));
+    /* v0.0012.1 — an amendment carries a third number, and outranks the
+       version it amends. */
+    .map(f => ({ f, v: (f.match(/_v(\d+)\.(\d+)(?:\.(\d+))?\.html$/) || [0, 0, 0, 0]).slice(1).map(x => Number(x || 0)) }))
+    .sort((a, b) => (b.v[0] - a.v[0]) || (b.v[1] - a.v[1]) || (b.v[2] - a.v[2]));
   if (!found.length) throw new Error(`no ${prefix}*.html in ${dir}`);
   return found[0].f;
 }
@@ -1667,7 +1670,7 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(() => { setPrice('P1', '5000000001224', 6000); setPrice('P1', '4000000001065', 3500);
        tillScan('5000000001224'); tillScan('4000000001065');
        const warn = document.querySelector('.till-finding.tier-warn .till-ack');
-       return !!warn && !document.querySelector('.modal-back') && !!document.querySelector('.till-complete'); }));
+       return !!warn && !document.querySelector('.modal-back') && !!document.querySelector('.till-confirm, .till-complete'); }));
   ok('completing without acknowledging still sells — and records that it was not acknowledged',
      await dk.evaluate(() => { S.till.given = '10000'; completeSale(); const f = S.sales[0].findings.find(x => x.a && x.b);
        return S.sales[0].total === 9500 && f && f.tier === 'warn' && f.acknowledged === false; }));
@@ -1697,19 +1700,19 @@ console.log('\nthe till (v0.0012)');
   ok('nothing on the till opens a banner — it is a dispensing surface (P1)',
      await dk.evaluate(() => !document.querySelector('#app-body .banner-slot') && !/SAYDALI\+ ·/i.test(document.getElementById('app-body').innerText)));
 
-  ok('default instructions say how to take it, never the dose',
-     await dk.evaluate(() => { const l = S.till.lines.find(x => x.form === 'tablet');
-       return l && l.dose === '' && /Swallow/.test(l.usage.en); }));
+  ok('the dose is never filled in for the pharmacist',
+     await dk.evaluate(() => S.till.lines.every(l => l.dose === '')));
   ok('a dose typed by the pharmacist reaches the receipt beside the instruction',
-     await dk.evaluate(() => { const i = S.till.lines.findIndex(x => x.form === 'tablet');
-       tillToggleLine(i); document.querySelector('.till-instr input').value = '1 tablet twice daily';
-       document.querySelector('.till-instr input').dispatchEvent(new Event('input'));
+     await dk.evaluate(() => { if (pharmacyPrice('P1', '5000000001033') == null) setPrice('P1', '5000000001033', 2000);
+       tillScan('5000000001033'); const i = S.till.lines.findIndex(x => x.barcode === '5000000001033');
+       tillToggleLine(i); const el = document.querySelector('.till-instr .till-dose'); el.value = '1 tablet twice daily';
+       el.dispatchEvent(new Event('input'));
        S.till.given = '100000'; completeSale();
-       return receiptLines(S.sales[0], 'en').some(l => l.kind === 'instr' && /1 tablet twice daily — Swallow/.test(l.text)); }));
+       return receiptLines(S.sales[0], 'en').some(l => l.kind === 'instr' && l.text === '1 tablet twice daily — After food'); }));
   ok('a non-medicine carries no instruction',
      await dk.evaluate(() => { const s = S.sales[0]; const nd = s.lines.find(l => l.mapping === 'nondrug');
        const lines = receiptLines(s, 'en'); const at = lines.findIndex(l => l.text === nd.name.en);
-       return nd.usage === null && (lines[at + 1] || {}).kind !== 'instr'; }));
+       return !nd.take.length && !nd.note && (lines[at + 1] || {}).kind !== 'instr'; }));
 
   await dk.evaluate(() => { closeReceipt(); S.till = tillReset(); });
   ok('a misread is refused and nothing is added',
@@ -1741,9 +1744,11 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(() => { const keep = S.role; S.role = 'pharmacist';
        const r = !canDiscount() && !canRefund() && !canSetPrices() && !canSeeMarket() && !setPrice('P1', '4000000001065', 1);
        S.role = keep; return r; }));
-  ok('with no barcode detector, the camera button is not offered at all',
-     await dk.evaluate(() => { delete window.BarcodeDetector; render(); return !cameraAvailable() && !document.querySelector('.till-cam'); }));
-  ok('with one, it is',
+  /* v0.0012.1 (A4): the button is offered with or without a built-in
+     detector — v0.0012 hid it, and it looked as if scanning did not exist. */
+  ok('the scan button is there without a built-in barcode detector',
+     await dk.evaluate(() => { delete window.BarcodeDetector; render(); return !!document.querySelector('.till-cam'); }));
+  ok('and with one',
      await dk.evaluate(() => { window.BarcodeDetector = function () {}; render();
        const shown = !!document.querySelector('.till-cam'); delete window.BarcodeDetector; render(); return shown; }));
 
@@ -1784,6 +1789,174 @@ console.log('\nthe till (v0.0012)');
        return document.querySelectorAll('.logo-input').length === myPharmacies().length; }));
 }
 
+/* ---------------------------------------------------------------------------
+   v0.0012.1 — the till's first amendment: smaller figures on the receipt
+   (A1), instructions that say something (A2), a scan button that is always
+   there with a reader of its own (A4), and cash confirmed in one tap (A5).
+   A3 is a CRM string, checked in crm/check.mjs.
+   --------------------------------------------------------------------------- */
+console.log('\nthe till, amended (v0.0012.1)');
+{
+  /* EAN-13 bars, drawn here from the standard's tables rather than from the
+     page's, so the reader is tested against an independent encoder. */
+  const EL = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+  const EG = EL.map(x => [...x].map(c => c === '1' ? '0' : '1').reverse().join(''));
+  const ER = EL.map(x => [...x].map(c => c === '1' ? '0' : '1').join(''));
+  const EP = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+  const eanBits = c => { const d = [...c].map(Number); let s = '101';
+    for (let i = 1; i < 7; i++) s += (EP[d[0]][i - 1] === 'L' ? EL : EG)[d[i]];
+    s += '01010'; for (let i = 7; i < 13; i++) s += ER[d[i]]; return s + '101'; };
+
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('till'); S.till = tillReset(); render(); });
+
+  /* A1 */
+  ok('A1 — an item’s figures are drawn smaller than its name, still bold, and the total is the largest',
+     await dk.evaluate(() => {
+       tillScan('4000000001065'); S.till.given = '100000'; completeSale();
+       const fonts = []; const orig = CanvasRenderingContext2D.prototype.fillText;
+       CanvasRenderingContext2D.prototype.fillText = function (txt) { fonts.push([String(txt), this.font]); return orig.apply(this, arguments); };
+       try { renderReceipt(S.sales[0], 'en'); } finally { CanvasRenderingContext2D.prototype.fillText = orig; }
+       const px = f => Number((f.match(/(\d+)px/) || [])[1]);
+       const name = fonts.find(x => x[0] === S.sales[0].lines[0].name.en);
+       const amount = fonts.find(x => /^1 × /.test(x[0]));
+       const total = fonts.find(x => /^Total$/.test(x[0]));
+       return name && amount && total && px(amount[1]) < px(name[1]) && px(name[1]) < px(total[1]) &&
+         /^600 /.test(amount[1]) && px(amount[1]) === 12; }));
+  await dk.evaluate(() => closeReceipt());
+
+  /* A2 */
+  ok('A2 — no product prints a generic line: nothing like “swallow with water” or “shake well”',
+     await dk.evaluate(() => PRODUCTS.every(p => { const l = tillLineFromProduct(p, 1000);
+       return ['ar', 'en'].every(rl => !/swallow|shake|as directed|يُبلع|تُبلع|رُجّ|حسب الإرشاد/i.test(instructionText(l, rl))); })));
+  ok('the drug reference’s instructions all come from the fixed list, in both languages',
+     Object.values(TAKE_DATA).every(v => v.ar && v.en) &&
+     DRUG_DATA.every(d => (d.take || []).every(k => TAKE_DATA[k])) &&
+     DRUG_DATA.filter(d => d.take && d.take.length).length >= 40);
+  ok('levothyroxine: on an empty stomach, 30 minutes before breakfast, by default',
+     await dk.evaluate(() => { const p = PRODUCTS.find(x => x.molecules.some(m => m.sci === 'Levothyroxine'));
+       const l = tillLineFromProduct(p, 1000);
+       return l.take.includes('emptyStomach') && l.take.includes('beforeBreakfast') &&
+         /empty stomach.*30 minutes before breakfast/i.test(instructionText(l, 'en')); }));
+  ok('methotrexate: once a week only',
+     await dk.evaluate(() => defaultTake({ molecules:[{ sci:'Methotrexate' }] }).join() === 'weekly'));
+  ok('a combination merges its molecules’ instructions without repeats (Janumet: with food, once)',
+     await dk.evaluate(() => defaultTake(productByCode('5000000001286')).join() === 'withFood'));
+  ok('a medicine with nothing worth saying prints no instruction line (Panadol)',
+     await dk.evaluate(() => { S.till = tillReset(); tillScan('5000000001002'); S.till.given = '100000'; completeSale();
+       const r = !receiptLines(S.sales[0], 'en').some(l => l.kind === 'instr'); closeReceipt(); return r; }));
+  ok('the choices are one tap each, the medicine’s own already on',
+     await dk.evaluate(() => { S.till = tillReset(); tillScan('4000000001065'); tillToggleLine(0);
+       const on = [...document.querySelectorAll('.take-chip.active')].map(x => x.dataset.take);
+       document.querySelector('.take-chip[data-take="morning"]').click();
+       document.querySelector('.take-chip[data-take="afterFood"]').click();
+       return on.join() === 'afterFood' && S.till.lines[0].take.join() === 'morning' &&
+         document.querySelectorAll('.take-chip').length === Object.keys(TAKE).length; }));
+  ok('what will print shows on the cart line without opening it',
+     await dk.evaluate(() => document.querySelector('.till-line-instr').innerText === 'In the morning'));
+  ok('the receipt translates the chosen instructions; a typed note prints as typed',
+     await dk.evaluate(() => { S.till.lines[0].note = 'Keep away from children'; S.till.given = '100000'; completeSale();
+       const en = receiptLines(S.sales[0], 'en').find(l => l.kind === 'instr').text;
+       const ar = receiptLines(S.sales[0], 'ar').find(l => l.kind === 'instr').text;
+       closeReceipt();
+       return en === 'In the morning · Keep away from children' && ar === 'صباحاً · Keep away from children'; }));
+
+  /* A4 */
+  ok('A4 — the till says a USB or Bluetooth scanner works as it is',
+     await dk.evaluate(() => { S.till = tillReset(); render(); return /USB or Bluetooth scanner/.test(document.querySelector('.till-empty').innerText); }));
+  ok('with no camera API at all (a file viewer), the button explains itself instead of doing nothing',
+     await dk.evaluate(async () => { const keep = Object.getOwnPropertyDescriptor(Navigator.prototype, 'mediaDevices');
+       Object.defineProperty(navigator, 'mediaDevices', { value:undefined, configurable:true });
+       try { document.querySelector('.till-cam').click(); await new Promise(r => setTimeout(r, 50));
+         return S.modal.error === 'unsupported' && /Open the file in Chrome/.test(document.getElementById('modal-root').innerText);
+       } finally { delete navigator.mediaDevices; if (keep) Object.defineProperty(Navigator.prototype, 'mediaDevices', keep); } }));
+  ok('a refused camera says how to allow it',
+     await dk.evaluate(async () => { closeModal(); const md = navigator.mediaDevices, orig = md.getUserMedia;
+       md.getUserMedia = () => Promise.reject(Object.assign(new Error('no'), { name:'NotAllowedError' }));
+       try { await cameraScan(); return S.modal.error === 'denied' && /Allow the camera/.test(document.getElementById('modal-root').innerText); }
+       finally { md.getUserMedia = orig; } }));
+  ok('“type it instead” closes the camera and puts the cursor in the box',
+     await dk.evaluate(() => { cameraTypeInstead(); return !S.modal && document.activeElement && document.activeElement.id === 'till-q'; }));
+  {
+    const codes = PRODUCT_DATA.map(p => p.barcode);
+    const r = await dk.evaluate(([codes, allBits]) => {
+      const draw = (bits, mw, o) => { const c = document.createElement('canvas'); c.width = 640; c.height = 480; const g = c.getContext('2d');
+        g.fillStyle = '#fff'; g.fillRect(0, 0, 640, 480); if (o.blur) g.filter = 'blur(' + o.blur + 'px)';
+        g.save(); g.translate(320, 240); if (o.rot) g.rotate(o.rot); const w = bits.length * mw; g.fillStyle = '#111';
+        [...bits].forEach((x, i) => { if (x === '1') g.fillRect(-w / 2 + i * mw, -80, mw, 160); }); g.restore();
+        const d = g.getImageData(0, 0, 640, 480);
+        if (o.noise) for (let i = 0; i < d.data.length; i += 4) { const n = (((i * 7919) % 97) / 97 - 0.5) * o.noise; d.data[i] += n; d.data[i + 1] += n; d.data[i + 2] += n; }
+        return d; };
+      const cases = [[3, {}], [4, { blur:1 }], [2.5, {}], [4, { rot:Math.PI / 2 }], [3, { rot:Math.PI }], [3.5, { rot:0.05, blur:1.2 }], [3, { noise:60 }]];
+      let read = 0, wrong = 0, total = 0;
+      codes.forEach((c, k) => cases.forEach(([mw, o]) => { total++; const got = decodeEan13(draw(allBits[k], mw, o));
+        if (got === c) read++; else if (got) wrong++; }));
+      const blank = document.createElement('canvas'); blank.width = 320; blank.height = 240;
+      const bg = blank.getContext('2d'); bg.fillStyle = '#777'; bg.fillRect(0, 0, 320, 240);
+      return { read, wrong, total, blank:decodeEan13(bg.getImageData(0, 0, 320, 240)) };
+    }, [codes, codes.map(eanBits)]);
+    ok(`the built-in reader reads every catalogue barcode — straight, sideways, upside down, blurred, noisy (${r.read}/${r.total})`,
+       r.read === r.total);
+    ok('and never reads a wrong number, or one off a blank frame', r.wrong === 0 && r.blank === null);
+  }
+  {
+    /* The whole path, through a camera: Chromium's fake device plays a frame
+       with Aspirin Protect's barcode on it. */
+    const W = 640, H = 480, bits = eanBits('4000000001065'), mw = 4, x0 = (W - bits.length * mw) / 2;
+    const Y = Buffer.alloc(W * H, 235);
+    for (let y = 140; y < 340; y++) for (let i = 0; i < bits.length; i++) if (bits[i] === '1') for (let k = 0; k < mw; k++) Y[y * W + x0 + i * mw + k] = 20;
+    const y4m = join(tmpdir(), 'saydali-bar-' + process.pid + '.y4m');
+    writeFileSync(y4m, Buffer.concat([Buffer.from(`YUV4MPEG2 W${W} H${H} F10:1 Ip A1:1 C420jpeg\nFRAME\n`), Y, Buffer.alloc(W * H / 2, 128)]));
+    const camBrowser = await chromium.launch({ ...launch, args:['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream',
+      '--use-file-for-fake-video-capture=' + y4m] });
+    const cp = await (await camBrowser.newContext({ viewport:{ width:390, height:844 } })).newPage();
+    cp.on('pageerror', e => errs.push('pageerror (camera): ' + e.message));
+    await cp.goto(darkUrl);
+    await cp.evaluate(() => { signInAs('rahma@example.com'); setLang('en'); goto('till'); delete window.BarcodeDetector;
+      document.querySelector('.till-cam').click(); });
+    await cp.waitForFunction(() => S.till.lines.length > 0, null, { timeout:8000 }).catch(() => {});
+    ok('a real camera stream is read and the item lands in the cart, and the camera closes',
+       await cp.evaluate(() => S.till.lines.length === 1 && S.till.lines[0].barcode === '4000000001065' && !S.modal));
+    await cp.evaluate(() => { S.till = tillReset(); render(); S.scanKeep = true; document.querySelector('.till-cam').click(); });
+    await cp.waitForFunction(() => S.till.lines.length > 0, null, { timeout:8000 }).catch(() => {});
+    await cp.waitForTimeout(2500);
+    ok('keep scanning stays open, says what it added, and a box held up is counted once',
+       await cp.evaluate(() => !!S.modal && /Added: Aspirin Protect/.test(document.getElementById('cam-status').innerText) &&
+         S.till.lines.length === 1 && S.till.lines[0].qty === 1 && !!document.getElementById('cam')));
+    await cp.evaluate(() => closeModal());
+    await camBrowser.close();
+  }
+
+  /* A5 */
+  await dk.evaluate(() => { closeModal(); S.till = tillReset(); tillScan('4000000001065'); tillScan('4000000001065'); });
+  ok('A5 — cash is one tap to confirm the exact total, with nothing to type',
+     await dk.evaluate(() => /Received exactly 7,000 IQD/.test(document.querySelector('.till-confirm').innerText) &&
+       !document.getElementById('till-given')));
+  ok('confirmed, it completes: received equals the total, no change, recorded as confirmed',
+     await dk.evaluate(() => { document.querySelector('.till-confirm').click(); const s = S.sales[0];
+       const rc = receiptLines(s, 'en').map(l => l.text + ' ' + (l.amount || '')).join('\n');
+       return s.total === 7000 && s.given === 7000 && s.change === 0 && s.cashConfirmed === true &&
+         /Change 0 IQD/.test(rc); }));
+  await dk.evaluate(() => { closeReceipt(); tillScan('4000000001065'); });
+  ok('a different amount is typed, and the change shows as it is typed',
+     await dk.evaluate(() => { document.querySelector('.till-other').click();
+       const el = document.getElementById('till-given'); el.value = '10000'; el.dispatchEvent(new Event('input'));
+       const shown = document.getElementById('till-change').innerText;
+       el.value = '3000'; el.dispatchEvent(new Event('input'));
+       const short = document.getElementById('till-change').innerText;
+       return !!el && shown === 'Change: 6,500 IQD' && short === 'Short by 500 IQD'; }));
+  ok('below the total it is still refused, and the typed amount stays on screen',
+     await dk.evaluate(() => { const n = S.sales.length; completeSale();
+       return S.sales.length === n && S.till.note.kind === 'shortCash' && !!document.getElementById('till-given'); }));
+  ok('typed, it is recorded as typed, not confirmed',
+     await dk.evaluate(() => { const el = document.getElementById('till-given'); el.value = '10000'; el.dispatchEvent(new Event('input'));
+       completeSale(); const s = S.sales[0]; closeReceipt();
+       return s.given === 10000 && s.change === 6500 && s.cashConfirmed === false; }));
+  ok('ZainCash and Qi Card are untouched: no cash confirmation, a reference, recorded only',
+     await dk.evaluate(() => { tillScan('4000000001065'); tillTender('zaincash');
+       const r = !document.querySelector('.till-confirm') && !!document.getElementById('till-ref') && !!document.querySelector('.till-complete');
+       completeSale(); const s = S.sales[0]; closeReceipt(); return r && s.tender === 'zaincash' && s.cashConfirmed === null; }));
+}
+
 await dk.setViewportSize({ width: 320, height: 700 });
 {
   const wide = [];
@@ -1802,7 +1975,7 @@ await dk.setViewportSize({ width: 320, height: 700 });
         /* A full till — long names, a finding, the discount form, an unknown
            item — and then its receipt. */
         await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('5000000001224'); tillScan('4000000001065');
-          tillScan('5000000001286'); tillToggleLine(0); tillOpenDiscount(); tillScan('6291234567894'); });
+          tillScan('5000000001286'); tillToggleLine(0); tillOpenDiscount(); tillScan('6291234567894'); tillCashManual(true); });
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`till (${dir})`);
         await dk.evaluate(() => { S.till.given = '1000000'; completeSale(); });
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`receipt (${dir})`);

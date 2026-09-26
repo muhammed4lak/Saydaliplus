@@ -544,7 +544,8 @@ learns to read the third number when the first amendment is built.
 
 ### v0.0012.1 — the till: receipt, instructions, scanning and cash
 
-Reported 26 Sep 2026, from the till on a phone. **Not built yet.**
+Reported 26 Sep 2026, from the till on a phone. **Built 26 Sep 2026** — see
+"v0.0012.1 as built" at the end of this entry.
 
 **A1. The line prices on the receipt are too big.** Each item's
 `1 × 35,250 = 35,250` is drawn at the same size as the item's name, so the
@@ -637,6 +638,47 @@ typed amount below the total is still refused; a medicine with no defaults print
 instruction exists in both languages and follows the receipt's language; the
 item figures are drawn smaller than the item names and the total; the dose is
 never pre-filled.
+
+### v0.0012.1 as built
+
+- **A1.** Receipt type sizes are one table (`RECEIPT_TYPE`): item name 15,
+  item figures 12 and bold, instructions 13, payment lines 13, total 19. The
+  check reads the fonts the receipt is actually drawn with.
+- **A2.** `take` added to the drug reference with a 13-entry bilingual
+  vocabulary; 49 of 119 molecules carry defaults. The form-based lines are
+  gone. At the till: the instruction under each line is shown on the cart; the
+  editor has the dose field, the 13 choices as chips (the medicine's own
+  pre-selected) and an optional note, which prints as typed in either language.
+  The embed script and a new unit test refuse an unknown key or a missing
+  language.
+- **A3.** Both CRM strings now say v0.0015.
+- **A4.** A **Scan** button always beside the search box. It uses the browser's
+  built-in detector where there is one, and otherwise an EAN-13 reader written
+  into the file — no outside library, a few kilobytes. It reads several lines
+  across the frame and several down it, both ways round, and needs two lines
+  to agree and the check digit to pass; in the check it reads every catalogue
+  barcode across 413 generated images (straight, sideways, upside down,
+  blurred, noisy) with no wrong read, and reads a real camera stream through
+  Chromium's fake camera. A beep and a buzz on each read. *Keep scanning*
+  leaves the camera open for a basket, says what it added, and counts a box
+  held in view once — the same code counts again only after it has left the
+  view for a second. With no camera API, with the camera refused, or with no
+  camera, the button says which and what to do, with *type the barcode
+  instead*. The empty till says a USB or Bluetooth scanner works as it is.
+- **A5.** Cash opens on **Received exactly {total} ✓**; one tap completes the
+  sale, recorded `cashConfirmed: true`. *Customer paid a different amount*
+  opens the typed field, with the change (or the shortfall) shown as it is
+  typed; typed sales are recorded `cashConfirmed: false`; a short amount is
+  still refused and stays on screen. Card and ZainCash are unchanged.
+- The test harness and the embed script now read the third number of a
+  version, so `v0.0012.1` is picked over `v0.0012`.
+
+**Still true after v0.0012.1:** the camera needs a browser that will give the
+page the camera — Chrome on Android, Safari on iPhone. A phone's built-in file
+viewer usually will not, and now says so. Real-world reading of small or
+crumpled barcodes in shop lighting is untested until the hardware test
+(non-code item 3); the built-in reader is tuned for a box held up to the
+camera, not for a barcode across a room.
 
 ## The non-code track
 
