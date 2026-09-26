@@ -818,8 +818,8 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **Two questions before v0.0013** — how long undo lasts, and stock history
-  before the timeline. See "Before v0.0013 — still to decide" above.
+- **Nothing blocks v0.0013** — every question before it is answered (see
+  "Before v0.0013 — answered"). Waiting on: a Karmasoft sample export.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
