@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "design-for-ai@saydaliplus-local": true
+  },
+  "extraKnownMarketplaces": {
+    "saydaliplus-local": {
+      "source": {
+        "source": "directory",
+        "path": "./.claude/plugins"
+      }
+    }
+  }
+}

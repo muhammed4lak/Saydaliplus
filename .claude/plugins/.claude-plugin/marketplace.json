@@ -1,0 +1,12 @@
+{
+  "name": "saydaliplus-local",
+  "owner": { "name": "Saydaliplus" },
+  "metadata": { "description": "Project-local Claude Code plugins for Saydaliplus" },
+  "plugins": [
+    {
+      "name": "design-for-ai",
+      "source": "./design-for-ai",
+      "description": "Design-foundations workflow: research → plan → mock → build"
+    }
+  ]
+}
