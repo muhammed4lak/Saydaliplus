@@ -542,7 +542,7 @@ anything else down the list. Files carry the full number
 (`saydali-plus_v0.0012.1.html`), and the test harness's newest-build picker
 learns to read the third number when the first amendment is built.
 
-### v0.0012.1 — the till: receipt and instructions
+### v0.0012.1 — the till: receipt, instructions and scanning
 
 Reported 26 Sep 2026, from the till on a phone. **Not built yet.**
 
@@ -591,9 +591,31 @@ under every syrup. A patient learns nothing from that. *Plan:*
 link *verified* "arrives with the Rules module in v0.0013". The Rules module is
 clinical governance, v0.0015. *Plan:* correct the two strings.
 
+**A4. There is no visible way to scan with the camera.** Reported 26 Sep
+2026: the till says "scan a barcode" and offers no button to do it. v0.0012
+shows the camera button only where the browser has a built-in barcode detector,
+and hides it everywhere else — which includes the phone's file viewer, iPhones,
+and any browser that will not give a local file the camera. Hiding it was
+meant as "never offer something broken"; in practice it reads as "the feature
+does not exist". *Plan:*
+- **The scan button is always there**, beside the search box, large enough for
+  a thumb.
+- Where the browser has no built-in detector, a **small scanning library
+  bundled into the file** reads the camera instead, so it works on iPhones and
+  in browsers without the detector.
+- Where the camera cannot be opened at all (permission refused, or a viewer
+  that blocks it), tapping the button **says why and what to do** ("open this
+  file in Chrome", "allow the camera") instead of doing nothing.
+- The camera view scans continuously, beeps or vibrates once on a read, adds
+  the item and closes; a *keep scanning* option keeps it open for a full
+  basket.
+- The search box's hint says a USB or Bluetooth scanner works by simply
+  scanning into it.
+
 *The check will assert:* no generic form line ("swallow", "shake") appears on
 any receipt; levothyroxine and methotrexate carry their instructions by
-default; a medicine with no defaults prints no instruction line; every
+default; the scan button is present with or without a built-in detector, and
+a refused camera produces a message rather than silence; a medicine with no defaults prints no instruction line; every
 instruction exists in both languages and follows the receipt's language; the
 item figures are drawn smaller than the item names and the total; the dose is
 never pre-filled.
