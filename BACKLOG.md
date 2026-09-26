@@ -793,6 +793,13 @@ last till transaction is shown beside the claim as evidence.
 overwrites the claim.
 
 **v0.0017 — permissions, and what was done on each shift.** (W23)
+*Asked 26 Sep 2026 when permissions arrive.* Proposed: bring them forward to
+**v0.0015**, straight after cash and offline — the till is check-only for
+every employed pharmacist until they exist, and discounts, refunds, prices and
+stock are the owner's alone. The timeline would show each person's actions
+**per day** at first and **per shift** once attendance (check-in/out) exists;
+clinical governance and attendance each move back one version. Awaiting the
+user's answer.
 The owner's grants, per pharmacy, default deny: a new employee can sell and
 check in, nothing else. Voids and refunds, discounts, prices, stock
 corrections, write-offs, cash variances, the receipt and its logo, the average
@@ -1052,6 +1059,50 @@ camera, not for a barcode across a room.
   register has no barcodes, so it cannot be scanned against; both are "for
   now", and `scripts/read-sources.py` re-reads replacements in one command.
 
+### v0.0013.3 — search by any name, and stock without barcodes
+
+Reported 26 Sep 2026. **Not built yet.**
+
+**A1. Every search finds a drug by its brand AND its scientific name.** Today
+each search box knows only one side: the drug reference matches the
+scientific name (and Arabic, ATC, strengths) but not brands — "Panadol" finds
+nothing; the till, the count and the purchase order match brands only —
+"paracetamol" finds nothing; only the catalogue screen matches both. *Plan:*
+- **One search, used everywhere** — till, count, purchase order, import
+  ("probably" pile), catalogue, drug reference — matching the brand (English
+  and Arabic), the scientific name, the Arabic scientific name, and a product's
+  every ingredient, with the Arabic letter forms folded as the reference
+  already does.
+- **Results say why they matched:** "Panadol Extra — paracetamol + caffeine"
+  when the scientific name was typed; in the drug reference, "Paracetamol —
+  sold as Panadol 500 mg, Panadol Extra" when a brand was typed.
+- **Order:** a name that starts with what was typed, then a brand containing
+  it, then a scientific-name match.
+
+**A2. Stock without barcodes — the owner can turn barcodes off.** Some
+pharmacies will not use barcodes at all. *Plan:*
+- A setting on the pharmacy (owner only): **"We use barcodes"**, on by
+  default. Off, every screen leads with a name search instead of a scan:
+  the till's scan button and scan wording go; the count becomes **pick from a
+  searchable list and type the quantity**, shelf by shelf as now; purchase
+  orders and receipts add by name. A scanner that happens to be plugged in
+  still works.
+- **Items of the pharmacy's own.** A pharmacy without barcodes will stock
+  things not in our catalogue. The owner (staff later, by permission) adds an
+  item by name — with form and strength if known — and it becomes a product
+  of that pharmacy with an internal code instead of a barcode: sellable,
+  countable, orderable, on the receipt, priced like any other. It goes to the
+  CRM's mapping queue by name, so the Helper can check it once it is linked;
+  until then it is marked *not checked*, as any unmapped product is.
+- Imports without a barcode column match by name (brand or scientific), and a
+  row that matches nothing can become one of the pharmacy's own items instead
+  of being left out.
+- **To decide:** (1) per pharmacy or per owner — *suggested: per pharmacy*,
+  since an owner of several may run one with scanners and one without;
+  (2) whether a pharmacy WITH barcodes may also add its own no-barcode items
+  (loose items, local products) — *suggested: yes*; (3) who may add a new item
+  by name — *suggested: the owner, and staff once permissions exist*.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -1102,7 +1153,10 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **UI amendments continue** (v0.0013.3, …) until the UI is approved.
+- **v0.0013.3 recorded, not built** — search by any name (A1) and stock
+  without barcodes (A2), with A2's three questions. **Permissions' place in
+  the plan** — asked 26 Sep 2026; see the reply recorded under v0.0017.
+- **UI amendments continue** until the UI is approved.
   **A controlled-substance schedule** is still needed before production.
   Nothing blocks v0.0014.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
