@@ -1,12 +1,21 @@
 {
   "name": "saydaliplus-local",
-  "owner": { "name": "Saydaliplus" },
-  "metadata": { "description": "Project-local Claude Code plugins for Saydaliplus" },
+  "owner": {
+    "name": "Saydaliplus"
+  },
+  "metadata": {
+    "description": "Project-local Claude Code plugins for Saydaliplus"
+  },
   "plugins": [
     {
       "name": "design-for-ai",
       "source": "./design-for-ai",
-      "description": "Design-foundations workflow: research → plan → mock → build"
+      "description": "Design-foundations workflow: research \u2192 plan \u2192 mock \u2192 build"
+    },
+    {
+      "name": "impeccable",
+      "source": "./impeccable",
+      "description": "Design fluency for frontend development: /impeccable with 24 commands and anti-pattern detection"
     }
   ]
 }

@@ -1,6 +1,7 @@
 {
   "enabledPlugins": {
-    "design-for-ai@saydaliplus-local": true
+    "design-for-ai@saydaliplus-local": true,
+    "impeccable@saydaliplus-local": true
   },
   "extraKnownMarketplaces": {
     "saydaliplus-local": {
