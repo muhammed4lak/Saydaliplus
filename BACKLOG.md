@@ -542,7 +542,7 @@ anything else down the list. Files carry the full number
 (`saydali-plus_v0.0012.1.html`), and the test harness's newest-build picker
 learns to read the third number when the first amendment is built.
 
-### v0.0012.1 — the till: receipt, instructions and scanning
+### v0.0012.1 — the till: receipt, instructions, scanning and cash
 
 Reported 26 Sep 2026, from the till on a phone. **Not built yet.**
 
@@ -612,10 +612,28 @@ does not exist". *Plan:*
 - The search box's hint says a USB or Bluetooth scanner works by simply
   scanning into it.
 
+**A5. Cash received is a confirmation, not a form.** Reported 26 Sep 2026.
+v0.0012 makes the pharmacist type the amount received for every cash sale,
+even when the customer hands over exactly the total — which is most sales.
+*Plan:*
+- For cash, the default is **one tap to confirm the exact amount**: "Received
+  49,500 IQD ✓". Confirmed, the sale completes with the amount received equal
+  to the total and no change.
+- **Not confirmed** — the customer handed over more — the pharmacist enters
+  the amount received by hand, and the till shows the change, exactly as
+  v0.0012 does now. An amount below the total is still refused.
+- The sale records which of the two it was (confirmed exact, or entered), so
+  v0.0014's drawer count can tell a confirmed sale from a typed one.
+- The receipt is unchanged: amount paid and change (0 IQD when confirmed).
+- ZainCash and Qi Card are unaffected: the method is recorded, with the
+  optional reference.
+
 *The check will assert:* no generic form line ("swallow", "shake") appears on
 any receipt; levothyroxine and methotrexate carry their instructions by
 default; the scan button is present with or without a built-in detector, and
-a refused camera produces a message rather than silence; a medicine with no defaults prints no instruction line; every
+a refused camera produces a message rather than silence; a cash sale completes
+on a single confirmation with no typing, records itself as confirmed, and a
+typed amount below the total is still refused; a medicine with no defaults prints no instruction line; every
 instruction exists in both languages and follows the receipt's language; the
 item figures are drawn smaller than the item names and the total; the dose is
 never pre-filled.
