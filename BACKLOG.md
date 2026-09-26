@@ -645,16 +645,58 @@ window follows the device's clock.
 6. **An adjustment form in v0.0014**, a correction with a reason, on the same
    audit trail.
 
-### Before v0.0014 — still to decide
+### Before v0.0014 — D5 answered 26 Sep 2026
 
-**D5. The last box, sold twice while offline.** Explained 26 Sep 2026:
-*recommended* — both sales stand (both boxes left the counter, so the record
-must say so); stock goes below zero; on syncing, the product is flagged as
-**sold on two devices while offline — check the shelf**, not just "count
-this", with both sales named; a controlled substance that goes below zero is
-put at the top of the owner's home. The alternatives — splitting stock
-between devices before they go offline, or letting only one device sell
-offline — both end in refusing a sale at the counter, which S1 rules out.
+**D5 — the last box sold twice offline: as recommended.** Both sales stand;
+stock goes below zero; on syncing the product is flagged *sold on two devices
+while offline — check the shelf*, naming both sales; a controlled substance
+below zero goes to the top of the owner's home.
+
+**L3 — printed shelf labels: in, as an option** (26 Sep 2026). A label per
+shelf, printed on the receipt printer (as a bitmap, like the receipt);
+scanning it starts that shelf's count. Naming or picking a shelf stays the
+default. Scheduled with v0.0014.
+
+**L2 — the controlled list:** a spreadsheet and a PDF were sent to draw the
+list from for now (subject to change when firmer sources arrive). **They did
+not arrive in the session** — to be re-sent.
+
+### Proposed — the till and the Helper as one, and simpler (26 Sep 2026)
+
+Raised: the Helper should be part of the till — the pharmacist is already
+dispensing through it — and the till is cluttered. Mockups were made (not
+built) of this proposal:
+
+- **U1. Three zones.** Scan bar on top; the basket; a **Pay bar pinned above
+  the navigation** with the total. Payment moves into a sheet that opens from
+  it, instead of sitting under the basket.
+- **U2. Lean lines.** Name, the instruction that will print, a quantity
+  badge, the line total. Steppers, *Instructions* and *Remove* go into a
+  **sheet opened by tapping the line** (quantity, dose, how-to-take chips,
+  remove).
+- **U3. The Helper folds into the basket.** Per line, only a tag when it
+  matters (*checked in part*, *not checked*). Under the basket, **one strip**
+  ("1 warning to look at — Marevan + Aspirin Protect · bleeding risk") and
+  **one line of coverage** ("Helper: 2 of 4 fully checked · 1 in part · 1 not
+  checked"). Coverage stays visible and as loud as the finding (W8).
+- **U4. One item per pair.** Findings about the same two drugs (here an
+  interaction and a duplication) are one warning with both reasons and one
+  *Acknowledge*. Tapping the strip opens a sheet: what was and was not
+  checked, the warning, the questions for the patient folded underneath, and
+  "it never stops a sale; whether it was acknowledged is recorded" (P9).
+- **U5. Pay sheet.** Total large, the three tenders, a single large *Received
+  exactly …* button; *Different amount* and *Discount* as links.
+- **U6. Today's sales** leave the till screen for one line on the empty till
+  ("Today · 7 sales · 184,500 IQD").
+- **U7. Check only.** A *Sell / Check only* switch: the same basket without
+  prices or payment, for a prescription question on the phone — and the mode
+  the till opens in for anyone not permitted to sell (until v0.0017, every
+  pharmacist). The Drugs tab keeps the reference only.
+
+**To decide:** (1) whether U1–U7 go ahead as shown or with changes; (2)
+whether it ships as an amendment (v0.0013.1) or inside v0.0014; (3) the
+pharmacist's bar once the Helper lives in the till — *suggested:* Check-in ·
+Tasks · Till (check only) · Drugs · Profile, with the CV moving to Profile.
 
 **Leftovers that are yours:** a **Karmasoft export** (being obtained);
 confirming the **controlled list** against the Ministry's schedule — see L2 as
@@ -950,8 +992,10 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **One question before v0.0014** — the last box sold twice while offline
-  (D5). See "Before v0.0014 — still to decide".
+- **The till redesign (U1–U7)** — go ahead as shown, as an amendment or in
+  v0.0014, and the pharmacist's bar. See "Proposed — the till and the Helper
+  as one". Nothing else blocks v0.0014; the controlled-list files (L2) need
+  re-sending.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
