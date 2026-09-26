@@ -455,41 +455,39 @@ ideas to choose from, not decisions (T = transition):
      section — typed once ("Shelf 3 — painkillers") or picked from the
      pharmacy's own list of shelves, which it builds as it goes. Optionally a
      printed shelf label (a QR code) is scanned to start that shelf's session.
-     Every box counted in a session is stored with that shelf, so the product
-     remembers where it lives — which later answers "where is it?" for a new
-     employee. Sessions pause and resume, and several phones can count
-     different shelves at once.
-   - **Progress is stated honestly.** The app cannot know how many boxes a
-     shelf holds, so there is no "63 % of your shelf". What it can say: boxes
-     and products counted in this shelf, and **how many of the products the
-     pharmacy has sold are now counted** ("41 of the 58 products you have sold
-     are counted").
+     **Every box counted is linked to its shelf**, so the product remembers
+     where it lives — which later answers "where is it?" for a new employee.
+     Several phones can count different shelves at once.
+   - **Progress is a count, never a percentage**: "13 drugs counted", per
+     shelf and in total. The app cannot know how many boxes a shelf holds.
    - **Fast counting (T3).** Keep-scanning on: each scan adds one, a long
      press types a quantity, expiry as month and year with "same as the last
      box" one tap away.
-2. **Selling before counting (T1), with a disclaimer** saying what happens
-   and how, shown where the owner turns it on and on the till until the count
-   is done — roughly: *"You can sell before you count. Until a product is
-   counted its stock figure is not real: sales can take it below zero, and it
-   joins **Count this**, most-sold first. Nothing is ever blocked."*
-3. **The spreadsheet import (T5)**, reading its own columns in either
-   language, with the review-and-confirm step and the one-press undo decided
-   above. **Karmasoft first**: it is what pharmacies here normally use. Until
-   a real Karmasoft export has been seen, the import finds columns by what
-   they contain, so a Karmasoft file works without a special case; a
-   Karmasoft-specific mapping follows once a sample arrives.
+2. **The spreadsheet import (T5) — a placeholder reader now**, for **CSV and
+   Excel (.xlsx)**. It finds the barcode, name, quantity, expiry and cost
+   columns by what they contain, in either language, and goes through the
+   review-and-confirm step and the one-press undo. Karmasoft-specific
+   recognition follows once a sample export is seen. The older Excel format
+   (**.xls**) is not read by the placeholder; such a file is met with "save it
+   as .xlsx or CSV and try again" rather than a failure.
+3. **Save and continue later.** A count session or an import under review can
+   be **saved and resumed where it was left** — the shelf, the boxes counted
+   so far, the rows already checked. Nothing saved is in stock until it is
+   confirmed. (In the prototype a saved session lives on the device; in
+   production it follows the owner to any of their devices.)
+4. **Undo (Q3):** a whole import or count can be undone **until the end of
+   the next day**, and never after a later count of the same products; after
+   that, a correction is an ordinary adjustment with a reason.
+5. **History (Q4):** v0.0013 shows each product's **stock history** and a list
+   of **imports and counts, each with its undo button**. The owner's full
+   timeline follows in v0.0017.
+
+S1 stands: a sale is never refused because the system thinks a product is out
+of stock — it goes negative and joins **Count this**. What was dropped is T1,
+the "sell first, count later" way of starting (see "Unused concepts").
 
 T4 (distributors' invoices) arrives with purchasing; T6, T7 are the team's
 call; T8 is out.
-
-### Before v0.0013 — still to decide
-
-1. **How long an undo stays possible** after an import or a count.
-   *Recommended:* until the end of the next day, and never after a later
-   count of the same products.
-2. **Seeing the history before v0.0017.** *Recommended:* a stock history per
-   product and a list of imports and counts with their undo button in
-   v0.0013; the full timeline follows.
 
 **Leftovers that are yours, not the code's:** **a Karmasoft export** — one
 real file, names and prices anonymised if you like, or even a screenshot of
@@ -770,6 +768,22 @@ viewer usually will not, and now says so. Real-world reading of small or
 crumpled barcodes in shop lighting is untested until the hardware test
 (non-code item 3); the built-in reader is tuned for a box held up to the
 camera, not for a barcode across a room.
+
+## Unused concepts
+
+Ideas that were considered and set aside — kept, with why, so they are not
+rediscovered as new or lost when circumstances change.
+
+- **T1. Sell from day one, count later** (set aside 26 Sep 2026). The till
+  would work with nothing counted; every product sold before being counted
+  would join a "count this" list, most-sold first, and a disclaimer would say
+  so: *"You can sell before you count. Until a product is counted its stock
+  figure is not real: sales can take it below zero, and it joins **Count
+  this**, most-sold first. Nothing is ever blocked."* Set aside in favour of
+  counting first (scan by shelf, or a spreadsheet). S1 — never refusing a
+  sale over a stock figure — is unaffected.
+- **T8. "Expiry unknown" at the opening count** (set aside 26 Sep 2026): in
+  tension with W17 — unchecked boxes would count as available.
 
 ## Reminders
 
