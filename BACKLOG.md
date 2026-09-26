@@ -1064,7 +1064,7 @@ camera, not for a barcode across a room.
 
 ### v0.0013.3 — search by any name, and stock without barcodes
 
-Reported 26 Sep 2026. **Not built yet.**
+Reported 26 Sep 2026. **Built as v0.0013.3** — see *as built* below.
 
 **A1. Every search finds a drug by its brand AND its scientific name.** Today
 each search box knows only one side: the drug reference matches the
@@ -1103,6 +1103,44 @@ pharmacies will not use barcodes at all. *Plan:*
 - **Decided 26 Sep 2026:** (1) the setting is **per pharmacy**; (2) a
   pharmacy **with** barcodes may also add its own no-barcode items; (3) the
   **owner** adds items by name, and staff once permissions (v0.0015) grant it.
+
+### v0.0013.3 as built — one search by any name, and stock without barcodes
+
+- **One search (A1)** — `findProducts()` — behind the till, the count, the
+  purchase order and the catalogue: brand (English and Arabic), scientific
+  name (English and Arabic) and every ingredient of a combination, letter
+  forms folded. Order: a brand that starts with the words, then a brand that
+  contains them, then an ingredient match. Each result's second line says why:
+  its pack when the brand matched, what it is made of ("Paracetamol +
+  Caffeine") when the scientific name did. A number is left to the scanner.
+  **A name and Enter** takes the first result, in the till, the count and the
+  order, as a scan would.
+- **The drug reference** now finds a drug by its brands: "panadol" finds
+  Paracetamol, and the row says *Sold as: Panadol 500 mg, Panadol Extra,
+  Panadol Cold & Flu Day* — only when the brand was what matched.
+- **Spreadsheets**: a row naming the scientific name ("Paracetamol 500 mg")
+  now finds the product for the *probably* pile.
+- **"We use barcodes" (A2)** — a switch at the top of Stock, owner only,
+  **per pharmacy**, on by default, written to the log. Off: no Scan button in
+  the till or the count, the boxes ask for a name, and the empty till says
+  "Type the first item's name — brand or scientific". A plugged-in scanner
+  still works: digits and Enter are still read as a barcode.
+- **Items of the pharmacy's own.** When a name search finds nothing, the
+  owner is offered *Add "…" as an item of your own* — in the till, the count
+  and the purchase order, whether barcodes are on or off. A short form (name;
+  form and strength optional) makes it a product **of that pharmacy only**,
+  with an internal code (`L-P1-001`) instead of a barcode: the till asks its
+  price once, then it sells, prints, counts, orders and imports like any
+  product, labelled *Your pharmacy's own item* in results. It goes to the
+  mapping queue **by name**; until mapped the Helper has nothing to check on
+  it and never stops the sale (P9). The same name twice is the same item.
+- **Spreadsheets without barcodes**: a row naming an own item is matched to
+  it; a row that matches nothing, has a name and no barcode, can be ticked to
+  **come in as a new own item** with its stock (its pile opens so the owner
+  sees it).
+- Staff other than the owner are not offered to add items — until
+  permissions (v0.0015) grant it.
+- Checks: 35 new (527 app in all); mutation-tested.
 
 ## Unused concepts
 
@@ -1154,9 +1192,12 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **v0.0013.3 recorded, not built** — search by any name (A1) and stock
-  without barcodes (A2); its questions answered. Waiting for "build 13.3".
-  **Permissions moved up to v0.0015** (26 Sep 2026).
+- **v0.0013.3 built** (search by any name; stock without barcodes; own
+  items). **Permissions moved up to v0.0015** (26 Sep 2026) — it will carry
+  "may add items" for staff.
+- **Own items in the CRM** — the app sends them to the mapping queue by name,
+  but the CRM prototype's queue still lists barcodes only; showing a by-name
+  request (and mapping it) is a CRM change to schedule.
 - **UI amendments continue** until the UI is approved.
   **A controlled-substance schedule** is still needed before production.
   Nothing blocks v0.0014.

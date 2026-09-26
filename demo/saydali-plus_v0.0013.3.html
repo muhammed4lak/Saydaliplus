@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0013.2">
+<meta name="version" content="App_v0.0013.3">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -984,6 +984,17 @@
   .take-chip{ font-size:12px; }
   .till-confirm{ margin-top:4px; }
   .till-other{ display:block; margin:10px auto 0; }
+  /* v0.0013.3 — search, own items, barcodes */
+  .find-why[data-why="sci"]{ color:var(--indigo); }
+  .own-offer .row-title{ color:var(--indigo); }
+  .own-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:8px; }
+  .own-grid input, .own-grid select{ width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card); }
+  .bc-setting{ display:flex; align-items:center; gap:12px; cursor:pointer; }
+  .bc-body{ flex:1; min-width:0; }
+  .bc-t{ display:block; font-weight:600; font-size:14px; }
+  .bc-s{ display:block; font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+  .bc-toggle{ width:22px; height:22px; accent-color:var(--indigo); flex:none; }
+  .sold-as{ color:var(--indigo); }
   /* v0.0013.2 — the owner's home, simpler */
   :root{ --spark:#B9B6D3; }
   .hm-hero{ padding:18px 18px 14px; }
@@ -1640,6 +1651,26 @@ const STRINGS = {
 };
 
 let lang = 'ar';
+Object.assign(STRINGS.ar, {
+  /* v0.0013.3 */
+  'dx.soldAs':'يُباع باسم: {names}','tl.typeName':'اكتب اسم المادة','tl.emptyNoBarcode':'اكتب اسم أول مادة — بالاسم التجاري أو العلمي.',
+  'ct.typeName':'اكتب اسم المادة','ct.howtoNoBarcode':'اختر المادة من القائمة، ثم اكتب العدد وتاريخ الانتهاء.','po.addLineName':'اكتب اسم المادة',
+  'own.tag':'مادة خاصة بصيدليتك','own.offer':'أضف "{name}" كمادة خاصة','own.offerSub':'ليست في الكتالوج — تُباع وتُجرد وتُطلب مثل غيرها.',
+  'own.title':'مادة خاصة بصيدليتك','own.sub':'برمز داخلي بدل الباركود. تُرسل لفريقنا ليُربط تركيبها، وحتى ذلك لا يفحصها المساعد.',
+  'own.name':'الاسم','own.form':'الشكل (اختياري)','own.strength':'التركيز (اختياري)','own.add':'أضف',
+  'bc.title':'نستخدم الباركود','bc.onS':'المسح بالكاميرا أو الماسح. يمكن دائماً البحث بالاسم.','bc.offS':'كل شيء بالاسم: الكاشير والجرد والطلبيات.',
+  'im.asOwn':'لا باركود ولا مطابقة — يمكن إضافتها كمادة خاصة بصيدليتك'
+});
+Object.assign(STRINGS.en, {
+  'dx.soldAs':'Sold as: {names}','tl.typeName':'Type the item’s name','tl.emptyNoBarcode':'Type the first item’s name — brand or scientific.',
+  'ct.typeName':'Type the item’s name','ct.howtoNoBarcode':'Pick the item from the list, then type how many and the expiry.','po.addLineName':'Type the item’s name',
+  'own.tag':'Your pharmacy’s own item','own.offer':'Add “{name}” as an item of your own','own.offerSub':'Not in the catalogue — sold, counted and ordered like any other.',
+  'own.title':'An item of your own','own.sub':'It gets an internal code instead of a barcode, and goes to our team to link its ingredients; until then the Helper does not check it.',
+  'own.name':'Name','own.form':'Form (optional)','own.strength':'Strength (optional)','own.add':'Add',
+  'bc.title':'We use barcodes','bc.onS':'Scan with the camera or a scanner. Searching by name always works too.','bc.offS':'Everything by name: the till, the count and orders.',
+  'im.asOwn':'no barcode and no match — can become an item of your own'
+});
+
 Object.assign(STRINGS.ar, {
   /* v0.0013.2 */
   'hm.salesToday':'مبيعات اليوم','hm.salesTodayAll':'مبيعات اليوم · {n} صيدليات','hm.today':'اليوم','hm.weekLabel':'المبيعات خلال سبعة أيام',
@@ -3036,7 +3067,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0013.2';
+const VERSION = 'App_v0.0013.3';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -3245,6 +3276,12 @@ const S = {
   stockNote: null, importNote: null, supplierQuery: '', countQuery: '',
   clockShift: 0,
   scanTarget: 'till',
+  /* v0.0013.3 — items of the pharmacy's own, the barcode setting, and the
+     own-item form while it is open. */
+  localItems: [],
+  noBarcodes: {},
+  ownDraft: null,
+  orderQuery: '',
   sales: [],
   prices: {},
   tillLog: [],
@@ -3562,7 +3599,10 @@ function sevChip(sev) {
 
 function drugMatches(d, q) {
   if (!q) return true;
-  const hay = drugNorm([d.sci, d.ar, d.atc, ...(d.doses || [])].join(' '));
+  /* v0.0013.3: the brands it is sold under count too — "Panadol" finds
+     paracetamol. */
+  const hay = drugNorm([d.sci, d.ar, d.atc, ...(d.doses || [])].concat(PRODUCTS.filter(p => p.molecules.some(m => m.sci === d.sci))
+    .map(p => p.name.en + ' ' + p.name.ar)).join(' '));
   return hay.includes(q);
 }
 
@@ -3815,8 +3855,9 @@ function screenReference() {
               '<span class="row-body">' +
                 '<span class="row-title" style="display:block;" dir="' + (lang === 'ar' ? 'rtl' : 'ltr') + '">' +
                   esc(drugName(d)) + '</span>' +
-                '<span class="row-sub" style="display:block;" dir="' + (lang === 'ar' ? 'ltr' : 'rtl') + '">' +
-                  esc(drugSub(d)) + '</span>' +
+                (matchedByBrandOnly(d, q)
+                  ? '<span class="row-sub sold-as" style="display:block;">' + esc(t('dx.soldAs', { names:drugBrands(d).join(', ') })) + '</span>'
+                  : '<span class="row-sub" style="display:block;" dir="' + (lang === 'ar' ? 'ltr' : 'rtl') + '">' + esc(drugSub(d)) + '</span>') +
               '</span>' +
               '<span class="drug-tags">' + sevChip(drugWorst(d)) +
                 '<span class="pill-tag">' + esc(t('df.' + d.form)) + '</span></span>' +
@@ -4835,7 +4876,9 @@ function screenTasks() {
    The one thing it must never do is let a product the Helper cannot check look
    like one it can. */
 
-const productByCode = code => PRODUCTS.find(p => p.barcode === code) || null;
+/* The catalogue, and (v0.0013.3) the pharmacies' own items, which carry an
+   internal code instead of a barcode. */
+const productByCode = code => PRODUCTS.find(p => p.barcode === code) || (S.localItems || []).find(p => p.barcode === code) || null;
 
 /* The same arithmetic as src/lib/barcode.ts, which is unit-tested. A barcode
    whose check digit is wrong is a MISREAD, not a new product — sending it for
@@ -5055,7 +5098,10 @@ function tillSetPriceAndAdd(code) {
 function tillKey(ev) {
   if (ev.key !== 'Enter') return;
   ev.preventDefault();
-  tillScan(ev.target.value);
+  const v = ev.target.value;
+  /* A name and Enter takes the first match, as a scan would. */
+  if (!/^[\d\s-]+$/.test(v)) { const r = findProducts(v, (tillPharmacy() || {}).id, 1)[0]; if (r) { S.till.query = ''; tillAdd(r.p.barcode); } return; }
+  tillScan(v);
 }
 function tillScan(raw) {
   const T = S.till;
@@ -5838,8 +5884,9 @@ function tillMain(ph, tabs) {
   const g = tillGroups(T.lines);
   const cov = tillCoverage(T.lines);
   const q = drugNorm(T.query);
-  const hits = q && !/^\d+$/.test(T.query.trim())
-    ? PRODUCTS.filter(p => drugNorm([p.name.en, p.name.ar].join(' ')).includes(q)).slice(0, 6) : [];
+  const hits = findProducts(T.query, ph && ph.id, 6);
+  const bc = usesBarcodes(ph);
+  const offer = S.ownDraft || hits.length ? '' : ownOffer('till', T.query);
   const note = !T.note || T.note.kind === 'shortCash' ? '' :
     '<div class="banner banner-amber till-note">' + icon('alert') + '<p>' +
       esc(t('till.note.' + T.note.kind, { code:T.note.code || '', total:iqd(T.note.total || 0) })) + '</p></div>';
@@ -5895,8 +5942,9 @@ function tillMain(ph, tabs) {
       (g.groups.length ? '' : ' · ' + esc(t('tl.nothingFound'))) + '</span></button>';
 
   const today = ph ? S.sales.filter(x => x.pharmacy === ph.id) : [];
-  const empty = '<div class="card card-pad till-empty">' + icon('barcode') + '<p>' + esc(t(selling ? 'tl.emptySell' : 'tl.emptyCheck')) + '</p>' +
-      '<p class="inline-note" style="margin:6px 0 0;">' + esc(t('till.wedgeHint')) + '</p></div>' +
+  const empty = '<div class="card card-pad till-empty">' + icon(usesBarcodes(ph) ? 'barcode' : 'search') + '<p>' +
+      esc(t(!usesBarcodes(ph) ? 'tl.emptyNoBarcode' : selling ? 'tl.emptySell' : 'tl.emptyCheck')) + '</p>' +
+      (usesBarcodes(ph) ? '<p class="inline-note" style="margin:6px 0 0;">' + esc(t('till.wedgeHint')) + '</p>' : '') + '</div>' +
     (selling && today.length
       ? '<div class="card"><button class="row till-today" style="width:100%;text-align:start;" onclick="openToday()"><span class="row-body">' +
           '<span class="row-title" style="display:block;">' + esc(t('tl.today', { n:today.length, total:iqd(today.filter(x => !x.refunded).reduce((a, x) => a + x.total, 0)) })) +
@@ -5915,18 +5963,18 @@ function tillMain(ph, tabs) {
           '<button class="' + (selling ? '' : 'active') + '" onclick="setTillMode(\'check\')">' + esc(t('tl.checkOnly')) + '</button></div>'
       : '<p class="till-checknote">' + icon('pill') + esc(t('tl.checkOnlyNote')) + '</p>') +
     '<div class="till-scanrow"><div class="searchbox">' + icon('barcode') +
-      '<input id="till-q" type="search" autocomplete="off" value="' + esc(T.query) + '" placeholder="' + esc(t('tl.scan')) + '" ' +
+      '<input id="till-q" type="search" autocomplete="off" value="' + esc(T.query) + '" placeholder="' + esc(t(bc ? 'tl.scan' : 'tl.typeName')) + '" ' +
         'oninput="tillQuery(this.value)" onkeydown="tillKey(event)">' +
     '</div>' +
-    '<button class="btn-scan till-cam" onclick="cameraScanFor(\'till\')" aria-label="' + esc(t('till.camera')) + '">' +
-      icon('camera') + '<span>' + esc(t('scan.button')) + '</span></button></div>' +
-    (hits.length
-      ? '<div class="card">' + hits.map(p => '<button class="row" style="width:100%;text-align:start;" onclick="tillQuery(\'\');tillAdd(' + attr(p.barcode) + ')">' +
-          '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
-          '<span class="row-sub" style="display:block;">' + esc(L(p.pack)) + '</span></span>' + icon('plus') + '</button>').join('') + '</div>'
+    /* A2: a pharmacy that does not use barcodes is not offered a scanner. */
+    (bc ? '<button class="btn-scan till-cam" onclick="cameraScanFor(\'till\')" aria-label="' + esc(t('till.camera')) + '">' +
+      icon('camera') + '<span>' + esc(t('scan.button')) + '</span></button>' : '') + '</div>' +
+    (hits.length || offer
+      ? '<div class="card till-hits">' + resultRows(hits, c => 'tillQuery(\'\');tillAdd(' + attr(c) + ')') + offer + '</div>'
       : '') +
+    (S.ownDraft && S.ownDraft.where === 'till' ? ownItemCard() : '') +
     note + needPrice + unknown +
-    (T.lines.length ? '<div class="card till-cart">' + T.lines.map(line).join('') + '</div>' : empty) +
+    (T.lines.length ? '<div class="card till-cart">' + T.lines.map(line).join('') + '</div>' : T.query.trim() || S.ownDraft ? '' : empty) +
     (T.lines.length ? '<div class="till-helper">' + flag + coverage + '</div>' : '') +
     bar +
     '</div></div>';
@@ -6490,7 +6538,10 @@ function matchByName(name) {
   const a = nameTokens(name);
   if (!a.length) return null;
   const scored = PRODUCTS.map(p => {
-    const best = [p.name.en, p.name.ar].map(n => {
+    /* v0.0013.3: a row naming the scientific name ("Paracetamol 500 mg")
+       finds the product as well as one naming the brand. */
+    const sci = p.molecules.map(m => m.sci + ' ' + ((drugBySci(m.sci) || {}).ar || '')).join(' ');
+    const best = [p.name.en + ' ' + sci, p.name.ar + ' ' + sci].map(n => {
       const b = nameTokens(n); const inter = a.filter(w => b.includes(w)).length;
       /* A strength that disagrees is a different product, whatever the rest says. */
       const numsA = a.filter(w => /^\d/.test(w)), numsB = b.filter(w => /^\d/.test(w));
@@ -6555,6 +6606,8 @@ function classifyImport(imp) {
     if (!raw.qty || !isFinite(qty) || qty <= 0) return Object.assign(row, { pile:'error', why:'qty' });
     if (!expiry) return Object.assign(row, { pile:'error', why:'expiry' });
     let p = raw.barcode && productByCode(raw.barcode);
+    /* An item of the pharmacy's own, by its exact name (v0.0013.3). */
+    if (!p && raw.name && !raw.barcode) p = ownItemByName(imp.pharmacy, raw.name);
     if (p) row.code = p.barcode, row.pile = 'matched';
     else {
       const guess = raw.name && matchByName(raw.name);
@@ -6568,6 +6621,9 @@ function classifyImport(imp) {
       /* Not in the catalogue but with a real barcode: it can still come in by
          its name, and goes for mapping — the owner decides. */
       if (row.pile === 'notFound' && ean13Valid(raw.barcode)) row.code = raw.barcode, row.unknown = true;
+      /* No barcode, no match, but a name: it can become one of the pharmacy's
+         own items (v0.0013.3). */
+      else if (row.pile === 'notFound' && raw.name && !raw.barcode) row.ownable = true;
     }
     if (row.code) {
       const k = row.code + '|' + expiry;
@@ -6581,7 +6637,7 @@ function classifyImport(imp) {
 }
 const importIncluded = (imp, row) =>
   row.pile === 'matched' ? imp.decide['x' + row.i] !== 'exclude' :
-  row.pile === 'notFound' && row.unknown ? imp.decide['x' + row.i] === 'include' : false;
+  row.pile === 'notFound' && (row.unknown || row.ownable) ? imp.decide['x' + row.i] === 'include' : false;
 
 function importDecide(id, key, v) {
   const imp = S.imports.find(x => x.id === id);
@@ -6605,6 +6661,7 @@ function commitImport(id) {
   const qtyFor = r => r.qty + rows.filter(d => d.pile === 'duplicate' && d.into === r.i).reduce((n, d) => n + d.qty, 0);
   const codes = new Set();
   take.forEach(r => {
+    if (r.ownable) r.code = createLocalItem(imp.pharmacy, r.raw.name).barcode;
     const b = newBatch(imp.pharmacy, r.code, { expiry:r.expiry, shelf:null });
     addMovement({ pharmacy:imp.pharmacy, code:r.code, batch:b.id, qty:qtyFor(r), kind:'import', ref:imp.id, unitCost:r.cost });
     if (r.unknown) {
@@ -6697,7 +6754,13 @@ function startCount(shelfArg) {
 }
 const openCountSession = () => S.countSessions.find(x => x.id === S.openCount && x.state === 'open' && (!currentPharmacy() || x.pharmacy === currentPharmacy().id));
 
-function countKey(ev) { if (ev.key === 'Enter') { ev.preventDefault(); countScan(ev.target.value); } }
+function countKey(ev) {
+  if (ev.key !== 'Enter') return;
+  ev.preventDefault();
+  const v = ev.target.value;
+  if (!/^[\d\s-]+$/.test(v)) { const r = findProducts(v, (currentPharmacy() || {}).id, 1)[0]; if (r) countAdd(r.p.barcode); return; }
+  countScan(v);
+}
 function countScan(raw) {
   const sess = openCountSession();
   if (!sess) return;
@@ -6891,7 +6954,13 @@ function newOrder() {
 const openOrderRec = () => S.orders.find(o => o.id === S.openOrder);
 function openOrder(id) { S.openOrder = id; S.screen = 'order'; render(); scrollTop(); }
 function orderSupplier(v) { const o = openOrderRec(); if (o && o.state === 'draft') { o.supplier = v || null; render(); } }
-function orderKey(ev) { if (ev.key === 'Enter') { ev.preventDefault(); orderAdd(ev.target.value); } }
+function orderKey(ev) {
+  if (ev.key !== 'Enter') return;
+  ev.preventDefault();
+  const v = ev.target.value;
+  if (!/^[\d\s-]+$/.test(v)) { const r = findProducts(v, (currentPharmacy() || {}).id, 1)[0]; if (r) { orderAddCode(r.p.barcode); return; } }
+  orderAdd(v);
+}
 function orderAdd(raw) {
   const o = openOrderRec();
   if (!o || o.state !== 'draft') return;
@@ -7044,6 +7113,7 @@ function screenStock() {
   const shelves = Object.entries(sum.shelves);
 
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    barcodeSettingCard() +
     '<div class="st-summary card card-pad"><p class="st-big">' + esc(t('st.drugsCounted', { n:countedCodes.size })) + '</p>' +
       (importedCodes.size ? '<p class="st-small">' + esc(t('st.drugsImported', { n:importedCodes.size })) + '</p>' : '') +
       (shelves.length ? '<div class="st-shelves">' + shelves.map(([s, v]) =>
@@ -7090,6 +7160,7 @@ function screenCount() {
       '</div></div></div>';
   }
   const boxes = sess.items.reduce((a, it) => a + it.qty, 0);
+  const cHits = findProducts(S.countQuery || '', ph.id, 6), cOffer = S.ownDraft || cHits.length ? '' : ownOffer('count', S.countQuery || '');
   const codes = new Set(sess.items.map(it => it.code)).size;
   const itemRow = (it, i) =>
     '<div class="till-line ct-line' + (sess.focus === i ? ' ct-focus' : '') + (it.expiry ? '' : ' ct-noexp') + '">' +
@@ -7108,9 +7179,12 @@ function screenCount() {
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
     '<div class="till-head"><span class="till-ph">' + esc(t('ct.counting', { shelf:sess.shelf })) + '</span>' +
       '<span class="till-by ct-progress">' + esc(t('ct.progress', { n:codes, boxes })) + '</span></div>' +
-    '<div class="till-scanrow"><div class="searchbox">' + icon('barcode') +
-      '<input id="count-q" type="search" autocomplete="off" inputmode="numeric" placeholder="' + esc(t('ct.scan')) + '" onkeydown="countKey(event)"></div>' +
-      '<button class="btn-scan" onclick="cameraScanFor(\'count\')">' + icon('camera') + '<span>' + esc(t('scan.button')) + '</span></button></div>' +
+    '<div class="till-scanrow"><div class="searchbox">' + icon(usesBarcodes(ph) ? 'barcode' : 'search') +
+      '<input id="count-q" type="search" autocomplete="off" value="' + esc(S.countQuery || '') + '" placeholder="' + esc(t(usesBarcodes(ph) ? 'ct.scan' : 'ct.typeName')) + '" ' +
+        'oninput="countQueryInput(this.value)" onkeydown="countKey(event)"></div>' +
+      (usesBarcodes(ph) ? '<button class="btn-scan" onclick="cameraScanFor(\'count\')">' + icon('camera') + '<span>' + esc(t('scan.button')) + '</span></button>' : '') + '</div>' +
+    (cHits.length || cOffer ? '<div class="card ct-hits">' + resultRows(cHits, c => 'countAdd(' + attr(c) + ')') + cOffer + '</div>' : '') +
+    (S.ownDraft && S.ownDraft.where === 'count' ? ownItemCard() : '') +
     stockNoteHtml() +
     (sess.items.length ? '<div class="card till-cart">' + sess.items.map(itemRow).join('') + '</div>'
       : '<div class="card card-pad till-empty">' + esc(t('ct.empty')) + '</div>') +
@@ -7118,7 +7192,7 @@ function screenCount() {
       ? '<details class="card ct-left" open><summary>' + esc(t('ct.notYet', { n:notYetCounted(sess).length })) + '</summary>' +
           notYetCounted(sess).map(c => '<div class="row"><span class="row-body"><span class="row-title" style="display:block;">' + esc(productName(c)) + '</span></span></div>').join('') +
           '<p class="inline-note ct-leave" style="padding:0 14px 12px;">' + esc(t('ct.willLeave')) + '</p></details>' : '') +
-    '<p class="inline-note">' + esc(t('ct.howto')) + '</p>' +
+    '<p class="inline-note">' + esc(t(usesBarcodes(ph) ? 'ct.howto' : 'ct.howtoNoBarcode')) + '</p>' +
     '<button class="btn-primary ct-confirm" onclick="confirmCount()">' + esc(t('ct.confirm', { n:codes })) + '</button>' +
     '<div class="till-receipt-bar"><button class="btn-secondary ct-save" onclick="saveCount()">' + esc(t('ct.save')) + '</button>' +
       '<button class="btn-secondary" onclick="discardCount(' + attr(sess.id) + ')">' + esc(t('ct.discard')) + '</button></div>' +
@@ -7163,12 +7237,12 @@ function screenImport() {
       'onchange="importDecide(' + attr(imp.id) + ',' + attr('x' + r.i) + ', this.checked ? \'include\' : \'exclude\')"></label>';
     if (r.pile === 'probable') act = '<span class="im-yn"><button class="btn-small im-yes" onclick="importDecide(' + attr(imp.id) + ',' + r.i + ',\'yes\')">' +
       esc(t('im.yes')) + '</button><button class="btn-ghost im-no" onclick="importDecide(' + attr(imp.id) + ',' + r.i + ',\'no\')">' + esc(t('im.no')) + '</button></span>';
-    if (r.pile === 'notFound' && r.unknown) act = '<label class="im-inc"><input type="checkbox" ' + (importIncluded(imp, r) ? 'checked ' : '') +
+    if (r.pile === 'notFound' && (r.unknown || r.ownable)) act = '<label class="im-inc"><input type="checkbox" ' + (importIncluded(imp, r) ? 'checked ' : '') +
       'onchange="importDecide(' + attr(imp.id) + ',' + attr('x' + r.i) + ', this.checked ? \'include\' : \'exclude\')"></label>';
     const sub = r.pile === 'probable' ? t('im.isIt', { name:L(productByCode(r.guess).name) }) :
                 r.pile === 'duplicate' ? t('im.mergedInto', { n:r.into + 1 }) :
                 r.pile === 'error' ? t('im.err.' + r.why) :
-                r.pile === 'notFound' ? (r.unknown ? t('im.byName') : t('im.noBarcode')) : bits;
+                r.pile === 'notFound' ? (r.unknown ? t('im.byName') : r.ownable ? t('im.asOwn') : t('im.noBarcode')) : bits;
     return '<div class="row im-row" data-pile="' + r.pile + '" data-row="' + r.i + '"><span class="row-body">' +
       '<span class="row-title" style="display:block;">' + esc(t('im.rowN', { n:r.i + 1 })) + ' · ' + esc(label) + flags + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(sub) + (r.pile !== 'matched' && bits && r.pile !== 'error' ? ' · ' + esc(bits) : '') + '</span></span>' + act + '</div>';
@@ -7178,7 +7252,7 @@ function screenImport() {
     '<details class="card card-pad im-cols"><summary>' + esc(t('im.columns')) + '</summary><div class="im-colgrid">' +
       IMPORT_FIELDS.map(colSel).join('') + '</div></details>' +
     piles.map(k => !count(k) ? '' :
-      '<details class="card im-pile im-' + k + '"' + (k === 'probable' || k === 'error' ? ' open' : '') + '><summary>' +
+      '<details class="card im-pile im-' + k + '"' + (k === 'probable' || k === 'error' || (k === 'notFound' && rows.some(r => r.ownable)) ? ' open' : '') + '><summary>' +
         '<span class="st-prompt-n figure">' + count(k) + '</span><span>' + esc(t('im.pile.' + k)) + '</span></summary>' +
         rows.filter(r => r.pile === k).map(rowHtml).join('') + '</details>').join('') +
     '<button class="btn-primary im-confirm" onclick="commitImport(' + attr(imp.id) + ')">' + esc(t('im.confirm', { n:included })) + '</button>' +
@@ -7213,6 +7287,7 @@ function screenOrder() {
   if (!ph || !o || o.pharmacy !== ph.id) return screenOrders();
   const sups = suppliersOf(ph.id);
   const draft = o.state === 'draft', receiving = o.state === 'sent' || o.state === 'partial';
+  const oHits = draft ? findProducts(S.orderQuery || '', ph.id, 6) : [], oOffer = draft && !S.ownDraft && !oHits.length ? ownOffer('order', S.orderQuery || '') : '';
   const num = (i, f, v, ph2) => '<input class="po-in po-' + f + '" type="number" inputmode="numeric" dir="ltr" value="' + (v == null ? '' : v) +
     '" placeholder="' + esc(ph2) + '" onchange="orderLine(' + i + ',' + attr(f) + ', this.value)">';
   const line = (l, i) => '<div class="till-line po-line">' +
@@ -7239,7 +7314,10 @@ function screenOrder() {
             sups.map(s => '<option value="' + esc(s.id) + '"' + (o.supplier === s.id ? ' selected' : '') + '>' + esc(supplierLabel(s)) + '</option>').join('') + '</select>' +
           '<button class="link-btn" style="margin-top:6px;" onclick="goto(\'suppliers\')">' + esc(t('po.addSupplier')) + '</button>'
         : '<p class="row-title">' + esc(supplierLabel(S.suppliers.find(x => x.id === o.supplier))) + '</p>') + '</div>' +
-    (draft ? '<div class="searchbox">' + icon('barcode') + '<input id="po-q" type="search" autocomplete="off" placeholder="' + esc(t('po.addLine')) + '" onkeydown="orderKey(event)"></div>' : '') +
+    (draft ? '<div class="searchbox">' + icon(usesBarcodes(ph) ? 'barcode' : 'search') + '<input id="po-q" type="search" autocomplete="off" value="' + esc(S.orderQuery || '') + '" ' +
+        'placeholder="' + esc(t(usesBarcodes(ph) ? 'po.addLine' : 'po.addLineName')) + '" oninput="orderQueryInput(this.value)" onkeydown="orderKey(event)"></div>' +
+      (oHits.length || oOffer ? '<div class="card po-hits">' + resultRows(oHits, c => 'orderAddCode(' + attr(c) + ')') + oOffer + '</div>' : '') +
+      (S.ownDraft && S.ownDraft.where === 'order' ? ownItemCard() : '') : '') +
     (o.lines.length ? '<div class="card till-cart">' + o.lines.map(line).join('') + '</div>' : '<div class="card card-pad till-empty">' + esc(t('po.empty')) + '</div>') +
     (draft ? '<button class="btn-primary po-send" onclick="sendOrder()">' + esc(t('po.send')) + '</button>' +
              '<p class="inline-note">' + esc(t('po.sendNote')) + '</p>' : '') +
@@ -7358,12 +7436,179 @@ function stockHomeCard() {
 /* The camera, pointed at the count rather than the till. */
 function cameraScanFor(target) { S.scanTarget = target; cameraScan(); }
 
+/* ==========================================================================
+   v0.0013.3 — ONE SEARCH, BY ANY NAME; AND STOCK WITHOUT BARCODES
+
+   A1. Every box that finds a drug — the till, the count, a purchase order, the
+   catalogue, the drug reference — finds it by its brand (English or Arabic)
+   AND its scientific name (English or Arabic), and every ingredient of a
+   combination. Results say why they matched. Order: a name that starts with
+   what was typed, then a brand that contains it, then an ingredient.
+
+   A2. A pharmacy may not use barcodes at all — the owner switches them off,
+   per pharmacy — and any pharmacy may keep items of its own that are not in
+   our catalogue: named, sold, counted, ordered and priced like any product,
+   with an internal code instead of a barcode, and sent for mapping by name.
+   ========================================================================== */
+
+const pharmacyItems = phId => (S.localItems || []).filter(x => x.pharmacy === phId);
+const searchPool = phId => PRODUCTS.concat(phId ? pharmacyItems(phId) : []);
+const moleculeNames = p => p.molecules.map(m => { const d = m.ref === false ? null : drugBySci(m.sci);
+  return d ? drugName(d) : m.sci; });
+
+function findProducts(q, phId, n) {
+  const nq = drugNorm(q);
+  if (!nq || /^\d+$/.test(nq)) return [];
+  const words = nq.split(' ');
+  const out = [];
+  searchPool(phId).forEach(p => {
+    const brand = drugNorm([p.name.en, p.name.ar].join(' '));
+    const sci = drugNorm(p.molecules.map(m => { const d = drugBySci(m.sci); return m.sci + ' ' + (d ? d.ar : ''); }).join(' '));
+    const all = brand + ' ' + sci + ' ' + drugNorm(p.strength || '');
+    let rank = null;
+    if (brand.split(' ').some(w => w.startsWith(words[0])) && words.every(w => brand.includes(w))) rank = brand.startsWith(nq) ? 0 : 1;
+    else if (words.every(w => all.includes(w))) rank = 2;
+    if (rank != null) out.push({ p, rank, why:rank < 2 ? 'brand' : 'sci' });
+  });
+  return out.sort((a, b) => a.rank - b.rank || L(a.p.name).localeCompare(L(b.p.name), lang === 'ar' ? 'ar' : 'en')).slice(0, n || 8);
+}
+/* The second line of a result: what it is made of when that is why it
+   matched, its pack otherwise; one of the pharmacy's own items says so. */
+function whyLine(r) {
+  if (r.p.local) return t('own.tag');
+  if (r.why === 'sci') return moleculeNames(r.p).join(' + ');
+  return L(r.p.pack);
+}
+/* In the drug reference: the brands a drug is sold under. */
+const drugBrands = d => PRODUCTS.filter(p => p.molecules.some(m => m.sci === d.sci)).map(p => L(p.name));
+function matchedByBrandOnly(d, q) {
+  if (!q) return false;
+  const own = drugNorm([d.sci, d.ar, d.atc, ...(d.doses || [])].join(' '));
+  return !own.includes(q) && drugBrands(d).some(b => drugNorm(b).includes(q));
+}
+
+/* A result row, shared by the till, the count and the purchase order. */
+function resultRows(results, act) {
+  return results.map(r => '<button class="row find-row" style="width:100%;text-align:start;" onclick="' + act(r.p.barcode) + '">' +
+    '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(r.p.name)) + '</span>' +
+    '<span class="row-sub find-why" data-why="' + r.why + '" style="display:block;">' + esc(whyLine(r)) + '</span></span>' +
+    icon('plus') + '</button>').join('');
+}
+
+/* ---------- The pharmacy's own items ---------- */
+
+function openOwnItem(where, name) {
+  if (!canSetPrices()) return;
+  S.ownDraft = { where, name:String(name || '').trim(), form:'', strength:'' };
+  render();
+  const el = document.getElementById('own-name'); if (el) el.focus();
+}
+function ownItemCard() {
+  const d = S.ownDraft;
+  if (!d) return '';
+  return '<div class="card card-pad own-card"><p class="urgent-t">' + esc(t('own.title')) + '</p>' +
+    '<p class="urgent-s" style="margin-bottom:10px;">' + esc(t('own.sub')) + '</p>' +
+    '<div class="own-grid"><input id="own-name" placeholder="' + esc(t('own.name')) + '" value="' + esc(d.name) + '">' +
+      '<select id="own-form"><option value="">' + esc(t('own.form')) + '</option>' +
+        DRUG_FORMS.map(f => '<option value="' + f + '">' + esc(t('df.' + f)) + '</option>').join('') + '</select>' +
+      '<input id="own-strength" dir="ltr" placeholder="' + esc(t('own.strength')) + '"></div>' +
+    '<div class="till-inline" style="margin-top:10px;"><button class="btn-small own-add" onclick="saveOwnItem()">' + esc(t('own.add')) + '</button>' +
+      '<button class="btn-ghost" onclick="S.ownDraft=null;render()">' + esc(t('common.cancel')) + '</button></div></div>';
+}
+const ownItemByName = (phId, name) => pharmacyItems(phId).find(x => drugNorm(x.name.en) === drugNorm(name)) || null;
+function createLocalItem(phId, name, form, strength) {
+  if (!canSetPrices() || !phId || !String(name || '').trim()) return null;
+  /* The same name twice is the same item. */
+  const had = ownItemByName(phId, name);
+  if (had) return had;
+  const n = pharmacyItems(phId).length + 1;
+  const item = { barcode:'L-' + phId + '-' + String(n).padStart(3, '0'), local:true, pharmacy:phId,
+    name:{ ar:name.trim(), en:name.trim() }, form:form || null, strength:strength || '', pack:{ ar:'', en:'' },
+    price:null, mapping:'unmapped', molecules:[] };
+  S.localItems.push(item);
+  /* To the CRM's mapping queue by name, so the Helper can check it once it
+     is linked to its ingredients. */
+  S.mappingRequests.push({ barcode:item.barcode, times:1, first:TODAY_ISO, name:item.name.en, local:true });
+  tillLog('localItem', { code:item.barcode, name:item.name.en });
+  return item;
+}
+function saveOwnItem() {
+  const d = S.ownDraft, ph = currentPharmacy();
+  if (!d || !ph) return;
+  const name = (document.getElementById('own-name') || {}).value || '';
+  const item = createLocalItem(ph.id, name, (document.getElementById('own-form') || {}).value, (document.getElementById('own-strength') || {}).value);
+  if (!item) return;
+  S.ownDraft = null;
+  if (d.where === 'till') { S.till.query = ''; tillAdd(item.barcode); }
+  else if (d.where === 'count') { S.countQuery = ''; countAdd(item.barcode); }
+  else if (d.where === 'order') { S.orderQuery = ''; orderAddCode(item.barcode); }
+  else render();
+}
+/* Offered when a name search finds nothing, to the owner, wherever an item
+   is looked for. */
+const ownOffer = (where, q) => canSetPrices() && currentPharmacy() && drugNorm(q).length >= 2 && !/^\d+$/.test(q.trim())
+  ? '<button class="row own-offer" style="width:100%;text-align:start;" onclick="openOwnItem(' + attr(where) + ',' + attr(q.trim()) + ')">' +
+      '<span class="row-body"><span class="row-title" style="display:block;">' + esc(t('own.offer', { name:q.trim() })) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(t('own.offerSub')) + '</span></span>' + icon('plus') + '</button>'
+  : '';
+
+/* ---------- Barcodes on or off, per pharmacy ---------- */
+
+const usesBarcodes = ph => !ph || !S.noBarcodes[ph.id];
+function setUsesBarcodes(on) {
+  const ph = currentPharmacy();
+  if (!ph || !canManageStock()) return;
+  S.noBarcodes[ph.id] = !on;
+  tillLog('barcodeSetting', { pharmacy:ph.id, on:!!on });
+  render();
+}
+function barcodeSettingCard() {
+  const ph = currentPharmacy();
+  if (!ph || !canManageStock()) return '';
+  const on = usesBarcodes(ph);
+  return '<label class="card card-pad bc-setting"><span class="bc-body"><span class="bc-t">' + esc(t('bc.title')) + '</span>' +
+    '<span class="bc-s">' + esc(t(on ? 'bc.onS' : 'bc.offS')) + '</span></span>' +
+    '<input type="checkbox" class="bc-toggle" ' + (on ? 'checked ' : '') + 'onchange="setUsesBarcodes(this.checked)"></label>';
+}
+
+/* ---------- Adding by name, in the count and the order ---------- */
+
+function countQueryInput(v) {
+  S.countQuery = v; render();
+  const el = document.getElementById('count-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+/* A product chosen from the list, or a scan: one box of it on this shelf. */
+function countAdd(code) {
+  const sess = openCountSession();
+  if (!sess || !productByCode(code)) return;
+  S.stockNote = null; S.countQuery = '';
+  const mine = sess.items.filter(it => it.code === code);
+  const expiry = mine.length ? mine[mine.length - 1].expiry : '';
+  const line = mine.find(it => it.expiry === expiry);
+  if (line) { line.qty++; sess.focus = sess.items.indexOf(line); }
+  else { sess.items.push({ code, expiry, qty:1 }); sess.focus = sess.items.length - 1; }
+  saveDrafts(); render();
+}
+function orderQueryInput(v) {
+  S.orderQuery = v; render();
+  const el = document.getElementById('po-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+function orderAddCode(code) {
+  const o = openOrderRec();
+  if (!o || o.state !== 'draft' || !productByCode(code)) return;
+  const l = o.lines.find(x => x.code === code);
+  if (l) l.qty++; else o.lines.push({ code, qty:1, bonus:0, cost:null, received:0, bonusReceived:0 });
+  S.stockNote = null; S.orderQuery = ''; render();
+}
+
 function screenProducts() {
   const q = drugNorm(S.productQuery);
   const sum = catalogueSummary();
-  const list = PRODUCTS
+  const cur = canSetPrices() ? currentPharmacy() : null;
+  const found = q ? new Set(findProducts(S.productQuery, cur && cur.id, 9999).map(r => r.p)) : null;
+  const list = searchPool(cur && cur.id)
     .filter(p => S.productFilter === 'all' || p.mapping === S.productFilter)
-    .filter(p => !q || drugNorm([p.name.en, p.name.ar, p.barcode].concat(p.molecules.map(m => m.sci)).join(' ')).includes(q))
+    .filter(p => !q || found.has(p) || p.barcode.includes(S.productQuery.trim()))
     .sort((a, b) => L(a.name).localeCompare(L(b.name), lang === 'ar' ? 'ar' : 'en'));
 
   const note = !S.scanNote ? '' :
@@ -9077,7 +9322,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0013.2.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0013.3.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

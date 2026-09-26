@@ -2480,6 +2480,131 @@ console.log('\nthe simpler home, and the Ministry sources (v0.0013.2)');
      await dk.evaluate(() => Object.keys(PRODUCT_REG).length));
 }
 
+
+/* ---------------------------------------------------------------------------
+   v0.0013.3 — one search by any name (A1); stock without barcodes, and items
+   of the pharmacy's own (A2).
+   --------------------------------------------------------------------------- */
+console.log('\nsearch by any name, and stock without barcodes (v0.0013.3)');
+{
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.noBarcodes = {}; S.localItems = []; S.ownDraft = null; });
+  ok('A1 — the scientific name finds the brands: "paracetamol" finds Panadol, and says why',
+     await dk.evaluate(() => { const r = findProducts('paracetamol', 'P1', 20);
+       return r.some(x => x.p.barcode === '5000000001002' && x.why === 'sci') && r.some(x => x.p.barcode === '5000000001019'); }));
+  ok('…in Arabic too: "باراسيتامول" finds Panadol',
+     await dk.evaluate(() => findProducts('باراسيتامول', 'P1', 20).some(x => x.p.barcode === '5000000001002')));
+  ok('…and the brand still finds itself, first, as a brand',
+     await dk.evaluate(() => { const r = findProducts('panadol', 'P1', 20); return r[0].p.barcode.startsWith('50000000010') && r[0].why === 'brand' && r.every(x => /Panadol/.test(x.p.name.en)); }));
+  ok('…an ingredient of a combination counts: "caffeine" finds Panadol Extra',
+     await dk.evaluate(() => findProducts('caffeine', 'P1', 20).some(x => x.p.barcode === '5000000001019')));
+  ok('…a brand that starts with the words comes before one that only contains them, and those before ingredient matches',
+     await dk.evaluate(() => { const r = findProducts('panadol', 'P1', 20).concat(findProducts('paracetamol', 'P1', 20));
+       const x = findProducts('paracetamol', 'P1', 20); return x.every((v, i) => !i || x[i - 1].rank <= v.rank); }));
+  ok('…digits are left to the scanner: a number finds nothing by name',
+     await dk.evaluate(() => findProducts('500', 'P1', 5).length === 0));
+  ok('the till: typing a scientific name lists the brands with what they are made of',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillQuery('paracetamol');
+       const rows = [...document.querySelectorAll('.till-hits .find-row')];
+       return rows.length >= 2 && rows.some(r => /Panadol 500 mg/.test(r.innerText) && /Paracetamol/i.test(r.querySelector('.find-why').innerText)); }));
+  ok('…with nothing else under the results: no “add as your own” when something matched, no empty-till hint',
+     await dk.evaluate(() => !document.querySelector('.own-offer') && !document.querySelector('.till-empty')));
+  ok('…and one tap puts it on the sale',
+     await dk.evaluate(() => { document.querySelector('.till-hits .find-row').click(); return S.till.lines.length === 1 && S.till.query === ''; }));
+  ok('…a name and Enter takes the first match, as a scan would',
+     await dk.evaluate(() => { S.till = tillReset(); render(); const el = document.getElementById('till-q'); el.value = 'brufen';
+       el.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); return S.till.lines.length === 1 && /Brufen/.test(S.till.lines[0].name.en || S.till.lines[0].name); }));
+  ok('the drug reference: a brand finds its drug — "panadol" finds paracetamol, and says what it is sold as',
+     await dk.evaluate(() => { goto('drugs'); setDrugQuery('panadol'); const t = document.getElementById('app-body').innerText;
+       return /Paracetamol/.test(t) && /Sold as: .*Panadol/.test(t) && !!document.querySelector('.sold-as'); }));
+  ok('…while a scientific search still shows the drug’s own line, not “sold as”',
+     await dk.evaluate(() => { setDrugQuery('paracetamol'); const r = !document.querySelector('.sold-as') && /Paracetamol/.test(document.getElementById('app-body').innerText); setDrugQuery(''); return r; }));
+  ok('the catalogue: "ibuprofen" finds Brufen',
+     await dk.evaluate(() => { goto('products'); S.productQuery = 'ibuprofen'; render(); const r = /Brufen/.test(document.getElementById('app-body').innerText); S.productQuery = ''; return r; }));
+  ok('the count: a name lists the products, and a tap counts one box',
+     await dk.evaluate(() => { goto('count'); startCount('Shelf N'); countQueryInput('amoxicillin');
+       const rows = document.querySelectorAll('.ct-hits .find-row'); if (!rows.length) return false;
+       rows[0].click(); const sess = openCountSession(); return sess.items.length === 1 && sess.items[0].qty === 1 && S.countQuery === ''; }));
+  ok('a purchase order: a name lists the products, and a tap adds a line',
+     await dk.evaluate(() => { goto('orders'); newOrder(); orderQueryInput('panadol');
+       const rows = document.querySelectorAll('.po-hits .find-row'); rows[0].click();
+       const o = openOrderRec(); return o.lines.length === 1 && /Panadol/.test(productName(o.lines[0].code)); }));
+  ok('a spreadsheet row naming the scientific name is matched to the product',
+     await dk.evaluate(() => { const p = matchByName('Paracetamol 500 mg'); return !!p && p.molecules.some(m => m.sci === 'Paracetamol'); }));
+
+  /* A2 */
+  ok('A2 — barcodes are on by default, and the setting sits at the top of Stock for the owner',
+     await dk.evaluate(() => { goto('stock'); const el = document.querySelector('.bc-setting'); return usesBarcodes(currentPharmacy()) && !!el &&
+       el.querySelector('.bc-toggle').checked && /We use barcodes/.test(el.innerText); }));
+  ok('switched off, the till offers no scanner and asks for a name',
+     await dk.evaluate(() => { document.querySelector('.bc-toggle').click(); goto('till'); S.till = tillReset(); render();
+       return S.noBarcodes.P1 === true && !document.querySelector('.till-cam') && /Type the item’s name/.test(document.getElementById('till-q').placeholder) &&
+         /name — brand or scientific/.test(document.querySelector('.till-empty').innerText); }));
+  ok('…nor does the count, or the purchase order',
+     await dk.evaluate(() => { goto('count'); const a = !document.querySelector('#app-body .btn-scan') && /name/.test(document.getElementById('count-q').placeholder);
+       goto('orders'); newOrder(); const b = /name/.test(document.getElementById('po-q').placeholder); return a && b; }));
+  ok('…the change is written to the log, by whom',
+     await dk.evaluate(() => S.tillLog.some(e => e.kind === 'barcodeSetting' && e.on === false && e.by === 'rahma@example.com')));
+  ok('…and it is per pharmacy: another pharmacy keeps its scanner',
+     await dk.evaluate(() => usesBarcodes(PHARMACIES.P9) && !usesBarcodes(PHARMACIES.P1)));
+  ok('an item that is not in the catalogue: the owner is offered to add it as one of the pharmacy’s own',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillQuery('Zaatar herbal tea');
+       return !document.querySelector('.till-hits .find-row') && /Add “Zaatar herbal tea” as an item of your own/.test(document.querySelector('.own-offer').innerText); }));
+  ok('…the form takes a name, an optional form and strength, and the item goes on the sale — asking its price',
+     await dk.evaluate(() => { document.querySelector('.own-offer').click(); const card = !!document.querySelector('.own-card') && document.getElementById('own-name').value === 'Zaatar herbal tea';
+       document.querySelector('.own-add').click(); const it = S.localItems[0];
+       return card && !!it && it.barcode === 'L-P1-001' && it.local && S.till.needPrice === 'L-P1-001'; }));
+  ok('…once priced it sells like any product, and it goes to our team for mapping by name',
+     await dk.evaluate(() => { const el = document.getElementById('till-price'); el.value = '1500'; tillSetPriceAndAdd('L-P1-001');
+       return S.till.lines.length === 1 && S.till.lines[0].unit === 1500 &&
+         S.mappingRequests.some(r => r.barcode === 'L-P1-001' && r.local && r.name === 'Zaatar herbal tea') && S.tillLog.some(e => e.kind === 'localItem'); }));
+  ok('…the Helper has nothing to check on it and does not stop the sale (P9)',
+     await dk.evaluate(() => { confirmCash(); closeReceipt(); return S.sales[0].lines.some(l => l.barcode === 'L-P1-001'); }));
+  ok('…and it is found by name from then on, labelled as the pharmacy’s own',
+     await dk.evaluate(() => { const r = findProducts('zaatar', 'P1', 5); tillQuery('zaatar');
+       const row = document.querySelector('.till-hits .find-row'); const ok1 = r.length === 1 && !!row && /your pharmacy’s own item/i.test(row.innerText); tillQuery(''); return ok1; }));
+  ok('…in this pharmacy only',
+     await dk.evaluate(() => findProducts('zaatar', 'P9', 5).length === 0));
+  ok('…the same name twice is the same item',
+     await dk.evaluate(() => createLocalItem('P1', 'zaatar herbal tea').barcode === 'L-P1-001' && S.localItems.length === 1));
+  ok('…it is counted and ordered like any product',
+     await dk.evaluate(() => { goto('count'); startCount('Shelf Z'); countQueryInput('zaatar'); document.querySelector('.ct-hits .find-row').click();
+       const a = openCountSession().items[0].code === 'L-P1-001';
+       goto('orders'); newOrder(); orderQueryInput('zaatar'); document.querySelector('.po-hits .find-row').click();
+       return a && openOrderRec().lines[0].code === 'L-P1-001'; }));
+  ok('an own item may be added from the count, too',
+     await dk.evaluate(() => { goto('count'); countQueryInput('Rosewater 100 ml'); document.querySelector('.own-offer').click();
+       document.querySelector('.own-add').click(); return S.localItems.length === 2 && openCountSession().items.some(i => i.code === 'L-P1-002'); }));
+  ok('a pharmacist who is not the owner is not offered to add items (until permissions, v0.0015)',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); return ownOffer('till', 'something new') === '' && createLocalItem('P1', 'x') === null; }));
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('import'); });
+  await dk.setInputFiles('#im-file', { name:'no-barcodes.csv', mimeType:'text/csv',
+    buffer:Buffer.from('Name,Qty,Expiry\nZaatar herbal tea,5,06/2027\nOud incense sticks,3,01/2028\n') });
+  await dk.waitForFunction(() => S.screen === 'import' && !!document.querySelector('.im-pile'), null, { timeout:5000 }).catch(() => {});
+  ok('a spreadsheet without barcodes: a row naming an own item is matched to it; a new name can become one',
+     await dk.evaluate(() => { const imp = S.imports.find(x => x.id === S.openImport); const r = classifyImport(imp);
+       return r[0].pile === 'matched' && r[0].code === 'L-P1-001' && r[1].pile === 'notFound' && r[1].ownable &&
+         /can become an item of your own/.test(document.getElementById('app-body').innerText); }));
+  ok('…included, it comes in as a new own item with its stock',
+     await dk.evaluate(() => { const imp = S.imports.find(x => x.id === S.openImport); importDecide(imp.id, 'x1', 'include'); commitImport(imp.id);
+       const it = ownItemByName('P1', 'Oud incense sticks');
+       return !!it && stockOf('P1', it.barcode).available === 3 && stockOf('P1', 'L-P1-001').available >= 5; }));
+  {
+    await dk.setViewportSize({ width: 320, height: 700 });
+    const wide = [];
+    for (const dir of ['ar', 'en']) {
+      await dk.evaluate(d => { setLang(d); goto('till'); S.till = tillReset(); tillQuery('xyz new'); openOwnItem('till', 'xyz new'); }, dir);
+      if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push('own item (' + dir + ')');
+      await dk.evaluate(() => { S.ownDraft = null; goto('stock'); });
+      if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push('barcode setting (' + dir + ')');
+    }
+    ok(`the own-item form and the barcode setting do not scroll sideways at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.noBarcodes = {}; render(); });
+  ok('switched back on, the scanner returns',
+     await dk.evaluate(() => { goto('till'); return !!document.querySelector('.till-cam'); }));
+}
+
 await dk.setViewportSize({ width: 320, height: 700 });
 {
   const wide = [];
