@@ -783,10 +783,10 @@ ok('the mapping queue is what is not linked, most-scanned first',
        && shown.every((x, i) => !i || shown[i - 1].scannedBy.length >= x.scannedBy.length);
    }));
 /* v0.0012.1 (A3): the version the curator's step arrives in. It said
-   v0.0013 — stock and purchasing — when the Rules module is v0.0015. */
-ok('the catalogue names the right version for the curator’s step (v0.0015, clinical governance)',
+   v0.0013 — stock and purchasing — when the Rules module is v0.0016. */
+ok('the catalogue names the right version for the curator’s step (v0.0016, clinical governance)',
    await p.evaluate(() => { const keys = ['cat.note', 'cat.curatorNote'];
-     return keys.every(k => /Rules module in v0\.0015/.test(t(k))) && !keys.some(k => /v0\.0013/.test(t(k))); }));
+     return keys.every(k => /Rules module in v0\.0016/.test(t(k))) && !keys.some(k => /v0\.001[35]\b/.test(t(k))); }));
 /* v0.0013 (S4): suppliers pharmacies named — one task per supplier, and a
    link the owner confirms, never the team. */
 ok('the storage house pharmacies named is a record, with the pharmacies that named it',

@@ -3099,13 +3099,13 @@ function screenAllowed(screen, role) {
   /* Adding a pharmacy is how a pharmacist becomes an owner, and how an owner
      becomes an owner of several. */
   if (screen === 'addPharmacy') return role === 'owner' || role === 'pharmacist';
-  /* The till is the owner's until permissions arrive (W23, v0.0017): an
+  /* The till is the owner's until permissions arrive (W23, v0.0015): an
      employed pharmacist sells when the owner lets them, and that grant does
      not exist yet. Not a marketplace screen — it is on with everything off. */
   /* The owner sells; with the Helper living in the till, a pharmacist gets it
-     in check-only mode until selling is granted (v0.0017). */
+     in check-only mode until selling is granted (v0.0015). */
   if (screen === 'till') return role === 'owner' || (role === 'pharmacist' && helperInTill());
-  /* Stock is the owner's until permissions make it grantable (v0.0017). */
+  /* Stock is the owner's until permissions make it grantable (v0.0015). */
   if (STOCK_SCREENS.includes(screen)) return role === 'owner';
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
@@ -4921,14 +4921,14 @@ function scanProduct(raw) {
    - Each PHARMACY sets its own price. The reference is the average market
      price, derived from what pharmacies charge and never typed in. It is the
      default for a product the pharmacy has not priced, and it is only ever
-     SHOWN to an owner (or, from v0.0017, staff they allow), and only from five
+     SHOWN to an owner (or, from v0.0015, staff they allow), and only from five
      pharmacies up (P6) — fewer, and an "average" is somebody's price.
    - The price is written onto the SALE LINE when it is sold. Changing a price
      afterwards changes the next sale, never a past one.
    - The total is the exact sum. No rounding, in either direction.
    - Tenders — cash, ZainCash, Qi Card — are RECORDED, not processed. The
      platform holds no money (no wallet, by principle).
-   - Discounts are the owner's alone until permissions arrive (v0.0017), need a
+   - Discounts are the owner's alone until permissions arrive (v0.0015), need a
      reason, and are on the record.
    - The Dispensing Helper checks the WHOLE BASKET as it fills, says how much of
      it it could check, and never stops a sale (P9). A warning is one tap to
@@ -5153,7 +5153,7 @@ function tillScis(lines) {
 
 /* Two tiers render, as P9 set them: WARN (serious or critical — shown on the
    basket, one tap to acknowledge) and NOTE (the rest — there if looked for).
-   The Stop tier exists and is empty until the curator fills it (v0.0015). */
+   The Stop tier exists and is empty until the curator fills it (v0.0016). */
 const tierOf = sev => (sev === 'critical' || sev === 'serious') ? 'warn' : 'note';
 
 function tillFindings(lines) {
@@ -5656,7 +5656,7 @@ function cameraModal() {
 
    Sell or Check only (U7): check-only is the same basket without prices or
    payment — a question on the phone — and the only mode for anyone who may
-   not sell (every pharmacist, until permissions in v0.0017).
+   not sell (every pharmacist, until permissions in v0.0015).
    ========================================================================== */
 
 /* With the market off, the Helper lives in the till and Drugs is the
@@ -6304,7 +6304,7 @@ function countedSummary(ph) {
   return { drugs:codes.size, shelves };
 }
 
-/* Owner-only until permissions (v0.0017) make it grantable. */
+/* Owner-only until permissions (v0.0015) make it grantable. */
 const canManageStock = () => S.role === 'owner';
 
 const stockOps = () => S.countSessions.concat(S.imports);

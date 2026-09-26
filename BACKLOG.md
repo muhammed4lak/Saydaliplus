@@ -132,7 +132,7 @@ backlog records is also scheduled):
    because both systems key everything on the pharmacy, and it gates
    onboarding any owner who holds more than one — or who adds one.
 2. **System 2** — attendance, then permissions and the shift timeline, then
-   tasks — once v0.0016, v0.0017 and v0.0019 have been in front of owners.
+   tasks — once v0.0017, v0.0015 and v0.0019 have been in front of owners.
 3. **System 1** — the till, stock, cash and offline, clinical governance —
    once the three gates above are passed.
 
@@ -146,19 +146,19 @@ backlog records is also scheduled):
 | **v0.0012** | The till | W17 sell |
 | **v0.0013** | Stock and purchasing | W17 inventory |
 | **v0.0014** | Cash, and the offline model | W17 cash, offline |
-| **v0.0015** | Clinical governance | W19; P8; W17 helper tiers |
-| **v0.0016** | Attendance | W18 roster, check-in/out |
-| **v0.0017** | Permissions, and what was done on each shift | W23 |
+| **v0.0015** | Permissions, and what was done on each shift | W23 |
+| **v0.0016** | Clinical governance | W19; P8; W17 helper tiers |
+| **v0.0017** | Attendance | W18 roster, check-in/out |
 | **v0.0018** | The near-expiry exchange | W22 |
 | **v0.0019** | Tasks, performance, and the absent owner's day | W18; P7 |
 | **v0.0020** | Paying for it | pricing — *blocked on a decision* |
 | later | Assessment, then shift credits, then the ecosystem | W20, W21, P6 |
 
-System 1 is complete at v0.0015, System 2 at v0.0019. Fixes to a built
+System 1 is complete at v0.0016, System 2 at v0.0019. Fixes to a built
 version are numbered `.1`, `.2` after it and listed under "Amendments" below;
 they never renumber this table. Versions were inserted
 twice on 25 Sep 2026 — v0.0010 for the W7 correction and v0.0011 for the
-review fixes — and W22 and W23 were given v0.0018 and v0.0017, so the numbers
+review fixes — and W22 and W23 were given v0.0018 and v0.0015, so the numbers
 below are the current ones. The till was built as v0.0012; stock and
 purchasing are next.
 
@@ -167,7 +167,7 @@ purchasing are next.
 A feature flag per surface, with the marketplace off by default and switchable
 per district later (W21 needs exactly that). The pharmacist's bar becomes
 Check-in · Tasks · Drugs · CV · Profile, with Tasks and Check-in as honest
-"coming in this build series" placeholders until v0.0016. The product layer
+"coming in this build series" placeholders until v0.0017. The product layer
 beneath the existing molecule layer: barcode, AR/EN name, form, strength, pack,
 price, molecule links, and a **mapping confidence** (verified / auto-mapped /
 unmapped). A **Catalogue** module in the CRM with the mapping queue: an unknown
@@ -245,7 +245,7 @@ reads; EAN-8, UPC-A and 2D codes on some imports would each need handling.
 **Known and left alone on purpose:** the owner's Billing screen still shows the
 shift-era plans and charges (v0.0020, blocked on price), and a pharmacist's
 Profile still shows the relief-shift record (replaced by attendance in
-v0.0016).
+v0.0017).
 
 ### v0.0010 as built — owners of more than one pharmacy
 
@@ -299,7 +299,7 @@ sets its own price — needs the pharmacy on screen to be unambiguous.
    total for cash and record the difference?) The average market price, used
    as a default price, is still shown to the nearest 250 because it becomes a
    price somebody charges; a sale's total never is.
-2. **Discounts are the owner's alone** until permissions arrive (v0.0017), and
+2. **Discounts are the owner's alone** until permissions arrive (v0.0015), and
    every discount is on the record with its reason.
 
 ### v0.0012 as built — the till
@@ -336,7 +336,7 @@ sets its own price — needs the pharmacy on screen to be unambiguous.
   basket with a one-tap *Acknowledge*, and **Note** (the rest) folded away. The
   Stop tier is empty (P9). Nothing is ever blocked: a sale with an
   unacknowledged warning completes, and the sale records every finding and
-  whether it was acknowledged — the raw material for v0.0015's override report.
+  whether it was acknowledged — the raw material for v0.0016's override report.
   Questions for the patient (contraindications) are folded under the findings.
 - **Money.** The total is the exact sum. Cash needs an amount received at
   least the total and shows the exact change; ZainCash and Qi Card take an
@@ -359,7 +359,7 @@ sets its own price — needs the pharmacy on screen to be unambiguous.
   check proves the slot that is on the dashboard is absent here.
 - **The record every later version reads.** `S.tillLog` holds sales, voids,
   discounts, refunds, price changes, logo uploads and carts set aside, each
-  with who, where and when. v0.0014's audit trail and v0.0017's shift timeline
+  with who, where and when. v0.0014's audit trail and v0.0015's shift timeline
   are views of it.
 
 **Known limits of the prototype** (not decisions — each is a later version's
@@ -712,7 +712,7 @@ built) of this proposal:
   ("Today · 7 sales · 184,500 IQD").
 - **U7. Check only.** A *Sell / Check only* switch: the same basket without
   prices or payment, for a prescription question on the phone — and the mode
-  the till opens in for anyone not permitted to sell (until v0.0017, every
+  the till opens in for anyone not permitted to sell (until v0.0015, every
   pharmacist). The Drugs tab keeps the reference only.
 
 **Decided 26 Sep 2026:** as shown; shipped as the amendment **v0.0013.1**,
@@ -768,7 +768,28 @@ of the same product while offline — reconciling to the right level.
 *The check asserts:* the expected total is not in the page before the count is
 entered; two offline devices reconcile correctly.
 
-**v0.0015 — clinical governance.**
+**v0.0015 — permissions, and what was done on each shift.** (W23)
+**Moved up on 26 Sep 2026** (was v0.0017): straight after cash and offline,
+because the till is check-only for every employed pharmacist until
+permissions exist, and discounts, refunds, prices and stock are the owner's
+alone. Until attendance (v0.0017) exists, the timeline shows each person's
+actions **per day**; it becomes **per shift** once check-in/out does.
+Clinical governance and attendance each moved back one version; every
+reference was renumbered. **The roster moves with it**: permissions need
+employees to grant them to, so the employment record per person (pharmacist
+or assistant, start and end dates), invitations for staff without accounts,
+and deactivation that keeps history arrive here; check-in/out stays in
+attendance.
+The owner's grants, per pharmacy, default deny: a new employee can sell,
+nothing else (check-in joins with attendance). Voids and refunds, discounts, prices, stock
+corrections, write-offs, cash variances, the receipt and its logo, the average
+market price, and the near-expiry exchange become grantable. Every action
+carries who did it and in which shift; the owner reads a timeline per shift,
+the employee reads their own, and a grant or a revocation is itself on it.
+*The check asserts:* an action without the permission is refused and recorded;
+the CRM can read no timeline.
+
+**v0.0016 — clinical governance.**
 A **Rules** module in the CRM — `proposed → under review → approved (tier) →
 retired` — with a named approver and date on every transition, and a rule that
 was never approved never fires. Every released rule set is versioned and
@@ -780,10 +801,9 @@ per-patient alert suppression inside that pharmacy and nowhere else.
 *The check asserts:* no CRM role can read a patient row; a retired rule stops
 firing; a rule set from any past date can be reproduced.
 
-**v0.0016 — attendance.**
-The roster: an employment record per person with start and end dates and a role
-(pharmacist or assistant), invitations for staff without accounts, deactivation
-that keeps history. Check-in is tied to opening a till session. A missed
+**v0.0017 — attendance.**
+On the roster that arrived with permissions (v0.0015): check-in is tied to
+opening a till session. A missed
 check-out closes automatically at the **scheduled** end plus a grace period —
 not at midnight, because overnight shifts exist — and is marked `auto_closed`.
 On the next check-in the person is asked when they actually left; the claim and
@@ -792,29 +812,12 @@ last till transaction is shown beside the claim as evidence.
 *The check asserts:* an auto-closed shift never counts as clean; approval never
 overwrites the claim.
 
-**v0.0017 — permissions, and what was done on each shift.** (W23)
-*Asked 26 Sep 2026 when permissions arrive.* Proposed: bring them forward to
-**v0.0015**, straight after cash and offline — the till is check-only for
-every employed pharmacist until they exist, and discounts, refunds, prices and
-stock are the owner's alone. The timeline would show each person's actions
-**per day** at first and **per shift** once attendance (check-in/out) exists;
-clinical governance and attendance each move back one version. Awaiting the
-user's answer.
-The owner's grants, per pharmacy, default deny: a new employee can sell and
-check in, nothing else. Voids and refunds, discounts, prices, stock
-corrections, write-offs, cash variances, the receipt and its logo, the average
-market price, and the near-expiry exchange become grantable. Every action
-carries who did it and in which shift; the owner reads a timeline per shift,
-the employee reads their own, and a grant or a revocation is itself on it.
-*The check asserts:* an action without the permission is refused and recorded;
-the CRM can read no timeline.
-
 **v0.0018 — the near-expiry exchange.** (W22)
 Built on v0.0013's batches: the owner's batches inside the near-expiry window,
 listed per batch by choice, never automatically; visible to nearby pharmacies;
 controlled substances excluded; settlement between the two pharmacies, recorded
 as a stock movement at both ends and never passing through the platform.
-Owners by default; grantable (v0.0017). *The check asserts:* a controlled item
+Owners by default; grantable (v0.0015). *The check asserts:* a controlled item
 cannot be listed; nothing is listed that the owner did not choose.
 
 **v0.0019 — tasks, performance, and the absent owner's day.**
@@ -898,7 +901,7 @@ under every syrup. A patient learns nothing from that. *Plan:*
 
 **A3. A stale version number in the CRM.** The Catalogue screen says marking a
 link *verified* "arrives with the Rules module in v0.0013". The Rules module is
-clinical governance, v0.0015. *Plan:* correct the two strings.
+clinical governance, v0.0016. *Plan:* correct the two strings.
 
 **A4. There is no visible way to scan with the camera.** Reported 26 Sep
 2026: the till says "scan a barcode" and offers no button to do it. v0.0012
@@ -1011,7 +1014,7 @@ camera, not for a barcode across a room.
 - **U7** **Sell / Check only** for the owner; checking needs no prices and
   sells nothing; *Sell this basket* turns it into a sale and asks for any
   missing price. A pharmacist gets the till in **check-only** mode — no
-  prices, no payment — until selling is granted (v0.0017).
+  prices, no payment — until selling is granted (v0.0015).
 - The pharmacist's bar is **Check-in · Tasks · Till · Drugs · Profile**; the
   CV is on Profile. With the marketplace off, **Drugs is the reference
   only**, with a line pointing to the till.
@@ -1097,11 +1100,9 @@ pharmacies will not use barcodes at all. *Plan:*
 - Imports without a barcode column match by name (brand or scientific), and a
   row that matches nothing can become one of the pharmacy's own items instead
   of being left out.
-- **To decide:** (1) per pharmacy or per owner — *suggested: per pharmacy*,
-  since an owner of several may run one with scanners and one without;
-  (2) whether a pharmacy WITH barcodes may also add its own no-barcode items
-  (loose items, local products) — *suggested: yes*; (3) who may add a new item
-  by name — *suggested: the owner, and staff once permissions exist*.
+- **Decided 26 Sep 2026:** (1) the setting is **per pharmacy**; (2) a
+  pharmacy **with** barcodes may also add its own no-barcode items; (3) the
+  **owner** adds items by name, and staff once permissions (v0.0015) grant it.
 
 ## Unused concepts
 
@@ -1139,7 +1140,7 @@ rediscovered as new or lost when circumstances change.
 
 These are yours, and several gate the production track. None is a coding task.
 
-1. **Name the clinical curator** (W19) — before v0.0015 leaves the prototype.
+1. **Name the clinical curator** (W19) — before v0.0016 leaves the prototype.
 2. **The catalogue go/no-go** (W17) — ten hours, a hundred real SKUs seeded from
    Kimadia / MoH registration lists, mapped to molecules. Count how many map
    cleanly. Before any production work on System 1.
@@ -1154,8 +1155,8 @@ These are yours, and several gate the production track. None is a coding task.
 ## Open decisions
 
 - **v0.0013.3 recorded, not built** — search by any name (A1) and stock
-  without barcodes (A2), with A2's three questions. **Permissions' place in
-  the plan** — asked 26 Sep 2026; see the reply recorded under v0.0017.
+  without barcodes (A2); its questions answered. Waiting for "build 13.3".
+  **Permissions moved up to v0.0015** (26 Sep 2026).
 - **UI amendments continue** until the UI is approved.
   **A controlled-substance schedule** is still needed before production.
   Nothing blocks v0.0014.
@@ -2306,7 +2307,7 @@ always reads 3%.
 ## W17. System 1 — the till: point of sale, inventory, purchasing, and the Helper in the cart
 
 **Raised:** 20 Sep 2026. **Touches:** everything. Versions v0.0009 and
-v0.0012–v0.0015 in Part 0. **Catalogue layer built in v0.0009** — products, mapping confidence,
+v0.0012–v0.0016 in Part 0. **Catalogue layer built in v0.0009** — products, mapping confidence,
 the unknown-barcode path and the CRM queue. **The till built in v0.0012**; stock
 and purchasing are next.
 
@@ -2389,7 +2390,7 @@ shelf looks full, reorders do not happen, and nothing stops it being sold. Here:
 ## W18. System 2 — the pharmacy's people: check-in/out, tasks, performance
 
 **Raised:** 20 Sep 2026. **Touches:** app + CRM. **Not built.** Versions
-v0.0016 and v0.0019.
+v0.0017 and v0.0019.
 
 For the owner who is not always in the building. Seen working at Salim.
 
@@ -2428,7 +2429,7 @@ systems get expensive if added later.
 ## W19. The clinical curator, and the rule-governance module
 
 **Raised:** 20 Sep 2026. **Touches:** CRM, the Helper. **Not built.** Version
-v0.0015; the person is on the non-code track.
+v0.0016; the person is on the non-code track.
 
 Once the Helper sits in a till influencing what is dispensed, somebody must be
 accountable for a rule being wrong or missing. "The software said so" is not a
@@ -2560,7 +2561,7 @@ Worth deciding before it is built:
 ## W23. Permissions an owner grants, and what was done on each shift
 
 **Raised:** 25 Sep 2026. **Touches:** app, CRM, every System 1 and 2 screen.
-**Not built — scheduled for v0.0017.**
+**Not built — scheduled for v0.0015 (moved up from v0.0017, 26 Sep 2026).**
 
 Some things are an owner's by default: the near-expiry exchange (W22),
 purchase orders, setting prices, stock corrections, write-offs, cash

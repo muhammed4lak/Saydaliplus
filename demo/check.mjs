@@ -1601,7 +1601,7 @@ console.log('\nthe till (v0.0012)');
 
   await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('till'); });
   /* v0.0013.1 (U7): a pharmacist has the till in check-only mode — never
-     prices, never payment — until the owner may grant selling (v0.0017). */
+     prices, never payment — until the owner may grant selling (v0.0015). */
   ok('a pharmacist without a pharmacy gets the till to CHECK, never to sell',
      await dk.evaluate(() => { const r = screenAllowed('till') && S.screen === 'till' && tillMode() === 'check' && !canSell() &&
        !document.querySelector('.till-mode') && /Check only/.test(document.querySelector('.till-checknote').innerText);
