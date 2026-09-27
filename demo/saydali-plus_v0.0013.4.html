@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0013.3">
+<meta name="version" content="App_v0.0013.4">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -984,6 +984,14 @@
   .take-chip{ font-size:12px; }
   .till-confirm{ margin-top:4px; }
   .till-other{ display:block; margin:10px auto 0; }
+  /* v0.0013.4 — Pharmacy: one module, a tab each */
+  .mod-tabs{ display:flex; border-bottom:1.5px solid var(--border); margin:0 0 14px; }
+  .mod-tab{ flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:6px; padding:11px 4px 10px;
+    font-size:14px; font-weight:600; color:var(--ink-soft); border-bottom:2.5px solid transparent; margin-bottom:-1.5px; }
+  .mod-tab span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mod-tab .ico{ width:17px; height:17px; flex:none; }
+  .mod-tab.on{ color:var(--indigo); border-color:var(--indigo); }
+  @media (max-width:380px){ .mod-tab .ico{ display:none; } .mod-tab{ font-size:13.5px; } }
   /* v0.0013.3 — search, own items, barcodes */
   .find-why[data-why="sci"]{ color:var(--indigo); }
   .own-offer .row-title{ color:var(--indigo); }
@@ -1217,6 +1225,7 @@
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-till" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5 11h14v8H5z"/><path d="M7 11V5h10v6"/><path d="M9 8h6M8 15h2M12 15h4"/></g></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></g></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9.5 5.5 5h13L20 9.5"/><path d="M4 9.5c0 1.4 1.1 2.5 2.7 2.5s2.6-1.1 2.6-2.5c0 1.4 1.1 2.5 2.7 2.5s2.7-1.1 2.7-2.5c0 1.4 1.1 2.5 2.6 2.5S20 10.9 20 9.5"/><path d="M5.5 12v7h13v-7"/><path d="M10 19v-4h4v4"/><path d="M12 13.2v1M11.5 13.7h1"/></g></symbol>
 </defs></svg>
 
 <script>
@@ -1279,7 +1288,7 @@ const LISTINGS = [
   /* v0.0011 — the platform's own announcement, in the same slot a paid
      placement would use. No sponsor: nobody paid for it. */
   { id:'A1', kind:'announcement', company:null, state:'live', surface:'home',
-    title:{ ar:'الكاشير وصل', en:'The till is here' },
+    title:{ ar:'نقطة البيع وصلت', en:'Point of sale is here' },
     body:{ ar:'بِع من صيدليتك بأسعارك، ومساعد الوصفات يفحص السلّة كاملة وأنت تمسح.',
            en:'Sell at your own prices, with the Dispensing Helper checking the whole basket as you scan.' },
     from:'2026-09-25', to:'2026-10-31' },
@@ -1627,7 +1636,7 @@ const STRINGS = {
     'h.title':'Handoff checklist',
     'h.intro':'Worked through together at the start of the shift. Both parties confirming is what completes the booking, what increments the pharmacist’s verified statistics, and what any later dispute is judged against.',
     'h.i1':'Controlled-substances register counted and signed by both parties',
-    'h.i2':'Till float counted and agreed',
+    'h.i2':'Cash float counted and agreed',
     'h.i3':'Fridge temperature log checked',
     'h.i4':'Keys, alarm code and safe access handed over',
     'h.i5':'Emergency contact for the owner confirmed',
@@ -1653,28 +1662,30 @@ const STRINGS = {
 let lang = 'ar';
 Object.assign(STRINGS.ar, {
   /* v0.0013.3 */
+  'nav.pharmacy':'الصيدلية',
   'dx.soldAs':'يُباع باسم: {names}','tl.typeName':'اكتب اسم المادة','tl.emptyNoBarcode':'اكتب اسم أول مادة — بالاسم التجاري أو العلمي.',
   'ct.typeName':'اكتب اسم المادة','ct.howtoNoBarcode':'اختر المادة من القائمة، ثم اكتب العدد وتاريخ الانتهاء.','po.addLineName':'اكتب اسم المادة',
   'own.tag':'مادة خاصة بصيدليتك','own.offer':'أضف "{name}" كمادة خاصة','own.offerSub':'ليست في الكتالوج — تُباع وتُجرد وتُطلب مثل غيرها.',
   'own.title':'مادة خاصة بصيدليتك','own.sub':'برمز داخلي بدل الباركود. تُرسل لفريقنا ليُربط تركيبها، وحتى ذلك لا يفحصها المساعد.',
   'own.name':'الاسم','own.form':'الشكل (اختياري)','own.strength':'التركيز (اختياري)','own.add':'أضف',
-  'bc.title':'نستخدم الباركود','bc.onS':'المسح بالكاميرا أو الماسح. يمكن دائماً البحث بالاسم.','bc.offS':'كل شيء بالاسم: الكاشير والجرد والطلبيات.',
+  'bc.title':'نستخدم الباركود','bc.onS':'المسح بالكاميرا أو الماسح. يمكن دائماً البحث بالاسم.','bc.offS':'كل شيء بالاسم: نقطة البيع والجرد والطلبيات.',
   'im.asOwn':'لا باركود ولا مطابقة — يمكن إضافتها كمادة خاصة بصيدليتك'
 });
 Object.assign(STRINGS.en, {
+  'nav.pharmacy':'Pharmacy',
   'dx.soldAs':'Sold as: {names}','tl.typeName':'Type the item’s name','tl.emptyNoBarcode':'Type the first item’s name — brand or scientific.',
   'ct.typeName':'Type the item’s name','ct.howtoNoBarcode':'Pick the item from the list, then type how many and the expiry.','po.addLineName':'Type the item’s name',
   'own.tag':'Your pharmacy’s own item','own.offer':'Add “{name}” as an item of your own','own.offerSub':'Not in the catalogue — sold, counted and ordered like any other.',
   'own.title':'An item of your own','own.sub':'It gets an internal code instead of a barcode, and goes to our team to link its ingredients; until then the Helper does not check it.',
   'own.name':'Name','own.form':'Form (optional)','own.strength':'Strength (optional)','own.add':'Add',
-  'bc.title':'We use barcodes','bc.onS':'Scan with the camera or a scanner. Searching by name always works too.','bc.offS':'Everything by name: the till, the count and orders.',
+  'bc.title':'We use barcodes','bc.onS':'Scan with the camera or a scanner. Searching by name always works too.','bc.offS':'Everything by name: point of sale, the count and orders.',
   'im.asOwn':'no barcode and no match — can become an item of your own'
 });
 
 Object.assign(STRINGS.ar, {
   /* v0.0013.2 */
   'hm.salesToday':'مبيعات اليوم','hm.salesTodayAll':'مبيعات اليوم · {n} صيدليات','hm.today':'اليوم','hm.weekLabel':'المبيعات خلال سبعة أيام',
-  'hm.vsYesterday':'عن أمس · {n} عمليات بيع','hm.noneYet':'لا مبيعات بعد اليوم · أمس {y}','hm.openTill':'افتح الكاشير',
+  'hm.vsYesterday':'عن أمس · {n} عمليات بيع','hm.noneYet':'لا مبيعات بعد اليوم · أمس {y}','hm.openTill':'افتح نقطة البيع',
   'hm.needs':'بانتظارك · {n}','hm.needsNone':'لا شيء بانتظارك الآن.','hm.needsN':'{n} بانتظارك','hm.nothingNeeds':'لا شيء بانتظارك',
   'hm.suppliers':'موردون بانتظار تأكيدك: {n}','hm.pending':'الصيدلية قيد المراجعة','hm.pendingS':'تُفتح بالكامل عند التوثيق.',
   'hm.noResponsibleS':'لا يُصرف دواء حتى يُضاف صيدلي مسؤول.','hm.yourPharmacies':'صيدلياتك','hm.cantSell':'لا يمكنها البيع','hm.noSalesShort':'لا مبيعات بعد',
@@ -1682,7 +1693,7 @@ Object.assign(STRINGS.ar, {
 });
 Object.assign(STRINGS.en, {
   'hm.salesToday':'Sales today','hm.salesTodayAll':'Sales today · {n} pharmacies','hm.today':'Today','hm.weekLabel':'Sales over seven days',
-  'hm.vsYesterday':'vs yesterday · {n} sales','hm.noneYet':'No sales yet today · yesterday {y}','hm.openTill':'Open the till',
+  'hm.vsYesterday':'vs yesterday · {n} sales','hm.noneYet':'No sales yet today · yesterday {y}','hm.openTill':'Open point of sale',
   'hm.needs':'Needs you · {n}','hm.needsNone':'Nothing needs you right now.','hm.needsN':'{n} need you','hm.nothingNeeds':'nothing needs you',
   'hm.suppliers':'Suppliers to confirm: {n}','hm.pending':'This pharmacy is under review','hm.pendingS':'It opens fully once verified.',
   'hm.noResponsibleS':'Nothing can be dispensed until a responsible pharmacist is added.','hm.yourPharmacies':'Your pharmacies','hm.cantSell':'can’t sell','hm.noSalesShort':'no sales yet',
@@ -1700,7 +1711,7 @@ Object.assign(STRINGS.ar, {
   'tl.beforeHand':'قبل أن تسلّمها','tl.checkedList':'فُحص: {list}.','tl.uncheckedList':'لم يُفحص: {list}.','tl.inPart':'(جزئياً)',
   'tl.interaction':'تداخل','tl.duplication':'ازدواج علاجي','tl.neverStops':'لا يوقف البيع أبداً. ويُسجّل إن كان قد اطُّلع عليه.',
   'tl.differentAmount':'مبلغ مختلف','tl.discount':'خصم','tl.afterDiscount':'{sub} − خصم {d} ({why})','tl.noSales':'لا مبيعات اليوم بعد.',
-  'tl.setPrice':'اعتمد السعر','tl.checkMoved':'فحص وصفة؟ صار في الكاشير','tl.checkMovedS':'مساعد الوصفات يفحص السلّة في الكاشير — افتحه بوضع "فحص فقط".'
+  'tl.setPrice':'اعتمد السعر','tl.checkMoved':'فحص وصفة؟ صار في نقطة البيع','tl.checkMovedS':'مساعد الوصفات يفحص السلّة في نقطة البيع — افتحه بوضع "فحص فقط".'
 });
 Object.assign(STRINGS.en, {
   'tl.sell':'Sell','tl.checkOnly':'Check only','tl.checkOnlyNote':'Check only — selling is granted by the owner (with permissions).',
@@ -1712,7 +1723,7 @@ Object.assign(STRINGS.en, {
   'tl.beforeHand':'Before you hand this over','tl.checkedList':'Checked: {list}.','tl.uncheckedList':'Not checked: {list}.','tl.inPart':'(in part)',
   'tl.interaction':'Interaction','tl.duplication':'Duplicate therapy','tl.neverStops':'It never stops a sale. Whether it was acknowledged is recorded.',
   'tl.differentAmount':'Different amount','tl.discount':'Discount','tl.afterDiscount':'{sub} − discount {d} ({why})','tl.noSales':'No sales yet today.',
-  'tl.setPrice':'Set the price','tl.checkMoved':'Checking a prescription? It is in the till now','tl.checkMovedS':'The Dispensing Helper checks the basket in the till — open it in Check only.'
+  'tl.setPrice':'Set the price','tl.checkMoved':'Checking a prescription? It is in Point of sale now','tl.checkMovedS':'The Dispensing Helper checks the basket in Point of sale — open it in Check only.'
 });
 
 /* v0.0013 — stock and purchasing. */
@@ -1788,7 +1799,7 @@ Object.assign(STRINGS.ar, {
   'rg.empty':'لا حركات لمواد خاضعة للرقابة بعد.','rg.bal':'الرصيد {n}',
   'sk.title':'المخزون في {ph}','sk.available':'متوفر','sk.expiredQ':'منتهٍ في الحجز','sk.quarantineQ':'مرتجع محجوز',
   'sk.onlyExpired':'المسجّل منه منتهٍ فقط ({n}). تحقّق من التاريخ على العلبة.','sk.where':'مكانه: {shelves}',
-  'sk.minPh':'نبّهني تحت …','sk.minSave':'احفظ','sk.unbatched':'بيع قبل الجرد','sk.quarantine':'مرتجعات محجوزة',
+  'sk.minPh':'نبّهني عندما يقلّ عن…','sk.minSave':'احفظ','sk.unbatched':'بيع قبل الجرد','sk.quarantine':'مرتجعات محجوزة',
   'sk.batch':'دفعة تنتهي {exp}','sk.expired':'منتهية','sk.cost':'الكلفة {c}','sk.why':'السبب','sk.writeOff':'اشطب',
   'sk.r.destroyed':'أُتلفت','sk.r.returnedToSupplier':'أُرجعت للمورد','sk.r.other':'سبب آخر','sk.r.soldBeforeCounted':'بيع قبل الجرد',
   'sk.history':'سجل الحركات ({n})',
@@ -1870,7 +1881,7 @@ Object.assign(STRINGS.en, {
   'rg.empty':'No movements of controlled substances yet.','rg.bal':'balance {n}',
   'sk.title':'Stock at {ph}','sk.available':'available','sk.expiredQ':'expired, in quarantine','sk.quarantineQ':'returns set aside',
   'sk.onlyExpired':'All that is recorded is expired ({n}). Check the date on the box.','sk.where':'Where: {shelves}',
-  'sk.minPh':'Tell me below…','sk.minSave':'Save','sk.unbatched':'Sold before it was counted','sk.quarantine':'Returns set aside',
+  'sk.minPh':'Warn me when fewer than…','sk.minSave':'Save','sk.unbatched':'Sold before it was counted','sk.quarantine':'Returns set aside',
   'sk.batch':'Batch expiring {exp}','sk.expired':'Expired','sk.cost':'cost {c}','sk.why':'Reason','sk.writeOff':'Write off',
   'sk.r.destroyed':'Destroyed','sk.r.returnedToSupplier':'Returned to the supplier','sk.r.other':'Other','sk.r.soldBeforeCounted':'sold before it was counted',
   'sk.history':'Movements ({n})',
@@ -1911,9 +1922,9 @@ Object.assign(STRINGS.en, {
 });
 
 Object.assign(STRINGS.ar, {
-  'nav.till':'الكاشير','till.receipt':'الوصل',
+  'nav.till':'نقطة البيع','till.receipt':'الوصل',
   'till.choose':'أيّ صيدلية تبيع منها؟','till.by':'يصرف: {name}',
-  'till.blocked.pendingT':'الصيدلية قيد المراجعة.','till.blocked.pendingS':'يُفتح الكاشير عند توثيقها.',
+  'till.blocked.pendingT':'الصيدلية قيد المراجعة.','till.blocked.pendingS':'تُفتح نقطة البيع عند توثيقها.',
   'till.blocked.noResponsibleT':'لا صيدلي مسؤول لهذه الصيدلية.','till.blocked.noResponsibleS':'لا يُصرف دواء من صيدلية لا يوقّع عنها صيدلي مسؤول. أضِفه أولاً.',
   'till.scan':'امسح الباركود أو اكتب الاسم','till.camera':'المسح بالكاميرا','till.cameraFailed':'تعذّر فتح الكاميرا. استعمل الماسح أو اكتب الرقم.',
   'till.empty':'امسح أول مادة بزر المسح، أو اكتب الباركود أو الاسم.',
@@ -1951,12 +1962,12 @@ Object.assign(STRINGS.ar, {
   'pd.ownPrice':'هذا سعر صيدليتك.','pd.defaultAverage':'لم تحدّد سعراً، فيُباع بمتوسط السوق حتى تحدّده.',
   'pd.mustSet':'لا سعر ولا متوسط سوقي — حدّد سعراً قبل بيعه.',
   'pd.marketAvg':'متوسط سعر السوق: {price} — من {n} صيدليات.','pd.marketThin':'لا يُعرض متوسط: تسعّرها أقل من {min} صيدليات.',
-  'd.tillT':'الكاشير','d.tillPick':'اختر صيدلية للبيع منها.','d.tillToday':'اليوم: {n} عمليات بيع · {total}','d.tillNone':'لا مبيعات اليوم بعد.'
+  'd.tillT':'نقطة البيع','d.tillPick':'اختر صيدلية للبيع منها.','d.tillToday':'اليوم: {n} عمليات بيع · {total}','d.tillNone':'لا مبيعات اليوم بعد.'
 });
 Object.assign(STRINGS.en, {
-  'nav.till':'Till','till.receipt':'Receipt',
+  'nav.till':'Point of sale','till.receipt':'Receipt',
   'till.choose':'Which pharmacy are you selling from?','till.by':'Dispensing: {name}',
-  'till.blocked.pendingT':'This pharmacy is under review.','till.blocked.pendingS':'The till opens once it is verified.',
+  'till.blocked.pendingT':'This pharmacy is under review.','till.blocked.pendingS':'Point of sale opens once it is verified.',
   'till.blocked.noResponsibleT':'This pharmacy has no responsible pharmacist.','till.blocked.noResponsibleS':'Nothing can be dispensed from a pharmacy nobody signs for. Add one first.',
   'till.scan':'Scan a barcode or type a name','till.camera':'Scan with the camera','till.cameraFailed':'The camera could not open. Use the scanner or type the number.',
   'till.empty':'Scan the first item with the Scan button, or type its barcode or name.',
@@ -1994,7 +2005,7 @@ Object.assign(STRINGS.en, {
   'pd.ownPrice':'This is your pharmacy\'s price.','pd.defaultAverage':'You have not set a price, so it sells at the market average until you do.',
   'pd.mustSet':'No price and no market average — set a price before selling it.',
   'pd.marketAvg':'Average market price: {price} — from {n} pharmacies.','pd.marketThin':'No average shown: fewer than {min} pharmacies price this.',
-  'd.tillT':'Till','d.tillPick':'Pick a pharmacy to sell from.','d.tillToday':'Today: {n} sales · {total}','d.tillNone':'No sales yet today.'
+  'd.tillT':'Point of sale','d.tillPick':'Pick a pharmacy to sell from.','d.tillToday':'Today: {n} sales · {total}','d.tillNone':'No sales yet today.'
 });
 
 const t = (key, vars) => {
@@ -2073,7 +2084,7 @@ Object.assign(STRINGS.ar, {
   'nav.checkin':'الحضور','nav.tasks':'المهام','nav.products':'المنتجات',
   'soon.tag':'قريباً',
   'soon.checkinT':'تسجيل الحضور',
-  'soon.checkinS':'سجّل حضورك عند فتح الصندوق، ويُسجَّل يومك تلقائياً — ساعات العمل والالتزام بالمواعيد، في سجلّ يعتمد عليه صاحب العمل والنقابة. يصل مع إصدار الحضور.',
+  'soon.checkinS':'سجّل حضورك عند فتح نقطة البيع، ويُسجَّل يومك تلقائياً — ساعات العمل والالتزام بالمواعيد، في سجلّ يعتمد عليه صاحب العمل والنقابة. يصل مع إصدار الحضور.',
   'soon.tasksT':'مهامك',
   'soon.tasksS':'ما تسنده إليك صيدليتك من مهام، مع مواعيدها وسجلّ بما أُنجز. تصل مع إصدار المهام.',
   'tk.l1':'مهام من صيدليتك مع مواعيد إنجازها','tk.l2':'فحوص متكررة — مثل حرارة الثلاجة كل صباح','tk.l3':'سجلّ بما أُنجز ومتى',
@@ -2329,12 +2340,12 @@ Object.assign(STRINGS.en, {
   'ad.fromUs':'From Saydali+',
   'sw.partners':'Partners','sw.partnersSub':'Company accounts, their paid banners and job listings — off until step 5',
   'roles.pharmacistSubDark':'Check in, see your tasks, and keep a verified CV — with the Dispensing Helper at the counter.',
-  'roles.pharmacySubDark':'Run your pharmacy: the Dispensing Helper and your product catalogue, and soon the till and your staff.',
+  'roles.pharmacySubDark':'Run your pharmacy: the Dispensing Helper and your product catalogue, and soon point of sale and your staff.',
   /* v0.0009 — owner-first: the switches, the placeholders, the catalogue */
   'nav.checkin':'Check-in','nav.tasks':'Tasks','nav.products':'Products',
   'soon.tag':'Coming',
   'soon.checkinT':'Check in',
-  'soon.checkinS':'Check in when you open the till and your day records itself — hours and punctuality, in a record your employer and the Syndicate can rely on. Arrives with the attendance build.',
+  'soon.checkinS':'Check in when you open point of sale and your day records itself — hours and punctuality, in a record your employer and the Syndicate can rely on. Arrives with the attendance build.',
   'soon.tasksT':'Your tasks',
   'soon.tasksS':'The tasks your pharmacy gives you, with due dates and a record of what was done. Arrives with the tasks build.',
   'tk.l1':'Tasks from your pharmacy, with due dates','tk.l2':'Repeating checks — the fridge temperature every morning','tk.l3':'A record of what was done, and when',
@@ -3067,7 +3078,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0013.3';
+const VERSION = 'App_v0.0013.4';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -3276,6 +3287,7 @@ const S = {
   stockNote: null, importNote: null, supplierQuery: '', countQuery: '',
   clockShift: 0,
   scanTarget: 'till',
+  pharmacyLast: 'till',
   /* v0.0013.3 — items of the pharmacy's own, the barcode setting, and the
      own-item form while it is open. */
   localItems: [],
@@ -3812,8 +3824,10 @@ function drugTabs() {
 
 function screenDrugs() {
   /* v0.0013.1: with the Helper in the till, Drugs is the reference. */
-  if (helperInTill()) return '<div class="screen-body"><div class="constrain stack">' +
-      linkCard('till', t('tl.checkMoved'), t('tl.checkMovedS'), "goto('till')") + '</div>' + screenReference() + '</div>';
+  /* v0.0013.4: inside the Pharmacy module Point of sale is the tab beside
+     this one, so the card pointing there goes. */
+  if (helperInTill()) return '<div class="screen-body">' + (pharmacyModule() && screenAllowed('till') ? '' : '<div class="constrain stack">' +
+      linkCard('till', t('tl.checkMoved'), t('tl.checkMovedS'), "goto('till')") + '</div>') + screenReference() + '</div>';
   return '<div class="screen-body">' +
     '<div class="constrain stack">' + drugTabs() + '</div>' +
     (S.drugTab === 'check' ? screenCheck() : screenReference()) +
@@ -8843,11 +8857,51 @@ const NAV_DARK = {
 };
 
 function navFor(role) {
+  role = role || S.role;
   let nav;
   if (!FLAGS.marketplace && NAV_DARK[role]) nav = NAV_DARK[role];
   else if (role !== 'owner') nav = NAV[role] || NAV.pharmacist;
   else nav = S.takesShifts ? NAV_OWNER_BOTH : NAV_OWNER_PHARMACY_ONLY;
-  return nav.filter(x => x[0] === 'more' || screenAllowed(x[0], role));
+  if (pharmacyModule(role)) nav = collapsePharmacy([nav], role)[0];
+  return nav.filter(x => x[0] === 'more' || x[0] === 'pharmacy' || screenAllowed(x[0], role));
+}
+
+/* ==========================================================================
+   v0.0013.4 — ONE MODULE: PHARMACY
+   Point of sale, Stock and Drugs were three modules that search the same
+   products; they are one, Pharmacy, with a tab each. The bar keeps a slot
+   for it, and the sidebar one line. The tabs a person sees are the ones
+   their role may open: an employed pharmacist has Point of sale (check only)
+   and Drugs until permissions (v0.0015) grant Stock.
+   ========================================================================== */
+const PHARMACY_TABS = [['till','till','nav.till'],['stock','barcode','nav.stock'],['drugs','pill','nav.drugs']];
+const pharmacyModule = role => { role = role || S.role; return !FLAGS.marketplace && (role === 'owner' || role === 'pharmacist'); };
+const pharmacyTabsFor = role => PHARMACY_TABS.filter(x => screenAllowed(x[0], role || S.role));
+/* Every screen that lives inside the module, so its button stays lit there. */
+const inPharmacy = s => pharmacyModule() && ['till','stock','drugs','drug','products','product'].concat(STOCK_SCREENS).includes(s);
+/* Where the module's first tab and the others were, one Pharmacy item. */
+function collapsePharmacy(groups, role) {
+  const ids = PHARMACY_TABS.map(x => x[0]);
+  let placed = !pharmacyTabsFor(role).length;
+  return groups.map(items => items.reduce((out, it) => {
+    if (!ids.includes(it[0])) return out.concat([it]);
+    if (placed) return out;
+    placed = true;
+    return out.concat([['pharmacy','store','nav.pharmacy']]);
+  }, []));
+}
+/* The module remembers its last tab: back from Home, the owner is where they
+   left off, at the counter as a rule. */
+function pharmacyLanding() {
+  const tabs = pharmacyTabsFor().map(x => x[0]);
+  return tabs.includes(S.pharmacyLast) ? S.pharmacyLast : (tabs[0] || homeScreen());
+}
+function moduleTabs() {
+  const tabs = pharmacyTabsFor();
+  if (tabs.length < 2) return '';
+  return '<div class="constrain"><div class="mod-tabs" role="tablist">' + tabs.map(([id, ic, key]) =>
+    '<button class="mod-tab' + (S.screen === id ? ' on' : '') + '" role="tab" aria-selected="' + (S.screen === id) + '" data-tab="' + id + '" ' +
+      'onclick="goto(' + attr(id) + ')">' + icon(ic) + '<span>' + esc(t(key)) + '</span></button>').join('') + '</div></div>';
 }
 
 /* The screen a role lands on. */
@@ -8857,7 +8911,10 @@ const homeScreen = () => (navFor(S.role)[0] || ['profile'])[0];
 function sidebarGroups() {
   const g = S.role === 'owner' ? ownerGroups() : null;
   if (!g) return null;
-  return g.map(x => ({ key:x.key, items:x.items.filter(i => screenAllowed(i[0])) }))
+  /* In the module the catalogue is inside Stock, so it leaves the sidebar
+     rather than light up beside Pharmacy. */
+  const items = pharmacyModule() ? collapsePharmacy(g.map(x => x.items.filter(it => it[0] !== 'products'))) : g.map(x => x.items);
+  return g.map((x, i) => ({ key:x.key, items:items[i].filter(it => it[0] === 'pharmacy' || screenAllowed(it[0])) }))
           .filter(x => x.items.length);
 }
 
@@ -8983,8 +9040,14 @@ function render() {
   const screen = SCREENS[S.screen] || SCREENS[homeScreen()];
   const unread = unreadCount();
 
-  document.getElementById('app-header').innerHTML = headerHtml(screen.eyebrow(), screen.title());
-  document.getElementById('app-body').innerHTML = verificationBanner() + screen.body();
+  /* v0.0013.4: the module's three screens carry its tabs and its name. */
+  const tabbed = pharmacyModule() && pharmacyTabsFor().some(x => x[0] === S.screen);
+  if (tabbed) S.pharmacyLast = S.screen;
+  let body = screen.body();
+  if (tabbed) { const tabs = moduleTabs(); body = body.indexOf('<div class="screen-body">') === 0
+    ? '<div class="screen-body">' + tabs + body.slice('<div class="screen-body">'.length) : tabs + body; }
+  document.getElementById('app-header').innerHTML = headerHtml(screen.eyebrow(), tabbed && pharmacyTabsFor().length > 1 ? t('nav.pharmacy') : screen.title());
+  document.getElementById('app-body').innerHTML = verificationBanner() + body;
 
   const nav = navFor(S.role);
   const onBar = nav.map(x => x[0]);
@@ -8993,11 +9056,11 @@ function render() {
     .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
 
   document.getElementById('bottom-nav').innerHTML = nav.map(([id, ic, key]) =>
-    '<button class="nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
+    '<button class="nav-item' + (S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
     icon(ic) + '<span>' + esc(t(key)) + '</span></button>').join('');
 
   const sideItem = ([id, ic, key]) =>
-    '<button class="side-nav-item' + (S.screen === id ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
+    '<button class="side-nav-item' + (S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
     icon(ic) + '<span>' + esc(t(key)) + '</span>' +
     (id === 'notifications' && unread ? '<span class="side-nav-count">' + unread + '</span>' : '') +
     '</button>';
@@ -9322,7 +9385,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0013.3.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0013.4.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -9450,6 +9513,7 @@ function goto(s){
   /* Arriving at the module from anywhere lands on the check. Moving between
      its own tabs does not go through here, so a pharmacist reading the
      reference is not yanked back mid-scroll. */
+  if (s === 'pharmacy') s = pharmacyLanding();
   if (s === 'drugs') S.drugTab = helperInTill() ? 'reference' : 'check';
   if (!screenAllowed(s)) s = homeScreen();
   S.screen = s; S.modal = null; render(); scrollTop();

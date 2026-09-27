@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0013.3">
+<meta name="version" content="CRM_v0.0013.4">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -768,7 +768,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0013.3';
+const VERSION = 'CRM_v0.0013.4';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1049,7 +1049,7 @@ Object.assign(STRINGS, {
   'mod.listings':'Listings','mod.invoices':'Invoices',
   /* v0.0009 — the product catalogue */
   'mod.catalogue':'Catalogue',
-  'cat.note':'Products — what a till scans — linked to the molecules the Dispensing Helper checks. The mapping queue is every product not linked yet, including barcodes a pharmacy scanned that matched nothing, most-scanned first. Marking a link verified is the clinical curator’s step (W19) and arrives with the Rules module in v0.0016.',
+  'cat.note':'Products — what a point of sale scans — linked to the molecules the Dispensing Helper checks. The mapping queue is every product not linked yet, including barcodes a pharmacy scanned that matched nothing, most-scanned first. Marking a link verified is the clinical curator’s step (W19) and arrives with the Rules module in v0.0016.',
   'v.allProducts':'All products','v.mappingQueue':'Mapping queue','v.awaitingCheck':'Awaiting a pharmacist’s check',
   'v.partCheckable':'Partly or not checkable','v.nondrugs':'Not medicines',
   'c.barcode':'Barcode','c.mapping':'Mapping','c.molecules':'Ingredients','c.coverage':'Helper coverage',
@@ -1060,13 +1060,13 @@ Object.assign(STRINGS, {
   'cov.full':'The Dispensing Helper can check everything in this product.',
   'cov.partial':'The Helper can check only part of this. Not in the reference yet: {names}.',
   'cov.none':'The Helper can’t check anything in this yet. Not in the reference: {names}.',
-  'cov.unmapped':'Ingredients not linked. It still sells at the till, and the Helper says plainly that it couldn’t check it.',
+  'cov.unmapped':'Ingredients not linked. It still sells at point of sale, and the Helper says plainly that it couldn’t check it.',
   'cov.nondrug':'Not a medicine — nothing for the Helper to check.',
   'cat.unknown':'Unknown product','cat.map':'Map ingredients','cat.remap':'Correct the mapping',
   'cat.inside':'What’s in it','cat.outside':'Not in the reference',
   'cat.noneLinked':'No ingredients linked yet — the Helper cannot check this product.',
   'cat.nondrugNote':'Not a medicine — nothing for the Helper to check.',
-  'cat.scannedAt':'Scanned at','cat.src.catalogue':'Catalogue','cat.src.scan':'Scanned at a till, unmatched',
+  'cat.scannedAt':'Scanned at','cat.src.catalogue':'Catalogue','cat.src.scan':'Scanned at a point of sale, unmatched',
   'cat.nameEn':'Name (English)','cat.strength':'Strength','cat.ingredients':'Ingredients',
   'cat.molPh':'Molecule — from the reference, or one outside it','cat.addIngredient':'Add an ingredient',
   'cat.ingredientHint':'A name that matches the reference links to it. Anything else is saved as outside the reference, and the Helper will say it cannot check it.',
@@ -7190,7 +7190,7 @@ const DATA = {
        one, while partners are still closed; nobody paid for it and nobody had
        to be phoned about it, because the team wrote it. */
     { id:'A1', kind:'announcement', company:null, state:'live',
-      title:'The till is here', where:null, from:'2026-09-25', to:'2026-10-31',
+      title:'Point of sale is here', where:null, from:'2026-09-25', to:'2026-10-31',
       contact:null, calledOn:null, calledBy:null, writtenBy:'u1', notes:'Shown on every home screen.',
       surface:'home', price:0 },
     { id:'J1', kind:'job', company:'CO1', state:'live',
@@ -10529,7 +10529,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0013.3.html';
+const PEER_APP = '../demo/saydali-plus_v0.0013.4.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');

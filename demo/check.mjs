@@ -1285,8 +1285,10 @@ await signIn(dk, 'ahmed@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
 /* v0.0013.1: the Helper lives in the till, which takes the CV's slot. */
-ok('a pharmacist’s bar is check-in, tasks, the till (checking), the reference and their profile',
-   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,tasks,till,drugs,profile'));
+/* v0.0013.4: point of sale and the reference are tabs of one Pharmacy module. */
+ok('a pharmacist’s bar is check-in, tasks, the pharmacy (point of sale to check, and the reference) and their profile',
+   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,tasks,pharmacy,profile' &&
+     pharmacyTabsFor('pharmacist').map(x => x[0]).join() === 'till,drugs'));
 ok('and the CV is one tap away on Profile',
    await dk.evaluate(() => profileLinks().some(x => x[0] === 'cv')));
 ok('and they land on check-in', await dk.evaluate(() => S.screen === 'checkin'));
@@ -1319,16 +1321,17 @@ await signOut(dk);
 await signIn(dk, 'rahma@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('an owner’s bar is their home, the till, stock, the Helper and their profile',
-   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,till,stock,drugs,profile'));
+ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) and their profile',
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,profile' &&
+     pharmacyTabsFor('owner').map(x => x[0]).join() === 'till,stock,drugs'));
 {
   const txt = await dk.locator('#app-body').innerText();
   ok('their home stops prompting about applicants and unfilled shifts',
      !/waiting on you|unfilled/i.test(txt) && await dk.locator('.repeat-chip').count() === 0);
   /* v0.0012: what used to be "coming" is here — the till is a link now, not
      a promise. */
-  ok('and leads to the till instead, which is no longer “coming”',
-     /till/i.test(txt) && !/on its way/i.test(txt) && await dk.locator('.soon-tag').count() === 0);
+  ok('and leads to point of sale instead, which is no longer “coming”',
+     /point of sale/i.test(txt) && !/on its way/i.test(txt) && await dk.locator('.soon-tag').count() === 0);
   /* v0.0013.2 (H3): the catalogue card left the home for the Stock screen. */
   ok('the catalogue is no longer a card on the home; it is one tap inside Stock',
      !/products in the catalogue/i.test(txt) &&
@@ -1611,9 +1614,10 @@ console.log('\nthe till (v0.0012)');
        setTillMode('sell'); openPay(); completeSale();
        const r3 = tillMode() === 'check' && !S.modal && !S.sales.some(x => x.by === 'ahmed@example.com');
        tillClear(); return r && r2 && r3; }));
-  ok('with the Helper in the till, Drugs is the reference, and says where the check went',
+  ok('with the Helper in the till, Drugs is the reference, with Point of sale the tab beside it (no card pointing there)',
      await dk.evaluate(() => { goto('drugs'); return S.drugTab === 'reference' && !document.querySelector('.segbar') &&
-       /It is in the till now/.test(document.getElementById('app-body').innerText); }));
+       !/It is in Point of sale now/.test(document.getElementById('app-body').innerText) &&
+       !!document.querySelector('.mod-tab[data-tab="till"]') && !!document.querySelector('.mod-tab[data-tab="drugs"].on'); }));
   await dk.evaluate(() => { goto('products'); openProduct(PRODUCTS[0].barcode); });
   ok('…and sees no price on the catalogue: what a pharmacy charges is the owner’s business',
      await dk.evaluate(() => !document.querySelector('.price-card, .market-avg') &&
@@ -1621,7 +1625,7 @@ console.log('\nthe till (v0.0012)');
 
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
   ok('the owner’s dashboard carries the till card, and a banner slot (so the next check is not vacuous)',
-     await dk.evaluate(() => /Open the till/.test(document.getElementById('app-body').innerText) &&
+     await dk.evaluate(() => /Open point of sale/.test(document.getElementById('app-body').innerText) &&
        document.querySelectorAll('.banner-slot').length > 0));
   await dk.evaluate(() => goto('till'));
   ok('the till opens on the owner’s pharmacy, named, selling',
@@ -2047,11 +2051,11 @@ console.log('\nstock and purchasing (v0.0013)');
   ]);
 
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
-  ok('an owner’s bar: home, the till, stock, the Helper, their profile',
-     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,till,stock,drugs,profile'));
-  ok('the catalogue is one tap inside Stock and in the sidebar',
+  ok('an owner’s bar: home, the pharmacy, their profile',
+     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,profile'));
+  ok('the catalogue is one tap inside Stock — and, with Pharmacy one module (v0.0013.4), not a second line in the sidebar',
      await dk.evaluate(() => { goto('stock'); return /Catalogue and prices/.test(document.getElementById('app-body').innerText) &&
-       sidebarGroups()[0].items.some(x => x[0] === 'products'); }));
+       !sidebarGroups()[0].items.some(x => x[0] === 'products') && sidebarGroups()[0].items.some(x => x[0] === 'pharmacy'); }));
   ok('the home screen says what the shelf needs',
      await dk.evaluate(() => { goto('dashboard'); const t = document.getElementById('app-body').innerText;
        return /Needs you/i.test(t) && /Expired batches in quarantine: 1/.test(t) && /Expiring within 90 days: 1/.test(t); }));
@@ -2607,6 +2611,71 @@ console.log('\nsearch by any name, and stock without barcodes (v0.0013.3)');
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.noBarcodes = {}; render(); });
   ok('switched back on, the scanner returns',
      await dk.evaluate(() => { goto('till'); return !!document.querySelector('.till-cam'); }));
+}
+
+
+/* ---------------------------------------------------------------------------
+   v0.0013.4 — Point of sale, Stock and Drugs as one module, Pharmacy.
+   --------------------------------------------------------------------------- */
+console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
+{
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.pharmacyLast = 'till'; goto('dashboard'); });
+  ok('the owner’s sidebar has one Pharmacy line where Till, Stock and Drugs were',
+     await dk.evaluate(() => { const ids = [...document.querySelectorAll('#side-nav [onclick]')].map(b => b.getAttribute('onclick'));
+       return ids.filter(x => /'pharmacy'/.test(x)).length === 1 && !ids.some(x => /'(till|stock|drugs)'/.test(x)); }));
+  ok('Pharmacy opens on Point of sale, with a tab each for Point of sale, Stock and Drugs, under the module’s name',
+     await dk.evaluate(() => { [...document.querySelectorAll('#side-nav [onclick]')].find(b => /'pharmacy'/.test(b.getAttribute('onclick'))).click();
+       const tabs = [...document.querySelectorAll('.mod-tab')];
+       return S.screen === 'till' && tabs.map(b => b.innerText.trim()).join('|') === 'Point of sale|Stock|Drugs' &&
+         tabs[0].classList.contains('on') && /Pharmacy/.test(document.getElementById('app-header').innerText) &&
+         /Al-Rahma/i.test(document.getElementById('app-header').innerText); }));
+  ok('a tab moves within the module, and the Pharmacy line stays lit',
+     await dk.evaluate(() => { document.querySelector('.mod-tab[data-tab="stock"]').click();
+       return S.screen === 'stock' && document.querySelector('.mod-tab.on').dataset.tab === 'stock' &&
+         /'pharmacy'/.test(document.querySelector('#side-nav .side-nav-item.active').getAttribute('onclick')); }));
+  ok('…and stays lit a level down: a count, a product, a drug record',
+     await dk.evaluate(() => ['count', 'orders'].every(s => { goto(s); return /'pharmacy'/.test(document.querySelector('#side-nav .active').getAttribute('onclick')); }) &&
+       (openProduct('5000000001002'), /'pharmacy'/.test(document.querySelector('#side-nav .active').getAttribute('onclick'))) &&
+       (openDrug('Paracetamol'), /'pharmacy'/.test(document.querySelector('#side-nav .active').getAttribute('onclick')))));
+  ok('…where the module tabs are not repeated',
+     await dk.evaluate(() => !document.querySelector('.mod-tabs')));
+  ok('the module remembers its last tab',
+     await dk.evaluate(() => { goto('drugs'); goto('dashboard'); goto('pharmacy'); return S.screen === 'drugs' && !!document.querySelector('.mod-tab[data-tab="drugs"].on'); }));
+  ok('the minimum level asks plainly: “Warn me when fewer than…”',
+     await dk.evaluate(() => { openProduct('5000000001002'); return document.getElementById('min-level').placeholder === 'Warn me when fewer than…'; }));
+  ok('nothing the app says calls it “the till” any more, in either language',
+     await dk.evaluate(() => { const en = Object.entries(STRINGS.en).filter(([k, v]) => /\btill\b/i.test(v)).map(x => x[0]);
+       const ar = Object.entries(STRINGS.ar).filter(([k, v]) => /الكاشير/.test(v)).map(x => x[0]);
+       return !en.length && !ar.length && t('nav.till') === 'Point of sale'; }));
+  ok('in Arabic: الصيدلية, and نقطة البيع',
+     await dk.evaluate(() => { setLang('ar'); goto('till'); const r = document.querySelector('.mod-tab').innerText.trim() === 'نقطة البيع' &&
+       /الصيدلية/.test(document.getElementById('app-header').innerText); setLang('en'); return r; }));
+  ok('the home still opens point of sale in one tap',
+     await dk.evaluate(() => { goto('dashboard'); document.querySelector('.hm-till').click(); return S.screen === 'till' && /Open point of sale/.test((goto('dashboard'), document.querySelector('.hm-till').innerText)); }));
+  ok('a pharmacist sees Point of sale and Drugs; Stock waits for permissions (v0.0015)',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('pharmacy');
+       const tabs = [...document.querySelectorAll('.mod-tab')].map(b => b.dataset.tab).join();
+       goto('stock'); return tabs === 'till,drugs' && S.screen !== 'stock'; }));
+  ok('an owner of several keeps the pharmacy chooser, under the module tabs',
+     await dk.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy('P2'); goto('stock');
+       const m = document.querySelector('.mod-tabs'), p = document.querySelector('.ptabs');
+       return !!m && !!p && (m.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) > 0; }));
+  ok('with the marketplace on, the bars are as they were',
+     await dk.evaluate(() => { setFlag('marketplace', true); const r = !navFor('owner').some(x => x[0] === 'pharmacy'); setFlag('marketplace', false); return r; }));
+  {
+    await dk.setViewportSize({ width: 320, height: 700 });
+    const wide = [];
+    for (const dir of ['ar', 'en']) {
+      for (const [who, s] of [['rahma@example.com', 'till'], ['rahma@example.com', 'stock'], ['layla@example.com', 'drugs'], ['ahmed@example.com', 'till']]) {
+        await dk.evaluate(([w, d, s]) => { signOut(); signInAs(w); setLang(d); if (w === 'layla@example.com') setPharmacy('P2'); goto(s); }, [who, dir, s]);
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} ${s} (${dir})`);
+        const bar = await dk.evaluate(() => [...document.querySelectorAll('#bottom-nav .nav-item')].map(b => b.innerText.trim()).join('|'));
+        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'لوحة التحكم|الصيدلية|الحساب' : 'Dashboard|Pharmacy|Profile')) wide.push('bar ' + bar);
+      }
+    }
+    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Profile${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
 }
 
 await dk.setViewportSize({ width: 320, height: 700 });

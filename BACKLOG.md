@@ -1145,7 +1145,9 @@ pharmacies will not use barcodes at all. *Plan:*
 ### v0.0013.4 — proposed: fewer main modules (27 Sep 2026)
 
 Raised 27 Sep 2026: *Drugs, Till and Stock are three main modules but
-overlap — can they be one, with sub-modules?* **Recorded, not built.**
+overlap — can they be one, with sub-modules?* **Decided 27 Sep 2026: A,
+named "Pharmacy"; and the till renamed "Point of sale / نقطة البيع".
+Built as v0.0013.4** — see *as built* below.
 
 Why they are separate today: they were built as three jobs — the till
 (every minute, at the counter), stock (back office, weekly), the drug
@@ -1181,6 +1183,30 @@ link to the drug's information).
 Also noticed while making them: the minimum-level box on a product's stock
 card reads "Tell me below…" — unclear. Proposed: "Warn me when fewer than…" /
 "نبّهني عندما يقلّ عن…".
+
+### v0.0013.4 as built — one Pharmacy module; the till is Point of sale
+
+- **Pharmacy / الصيدلية** replaces Till, Stock and Drugs on the bar and in
+  the sidebar (marketplace off). The owner's bar is **Dashboard · Pharmacy ·
+  Profile**; a pharmacist's is **Check-in · Tasks · Pharmacy · Profile**.
+- Inside, a tab each — **Point of sale · Stock · Drugs** — under the header
+  "Pharmacy", with the pharmacy's name above it. The tabs a person sees are
+  the ones their role may open: a pharmacist has Point of sale (check only)
+  and Drugs; Stock waits for permissions (v0.0015).
+- The module **remembers its last tab**; it opens on Point of sale the first
+  time. The Pharmacy button stays lit a level down (a count, an order, a
+  product, a drug record), where the tabs are not repeated.
+- An owner of several keeps the pharmacy chooser, under the module tabs.
+- **The till is "Point of sale" / "نقطة البيع"** everywhere the app says it
+  (tab, home button "Open point of sale", the announcement, check-in and
+  barcode wording, the CRM's catalogue notes). Code names are unchanged.
+- The Drugs tab lost its "Checking a prescription? It is in Point of sale
+  now" card (the tab is beside it); the desktop sidebar lost its separate
+  Products line (the catalogue is inside Stock).
+- The minimum-level box reads **"Warn me when fewer than…" / "نبّهني عندما
+  يقلّ عن…"**.
+- With the marketplace switched on, the bars are as they were.
+- Checks: 14 new (541 app in all); mutation-tested.
 
 ## Unused concepts
 
@@ -1232,8 +1258,8 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
-- **v0.0013.4 proposed, not built** — fewer main modules (Till alone;
-  Stock + Drugs as one "Products"); three questions waiting.
+- **v0.0013.4 built** — one Pharmacy module (Point of sale · Stock ·
+  Drugs); the till renamed Point of sale.
 - **v0.0013.3 built** (search by any name; stock without barcodes; own
   items). **Permissions moved up to v0.0015** (26 Sep 2026) — it will carry
   "may add items" for staff.
