@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0013.5">
+<meta name="version" content="App_v0.0014">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -985,6 +985,35 @@
   .take-chip{ font-size:12px; }
   .till-confirm{ margin-top:4px; }
   .till-other{ display:block; margin:10px auto 0; }
+  /* v0.0014 — the drawer, and offline */
+  .dr-status{ display:flex; align-items:center; gap:10px; width:100%; text-align:start; padding:10px 14px; border:1px solid var(--border); border-radius:14px; background:var(--card); font-size:13px; flex-wrap:wrap; }
+  .dr-status .more-chevron{ margin-inline-start:auto; }
+  .dr-status-t{ font-weight:600; color:var(--ink-soft); }
+  .dr-dot{ width:9px; height:9px; border-radius:50%; background:var(--ink-faint); flex:none; }
+  .dr-dot.on{ background:var(--palm); }
+  .dr-off{ flex-basis:100%; width:fit-content; display:inline-flex; align-items:center; gap:5px; font-weight:600; color:var(--indigo); background:var(--indigo-tint); padding:3px 9px; border-radius:100px; }
+  .dr-off.warn{ color:#845310; background:var(--amber-tint); }
+  .dr-off.bad{ color:var(--clay); background:var(--clay-tint); }
+  .dr-off svg{ width:14px; height:14px; }
+  .dr-count{ width:100%; font-family:var(--font-mono); font-size:22px; font-weight:600; border:1.4px solid var(--border); border-radius:12px; padding:10px 14px; margin:6px 0 10px; }
+  .drawer-sheet input, .dr-reveal input, .dr-countcard input{ width:100%; border:1.4px solid var(--border); border-radius:12px; padding:10px 13px; margin:6px 0 10px; }
+  .drawer-sheet .btn-ghost, .dr-countcard .btn-ghost{ width:100%; margin-top:8px; }
+  .dr-diff{ font-size:13.5px; color:var(--clay); margin:-2px 0 6px; }
+  .dr-figs{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin:12px 0; }
+  .dr-figs div{ background:var(--mist); border-radius:12px; padding:10px 12px; min-width:0; }
+  .dr-figs span{ display:block; font-size:12px; color:var(--ink-soft); }
+  .dr-figs b{ display:block; font-size:16px; margin-top:3px; overflow-wrap:anywhere; }
+  .dr-var.ok b{ color:var(--palm); } .dr-var.warn b{ color:#845310; } .dr-var.bad b{ color:var(--clay); }
+  .dr-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .dr-actions .dr-close{ grid-column:1 / -1; }
+  .dr-n{ font-size:14px; font-weight:600; margin-top:10px; }
+  .dr-other{ margin-top:12px; } .dr-other-row{ display:flex; justify-content:space-between; font-size:14px; padding:4px 0; }
+  .dr-signrow{ margin:4px 0 10px; }
+  .dev-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; font-size:13.5px; flex-wrap:wrap; }
+  .dev-pick{ margin:0; } .dev-pick button{ flex:none; padding:8px 14px; }
+  .adj-card summary{ font-weight:600; cursor:pointer; }
+  .adj-card select{ width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card); }
+  .shelf-label{ background:#fff; }
   /* v0.0013.5 — the UI review (U1–U9) */
   .app-header{ padding:12px 20px; }
   @media (min-width:901px){ .app-header{ padding:16px 34px; } }
@@ -1747,6 +1776,36 @@ let lang = 'ar';
 Object.assign(STRINGS.ar, {
   /* v0.0013.3 */
   'nav.pharmacy':'الصيدلية',
+  /* v0.0014 */
+  'dr.title':'الصندوق','dr.openT':'افتح الصندوق','dr.openS':'عُدّ النقد في الصندوق قبل أول بيع. لا يظهر لك ما يُفترض أن يكون فيه قبل العدّ.',
+  'dr.countCash':'النقد في الصندوق (د.ع)','dr.openGo':'افتح الصندوق','dr.later':'لاحقاً','dr.laterNote':'«لاحقاً» يفتح الصندوق دون عدّ، ويُسجَّل ذلك. لا يمنع ذلك البيع.',
+  'dr.leftWas':'تُرك فيه أمس {left} — الفرق {diff}. اكتب ملاحظة.','dr.notePh':'ما الذي حدث؟','dr.needNote':'اكتب ملاحظة عن الفرق.','dr.needCount':'اكتب المبلغ المعدود.',
+  'dr.noSaleT':'فتح الصندوق دون بيع','dr.noSaleS':'يُسجَّل مع السبب ومن فتحه.','dr.noSalePh':'السبب — مثلاً صرف فكّة','dr.needReason':'اكتب السبب.','dr.noSaleGo':'سجّل وافتح','dr.noSaleDone':'سُجّل فتح الصندوق.',
+  'dr.handedOver':'سُجّل التسليم.','dr.openSince':'الصندوق مفتوح منذ {t} · {by}','dr.closedNow':'الصندوق مغلق','dr.closedNowS':'يُطلب عدّ النقد عند أول بيع، أو افتحه الآن.',
+  'dr.uncounted':'دون عدّ','dr.closedWaiting':'أُغلق — بانتظار توقيع المالك','dr.closedT':'أُغلق الصندوق','dr.slipNote':'ورقة الإغلاق تُطبع على طابعة الوصولات.','dr.done':'تمّ',
+  'dr.handoverT':'تسليم الصندوق','dr.closeT':'إغلاق الصندوق','dr.blindS':'عُدّ النقد أولاً. يظهر ما يُفترض أن يكون فيه بعد العدّ.','dr.countGo':'تمّ العدّ',
+  'dr.noteL':'ملاحظة عن الفرق','dr.toL':'إلى من؟','dr.toPh':'الاسم (اختياري)','dr.leftL':'ما يُترك في الصندوق للغد (د.ع)',
+  'dr.signL':'راجعتُ هذا الفرق وأوقّع عليه (أكثر من {amt})','dr.willWait':'الفرق أكثر من {amt}: يبقى بانتظار توقيع المالك.','dr.needSign':'الفرق فوق حدّ التوقيع: وقّع عليه.','dr.badLeft':'ما يُترك لا يتجاوز المعدود.',
+  'dr.handoverGo':'سلّم','dr.closeGo':'أغلق الصندوق','dr.floatLaterS':'فُتح دون عدّ النقد.','dr.floatS':'النقد عند الفتح: {f}','dr.salesN':'{n} عمليات بيع في هذه الجلسة',
+  'dr.otherT':'غير النقد — طابِقه مع كشف الحساب','dr.close':'أغلق الصندوق','dr.handover':'سلّم الصندوق','dr.noSale':'فتح دون بيع',
+  'dr.waitingT':'بانتظار توقيعك','dr.sign':'وقّع','dr.pastT':'جلسات سابقة','dr.stWaiting':'بانتظار التوقيع','dr.stClosed':'مغلق',
+  'dr.overL':'وقّع بنفسك على كل فرق أكبر من (د.ع)','dr.overS':'كل فرق يحتاج ملاحظة؛ ما فوق هذا المبلغ يحتاج توقيعك. لا يُخصم شيء من راتب أحد.',
+  'dr.trailT':'سجلّ هذه الجلسة','dr.waitingN':'صناديق بانتظار توقيعك: {n}',
+  'au.sale':'بيع {no} · {amt}','au.disc':'خصم {amt}','au.refund':'استرجاع {amt} — {why}','au.void':'حذف {name} ×{n}','au.noSale':'فتح دون بيع — {why}','au.handover':'تسليم · فرق {v}',
+  'au.floatLater':'فُتح دون عدّ','au.drawerOpen':'فُتح الصندوق','au.offline':'انقطع الاتصال','au.online':'عاد الاتصال','au.sync':'أُرسل ما حُفظ على الجهاز',
+  'sl.title':'إغلاق الصندوق','sl.device':'جهاز {d}','sl.sales':'المبيعات ({n})','sl.refunds':'الاسترجاع ({n})','sl.voids':'الحذف ({n})','sl.discounts':'الخصومات ({n})','sl.noSale':'فتح دون بيع ({n})',
+  'sl.float':'النقد عند الفتح','sl.notCounted':'لم يُعدّ','sl.expected':'المفترض في الصندوق','sl.counted':'المعدود','sl.variance':'الفرق','sl.note':'ملاحظة:','sl.left':'تُرك للغد',
+  'sl.closedBy':'أغلقه:','sl.signedBy':'وقّع:','sl.waiting':'بانتظار توقيع المالك','sl.noSign':'ضمن الحدّ — لا يحتاج توقيعاً',
+  'off.needs':'يحتاج هذا إلى اتصال. سيبقى كما هو حتى يعود.','off.now':'دون اتصال · {n} عمليات بيع محفوظة على الجهاز','off.day':'دون اتصال منذ أكثر من يوم — اتصل لإرسال {n} عمليات بيع',
+  'off.days':'دون اتصال منذ {d} أيام — اتصل في أقرب وقت','off.saleWarn':'دون اتصال منذ {d} أيام — البيع محفوظ على الجهاز؛ اتصل في أقرب وقت.','off.priceOnce':'دون اتصال: السعر لهذا البيع فقط.',
+  'off.conflict':'بيعت آخر علبة من {name} على جهازين دون اتصال ({sales}) — تحقّق من الرف.','off.checked':'تحقّقت','off.conflictT':'بيع على جهازين دون اتصال: {name}','off.conflictS':'تحقّق من الرف · {sales}',
+  'off.deviceT':'هذا الجهاز والاتصال','off.onlineL':'متصل','off.onlineS':'كل شيء يُرسل فوراً.','off.offlineS':'دون اتصال منذ {since} · {n} عمليات بيع محفوظة هنا، تُرسل عند عودة الاتصال.',
+  'off.thisDevice':'هذا الجهاز: {d}','off.device':'جهاز {d}','off.protoNote':'في النموذج: «جهاز B» صندوق ثانٍ في الصيدلية نفسها، لتجربة البيع على جهازين دون اتصال.',
+  'adj.title':'تصحيح المخزون','adj.sub':'تصحيح مع سبب، في السجلّ نفسه. للإضافة رقم موجب، وللنقص رقم سالب.','adj.qty':'الكمية (+/−)','adj.why':'السبب',
+  'adj.r.damaged':'تالف','adj.r.lost':'مفقود','adj.r.found':'وُجد','adj.r.miscounted':'خطأ في العدّ','adj.r.other':'سبب آخر','adj.note':'ملاحظة','adj.go':'صحّح',
+  'st.note.adjNeed':'اكتب الكمية واختر السبب (وملاحظة إن كان «سبب آخر»).','st.note.adjDone':'سُجّل التصحيح.',
+  'shl.title':'ملصقات الرفوف','shl.titleShort':'ملصقات الرفوف','shl.sub':'ملصق لكل رف، يُطبع على طابعة الوصولات. مسحه يبدأ جرد ذلك الرف.','shl.none':'لا رفوف بعد — ابدأ جرد رف أولاً.','shl.print':'اطبع ملصقات الرفوف',
+
   'hm.checkRx':'افحص وصفة','hm.checkRxS':'امسح ما يتناوله المريض — مساعد الوصفات يفحصها كلها معاً.',
   'tl.basketN':'السلّة · {n}','tl.basket1':'السلّة · 1','tl.basketEmpty':'السلّة فارغة','tl.keyPay':'ادفع','tl.keyEsc':'امسح البحث',
   'ct.confirm1':'أكّد الجرد — دواء واحد',
@@ -1760,6 +1819,36 @@ Object.assign(STRINGS.ar, {
 });
 Object.assign(STRINGS.en, {
   'nav.pharmacy':'Pharmacy',
+  /* v0.0014 */
+  'dr.title':'Cash drawer','dr.openT':'Open the drawer','dr.openS':'Count the cash in the drawer before the first sale. What it should hold is not shown until you have counted.',
+  'dr.countCash':'Cash in the drawer (IQD)','dr.openGo':'Open the drawer','dr.later':'Later','dr.laterNote':'“Later” opens the drawer uncounted, and the record says so. It never stops a sale.',
+  'dr.leftWas':'Left in it last night: {left} — a difference of {diff}. Add a note.','dr.notePh':'What happened?','dr.needNote':'Add a note about the difference.','dr.needCount':'Type the amount you counted.',
+  'dr.noSaleT':'Open the drawer — no sale','dr.noSaleS':'Recorded with the reason and who opened it.','dr.noSalePh':'Reason — e.g. change for a note','dr.needReason':'Type the reason.','dr.noSaleGo':'Record and open','dr.noSaleDone':'Drawer opening recorded.',
+  'dr.handedOver':'Hand-over recorded.','dr.openSince':'Drawer open since {t} · {by}','dr.closedNow':'The drawer is closed','dr.closedNowS':'The first sale asks for the count — or open it now.',
+  'dr.uncounted':'uncounted','dr.closedWaiting':'Closed — waiting for the owner’s sign-off','dr.closedT':'Drawer closed','dr.slipNote':'The close slip prints on the receipt printer.','dr.done':'Done',
+  'dr.handoverT':'Hand the drawer over','dr.closeT':'Close the drawer','dr.blindS':'Count the cash first. What it should hold appears after you count.','dr.countGo':'Counted',
+  'dr.noteL':'A note about the difference','dr.toL':'Handed to','dr.toPh':'Name (optional)','dr.leftL':'Left in the drawer for tomorrow (IQD)',
+  'dr.signL':'I have checked this difference and sign it off (over {amt})','dr.willWait':'The difference is over {amt}: it waits for the owner’s sign-off.','dr.needSign':'Over the sign-off amount: sign it off.','dr.badLeft':'What is left cannot be more than was counted.',
+  'dr.handoverGo':'Hand over','dr.closeGo':'Close the drawer','dr.floatLaterS':'Opened without counting the cash.','dr.floatS':'Cash at opening: {f}','dr.salesN':'{n} sales in this session',
+  'dr.otherT':'Not cash — match against your statement','dr.close':'Close the drawer','dr.handover':'Hand over','dr.noSale':'No sale',
+  'dr.waitingT':'Waiting for your sign-off','dr.sign':'Sign off','dr.pastT':'Earlier sessions','dr.stWaiting':'waiting for sign-off','dr.stClosed':'closed',
+  'dr.overL':'Sign off yourself any difference over (IQD)','dr.overS':'Every difference needs a note; above this amount it needs your sign-off. Nothing is ever deducted from anyone’s pay.',
+  'dr.trailT':'This session’s record','dr.waitingN':'Drawers waiting for your sign-off: {n}',
+  'au.sale':'Sale {no} · {amt}','au.disc':'discount {amt}','au.refund':'Refund {amt} — {why}','au.void':'Removed {name} ×{n}','au.noSale':'No sale — {why}','au.handover':'Hand-over · difference {v}',
+  'au.floatLater':'Opened uncounted','au.drawerOpen':'Drawer opened','au.offline':'Went offline','au.online':'Back online','au.sync':'Sent what was kept on the device',
+  'sl.title':'Drawer close','sl.device':'device {d}','sl.sales':'Sales ({n})','sl.refunds':'Refunds ({n})','sl.voids':'Removed lines ({n})','sl.discounts':'Discounts ({n})','sl.noSale':'No-sale openings ({n})',
+  'sl.float':'Cash at opening','sl.notCounted':'not counted','sl.expected':'Should be in the drawer','sl.counted':'Counted','sl.variance':'Difference','sl.note':'Note:','sl.left':'Left for tomorrow',
+  'sl.closedBy':'Closed by:','sl.signedBy':'Signed off by:','sl.waiting':'Waiting for the owner’s sign-off','sl.noSign':'Within the amount — no sign-off needed',
+  'off.needs':'This needs a connection. It will wait until you are back online.','off.now':'Offline · sales waiting to send: {n}','off.day':'Offline for over a day — sales waiting to send: {n}',
+  'off.days':'Offline for {d} days — connect as soon as you can','off.saleWarn':'Offline for {d} days — the sale is kept on this device; connect as soon as you can.','off.priceOnce':'Offline: this price is for this sale only.',
+  'off.conflict':'The last {name} was sold on two devices while offline ({sales}) — check the shelf.','off.checked':'Checked','off.conflictT':'Sold on two devices offline: {name}','off.conflictS':'Check the shelf · {sales}',
+  'off.deviceT':'This device, and the connection','off.onlineL':'Online','off.onlineS':'Everything is sent as it happens.','off.offlineS':'Offline since {since} · sales kept here: {n}, sent when the connection is back.',
+  'off.thisDevice':'This device: {d}','off.device':'Device {d}','off.protoNote':'Prototype: “Device B” is a second point of sale at the same pharmacy, to try two devices selling offline.',
+  'adj.title':'Correct the stock','adj.sub':'A correction with a reason, on the same record. A positive number adds, a negative one removes.','adj.qty':'Quantity (+/−)','adj.why':'Reason',
+  'adj.r.damaged':'Damaged','adj.r.lost':'Lost','adj.r.found':'Found','adj.r.miscounted':'Miscounted','adj.r.other':'Other reason','adj.note':'Note','adj.go':'Correct',
+  'st.note.adjNeed':'Type the quantity and choose a reason (and a note for “Other reason”).','st.note.adjDone':'Correction recorded.',
+  'shl.title':'Shelf labels','shl.titleShort':'Shelf labels','shl.sub':'A label per shelf, printed on the receipt printer. Scanning it starts that shelf’s count.','shl.none':'No shelves yet — count a shelf first.','shl.print':'Print shelf labels',
+
   'hm.checkRx':'Check a prescription','hm.checkRxS':'Scan what the patient is taking — the Dispensing Helper checks it all together.',
   'tl.basketN':'Basket · {n} items','tl.basket1':'Basket · 1 item','tl.basketEmpty':'Basket is empty','tl.keyPay':'pay','tl.keyEsc':'clear search',
   'ct.confirm1':'Confirm the count — 1 drug',
@@ -2329,7 +2418,7 @@ Object.assign(STRINGS.ar, {
   'cv.exportNote':'يُصدَّر بلغة السيرة لا بلغة التطبيق.',
   'cv.native':'اللغة الأم','cv.fluent':'إتقان تام','cv.professional':'مستوى مهني','cv.basic':'أساسي',
   'cv.saved':'حُفظت سيرتك.',
-  'lb.title':'سجل التدريب','lb.week':'الأسبوع {n} من 12','lb.attendance':'أيام الحضور',
+  'shl.title':'سجل التدريب','lb.week':'الأسبوع {n} من 12','lb.attendance':'أيام الحضور',
   'lb.entry':'ماذا عملت هذا الأسبوع؟','lb.entryPlaceholder':'الأدوية التي صرفتها، ما تعلّمته، ما أشكل عليك.',
   'lb.minChars':'{n} حرفاً على الأقل','lb.charsSoFar':'{n} حرف','lb.needsDay':'سجّل يوم حضور واحداً على الأقل.',
   'lb.submit':'إرسال الأسبوع','lb.submitted':'أُرسل — بانتظار مصادقة الصيدلية',
@@ -2590,7 +2679,7 @@ Object.assign(STRINGS.en, {
   'cv.exportNote':'Exports in the CV’s language, not the app’s.',
   'cv.native':'Native','cv.fluent':'Fluent','cv.professional':'Professional','cv.basic':'Basic',
   'cv.saved':'CV saved.',
-  'lb.title':'Logbook','lb.week':'Week {n} of 12','lb.attendance':'Days attended',
+  'shl.title':'Logbook','lb.week':'Week {n} of 12','lb.attendance':'Days attended',
   'lb.entry':'What did you do this week?','lb.entryPlaceholder':'What you dispensed, what you learned, what you found difficult.',
   'lb.minChars':'{n} characters minimum','lb.charsSoFar':'{n} characters','lb.needsDay':'Record at least one day of attendance.',
   'lb.submit':'Submit week','lb.submitted':'Submitted — awaiting the pharmacy',
@@ -3168,7 +3257,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0013.5';
+const VERSION = 'App_v0.0014';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -3219,7 +3308,7 @@ function setFlag(k, on) {
    because an incident is filed against a booking, and with the marketplace off
    there are no bookings to file against. */
 const MARKET_SCREENS = ['shifts', 'handoff', 'earnings', 'applicants', 'incidents'];
-const STOCK_SCREENS = ['stock', 'count', 'import', 'orders', 'order', 'suppliers', 'register'];
+const STOCK_SCREENS = ['stock', 'count', 'import', 'orders', 'order', 'suppliers', 'register', 'labels'];
 const PLACEMENT_SCREENS = ['placement', 'logbook', 'trainees'];
 
 /* The single gate. Navigation, the sidebar, Profile's links and render() all
@@ -3239,6 +3328,8 @@ function screenAllowed(screen, role) {
   if (screen === 'till') return role === 'owner' || (role === 'pharmacist' && helperInTill());
   /* Stock is the owner's until permissions make it grantable (v0.0015). */
   if (STOCK_SCREENS.includes(screen)) return role === 'owner';
+  /* v0.0014: the drawer is the seller's — the owner's until permissions. */
+  if (screen === 'drawer') return role === 'owner';
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -3377,6 +3468,10 @@ const S = {
   stockNote: null, importNote: null, supplierQuery: '', countQuery: '',
   clockShift: 0,
   scanTarget: 'till',
+  /* v0.0014 — the drawer, and the devices. */
+  drawers: [], drawerStep: null, drawerSlip: null, signOffOver: {},
+  devices: { A:{ online:true, since:null, queue:[], seq:{} }, B:{ online:true, since:null, queue:[], seq:{} } },
+  device: 'A', serverView: false, offlineConflicts: [], syncedOffline: [],
   bannerTaps: {},
   pharmacyLast: 'till',
   /* v0.0013.3 — items of the pharmacy's own, the barcode setting, and the
@@ -3460,7 +3555,7 @@ function headerHtml(eyebrow, title, opt) {
 }
 /* Where each screen below the Pharmacy tabs goes back to. */
 const BACK_OF = { count:'stock', import:'stock', orders:'stock', order:'orders', suppliers:'stock', register:'stock',
-                  products:'stock', product:'products', drug:'drugs' };
+                  products:'stock', product:'products', drug:'drugs', drawer:'till', labels:'count' };
 function headerBack() {
   const to = pharmacyModule() && BACK_OF[S.screen];
   if (!to || !screenAllowed(to)) return null;
@@ -4815,7 +4910,7 @@ function salesHistory(phId) {
     const total = Math.round((base + (h % 70000) - 25000) / 500) * 500; return { total, n:Math.max(3, Math.round(total / 24000)) }; });
 }
 function salesToday(phId) {
-  const s = S.sales.filter(x => x.pharmacy === phId && !x.refunded);
+  const s = S.sales.filter(x => x.pharmacy === phId && !x.refunded && saleVisible(x));
   return { total:s.reduce((a, x) => a + x.total, 0), n:s.length };
 }
 function salesWeek(phId) { return salesHistory(phId).concat([salesToday(phId)]); }
@@ -4867,6 +4962,12 @@ function heroCard(label, today, yesterday, week) {
 function needsYou(ph) {
   const rows = [];
   const row = (tone, ic, title, sub, go) => rows.push({ tone, ic, title, sub, go });
+  /* v0.0014 (D5): a controlled substance sold on two devices while offline
+     goes to the very top; any other such product follows the stock rows. */
+  const conflicts = S.offlineConflicts.filter(c => c.pharmacy === ph.id && !c.resolved);
+  conflicts.filter(c => c.controlled).forEach(c => row('bad', 'alert', t('off.conflictT', { name:productName(c.code) }), t('off.conflictS', { sales:c.sales.join(', ') }), "goto('drawer')"));
+  const waiting = drawersOf(ph.id).filter(d => d.state === 'waiting');
+  if (waiting.length) row('warn', 'wallet', t('dr.waitingN', { n:waiting.length }), waiting.map(d => d.id + ' · ' + signed(d.variance)).join(' · '), "goto('drawer')");
   if (ph.verification === 'pending') row('warn', 'hourglass', t('hm.pending'), t('hm.pendingS'), "goto('profile')");
   if (!ph.responsible) row('bad', 'alert', t('g.noResponsible'), t('hm.noResponsibleS'), "goto('profile')");
   const pr = stockPrompts(ph.id);
@@ -4887,6 +4988,7 @@ function needsYou(ph) {
     const ready = Object.keys(S.months).find(m => S.months[m] === 'ready');
     if (ready) row('', 'cap', t('d.traineeReady', { n:ready }), t('d.traineeReadySub'), "goto('trainees')");
   }
+  conflicts.filter(c => !c.controlled).forEach(c => row('warn', 'alert', t('off.conflictT', { name:productName(c.code) }), t('off.conflictS', { sales:c.sales.join(', ') }), "goto('drawer')"));
   return rows;
 }
 function needsList(rows) {
@@ -5168,12 +5270,14 @@ const canRefund    = () => S.role === 'owner';
 /* The record every later version builds on: who did what, where, when. The
    shift timeline (W23) reads it; the CRM never does. */
 function tillLog(kind, detail) {
-  S.tillLog.push(Object.assign({ kind, at:new Date().toISOString(), by:S.email,
-    pharmacy:(currentPharmacy() || {}).id || null }, detail || {}));
+  const ph = currentPharmacy();
+  const d = ph && S.drawers && openDrawer(ph.id);
+  S.tillLog.push(Object.assign({ kind, at:new Date(nowMs()).toISOString(), by:S.email,
+    pharmacy:ph ? ph.id : null, drawer:d ? d.id : null, device:S.device }, detail || {}));
 }
 
 function setPrice(phId, code, v) {
-  if (!canSetPrices()) return false;
+  if (!canSetPrices() || needsConnection()) return false;
   const price = Math.round(Number(v));
   if (!isFinite(price) || price <= 0) return false;
   const from = pharmacyPrice(phId, code);
@@ -5228,6 +5332,17 @@ function tillAdd(code) {
 function tillSetPriceAndAdd(code) {
   const ph = tillPharmacy();
   const el = document.getElementById('till-price');
+  /* Offline, a price cannot be set (C5) — but the sale is not refused: the
+     price holds for this line, and is on the record. */
+  if (ph && el && isOffline() && canSetPrices()) {
+    const once = Math.round(Number(el.value)), p = productByCode(code);
+    if (!isFinite(once) || once <= 0 || !p) { S.till.note = { kind:'badPrice' }; render(); return; }
+    S.till.needPrice = null;
+    const w = S.till.lines.find(l => l.barcode === code && l.unit == null);
+    if (w) w.unit = once; else S.till.lines.push(tillLineFromProduct(p, once));
+    tillLog('priceOnce', { code, price:once });
+    toast(t('off.priceOnce')); render(); return;
+  }
   if (!ph || !el || !setPrice(ph.id, code, el.value)) { S.till.note = { kind:'badPrice' }; render(); return; }
   S.till.needPrice = null;
   /* A line checked before it had a price takes the price now. */
@@ -5431,6 +5546,8 @@ function tillRef(v) { S.till.ref = v; }
 
 /* ---------- Completing, and after ---------- */
 
+/* Sale ids from a counter that never goes back, so one is never reused. */
+let SALE_SEQ = 0;
 function completeSale() {
   const T = S.till;
   const ph = tillPharmacy();
@@ -5443,8 +5560,12 @@ function completeSale() {
     change = given - total;
   }
   const f = tillFindings(T.lines);
+  /* v0.0014: every sale is in a drawer — one opens uncounted if none is —
+     and carries the device's receipt number (C6). */
+  const drawer = ensureDrawer(ph.id);
   const sale = {
-    id:'S' + String(S.sales.length + 1).padStart(4, '0'), pharmacy:ph.id, at:new Date().toISOString(),
+    id:'S' + String(SALE_SEQ = Math.max(SALE_SEQ, S.sales.length) + 1).padStart(4, '0'), pharmacy:ph.id, at:new Date(nowMs()).toISOString(),
+    drawer:drawer.id, device:S.device, no:receiptNo(ph.id), offline:isOffline(), synced:null,
     by:S.email, lines:T.lines.map(l => ({ barcode:l.barcode, name:l.name, qty:l.qty, unit:l.unit,
       total:l.qty * l.unit, mapping:l.mapping, molecules:l.molecules, form:l.form,
       dose:l.dose, take:l.take.slice(), note:l.note, unknown:!!l.unknown })),
@@ -5460,7 +5581,9 @@ function completeSale() {
   };
   S.sales.unshift(sale);
   stockSale(sale);
-  tillLog('sale', { sale:sale.id, total });
+  tillLog('sale', { sale:sale.id, total, drawer:drawer.id });
+  /* Offline for three days: said on every sale, never refused. */
+  if (offlineHours() >= 72) toast(t('off.saleWarn', { d:Math.floor(offlineHours() / 24) }));
   S.till = tillReset();
   S.modal = null;
   S.receiptFor = sale.id;
@@ -5477,7 +5600,7 @@ function refundSale(id) {
   if (!reason) { S.till.note = { kind:'needReason' }; render(); return; }
   /* S5: back to stock is chosen already; set aside is one tap away. */
   const dest = ((document.querySelector('input[name="rf-dest"]:checked') || {}).value) || 'stock';
-  sale.refunded = { at:new Date().toISOString(), by:S.email, reason, dest };
+  sale.refunded = { at:new Date(nowMs()).toISOString(), by:S.email, reason, dest, drawer:ensureDrawer(sale.pharmacy).id };
   stockRefund(sale, dest, reason);
   tillLog('refund', { sale:id, total:sale.total, reason, dest });
   render();
@@ -5504,7 +5627,7 @@ function receiptLines(sale, rl) {
   const out = [];
   out.push({ kind:'title', text:LL(ph.name) });
   out.push({ kind:'small', text:T('rc.licence') + ' ' + ph.licence });
-  out.push({ kind:'small', text:when + '  ·  ' + sale.id });
+  out.push({ kind:'small', text:when + '  ·  ' + (sale.no || sale.id) });
   out.push({ kind:'rule' });
   sale.lines.forEach(l => {
     out.push({ kind:'item', text:LL(l.name), amount:l.qty + ' × ' + fmt(l.unit) + ' = ' + fmt(l.total) });
@@ -5536,9 +5659,8 @@ const RECEIPT_WIDTH = 384;
    (15), and the total (19) is the largest thing on the paper. */
 const RECEIPT_TYPE = { item:15, itemAmount:12, instr:13, small:13, line:13, total:19 };
 const LOGO_IMG = {};
-function renderReceipt(sale, rl) {
-  const lines = receiptLines(sale, rl);
-  const ph = PHARMACIES[sale.pharmacy];
+function renderReceipt(sale, rl) { return renderSlip(receiptLines(sale, rl), rl, PHARMACIES[sale.pharmacy]); }
+function renderSlip(lines, rl, ph) {
   const logo = LOGO_IMG[ph.id];
   const rtl = rl === 'ar';
   const font = rtl ? "'Noto Kufi Arabic', 'IBM Plex Sans', sans-serif" : "'IBM Plex Sans', sans-serif";
@@ -5902,6 +6024,8 @@ function openHelper() { openTillSheet('tillHelper'); }
 function openPay() {
   if (tillMode() !== 'sell' || !S.till.lines.length) return;
   if (S.till.lines.some(l => l.unit == null)) { tillPromptPrice(); render(); return; }
+  const ph = tillPharmacy();
+  if (ph && !openDrawer(ph.id)) { openDrawerSheet('pay'); return; }
   openTillSheet('tillPay');
 }
 function openToday() { openTillSheet('tillToday'); }
@@ -5999,11 +6123,11 @@ function tillPaySheet() {
 
 function tillTodaySheet() {
   const ph = tillPharmacy();
-  const today = ph ? S.sales.filter(x => x.pharmacy === ph.id) : [];
+  const today = ph ? S.sales.filter(x => x.pharmacy === ph.id && saleVisible(x)) : [];
   return '<h3 class="sheet-title">' + esc(t('till.today', { n:today.length })) + '</h3>' +
     (today.length ? '<div class="card till-today-list">' + today.map(x =>
       '<button class="row" style="width:100%;text-align:start;" onclick="closeModal();openReceipt(' + attr(x.id) + ')">' +
-        '<span class="row-body"><span class="row-title figure" style="display:block;">' + esc(x.id) + ' · ' + iqd(x.total) + '</span>' +
+        '<span class="row-body"><span class="row-title figure" style="display:block;">' + esc(x.no || x.id) + ' · ' + iqd(x.total) + '</span>' +
         '<span class="row-sub" style="display:block;">' + esc(t('tender.' + x.tender)) +
           (x.refunded ? ' · ' + esc(t('till.refunded')) : '') + '</span></span>' +
         icon('chevron', 'more-chevron') + '</button>').join('') + '</div>'
@@ -6016,6 +6140,8 @@ function tillSheet() {
   if (m.kind === 'tillHelper') return tillHelperSheet();
   if (m.kind === 'tillPay') return tillPaySheet();
   if (m.kind === 'tillToday') return tillTodaySheet();
+  if (m.kind === 'drawerOpen') return drawerOpenSheet();
+  if (m.kind === 'drawerNoSale') return noSaleSheet();
   return '';
 }
 
@@ -6113,7 +6239,7 @@ function tillMain(ph, tabs) {
         '<button class="' + (selling ? '' : 'active') + '" onclick="setTillMode(\'check\')">' + esc(t('tl.checkOnly')) + '</button></div></div>'
     : '';
   return '<div class="screen-body till-screen">' + tabs + '<div class="constrain stack till-wrap' + (T.lines.length ? ' has-bar' : '') + '">' +
-    (canSell() ? '' : '<p class="till-checknote">' + icon('pill') + esc(t('tl.checkOnlyNote')) + '</p>') +
+    (canSell() ? drawerStatusLine(ph) : '<p class="till-checknote">' + icon('pill') + esc(t('tl.checkOnlyNote')) + '</p>') +
     '<div class="till-scanrow"><div class="searchbox">' + icon('barcode') +
       '<input id="till-q" type="search" autocomplete="off" value="' + esc(T.query) + '" placeholder="' + esc(t(bc ? 'tl.scan' : 'tl.typeName')) + '" ' +
         'oninput="tillQuery(this.value)" onkeydown="tillKey(event)">' +
@@ -6311,9 +6437,14 @@ let MOVE_SEQ = 0, BATCH_SEQ = 0;
 /* THE ONLY WRITER. Nothing anywhere assigns a stock level. */
 function addMovement(m) {
   const mv = Object.assign({ id:'M' + String(++MOVE_SEQ).padStart(5, '0'), at:nowIso(), by:S.email }, m);
-  S.movements.push(mv);
+  /* v0.0014: offline, a movement waits on this device until it syncs. */
+  if (isOffline()) { mv.device = S.device; mv.offline = true; thisDevice().queue.push(mv); }
+  else recordMovement(mv);
   return mv;
 }
+/* The one place a movement joins the record: made online, or replayed from
+   a device's queue when it syncs. */
+function recordMovement(mv) { S.movements.push(mv); }
 function newBatch(ph, code, props) {
   const b = Object.assign({ id:'B' + String(++BATCH_SEQ).padStart(4, '0'), pharmacy:ph, code,
     kind:'stock', expiry:null, shelf:null }, props || {});
@@ -6325,7 +6456,7 @@ function newBatch(ph, code, props) {
 function specialBatch(ph, code, kind) {
   return S.batches.find(b => b.pharmacy === ph && b.code === code && b.kind === kind) || newBatch(ph, code, { kind });
 }
-const batchQty = id => S.movements.reduce((n, m) => m.batch === id ? n + m.qty : n, 0);
+const batchQty = id => allMoves().reduce((n, m) => m.batch === id ? n + m.qty : n, 0);
 
 /* The level, always derived. */
 function stockOf(ph, code) {
@@ -6349,7 +6480,7 @@ const productName = code => { const p = productByCode(code); return p ? L(p.name
 /* Average cost of a batch: what came in, over how many units came in. Bonus
    units come in at zero, which is exactly how they lower it. */
 function batchCost(id) {
-  const ins = S.movements.filter(m => m.batch === id && m.qty > 0 && m.unitCost != null);
+  const ins = allMoves().filter(m => m.batch === id && m.qty > 0 && m.unitCost != null);
   const units = ins.reduce((n, m) => n + m.qty, 0);
   return units ? ins.reduce((n, m) => n + m.qty * m.unitCost, 0) / units : null;
 }
@@ -6382,7 +6513,7 @@ function stockSale(sale) {
 /* S5: back to stock (the default) returns each unit to the batch it left;
    quarantine sets it aside. */
 function stockRefund(sale, dest, reason) {
-  S.movements.filter(m => m.ref === sale.id && m.kind === 'sale').forEach(m => {
+  allMoves().filter(m => m.ref === sale.id && m.kind === 'sale').forEach(m => {
     const batch = dest === 'quarantine' ? specialBatch(sale.pharmacy, m.code, 'quarantine').id : m.batch;
     addMovement({ pharmacy:sale.pharmacy, code:m.code, batch, qty:-m.qty, kind:'refund', ref:sale.id, reason, dest });
   });
@@ -6452,7 +6583,7 @@ function undoState(rec) {
 function undoOp(id) {
   const rec = stockOps().find(o => o.id === id);
   if (!rec || !canManageStock() || !undoState(rec).ok) return;
-  S.movements.filter(m => m.ref === rec.id && m.kind !== 'undo').forEach(m =>
+  allMoves().filter(m => m.ref === rec.id && m.kind !== 'undo').forEach(m =>
     addMovement({ pharmacy:m.pharmacy, code:m.code, batch:m.batch, qty:-m.qty, kind:'undo', ref:rec.id }));
   rec.state = 'undone'; rec.undoneAt = nowIso(); rec.undoneBy = S.email;
   tillLog(rec.id[0] === 'C' ? 'countUndone' : 'importUndone', { op:rec.id, pharmacy:rec.pharmacy });
@@ -6468,7 +6599,7 @@ const isControlled = code => { const p = productByCode(code);
    It is the ledger filtered, so it cannot disagree with the ledger. */
 function controlledRegister(ph) {
   const bal = {};
-  return S.movements.filter(m => m.pharmacy === ph && isControlled(m.code))
+  return allMoves().filter(m => m.pharmacy === ph && isControlled(m.code))
     .map(m => { bal[m.code] = (bal[m.code] || 0) + m.qty; return Object.assign({}, m, { balance:bal[m.code] }); });
 }
 
@@ -6804,6 +6935,7 @@ function importColumn(id, field, v) {
 }
 
 function commitImport(id) {
+  if (needsConnection()) return;
   const imp = S.imports.find(x => x.id === id);
   if (!imp || !canManageStock() || (imp.state !== 'review' && imp.state !== 'saved')) return;
   const rows = classifyImport(imp);
@@ -6893,7 +7025,9 @@ function startCount(shelfArg) {
   const ph = currentPharmacy();
   if (!ph || !canManageStock()) return;
   const typed = document.getElementById('shelf-new');
-  const shelf = String(shelfArg != null ? shelfArg : (typed ? typed.value : '')).trim();
+  let shelf = String(shelfArg != null ? shelfArg : (typed ? typed.value : '')).trim();
+  /* v0.0014 (L3): a scanned shelf label is that shelf. */
+  shelf = shelfFromCode(ph.id, shelf) || shelf;
   if (!shelf) { S.stockNote = { kind:'needShelf' }; render(); return; }
   const list = S.shelves[ph.id] = S.shelves[ph.id] || [];
   if (!list.includes(shelf)) list.push(shelf);
@@ -6919,7 +7053,7 @@ function countKey(ev) {
 }
 function countScan(raw) {
   const sess = openCountSession();
-  if (!sess) return;
+  if (!sess) { const ph = currentPharmacy(), shelf = ph && shelfFromCode(ph.id, raw); if (shelf) startCount(shelf); return; }
   const code = String(raw || '').replace(/[\s-]/g, '');
   S.countQuery = '';
   if (!/^\d+$/.test(code) || !ean13Valid(code)) { S.stockNote = { kind:'misread', code }; render(); return; }
@@ -7069,6 +7203,7 @@ function supplierQuery(v) {
   if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
 }
 function addSupplier(linkTo) {
+  if (needsConnection()) return;
   const ph = currentPharmacy();
   const name = String(S.supplierQuery || '').trim();
   if (!ph || !canManageStock() || (!name && !linkTo)) return;
@@ -7083,6 +7218,7 @@ function addSupplier(linkTo) {
 }
 /* The CRM team found the record: the owner is asked, never told. */
 function answerSupplierLink(id, yes) {
+  if (needsConnection()) return;
   const s = S.suppliers.find(x => x.id === id);
   if (!s || !s.suggest || !canManageStock()) return;
   tillLog(yes ? 'supplierLinked' : 'supplierLinkRefused', { supplier:id, crm:s.suggest });
@@ -7136,6 +7272,7 @@ function orderLine(i, field, v) {
   render();
 }
 function sendOrder() {
+  if (needsConnection()) return;
   const o = openOrderRec();
   if (!o || o.state !== 'draft') return;
   if (!o.supplier) { S.stockNote = { kind:'needSupplier' }; render(); return; }
@@ -7311,8 +7448,10 @@ function screenCount() {
         '<p class="urgent-s" style="margin-bottom:10px;">' + esc(t('ct.whichShelfS')) + '</p>' +
         (shelves.length ? '<div class="take-chips" style="margin-bottom:10px;">' + shelves.map(s =>
           '<button class="chip st-shelf-pick" onclick="startCount(' + attr(s) + ')">' + esc(s) + '</button>').join('') + '</div>' : '') +
-        '<div class="till-inline"><input id="shelf-new" placeholder="' + esc(t('ct.shelfPh')) + '">' +
+        '<div class="till-inline"><input id="shelf-new" placeholder="' + esc(t('ct.shelfPh')) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();startCount();}">' +
         '<button class="btn-small" onclick="startCount()">' + esc(t('ct.start')) + '</button></div>' +
+        /* v0.0014 (L3): scanning a printed shelf label starts that shelf. */
+        (shelves.length ? '<button class="link-btn lb-link" style="margin-top:10px;" onclick="goto(\'labels\')">' + esc(t('shl.print')) + '</button>' : '') +
       '</div></div></div>';
   }
   const boxes = sess.items.reduce((a, it) => a + it.qty, 0);
@@ -7555,7 +7694,7 @@ function stockCard(p) {
         '<button class="btn-small" onclick="writeOff(' + attr(b.id) + ')">' + esc(t('sk.writeOff')) + '</button></span>' : '') +
       '</span><span class="figure sk-q' + (b.qty < 0 ? ' neg' : '') + '">' + b.qty + '</span></div>';
   };
-  const hist = S.movements.filter(m => m.pharmacy === ph.id && m.code === p.barcode).slice(-15).reverse();
+  const hist = allMoves().filter(m => m.pharmacy === ph.id && m.code === p.barcode).slice(-15).reverse();
   return '<p class="section-eyebrow">' + esc(t('sk.title', { ph:L(ph.name) })) + '</p>' +
     '<div class="card card-pad sk-card">' +
       '<div class="sk-figs"><span><b class="figure sk-avail">' + st.available + '</b> ' + esc(t('sk.available')) + '</span>' +
@@ -7568,7 +7707,7 @@ function stockCard(p) {
     '</div>' +
     stockNoteHtml() +
     (st.batches.length ? '<div class="card sk-batches">' + st.batches.filter(b => b.qty !== 0 || b.kind === 'stock').map(batchRow).join('') + '</div>' : '') +
-    (hist.length ? '<details class="card sk-hist"><summary>' + esc(t('sk.history', { n:S.movements.filter(m => m.pharmacy === ph.id && m.code === p.barcode).length })) + '</summary>' +
+    (hist.length ? '<details class="card sk-hist"><summary>' + esc(t('sk.history', { n:allMoves().filter(m => m.pharmacy === ph.id && m.code === p.barcode).length })) + '</summary>' +
       hist.map(m => '<div class="row sk-mv"><span class="row-body"><span class="row-title" style="display:block;">' + esc(t('mv.' + m.kind)) +
         (m.reason ? ' · ' + esc(t('sk.r.' + m.reason) === 'sk.r.' + m.reason ? m.reason : t('sk.r.' + m.reason)) : '') + '</span>' +
         '<span class="row-sub" style="display:block;">' + esc(fmtWhen(m.at)) + ' · ' + esc(personName(m.by)) + (m.ref ? ' · ' + esc(m.ref) : '') + '</span></span>' +
@@ -7757,6 +7896,532 @@ function orderAddCode(code) {
   S.stockNote = null; S.orderQuery = ''; render();
 }
 
+/* ==========================================================================
+   v0.0014 — CASH, AND THE OFFLINE MODEL
+
+   The drawer. One session per drawer (a drawer is a device at a pharmacy),
+   every sale tagged with who made it. The float is counted blind when the
+   drawer opens; the first sale asks for it, with "Later" (C1) — the count
+   never stops a sale, as the Helper never does (P9). The count at a hand-over
+   (C3) and at the close is blind: the figure the drawer should hold is not on
+   the page until the count is entered. Every difference carries a note; above
+   the pharmacy's sign-off amount (C4, 5,000 IQD unless the owner changes it)
+   the owner signs it. Only cash is counted (C2); ZainCash and Qi Card are
+   shown beside it, to match against the provider's statement. Closing prints
+   one slip (C7). Nothing here ever deducts from anyone's pay.
+
+   Offline. Each device keeps what it does while offline — sales, refunds,
+   voids, counts, receiving an order (C5) — as movements queued on the device,
+   and replays them when it is back. Receipt numbers carry the device's letter
+   (C6), so two offline tills never print the same one. Setting a price,
+   suppliers, imports and sending an order wait for the connection. Offline
+   warns at 24 hours and on every sale after 72; it never blocks. The last box
+   sold on two devices while both were offline: both sales stand, the level
+   goes below zero, and the product is flagged, naming both sales (D5).
+   ========================================================================== */
+
+const SIGN_OFF_DEFAULT = 5000;
+const signOffOver = phId => S.signOffOver[phId] != null ? S.signOffOver[phId] : SIGN_OFF_DEFAULT;
+
+/* ---------- Devices, and the connection ---------- */
+
+const thisDevice = () => S.devices[S.device];
+const isOffline = () => !thisDevice().online;
+/* The movements this device can see: what has synced, and its own queue.
+   `S.serverView` is the synced record alone — what reconciling reads. */
+const allMoves = () => {
+  const q = thisDevice().queue;
+  return S.serverView || !q.length ? S.movements : S.movements.concat(q);
+};
+function offlineHours() {
+  const d = thisDevice();
+  return d.online || !d.since ? 0 : (nowMs() - Date.parse(d.since)) / 3.6e6;
+}
+const pendingSales = () => S.sales.filter(s => s.device === S.device && s.offline && !s.synced).length;
+/* Another device's sale that has not reached the server is not on this one. */
+const saleVisible = s => !s.offline || !!s.synced || s.device === S.device;
+
+function setOnline(on) {
+  const d = thisDevice();
+  if (d.online === !!on) return;
+  d.online = !!on;
+  d.since = on ? null : nowIso();
+  tillLog(on ? 'online' : 'offline', { device:S.device });
+  if (on) syncDevice(S.device);
+  render();
+}
+/* The prototype's second till: the same pharmacy, another device. */
+function setDevice(id) {
+  if (!S.devices[id]) return;
+  S.device = id; S.drawerStep = null; S.drawerSlip = null;
+  render();
+}
+/* Replay a device's queue onto the record, in the order it happened, then
+   look for the last box sold on two devices while both were offline. */
+function syncDevice(id) {
+  const d = S.devices[id];
+  if (!d || !d.online) return 0;
+  const q = d.queue.splice(0);
+  q.forEach(m => { m.synced = nowIso(); recordMovement(m); });
+  S.sales.filter(s => s.device === id && s.offline && !s.synced).forEach(s => { s.synced = nowIso(); });
+  const sold = q.filter(m => m.kind === 'sale');
+  sold.forEach(m => S.syncedOffline.push({ device:id, pharmacy:m.pharmacy, code:m.code, sale:m.ref }));
+  S.serverView = true;
+  try {
+    [...new Set(sold.map(m => m.pharmacy + '|' + m.code))].forEach(k => {
+      const [ph, code] = k.split('|');
+      if (stockOf(ph, code).available >= 0) return;
+      const all = S.syncedOffline.filter(x => x.pharmacy === ph && x.code === code);
+      const devices = new Set(all.map(x => x.device));
+      if (devices.size < 2) return;
+      const sales = [...new Set(all.map(x => x.sale))];
+      if (S.offlineConflicts.some(c => c.pharmacy === ph && c.code === code && !c.resolved && sales.every(x => c.sales.includes(x)))) return;
+      const old = S.offlineConflicts.find(c => c.pharmacy === ph && c.code === code && !c.resolved);
+      if (old) old.sales = sales;
+      else S.offlineConflicts.push({ id:'X' + (S.offlineConflicts.length + 1), pharmacy:ph, code, sales, at:nowIso(),
+                                     controlled:isControlled(code), resolved:null });
+    });
+  } finally { S.serverView = false; }
+  if (q.length) tillLog('sync', { device:id, moves:q.length });
+  return q.length;
+}
+function resolveConflict(id) {
+  const c = S.offlineConflicts.find(x => x.id === id);
+  if (!c || !canManageStock()) return;
+  c.resolved = { at:nowIso(), by:S.email };
+  tillLog('conflictChecked', { code:c.code, sales:c.sales });
+  render();
+}
+/* C5: what needs the connection says so, and waits. */
+function needsConnection() {
+  if (!isOffline()) return false;
+  toast(t('off.needs'));
+  return true;
+}
+/* C6: the pharmacy, the device's letter, and the device's own count. */
+function receiptNo(phId) {
+  const d = thisDevice();
+  d.seq[phId] = (d.seq[phId] || 0) + 1;
+  return phId + '-' + S.device + '-' + String(d.seq[phId]).padStart(6, '0');
+}
+
+/* ---------- The drawer ---------- */
+
+const openDrawer = phId => S.drawers.find(d => d.pharmacy === phId && d.device === S.device && d.state === 'open') || null;
+const drawersOf = phId => S.drawers.filter(d => d.pharmacy === phId);
+function lastClosedDrawer(phId) {
+  const done = S.drawers.filter(d => d.pharmacy === phId && d.device === S.device && d.state !== 'open');
+  return done[done.length - 1] || null;
+}
+/* A counter that never goes back, so a drawer's id is never reused. */
+let DRAWER_SEQ = 0;
+function nextDrawerId() { DRAWER_SEQ = Math.max(DRAWER_SEQ, S.drawers.length) + 1; return 'D' + String(DRAWER_SEQ).padStart(4, '0'); }
+/* Open a session. `counted` null with `later` is the C1 "Later": the drawer
+   opens uncounted, and the record says so. */
+function startDrawer(phId, counted, note, later, auto) {
+  const prev = lastClosedDrawer(phId);
+  const d = { id:nextDrawerId(), pharmacy:phId, device:S.device, state:'open', openedAt:nowIso(), openedBy:S.email,
+              float:later ? null : counted, floatLater:!!later, carried:prev ? prev.left : null,
+              openNote:note || '', handovers:[], counted:null, left:null };
+  S.drawers.push(d);
+  tillLog(later ? 'floatLater' : 'drawerOpen', { drawer:d.id, float:d.float, auto:!!auto });
+  return d;
+}
+/* A sale always has a drawer: if none is open, one opens uncounted. */
+function ensureDrawer(phId) { return openDrawer(phId) || startDrawer(phId, null, '', true, true); }
+
+const sessionSales = d => S.sales.filter(s => s.drawer === d.id);
+const drawerRefunds = d => S.sales.filter(s => s.refunded && s.refunded.drawer === d.id);
+/* What the drawer should hold — always derived, never stored as a figure
+   anyone can edit: the float, the cash taken, less the cash paid back. */
+function drawerExpected(d) {
+  const cashIn = sessionSales(d).filter(s => s.tender === 'cash').reduce((a, s) => a + s.total, 0);
+  const cashOut = drawerRefunds(d).filter(s => s.tender === 'cash').reduce((a, s) => a + s.total, 0);
+  return (d.float || 0) + cashIn - cashOut;
+}
+function drawerTenders(d) {
+  const out = {};
+  sessionSales(d).forEach(s => { out[s.tender] = (out[s.tender] || 0) + s.total; });
+  drawerRefunds(d).forEach(s => { out[s.tender] = (out[s.tender] || 0) - s.total; });
+  return out;
+}
+const drawerLog = d => S.tillLog.filter(e => e.drawer === d.id);
+
+/* C1 — asked at the first sale; also from the drawer screen. */
+function openDrawerSheet(next) { openTillSheet('drawerOpen', { next:next || null }); }
+function confirmDrawerOpen(later) {
+  const ph = tillPharmacy();
+  if (!ph || openDrawer(ph.id)) { closeModal(); return; }
+  const next = (S.modal || {}).next;
+  if (later) {
+    startDrawer(ph.id, null, '', true);
+  } else {
+    const v = ((document.getElementById('drawer-float') || {}).value || '').trim();
+    const n = Math.round(Number(v));
+    if (v === '' || !isFinite(n) || n < 0) { S.modal.err = 'count'; renderModal(); return; }
+    const prev = lastClosedDrawer(ph.id);
+    const note = ((document.getElementById('drawer-open-note') || {}).value || '').trim();
+    /* Blind: what was left last night is shown only after the count. */
+    if (prev && prev.left != null && n !== prev.left && !S.modal.revealed) { S.modal.revealed = n; renderModal(); return; }
+    if (prev && prev.left != null && n !== prev.left && !note) { S.modal.err = 'note'; renderModal(); return; }
+    startDrawer(ph.id, n, note, false);
+  }
+  S.modal = null;
+  if (next === 'pay') openTillSheet('tillPay'); else render();
+}
+function drawerOpenSheet() {
+  const m = S.modal, ph = tillPharmacy();
+  const prev = ph ? lastClosedDrawer(ph.id) : null;
+  const revealed = m.revealed != null;
+  return '<div class="sheet-body drawer-sheet">' +
+    '<p class="sheet-title">' + esc(t('dr.openT')) + '</p>' +
+    '<p class="sheet-sub">' + esc(t('dr.openS')) + '</p>' +
+    '<label class="field-label" for="drawer-float">' + esc(t('dr.countCash')) + '</label>' +
+    '<input id="drawer-float" class="dr-count" type="number" inputmode="numeric" dir="ltr" value="' + (revealed ? m.revealed : '') + '" placeholder="0">' +
+    (revealed
+      ? '<p class="dr-diff">' + esc(t('dr.leftWas', { left:iqd(prev.left), diff:signed(m.revealed - prev.left) })) + '</p>' +
+        '<input id="drawer-open-note" placeholder="' + esc(t('dr.notePh')) + '">' : '') +
+    (m.err ? '<p class="auth-error">' + esc(t(m.err === 'note' ? 'dr.needNote' : 'dr.needCount')) + '</p>' : '') +
+    '<button class="btn-primary dr-open-go" onclick="confirmDrawerOpen(false)">' + esc(t('dr.openGo')) + '</button>' +
+    '<button class="btn-ghost dr-later" onclick="confirmDrawerOpen(true)">' + esc(t('dr.later')) + '</button>' +
+    '<p class="inline-note">' + esc(t('dr.laterNote')) + '</p></div>';
+}
+const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n)) + ' ' + t('common.iqd');
+
+/* C8 — the drawer opened with no sale: a reason, on the record. */
+function noSaleSheet() {
+  return '<div class="sheet-body"><p class="sheet-title">' + esc(t('dr.noSaleT')) + '</p>' +
+    '<p class="sheet-sub">' + esc(t('dr.noSaleS')) + '</p>' +
+    '<input id="nosale-reason" placeholder="' + esc(t('dr.noSalePh')) + '">' +
+    (S.modal.err ? '<p class="auth-error">' + esc(t('dr.needReason')) + '</p>' : '') +
+    '<button class="btn-primary dr-nosale-go" onclick="noSale()">' + esc(t('dr.noSaleGo')) + '</button></div>';
+}
+function noSale() {
+  const ph = tillPharmacy();
+  const reason = ((document.getElementById('nosale-reason') || {}).value || '').trim();
+  if (!reason) { S.modal.err = true; renderModal(); return; }
+  const d = ensureDrawer(ph.id);
+  tillLog('noSale', { drawer:d.id, reason });
+  S.modal = null; toast(t('dr.noSaleDone')); render();
+}
+
+/* The count, at a hand-over or at the close: blind, then revealed. */
+function beginCount(kind) {
+  const ph = tillPharmacy(), d = ph && openDrawer(ph.id);
+  if (!d) return;
+  S.drawerStep = { drawer:d.id, kind, counted:null };
+  S.drawerSlip = null;
+  render();
+}
+function submitCount() {
+  const st = S.drawerStep;
+  const v = ((document.getElementById('dr-count') || {}).value || '').trim();
+  const n = Math.round(Number(v));
+  if (!st || v === '' || !isFinite(n) || n < 0) { if (st) st.err = 'count'; render(); return; }
+  st.counted = n; st.err = null;
+  render();
+}
+function finishCount() {
+  const st = S.drawerStep, d = st && S.drawers.find(x => x.id === st.drawer);
+  if (!d || st.counted == null) return;
+  const expected = drawerExpected(d), variance = st.counted - expected;
+  const note = ((document.getElementById('dr-note') || {}).value || '').trim();
+  const over = Math.abs(variance) > signOffOver(d.pharmacy);
+  const sign = !!(document.getElementById('dr-sign') || {}).checked;
+  if (variance && !note) { st.err = 'note'; render(); return; }
+  if (st.kind === 'handover') {
+    const to = ((document.getElementById('dr-to') || {}).value || '').trim();
+    d.handovers.push({ at:nowIso(), by:S.email, to, counted:st.counted, expected, variance, note });
+    tillLog('handover', { drawer:d.id, counted:st.counted, expected, variance, note, to });
+    S.drawerStep = null; toast(t('dr.handedOver')); render(); return;
+  }
+  const leftV = ((document.getElementById('dr-left') || {}).value || '').trim();
+  const left = leftV === '' ? 0 : Math.round(Number(leftV));
+  if (!isFinite(left) || left < 0 || left > st.counted) { st.err = 'left'; render(); return; }
+  /* Above the amount: the owner signs. An owner closing signs here; anyone
+     else leaves it waiting for the owner. */
+  if (over && S.role === 'owner' && !sign) { st.err = 'sign'; render(); return; }
+  Object.assign(d, { counted:st.counted, expectedAtClose:expected, variance, note, left, closedAt:nowIso(), closedBy:S.email,
+    state:over && S.role !== 'owner' ? 'waiting' : 'closed', signedBy:over && S.role === 'owner' ? S.email : null,
+    signedAt:over && S.role === 'owner' ? nowIso() : null });
+  tillLog('drawerClose', { drawer:d.id, counted:st.counted, expected, variance, note, state:d.state });
+  S.drawerStep = null; S.drawerSlip = d.id;
+  render(); scrollTop();
+}
+function signDrawer(id) {
+  const d = S.drawers.find(x => x.id === id);
+  if (!d || d.state !== 'waiting' || S.role !== 'owner') return;
+  d.state = 'closed'; d.signedBy = S.email; d.signedAt = nowIso();
+  tillLog('drawerSigned', { drawer:d.id, variance:d.variance });
+  render();
+}
+function setSignOffOver(v) {
+  const ph = tillPharmacy();
+  const n = Math.round(Number(v));
+  if (!ph || S.role !== 'owner' || !isFinite(n) || n < 0) return;
+  S.signOffOver[ph.id] = n;
+  tillLog('signOffOver', { pharmacy:ph.id, amount:n });
+  render();
+}
+
+/* C7 — the close, on one slip, drawn like the receipt. */
+function drawerSlipLines(d, rl) {
+  const ph = PHARMACIES[d.pharmacy];
+  const T = (k, v) => { const keep = lang; lang = rl; const s = t(k, v); lang = keep; return s; };
+  const LL = o => (o && (o[rl] || o.en)) || '';
+  const money = n => fmt(n) + ' ' + (rl === 'ar' ? 'د.ع' : 'IQD');
+  const sgn = n => (n > 0 ? '+' : n < 0 ? '− ' : '') + money(Math.abs(n));
+  const when = iso => { const x = new Date(iso), p = n => String(n).padStart(2, '0');
+    return x.getFullYear() + '-' + p(x.getMonth() + 1) + '-' + p(x.getDate()) + ' ' + p(x.getHours()) + ':' + p(x.getMinutes()); };
+  const sales = sessionSales(d), log = drawerLog(d), ten = drawerTenders(d);
+  const out = [];
+  out.push({ kind:'title', text:LL(ph.name) });
+  out.push({ kind:'small', text:T('sl.title') + ' · ' + d.id + ' · ' + T('sl.device', { d:d.device }) });
+  out.push({ kind:'small', text:when(d.openedAt) + ' → ' + when(d.closedAt) });
+  out.push({ kind:'rule' });
+  out.push({ kind:'line', text:T('sl.sales', { n:sales.length }), amount:money(sales.reduce((a, s) => a + s.total, 0)) });
+  ['cash', 'zaincash', 'qicard'].forEach(k => { if (ten[k] != null) out.push({ kind:'line', text:'  ' + T('tender.' + k), amount:money(ten[k]) }); });
+  const refunds = drawerRefunds(d);
+  out.push({ kind:'line', text:T('sl.refunds', { n:refunds.length }), amount:money(refunds.reduce((a, s) => a + s.total, 0)) });
+  out.push({ kind:'line', text:T('sl.voids', { n:log.filter(e => e.kind === 'void').length }), amount:'' });
+  const disc = sales.filter(s => s.discount);
+  out.push({ kind:'line', text:T('sl.discounts', { n:disc.length }), amount:money(disc.reduce((a, s) => a + s.discount, 0)) });
+  out.push({ kind:'line', text:T('sl.noSale', { n:log.filter(e => e.kind === 'noSale').length }), amount:'' });
+  out.push({ kind:'rule' });
+  out.push({ kind:'line', text:T('sl.float'), amount:d.float == null ? T('sl.notCounted') : money(d.float) });
+  out.push({ kind:'line', text:T('sl.expected'), amount:money(d.expectedAtClose) });
+  out.push({ kind:'line', text:T('sl.counted'), amount:money(d.counted) });
+  out.push({ kind:'total', text:T('sl.variance'), amount:sgn(d.variance) });
+  if (d.note) out.push({ kind:'small', text:T('sl.note') + ' ' + d.note });
+  out.push({ kind:'line', text:T('sl.left'), amount:money(d.left) });
+  out.push({ kind:'rule' });
+  out.push({ kind:'small', text:T('sl.closedBy') + ' ' + LL(accountName(d.closedBy)) });
+  out.push({ kind:'small', text:d.signedBy ? T('sl.signedBy') + ' ' + LL(accountName(d.signedBy)) : d.state === 'waiting' ? T('sl.waiting') : T('sl.noSign') });
+  return out;
+}
+
+/* ---------- The drawer screen ---------- */
+
+function drawerStatusLine(ph) {
+  if (!ph || !canSell()) return '';
+  const d = openDrawer(ph.id), h = offlineHours(), n = pendingSales();
+  const off = isOffline()
+    ? '<span class="dr-off' + (h >= 72 ? ' bad' : h >= 24 ? ' warn' : '') + '">' + icon('alert') +
+        esc(t(h >= 72 ? 'off.days' : h >= 24 ? 'off.day' : 'off.now', { n, d:Math.floor(h / 24) })) + '</span>' : '';
+  return '<button class="dr-status" onclick="goto(\'drawer\')">' +
+    '<span class="dr-dot' + (d ? ' on' : '') + '"></span><span class="dr-status-t">' +
+    esc(d ? t('dr.openSince', { t:fmtWhen(d.openedAt).split(' ').slice(-1)[0], by:firstName(personName(d.openedBy)) }) : t('dr.closedNow')) +
+    (d && d.float == null ? ' · ' + esc(t('dr.uncounted')) : '') + '</span>' + icon('chevron', 'more-chevron') + off + '</button>';
+}
+
+function screenDrawer() {
+  const ph = tillPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'drawer');
+  const d = openDrawer(ph.id), st = S.drawerStep, slip = S.drawerSlip && S.drawers.find(x => x.id === S.drawerSlip);
+  const dev = thisDevice();
+  let main = '';
+  if (slip) {
+    const r = renderSlip(drawerSlipLines(slip, S.receiptLang || 'ar'), S.receiptLang || 'ar', PHARMACIES[slip.pharmacy]);
+    main = '<div class="card card-pad"><p class="urgent-t">' + esc(t(slip.state === 'waiting' ? 'dr.closedWaiting' : 'dr.closedT')) + '</p>' +
+        '<p class="urgent-s">' + esc(t('dr.slipNote')) + '</p></div>' +
+      '<div class="till-receipt-bar"><button class="btn-secondary" onclick="toggleReceiptLang()">' + esc(S.receiptLang === 'en' ? 'العربية' : 'English') + '</button>' +
+        '<button class="btn-primary" onclick="S.drawerSlip=null;render()">' + esc(t('dr.done')) + '</button></div>' +
+      '<div class="receipt-wrap"><img class="receipt-img dr-slip" alt="' + esc(t('sl.title')) + '" src="' + r.url + '" width="' + r.width + '"></div>';
+  } else if (st && d && st.drawer === d.id) {
+    const handover = st.kind === 'handover';
+    if (st.counted == null) {
+      /* Blind: nothing on this page says what the drawer should hold. */
+      main = '<div class="card card-pad dr-countcard"><p class="urgent-t">' + esc(t(handover ? 'dr.handoverT' : 'dr.closeT')) + '</p>' +
+        '<p class="urgent-s">' + esc(t('dr.blindS')) + '</p>' +
+        '<label class="field-label" for="dr-count">' + esc(t('dr.countCash')) + '</label>' +
+        '<input id="dr-count" class="dr-count" type="number" inputmode="numeric" dir="ltr" placeholder="0">' +
+        (st.err ? '<p class="auth-error">' + esc(t('dr.needCount')) + '</p>' : '') +
+        '<button class="btn-primary dr-count-go" onclick="submitCount()">' + esc(t('dr.countGo')) + '</button>' +
+        '<button class="btn-ghost" onclick="S.drawerStep=null;render()">' + esc(t('common.cancel')) + '</button></div>';
+    } else {
+      const expected = drawerExpected(d), variance = st.counted - expected, over = Math.abs(variance) > signOffOver(ph.id);
+      main = '<div class="card card-pad dr-reveal"><p class="urgent-t">' + esc(t(handover ? 'dr.handoverT' : 'dr.closeT')) + '</p>' +
+        '<div class="dr-figs"><div><span>' + esc(t('sl.counted')) + '</span><b class="figure">' + esc(iqd(st.counted)) + '</b></div>' +
+          '<div><span>' + esc(t('sl.expected')) + '</span><b class="figure dr-expected">' + esc(iqd(expected)) + '</b></div>' +
+          '<div class="dr-var' + (variance ? (over ? ' bad' : ' warn') : ' ok') + '"><span>' + esc(t('sl.variance')) + '</span><b class="figure">' + esc(signed(variance)) + '</b></div></div>' +
+        (variance ? '<label class="field-label" for="dr-note">' + esc(t('dr.noteL')) + '</label><input id="dr-note" placeholder="' + esc(t('dr.notePh')) + '">' : '') +
+        (handover ? '<label class="field-label" for="dr-to">' + esc(t('dr.toL')) + '</label><input id="dr-to" placeholder="' + esc(t('dr.toPh')) + '">'
+          : '<label class="field-label" for="dr-left">' + esc(t('dr.leftL')) + '</label>' +
+            '<input id="dr-left" type="number" inputmode="numeric" dir="ltr" placeholder="0">' +
+            (over ? (S.role === 'owner'
+              ? '<label class="checkbox-row dr-signrow"><input type="checkbox" id="dr-sign"><span>' + esc(t('dr.signL', { amt:iqd(signOffOver(ph.id)) })) + '</span></label>'
+              : '<p class="inline-note">' + esc(t('dr.willWait', { amt:iqd(signOffOver(ph.id)) })) + '</p>') : '')) +
+        (st.err ? '<p class="auth-error">' + esc(t({ note:'dr.needNote', sign:'dr.needSign', left:'dr.badLeft', count:'dr.needCount' }[st.err])) + '</p>' : '') +
+        '<button class="btn-primary dr-finish" onclick="finishCount()">' + esc(t(handover ? 'dr.handoverGo' : 'dr.closeGo')) + '</button></div>';
+    }
+  } else if (d) {
+    const sales = sessionSales(d), ten = drawerTenders(d);
+    main = '<div class="card card-pad dr-open">' +
+        '<p class="urgent-t">' + esc(t('dr.openSince', { t:fmtWhen(d.openedAt), by:personName(d.openedBy) })) + '</p>' +
+        '<p class="urgent-s">' + esc(d.float == null ? t('dr.floatLaterS') : t('dr.floatS', { f:iqd(d.float) })) + '</p>' +
+        '<p class="dr-n">' + esc(t('dr.salesN', { n:sales.length })) + '</p>' +
+        /* C2: only cash is counted; the rest is matched against statements. */
+        (['zaincash', 'qicard'].some(k => ten[k]) ? '<div class="dr-other"><p class="field-label">' + esc(t('dr.otherT')) + '</p>' +
+          ['zaincash', 'qicard'].filter(k => ten[k]).map(k => '<div class="dr-other-row"><span>' + esc(t('tender.' + k)) + '</span><b class="figure">' + esc(iqd(ten[k])) + '</b></div>').join('') + '</div>' : '') +
+      '</div>' +
+      '<div class="dr-actions"><button class="btn-primary dr-close" onclick="beginCount(\'close\')">' + esc(t('dr.close')) + '</button>' +
+        '<button class="btn-secondary dr-handover" onclick="beginCount(\'handover\')">' + esc(t('dr.handover')) + '</button>' +
+        '<button class="btn-secondary dr-nosale" onclick="openTillSheet(\'drawerNoSale\')">' + esc(t('dr.noSale')) + '</button></div>';
+  } else {
+    main = '<div class="card card-pad"><p class="urgent-t">' + esc(t('dr.closedNow')) + '</p><p class="urgent-s">' + esc(t('dr.closedNowS')) + '</p>' +
+      '<button class="btn-primary dr-openbtn" onclick="openDrawerSheet()">' + esc(t('dr.openT')) + '</button></div>';
+  }
+
+  /* The session's record: every sale, refund, void, discount and no-sale. */
+  const trail = d && !st && !slip ? drawerTrail(d) : '';
+  const waiting = drawersOf(ph.id).filter(x => x.state === 'waiting');
+  const past = drawersOf(ph.id).filter(x => x.state !== 'open').slice(-5).reverse();
+  const conflicts = S.offlineConflicts.filter(c => c.pharmacy === ph.id && !c.resolved);
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    conflicts.map(c => '<div class="banner banner-amber dr-conflict">' + icon('alert') + '<p>' +
+      esc(t('off.conflict', { name:productName(c.code), sales:c.sales.join(', ') })) +
+      ' <button class="link-btn" onclick="resolveConflict(' + attr(c.id) + ')">' + esc(t('off.checked')) + '</button></p></div>').join('') +
+    main + trail +
+    (waiting.length && S.role === 'owner' ? '<p class="section-eyebrow">' + esc(t('dr.waitingT')) + '</p><div class="card">' + waiting.map(w =>
+      '<div class="row dr-wait"><span class="row-body"><span class="row-title" style="display:block;">' + esc(w.id + ' · ' + signed(w.variance)) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(personName(w.closedBy) + ' · ' + fmtWhen(w.closedAt) + (w.note ? ' · ' + w.note : '')) + '</span></span>' +
+      '<button class="btn-small dr-signbtn" onclick="signDrawer(' + attr(w.id) + ')">' + esc(t('dr.sign')) + '</button></div>').join('') + '</div>' : '') +
+    (past.length ? '<p class="section-eyebrow">' + esc(t('dr.pastT')) + '</p><div class="card">' + past.map(p =>
+      '<button class="row dr-past" style="width:100%;text-align:start;" onclick="S.drawerSlip=' + attr(p.id) + ';render()"><span class="row-body">' +
+      '<span class="row-title" style="display:block;">' + esc(p.id + ' · ' + fmtWhen(p.closedAt)) + '</span>' +
+      '<span class="row-sub" style="display:block;">' + esc(t('sl.variance') + ' ' + signed(p.variance) + ' · ' + t(p.state === 'waiting' ? 'dr.stWaiting' : 'dr.stClosed')) + '</span></span>' +
+      icon('chevron', 'more-chevron') + '</button>').join('') + '</div>' : '') +
+    (S.role === 'owner' ? '<div class="card card-pad dr-setting"><label class="field-label" for="dr-over">' + esc(t('dr.overL')) + '</label>' +
+      '<div class="till-inline"><input id="dr-over" type="number" inputmode="numeric" dir="ltr" value="' + signOffOver(ph.id) + '">' +
+      '<button class="btn-small" onclick="setSignOffOver(document.getElementById(\'dr-over\').value)">' + esc(t('sk.minSave')) + '</button></div>' +
+      '<p class="inline-note">' + esc(t('dr.overS')) + '</p></div>' : '') +
+    deviceCard(dev) +
+    '</div></div>';
+}
+function drawerTrail(d) {
+  const kinds = ['sale', 'refund', 'void', 'noSale', 'handover', 'floatLater', 'drawerOpen', 'offline', 'online', 'sync'];
+  const ev = S.tillLog.filter(e => (e.drawer === d.id || (e.kind === 'refund' && S.sales.some(s => s.id === e.sale && s.refunded && s.refunded.drawer === d.id)))
+    && kinds.includes(e.kind)).slice(-12).reverse();
+  if (!ev.length) return '';
+  const what = e => {
+    if (e.kind === 'sale') { const s = S.sales.find(x => x.id === e.sale); return t('au.sale', { no:s ? (s.no || s.id) : e.sale, amt:iqd(e.total) }) + (s && s.discount ? ' · ' + t('au.disc', { amt:iqd(s.discount) }) : ''); }
+    if (e.kind === 'refund') return t('au.refund', { amt:iqd(e.total), why:e.reason });
+    if (e.kind === 'void') return t('au.void', { name:productName(e.code), n:e.qty });
+    if (e.kind === 'noSale') return t('au.noSale', { why:e.reason });
+    if (e.kind === 'handover') return t('au.handover', { v:signed(e.variance) });
+    return t('au.' + e.kind);
+  };
+  return '<p class="section-eyebrow">' + esc(t('dr.trailT')) + '</p><div class="card dr-trail">' + ev.map(e =>
+    '<div class="row dr-ev" data-kind="' + e.kind + '"><span class="row-body"><span class="row-title" style="display:block;">' + esc(what(e)) + '</span>' +
+    '<span class="row-sub" style="display:block;">' + esc(fmtWhen(e.at) + ' · ' + personName(e.by)) + '</span></span></div>').join('') + '</div>';
+}
+function deviceCard(dev) {
+  const n = pendingSales();
+  return '<p class="section-eyebrow">' + esc(t('off.deviceT')) + '</p><div class="card card-pad dev-card">' +
+    '<label class="bc-setting dev-online" style="padding:0;border:none;"><span class="bc-body"><span class="bc-t">' + esc(t('off.onlineL')) + '</span>' +
+      '<span class="bc-s">' + esc(dev.online ? t('off.onlineS') : t('off.offlineS', { n, since:fmtWhen(dev.since) })) + '</span></span>' +
+      '<input type="checkbox" class="bc-toggle dev-toggle" ' + (dev.online ? 'checked ' : '') + 'onchange="setOnline(this.checked)"></label>' +
+    '<div class="dev-row"><span>' + esc(t('off.thisDevice', { d:S.device })) + '</span>' +
+      '<span class="segmented dev-pick">' + Object.keys(S.devices).map(k => '<button class="' + (k === S.device ? 'active' : '') + '" onclick="setDevice(' + attr(k) + ')">' + esc(t('off.device', { d:k })) + '</button>').join('') + '</span></div>' +
+    '<p class="inline-note">' + esc(t('off.protoNote')) + '</p></div>';
+}
+
+/* A correction with a reason (the adjustment form): on the product's stock
+   card, on the same record as everything else. */
+function adjustStock(code) {
+  const ph = currentPharmacy();
+  if (!ph || !canManageStock()) return;
+  const n = Math.round(Number((document.getElementById('adj-qty') || {}).value));
+  const why = (document.getElementById('adj-why') || {}).value || '';
+  const note = ((document.getElementById('adj-note') || {}).value || '').trim();
+  if (!n || !isFinite(n) || !why || (why === 'other' && !note)) { S.stockNote = { kind:'adjNeed' }; render(); return; }
+  const reason = why === 'other' ? note : why;
+  if (n > 0) addMovement({ pharmacy:ph.id, code, batch:specialBatch(ph.id, code, 'unbatched').id, qty:n, kind:'adjust', reason, note });
+  else {
+    let left = -n;
+    stockOf(ph.id, code).batches.filter(b => b.kind === 'stock' && !b.expired && b.qty > 0)
+      .sort((a, b) => ymNum(a.expiry) - ymNum(b.expiry)).forEach(b => {
+        if (!left) return;
+        const take = Math.min(left, b.qty);
+        addMovement({ pharmacy:ph.id, code, batch:b.id, qty:-take, kind:'adjust', reason, note });
+        left -= take;
+      });
+    if (left) addMovement({ pharmacy:ph.id, code, batch:specialBatch(ph.id, code, 'unbatched').id, qty:-left, kind:'adjust', reason, note });
+  }
+  tillLog('adjust', { code, qty:n, reason });
+  S.stockNote = { kind:'adjDone' };
+  render();
+}
+function adjustForm(code) {
+  if (!canManageStock()) return '';
+  return '<details class="card card-pad adj-card"><summary>' + esc(t('adj.title')) + '</summary>' +
+    '<p class="inline-note" style="margin:8px 0;">' + esc(t('adj.sub')) + '</p>' +
+    '<div class="own-grid"><input id="adj-qty" type="number" inputmode="numeric" dir="ltr" placeholder="' + esc(t('adj.qty')) + '">' +
+      '<select id="adj-why"><option value="">' + esc(t('adj.why')) + '</option>' +
+        ['damaged', 'lost', 'found', 'miscounted', 'other'].map(k => '<option value="' + k + '">' + esc(t('adj.r.' + k)) + '</option>').join('') + '</select>' +
+      '<input id="adj-note" placeholder="' + esc(t('adj.note')) + '"></div>' +
+    '<button class="btn-small adj-go" style="margin-top:10px;" onclick="adjustStock(' + attr(code) + ')">' + esc(t('adj.go')) + '</button></details>';
+}
+
+/* ---------- L3: printed shelf labels ----------
+   A label per shelf, printed on the receipt printer; its barcode is an
+   in-store EAN-13 (prefix 29: the pharmacy, then the shelf), so scanning it
+   starts that shelf's count. */
+function shelfCode(phId, shelf) {
+  const list = S.shelves[phId] || [];
+  const i = list.indexOf(shelf);
+  if (i < 0) return null;
+  const body = '29' + String(Number(String(phId).replace(/\D/g, '')) || 0).padStart(3, '0') + String(i + 1).padStart(7, '0');
+  const sum = [...body].reduce((n, c, k) => n + Number(c) * (k % 2 ? 3 : 1), 0);
+  return body + ((10 - sum % 10) % 10);
+}
+function shelfFromCode(phId, code) {
+  code = String(code || '').replace(/[\s-]/g, '');
+  if (!/^29\d{11}$/.test(code) || !ean13Valid(code)) return null;
+  return (S.shelves[phId] || []).find(s => shelfCode(phId, s) === code) || null;
+}
+/* The printer's side of the decoder's tables: EAN_L as bar patterns. */
+const EAN_BITS_L = ['0001101', '0011001', '0010011', '0111101', '0100011', '0110001', '0101111', '0111011', '0110111', '0001011'];
+function ean13Bits(code) {
+  /* R is L inverted; G is R read backwards. */
+  const R = s => [...s].map(c => c === '0' ? '1' : '0').join('');
+  const G = s => [...R(s)].reverse().join('');
+  const par = EAN_FIRST[Number(code[0])];
+  let bits = '101';
+  for (let i = 1; i <= 6; i++) bits += par[i - 1] === 'L' ? EAN_BITS_L[Number(code[i])] : G(EAN_BITS_L[Number(code[i])]);
+  bits += '01010';
+  for (let i = 7; i <= 12; i++) bits += R(EAN_BITS_L[Number(code[i])]);
+  return bits + '101';
+}
+function renderShelfLabel(phId, shelf) {
+  const code = shelfCode(phId, shelf), ph = PHARMACIES[phId];
+  const c = document.createElement('canvas');
+  c.width = RECEIPT_WIDTH; c.height = 250;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  g.fillStyle = '#000'; g.textAlign = 'center';
+  g.font = "600 24px 'Noto Kufi Arabic', 'IBM Plex Sans', sans-serif";
+  g.fillText(shelf, c.width / 2, 40, c.width - 28);
+  g.font = "400 14px 'Noto Kufi Arabic', 'IBM Plex Sans', sans-serif";
+  g.fillText(L(ph.name), c.width / 2, 66, c.width - 28);
+  const bits = ean13Bits(code), mod = 3, x0 = Math.round((c.width - bits.length * mod) / 2);
+  [...bits].forEach((b, i) => { if (b === '1') g.fillRect(x0 + i * mod, 84, mod, 120); });
+  g.font = "500 16px 'IBM Plex Mono', monospace";
+  g.fillText(code, c.width / 2, 228);
+  return { url:c.toDataURL('image/png'), code, width:c.width, height:c.height };
+}
+function screenLabels() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'labels');
+  const list = S.shelves[ph.id] || [];
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="card card-pad"><p class="urgent-t">' + esc(t('shl.title')) + '</p><p class="urgent-s">' + esc(t('shl.sub')) + '</p></div>' +
+    (list.length ? list.map(s => { const r = renderShelfLabel(ph.id, s);
+      return '<div class="receipt-wrap"><img class="receipt-img shelf-label" data-code="' + r.code + '" alt="' + esc(s) + '" src="' + r.url + '" width="' + r.width + '"></div>'; }).join('')
+      : '<div class="card card-pad till-empty">' + esc(t('shl.none')) + '</div>') +
+    '<p class="inline-note">' + esc(t('till.printNote')) + '</p></div></div>';
+}
+
 function screenProducts() {
   const q = drugNorm(S.productQuery);
   const sum = catalogueSummary();
@@ -7855,6 +8520,7 @@ function screenProduct() {
     '</div>' +
     priceCard(p) +
     stockCard(p) +
+    (currentPharmacy() ? adjustForm(p.barcode) : '') +
     (pharmacyModule() ? '' : '<button class="btn-secondary" onclick="goto(\'products\')">' + esc(t('pd.back')) + '</button>') +
     '</div></div>';
 }
@@ -8900,6 +9566,8 @@ const SCREENS = {
   products:      { eyebrow:()=>currentName(), title:()=>t('nav.products'), body:screenProducts },
   stock:         { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('nav.stock'), body:screenStock },
   count:         { eyebrow:()=>t('nav.stock'), title:()=>t('st.countShelf'), body:screenCount },
+  drawer:        { eyebrow:()=>t('nav.till'), title:()=>t('dr.title'), body:screenDrawer },
+  labels:        { eyebrow:()=>t('nav.stock'), title:()=>t('shl.titleShort'), body:screenLabels },
   import:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.importSheet'), body:screenImport },
   orders:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.orders'), body:screenOrders },
   order:         { eyebrow:()=>t('st.orders'), title:()=>S.openOrder || '', body:screenOrder },
@@ -8918,7 +9586,7 @@ const SCREENS = {
   trainees:      { eyebrow:()=>currentName(), title:()=>t('tr.title'), body:screenTrainees },
 
   placement:     { eyebrow:()=>currentName(), title:()=>t('pl.title'), body:screenPlacement },
-  logbook:       { eyebrow:()=>currentName(), title:()=>t('lb.title'), body:screenLogbook },
+  logbook:       { eyebrow:()=>currentName(), title:()=>t('shl.title'), body:screenLogbook },
 
   queue:         { eyebrow:()=>currentName(), title:()=>t('q.title'), body:screenQueue },
 
@@ -9021,7 +9689,7 @@ const PHARMACY_TABS = [['till','till','nav.till'],['stock','barcode','nav.stock'
 const pharmacyModule = role => { role = role || S.role; return !FLAGS.marketplace && (role === 'owner' || role === 'pharmacist'); };
 const pharmacyTabsFor = role => PHARMACY_TABS.filter(x => screenAllowed(x[0], role || S.role));
 /* Every screen that lives inside the module, so its button stays lit there. */
-const inPharmacy = s => pharmacyModule() && ['till','stock','drugs','drug','products','product'].concat(STOCK_SCREENS).includes(s);
+const inPharmacy = s => pharmacyModule() && ['till','stock','drugs','drug','products','product','drawer'].concat(STOCK_SCREENS).includes(s);
 /* Where the module's first tab and the others were, one Pharmacy item. */
 function collapsePharmacy(groups, role) {
   const ids = PHARMACY_TABS.map(x => x[0]);
@@ -9487,7 +10155,7 @@ function renderModal() {
   if (!S.modal) { root.innerHTML = ''; return; }
   if (S.modal.kind === 'camera' && !S.modal.error && document.getElementById('cam')) { cameraStatus(); return; }
   /* v0.0013.1 — the till's sheets rise from the bottom rather than float. */
-  if (/^till(Line|Helper|Pay|Today)$/.test(S.modal.kind)) { root.innerHTML = sheetWrap(tillSheet()); return; }
+  if (/^(till(Line|Helper|Pay|Today)|drawer(Open|NoSale))$/.test(S.modal.kind)) { root.innerHTML = sheetWrap(tillSheet()); return; }
 
   let inner = '';
   if (S.modal.kind === 'txn') {
@@ -9534,7 +10202,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0013.5.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0014.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

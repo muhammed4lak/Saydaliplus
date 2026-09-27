@@ -627,9 +627,8 @@ reconciles to movements exactly.
 
 **Known limits of the prototype:** stock lives in memory (only saved drafts
 survive a reload); the CRM's proposals are a fixture, since the prototype has
-no shared backend; shelf QR labels are not printed yet (a shelf is named or
-picked); a correction after the undo window is made by **recounting the shelf**
-— there is no separate adjustment form yet; counted stock carries no cost, so
+no shared backend; *(v0.0014: shelf labels are printed, and a correction can
+be made with the adjustment form as well as by recounting the shelf)*; counted stock carries no cost, so
 stock value covers what came in with a cost (imports and receipts); the undo
 window follows the device's clock.
 
@@ -759,8 +758,9 @@ days).
 
 ### Before v0.0014 — questions put 27 Sep 2026 (UI approved for now)
 
-**Answered 27 Sep 2026:** C1, C2, C3, C5, C6, C7, C8 as recommended. **C4
-asked back** ("wdym") — explained with an example; waiting.
+**Answered 27 Sep 2026:** all eight as recommended (C4 after an example: the
+owner signs off any difference over 5,000 IQD, changeable per pharmacy).
+Built as v0.0014 — see *as built* below.
 
 Already settled (26 Sep): one session per drawer with every sale tagged; the
 opening float counted blind; a note for every variance and the owner's
@@ -1351,6 +1351,69 @@ the compact header applies to every screen or only Pharmacy.
   a drug record (P1).
 - Checks: 21 new (562 app in all); mutation-tested.
 
+### v0.0014 as built — cash, and the offline model
+
+**The drawer** (Point of sale → the drawer line → *Cash drawer*; owner only
+until permissions, v0.0015).
+- One session per drawer — a drawer is a device at a pharmacy — every sale
+  and refund tagged with the drawer and who made it. Sales and drawers have
+  ids that are never reused.
+- **Opening (C1):** the first sale asks for the cash in the drawer, with
+  **"Later"** — which opens it uncounted, on the record, and goes straight on
+  to paying. A sale with no drawer open is never refused: one opens uncounted.
+  The opening count is **blind**: what was left the night before appears only
+  after counting, and a difference needs a note.
+- **Hand-over (C3):** optional; counted blind, a note for any difference, to
+  whom; the session carries on.
+- **Close:** counted **blind** — what the drawer should hold is nowhere on the
+  page until the count is entered — then counted / should be / difference.
+  Every difference needs a note; **over the sign-off amount (C4, 5,000 IQD by
+  default, the owner's setting per pharmacy)** the owner signs it; anyone else
+  closing leaves it *waiting*, on the owner's home, until the owner signs.
+  What is left for tomorrow is recorded.
+- **Only cash is counted (C2);** ZainCash and Qi Card are shown apart, "to
+  match against your statement". A cash refund comes out of the drawer it is
+  paid from.
+- **The close slip (C7),** drawn like the receipt (Arabic by default,
+  English on request): sales and each tender, refunds, removed lines,
+  discounts, no-sale openings, the float, what should be there, the count, the
+  difference and its note, what was left, who closed and who signed.
+- **"No sale" (C8),** with a reason, on the record.
+- **The session's record:** sales (with discounts), refunds, removed lines,
+  no-sales, hand-overs, going offline and back, with who and when.
+- *"Nothing is ever deducted from anyone's pay"* says so on the screen.
+- **The adjustment form** (item 6 of 26 Sep): *Correct the stock* on a
+  product's stock card — a quantity (+/−) and a reason (damaged, lost, found,
+  miscounted, other with a note), a movement on the record.
+
+**Offline.**
+- A switch on the drawer screen (*This device, and the connection*), and —
+  for the prototype — **Device A / Device B**, a second point of sale at the
+  same pharmacy.
+- Offline, every movement waits in the **device's queue**; the device sees
+  its own queue, the record does not, and another device does not see it
+  either. Back online, the queue **replays onto the record in order** and the
+  device's sales are marked sent. Stock still has one writer.
+- **C5:** setting a price, adding or linking a supplier, an import and sending
+  an order wait for the connection and say so. A product with no price is
+  not refused offline: the price holds for that sale only, on the record.
+- **C6:** receipt numbers `P1-A-000123` — pharmacy, device letter, the
+  device's own count.
+- Point of sale shows offline and how many sales wait; **over a day** it says
+  so louder; **after three days every sale says so** — and goes through.
+- **D5:** the last box sold on two devices while both were offline — both
+  sales stand, the level goes below zero, and the product is flagged naming
+  both sales, on the drawer screen and the owner's home; **a controlled
+  substance goes to the very top of the home**, until the owner marks the
+  shelf checked.
+
+**L3 — shelf labels:** *Print shelf labels* on the count's shelf picker; a
+label per shelf, drawn for the receipt printer, with an in-store EAN-13
+(prefix 29, the pharmacy, the shelf). The app's own camera decoder reads it
+back; scanning it (or typing it) starts that shelf's count.
+
+- Checks: 32 new (594 app in all); mutation-tested.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -1414,7 +1477,7 @@ These are yours, and several gate the production track. None is a coding task.
   request (and mapping it) is a CRM change to schedule.
 - **UI amendments continue** until the UI is approved.
   **A controlled-substance schedule** is still needed before production.
-  **UI approved for now (27 Sep 2026).** v0.0014 waits on C4, then "go".
+  **UI approved for now (27 Sep 2026).** **v0.0014 built.**
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.

@@ -1811,7 +1811,7 @@ console.log('\nthe till (v0.0012)');
      await dk.evaluate(c => { tillScan(c); const had = S.till.lines.length === 1; setPharmacy('P8');
        return had && !S.till.lines.length && S.tillLog.some(x => x.kind === 'cleared' && x.pharmacy === 'P7'); }, avgCode));
   ok('a sale is recorded against the pharmacy it was made in, and listed only there',
-     await dk.evaluate(c => { tillScan(c); S.till.given = '100000'; completeSale(); const id = S.sales[0].id;
+     await dk.evaluate(c => { tillScan(c); S.till.given = '100000'; completeSale(); const id = S.sales[0].no;
        /* U6: today's sales live one tap away, in their own sheet. */
        closeReceipt(); openToday(); const atP8 = document.getElementById('modal-root').innerText.includes(id); closeModal();
        setPharmacy('P7'); openToday(); const atP7 = document.getElementById('modal-root').innerText.includes(id); closeModal();
@@ -2783,6 +2783,174 @@ console.log('\nthe UI review (v0.0013.5)');
       }
     }
     ok(`the slim header, the banner and the basket row fit at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   v0.0014 — cash, and the offline model.
+   --------------------------------------------------------------------------- */
+console.log('\ncash, and the offline model (v0.0014)');
+{
+  const fresh = () => dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.drawers = []; S.drawerStep = null; S.drawerSlip = null;
+    S.devices.A = { online:true, since:null, queue:[], seq:{} }; S.devices.B = { online:true, since:null, queue:[], seq:{} }; S.device = 'A';
+    S.clockShift = 0; S.signOffOver = {}; S.offlineConflicts = []; S.syncedOffline = []; S.till = tillReset(); goto('till'); });
+  await fresh();
+  ok('C1 — the first sale asks for the opening count, with “Later”',
+     await dk.evaluate(() => { tillAdd('5000000001002'); openPay(); return S.modal && S.modal.kind === 'drawerOpen' &&
+       !!document.querySelector('.dr-later') && !!document.getElementById('drawer-float'); }));
+  ok('…“Later” opens the drawer uncounted, on the record, and goes straight on to paying',
+     await dk.evaluate(() => { document.querySelector('.dr-later').click(); const d = openDrawer('P1');
+       return !!d && d.float == null && d.floatLater && S.modal.kind === 'tillPay' && S.tillLog.some(e => e.kind === 'floatLater' && e.drawer === d.id); }));
+  ok('…and a sale made with no drawer open is never refused: one opens uncounted',
+     await dk.evaluate(() => { closeModal(); S.drawers = []; S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
+       const s = S.sales[0], d = S.drawers.find(x => x.id === s.drawer); return !!d && d.floatLater && s.by === 'rahma@example.com'; }));
+  await fresh();
+  ok('the opening float is counted: the drawer opens with what was counted',
+     await dk.evaluate(() => { openDrawerSheet(); document.getElementById('drawer-float').value = '37250'; confirmDrawerOpen(false);
+       const d = openDrawer('P1'); return !!d && d.float === 37250 && !S.modal; }));
+  ok('C8 — “No sale” needs a reason, and goes on the record with the drawer',
+     await dk.evaluate(() => { goto('drawer'); document.querySelector('.dr-nosale').click(); noSale(); const refused = S.modal && S.modal.err;
+       document.getElementById('nosale-reason').value = 'change for a 25,000 note'; noSale();
+       return refused && !S.modal && S.tillLog.some(e => e.kind === 'noSale' && e.drawer === openDrawer('P1').id && /25,000/.test(e.reason)); }));
+  ok('sales in the session: cash counts toward the drawer; ZainCash is shown apart, to match against the statement (C2)',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
+       const d = openDrawer('P1'), before = drawerExpected(d);
+       S.till = tillReset(); tillScan('4000000001065'); S.till.tender = 'zaincash'; S.till.ref = 'ZC-1'; completeSale(); closeReceipt();
+       goto('drawer'); const txt = document.getElementById('app-body').innerText;
+       return drawerExpected(d) === before && /Not cash — match against your statement/.test(txt) && /ZainCash/.test(txt) && /2 sales in this session/.test(txt); }));
+  ok('a cash refund comes out of the drawer it is paid from',
+     await dk.evaluate(() => { const d = openDrawer('P1'), before = drawerExpected(d); const sale = S.sales.find(s => s.tender === 'cash' && s.drawer === d.id);
+       goto('till'); openReceipt(sale.id); document.getElementById('refund-reason').value = 'wrong strength'; refundSale(sale.id); closeReceipt();
+       return drawerExpected(d) === before - sale.total && sale.refunded.drawer === d.id; }));
+  ok('the session’s record lists the sale, the refund and the no-sale, with who and when',
+     await dk.evaluate(() => { goto('drawer'); const kinds = [...document.querySelectorAll('.dr-trail .dr-ev')].map(x => x.dataset.kind);
+       return ['sale', 'refund', 'noSale'].every(k => kinds.includes(k)) && /Rahma/.test(document.querySelector('.dr-trail').innerText); }));
+  ok('THE COUNT IS BLIND: what the drawer should hold is nowhere on the page until the count is entered',
+     await dk.evaluate(() => { const d = openDrawer('P1'), expected = drawerExpected(d);
+       document.querySelector('.dr-close').click();
+       const page = () => document.body.innerText + [...document.querySelectorAll('input')].map(i => i.value + i.placeholder).join(' ');
+       const hidden = !page().includes(fmt(expected)) && !document.querySelector('.dr-expected');
+       document.getElementById('dr-count').value = String(expected); submitCount();
+       return hidden && page().includes(fmt(expected)) && /Difference/.test(document.querySelector('.dr-reveal').innerText); }));
+  ok('C7 — a count that matches closes without a note, and the close prints on one slip',
+     await dk.evaluate(() => { document.getElementById('dr-left').value = '20000'; finishCount(); const d = S.drawers.find(x => x.id === S.drawerSlip);
+       const lines = drawerSlipLines(d, 'en').map(l => l.text + ' ' + (l.amount || '')).join('\n');
+       return d.state === 'closed' && d.variance === 0 && d.left === 20000 && !!document.querySelector('.dr-slip') &&
+         /Sales \(2\)/.test(lines) && /ZainCash/.test(lines) && /Refunds \(1\)/.test(lines) && /No-sale openings \(1\)/.test(lines) &&
+         /Cash at opening 37,250 IQD/.test(lines) && /Difference/.test(lines) && /Closed by: Rahma/.test(lines) && /no sign-off needed/.test(lines); }));
+  ok('the next opening is blind too: counted against what was left, and a difference needs a note',
+     await dk.evaluate(() => { S.drawerSlip = null; openDrawerSheet(); document.getElementById('drawer-float').value = '19000'; confirmDrawerOpen(false);
+       const shown = /Left in it last night: 20,000 IQD/.test(document.getElementById('modal-root').innerText) && !openDrawer('P1');
+       confirmDrawerOpen(false); const needNote = S.modal && S.modal.err === 'note';
+       document.getElementById('drawer-open-note').value = 'bank run'; confirmDrawerOpen(false); const d = openDrawer('P1');
+       return shown && needNote && !!d && d.float === 19000 && d.carried === 20000 && d.openNote === 'bank run'; }));
+  ok('C3 — a hand-over is counted blind too; the session carries on',
+     await dk.evaluate(() => { goto('drawer'); document.querySelector('.dr-handover').click(); const blind = !document.querySelector('.dr-expected');
+       document.getElementById('dr-count').value = '18500'; submitCount(); finishCount(); const needNote = S.drawerStep && S.drawerStep.err === 'note';
+       document.getElementById('dr-note').value = '500 short'; document.getElementById('dr-to').value = 'Ahmed'; finishCount();
+       const d = openDrawer('P1'); return blind && needNote && !!d && d.handovers.length === 1 && d.handovers[0].variance === -500 && d.handovers[0].to === 'Ahmed'; }));
+  ok('C4 — every difference needs a note; above 5,000 IQD the owner signs it off',
+     await dk.evaluate(() => { document.querySelector('.dr-close').click(); document.getElementById('dr-count').value = '10000'; submitCount();
+       finishCount(); const n1 = S.drawerStep.err === 'note'; document.getElementById('dr-note').value = 'counted twice';
+       finishCount(); const n2 = S.drawerStep.err === 'sign' && !!document.getElementById('dr-sign');
+       document.getElementById('dr-note').value = 'counted twice'; document.getElementById('dr-sign').checked = true; finishCount();
+       const d = S.drawers.find(x => x.id === S.drawerSlip); return n1 && n2 && d.state === 'closed' && d.signedBy === 'rahma@example.com' && d.variance === -9000; }));
+  ok('…anyone but the owner leaves it waiting; the owner is told on the home, and signs',
+     await dk.evaluate(() => { S.drawerSlip = null; startDrawer('P1', 0, '', false); const d = openDrawer('P1');
+       S.drawerStep = { drawer:d.id, kind:'close', counted:7000 }; render();
+       S.role = 'pharmacist'; document.getElementById('dr-note').value = 'found in the till roll'; finishCount(); S.role = 'owner';
+       const waiting = d.state === 'waiting' && !d.signedBy;
+       goto('dashboard'); const home = /Drawers waiting for your sign-off: 1/.test(document.querySelector('.hm-needs').innerText);
+       goto('drawer'); document.querySelector('.dr-signbtn').click();
+       return waiting && home && d.state === 'closed' && d.signedBy === 'rahma@example.com'; }));
+  ok('…and the amount is the owner’s, per pharmacy',
+     await dk.evaluate(() => { setSignOffOver(2000); return signOffOver('P1') === 2000 && signOffOver('P8') === 5000 && S.tillLog.some(e => e.kind === 'signOffOver' && e.amount === 2000); }));
+  ok('nothing on the drawer deducts from anyone’s pay',
+     await dk.evaluate(() => /Nothing is ever deducted from anyone’s pay/.test(document.getElementById('app-body').innerText)));
+
+  /* Offline. */
+  await fresh();
+  ok('offline: a sale is kept on the device — not on the record — and this device already sees it',
+     await dk.evaluate(() => { const c = '5000000001002', before = stockOf('P1', c).available; const n = S.movements.length;
+       setOnline(false); tillScan(c); confirmCash(); closeReceipt();
+       return isOffline() && S.movements.length === n && thisDevice().queue.length >= 1 && stockOf('P1', c).available === before - 1 && S.sales[0].offline; }));
+  ok('C6 — receipt numbers carry the pharmacy and the device’s letter',
+     await dk.evaluate(() => /^P1-A-\d{6}$/.test(S.sales[0].no)));
+  ok('Point of sale says it is offline and how many sales wait',
+     await dk.evaluate(() => { goto('till'); return /Offline · sales waiting to send: 1/.test(document.querySelector('.dr-status').innerText); }));
+  ok('C5 — a price, a supplier, an import or sending an order waits for the connection, and says so',
+     await dk.evaluate(() => { const had = pharmacyPrice('P1', '5000000001002'); const ok1 = setPrice('P1', '5000000001002', 9999) === false && pharmacyPrice('P1', '5000000001002') === had;
+       const nSup = S.suppliers.length; addSupplier(); return ok1 && S.suppliers.length === nSup && /needs a connection/.test(document.body.innerText); }));
+  ok('…but a product with no price is not refused: offline, the price holds for that sale only',
+     await dk.evaluate(() => { const p = PRODUCTS.find(x => pharmacyPrice('P1', x.barcode) == null); S.till = tillReset(); tillAdd(p.barcode);
+       const need = S.till.needPrice === p.barcode; render(); document.getElementById('till-price').value = '1750'; tillSetPriceAndAdd(p.barcode);
+       const l = S.till.lines.find(x => x.barcode === p.barcode);
+       return need && !!l && l.unit === 1750 && pharmacyPrice('P1', p.barcode) == null && S.tillLog.some(e => e.kind === 'priceOnce'); }));
+  ok('a day offline is said louder; after three days every sale says so — and still goes through',
+     await dk.evaluate(() => { S.clockShift = 25 * 3.6e6; render(); const day = /Offline for over a day/.test(document.querySelector('.dr-status').innerText);
+       S.clockShift = 73 * 3.6e6; S.till = tillReset(); tillScan('4000000001065'); const n = S.sales.length; confirmCash();
+       const sold = S.sales.length === n + 1; const warned = /Offline for 3 days/.test(document.body.innerText); closeReceipt();
+       const days = /Offline for 3 days/.test(document.querySelector('.dr-status').innerText); S.clockShift = 0; return day && sold && warned && days; }));
+  ok('back online, the queue replays onto the record, in order, and the sales are marked sent',
+     await dk.evaluate(() => { const q = thisDevice().queue.length, n = S.movements.length; setOnline(true);
+       return !isOffline() && thisDevice().queue.length === 0 && S.movements.length === n + q && S.sales.filter(s => s.offline).every(s => s.synced); }));
+  ok('D5 — THE LAST BOX SOLD ON TWO DEVICES OFFLINE reconciles: both sales stand, the level goes below zero, the product is flagged with both sales',
+     await dk.evaluate(() => {
+       const c = stockCodes('P1').find(x => isControlled(x) && stockOf('P1', x).available > 0);
+       /* Bring it to one box, by a correction. */
+       goto('product'); openProduct(c); const have = stockOf('P1', c).available;
+       document.getElementById('adj-qty').value = String(1 - have); document.getElementById('adj-why').value = 'miscounted'; adjustStock(c);
+       const one = stockOf('P1', c).available === 1;
+       setOnline(false); goto('till'); S.till = tillReset(); tillAdd(c); confirmCash(); closeReceipt(); const saleA = S.sales[0];
+       const aSees = stockOf('P1', c).available === 0;
+       setDevice('B'); setOnline(false); const bSees = stockOf('P1', c).available === 1 && !S.sales.filter(saleVisible).some(s => s.id === saleA.id);
+       S.till = tillReset(); tillAdd(c); confirmCash(); closeReceipt(); const saleB = S.sales[0];
+       const bNo = /^P1-B-000001$/.test(saleB.no);
+       setOnline(true); setDevice('A'); setOnline(true);
+       S.serverView = true; const level = stockOf('P1', c).available; S.serverView = false;
+       const x = S.offlineConflicts.find(k => k.code === c && !k.resolved);
+       return one && aSees && bSees && bNo && level === -1 && !!x && x.sales.includes(saleA.id) && x.sales.includes(saleB.id) && x.controlled; }));
+  ok('…a controlled substance so flagged goes to the very top of the owner’s home, and to the drawer screen',
+     await dk.evaluate(() => { goto('dashboard'); const first = document.querySelector('.hm-needs .hm-row');
+       goto('drawer'); const banner = !!document.querySelector('.dr-conflict');
+       return /Sold on two devices offline/.test(first.innerText) && banner; }));
+  ok('…until the owner has checked the shelf',
+     await dk.evaluate(() => { const x = S.offlineConflicts[0]; resolveConflict(x.id); goto('drawer'); return !!x.resolved && !document.querySelector('.dr-conflict'); }));
+
+  ok('the adjustment form: a correction needs a reason, and is a movement on the record',
+     await dk.evaluate(() => { const c = '5000000001002'; openProduct(c); const before = stockOf('P1', c).available;
+       document.getElementById('adj-qty').value = '-2'; adjustStock(c); const refused = stockOf('P1', c).available === before && S.stockNote.kind === 'adjNeed';
+       document.getElementById('adj-qty').value = '-2'; document.getElementById('adj-why').value = 'damaged'; adjustStock(c);
+       return refused && stockOf('P1', c).available === before - 2 && S.movements.some(m => m.kind === 'adjust' && m.code === c && m.reason === 'damaged'); }));
+
+  /* L3 */
+  ok('L3 — a label per shelf, printed like the receipt; its barcode reads back as the shelf',
+     await dk.evaluate(() => { goto('labels'); const imgs = [...document.querySelectorAll('.shelf-label')];
+       const shelf = (S.shelves.P1 || [])[0]; const code = shelfCode('P1', shelf);
+       return /^Shelf labels/.test(document.querySelector('#app-body .card').innerText) && imgs.length === (S.shelves.P1 || []).length && imgs[0].dataset.code === code && /^29/.test(code) && ean13Valid(code) && shelfFromCode('P1', code) === shelf; }));
+  ok('…the printed bars decode, with the app’s own camera decoder',
+     await dk.evaluate(() => new Promise(res => { const shelf = S.shelves.P1[0], r = renderShelfLabel('P1', shelf); const img = new Image();
+       img.onload = () => { const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+         res(decodeEan13(g.getImageData(0, 0, c.width, c.height)) === r.code); }; img.src = r.url; })));
+  ok('…and scanning it starts that shelf’s count',
+     await dk.evaluate(() => { goto('count'); const s = openCountSession(); if (s) discardCount && discardCount(s.id);
+       goto('count'); const shelf = S.shelves.P1[0]; countScan(shelfCode('P1', shelf)); const sess = openCountSession();
+       return S.screen === 'count' && !!sess && sess.shelf === shelf; }));
+  ok('a pharmacist has no drawer to open (the owner’s until permissions, v0.0015)',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('drawer'); return S.screen !== 'drawer'; }));
+  {
+    await dk.setViewportSize({ width: 320, height: 700 });
+    const wide = [];
+    for (const dir of ['ar', 'en']) {
+      for (const fn of ["goto('drawer')", "goto('drawer');beginCount('close');document.getElementById('dr-count').value='1';submitCount()", "goto('till');openDrawerSheet()", "goto('labels')"]) {
+        await dk.evaluate(([d, f]) => { signOut(); signInAs('rahma@example.com'); setLang(d); S.drawerStep = null; S.drawerSlip = null; if (!openDrawer('P1')) startDrawer('P1', 0, '', false); eval(f); }, [dir, fn]);
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(fn + ' (' + dir + ')');
+        await dk.evaluate(() => closeModal());
+      }
+    }
+    ok(`the drawer, its count, the opening sheet and the labels fit at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
 }
