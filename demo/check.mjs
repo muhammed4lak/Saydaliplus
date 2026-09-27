@@ -2631,12 +2631,12 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
          /Al-Rahma/i.test(document.getElementById('app-header').innerText); }));
   ok('a tab moves within the module, and the Pharmacy line stays lit',
      await dk.evaluate(() => { document.querySelector('.mod-tab[data-tab="stock"]').click();
+       const lit = document.querySelector('#side-nav .side-nav-item.active');
        return S.screen === 'stock' && document.querySelector('.mod-tab.on').dataset.tab === 'stock' &&
-         /'pharmacy'/.test(document.querySelector('#side-nav .side-nav-item.active').getAttribute('onclick')); }));
+         !!lit && /'pharmacy'/.test(lit.getAttribute('onclick')); }));
   ok('…and stays lit a level down: a count, a product, a drug record',
-     await dk.evaluate(() => ['count', 'orders'].every(s => { goto(s); return /'pharmacy'/.test(document.querySelector('#side-nav .active').getAttribute('onclick')); }) &&
-       (openProduct('5000000001002'), /'pharmacy'/.test(document.querySelector('#side-nav .active').getAttribute('onclick'))) &&
-       (openDrug('Paracetamol'), /'pharmacy'/.test(document.querySelector('#side-nav .active').getAttribute('onclick')))));
+     await dk.evaluate(() => { const lit = () => { const a = document.querySelector('#side-nav .active'); return !!a && /'pharmacy'/.test(a.getAttribute('onclick')); };
+       return ['count', 'orders'].every(s => { goto(s); return lit(); }) && (openProduct('5000000001002'), lit()) && (openDrug('Paracetamol'), lit()); }));
   ok('…where the module tabs are not repeated',
      await dk.evaluate(() => !document.querySelector('.mod-tabs')));
   ok('the module remembers its last tab',
