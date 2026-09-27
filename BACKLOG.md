@@ -1208,6 +1208,51 @@ card reads "Tell me below…" — unclear. Proposed: "Warn me when fewer than…
 - With the marketplace switched on, the bars are as they were.
 - Checks: 14 new (541 app in all); mutation-tested.
 
+### v0.0013.5 — proposed: a UI review (27 Sep 2026)
+
+A design review of v0.0013.4 (every main screen, phone and desktop, English
+and Arabic, with an automated scan for small text, small targets and low
+contrast). **Recorded, not built; mock-ups shown; nothing changes until
+"build 13.5".**
+
+- **U1. A shorter header.** Two dark bands (the "Saydali+" strip and the
+  title block) take ~30% of a phone screen before any content; on Point of
+  sale the scan box starts a third of the way down. Proposed: one compact
+  band — "Saydali+" small, the pharmacy's name (or "Good morning, Rahma" on
+  Home), the language and bell buttons.
+- **U2. Sell / Check only beside the basket** instead of a second full-width
+  row under the module tabs — "Basket · 3 items" on the left, a compact
+  Sell | Check only on the right.
+- **U3. Point of sale on a computer: two columns** — the basket on the left;
+  on the right the total, the lines, Pay, and the Helper's warnings — instead
+  of a 660px column with the Pay bar stretched across the whole screen. Maybe
+  keyboard keys (F2 pay, Esc clear).
+- **U4. Home, "today so far".** At the start of the day the week's line dives
+  to 0 and reads like a crash. Proposed: today drawn dashed and hollow,
+  labelled "Today so far", compared with yesterday *by the same time*. Also a
+  missing gap between the two buttons and "Needs you".
+- **U5. A pharmacist's home** still leads with a large Dispensing Helper card
+  and "Look up a product", both now inside Pharmacy; the announcement "Point
+  of sale is here" is aimed at owners. Proposed: one "Check a prescription"
+  card, Check-in, and a quiet announcement line.
+- **U6. Readability and targets (no mock-up needed).** Secondary text
+  (#8B87A3) is 3.4:1 on white and 3:1 on the background — below the 4.5:1
+  minimum; bar labels are 10px; the language and bell buttons are 36px, Sell /
+  Check and the form chips 31px, the count's − / + 34×32, the interaction links
+  on a drug record 15px tall. Proposed: secondary text #6B6785 (≈5:1), bar
+  labels 11.5px, every target at least 40–44px.
+- **U7. Small defects.** "1 drugs · 1 boxes" and "Confirm the count — 1
+  drugs" (plurals); the count line's card edges look clipped; "Discount" and
+  "Different amount" sit on different lines in the pay sheet; the Essential
+  Drugs List shows raw text ("Warfarin sodium 3mg Tablet Tablet \1070"); the
+  profile name breaks as "Rahma Al- / Jubouri" beside its badge; the drug
+  record has a separate "Back" button under a header that already says where
+  you are; the sidebar still says "A professional relief network" (the
+  marketplace-era tagline).
+
+Questions put 27 Sep 2026: which of U1–U7 to build; the new tagline; whether
+the compact header applies to every screen or only Pharmacy.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -1260,6 +1305,8 @@ These are yours, and several gate the production track. None is a coding task.
 
 - **v0.0013.4 built** — one Pharmacy module (Point of sale · Stock ·
   Drugs); the till renamed Point of sale.
+- **v0.0013.5 proposed, not built** — a UI review (U1–U7), mock-ups shown;
+  waiting for answers.
 - **v0.0013.3 built** (search by any name; stock without barcodes; own
   items). **Permissions moved up to v0.0015** (26 Sep 2026) — it will carry
   "may add items" for staff.
