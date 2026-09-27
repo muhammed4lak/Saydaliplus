@@ -2793,6 +2793,10 @@ console.log('\nthe UI review (v0.0013.5)');
    --------------------------------------------------------------------------- */
 console.log('\ncash, and the offline model (v0.0014)');
 {
+  /* Helpers that fail a check instead of crashing the run when an element is missing. */
+  await dk.evaluate(() => { window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+    window.setc = id => { const e = document.getElementById(id); if (e) e.checked = true; };
+    window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); }; });
   const fresh = () => dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.drawers = []; S.drawerStep = null; S.drawerSlip = null;
     S.devices.A = { online:true, since:null, queue:[], seq:{} }; S.devices.B = { online:true, since:null, queue:[], seq:{} }; S.device = 'A';
     S.clockShift = 0; S.signOffOver = {}; S.offlineConflicts = []; S.syncedOffline = []; S.till = tillReset(); goto('till'); });
@@ -2801,18 +2805,18 @@ console.log('\ncash, and the offline model (v0.0014)');
      await dk.evaluate(() => { tillAdd('5000000001002'); openPay(); return S.modal && S.modal.kind === 'drawerOpen' &&
        !!document.querySelector('.dr-later') && !!document.getElementById('drawer-float'); }));
   ok('…“Later” opens the drawer uncounted, on the record, and goes straight on to paying',
-     await dk.evaluate(() => { document.querySelector('.dr-later').click(); const d = openDrawer('P1');
+     await dk.evaluate(() => { tap('.dr-later'); const d = openDrawer('P1');
        return !!d && d.float == null && d.floatLater && S.modal.kind === 'tillPay' && S.tillLog.some(e => e.kind === 'floatLater' && e.drawer === d.id); }));
   ok('…and a sale made with no drawer open is never refused: one opens uncounted',
      await dk.evaluate(() => { closeModal(); S.drawers = []; S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
        const s = S.sales[0], d = S.drawers.find(x => x.id === s.drawer); return !!d && d.floatLater && s.by === 'rahma@example.com'; }));
   await fresh();
   ok('the opening float is counted: the drawer opens with what was counted',
-     await dk.evaluate(() => { openDrawerSheet(); document.getElementById('drawer-float').value = '37250'; confirmDrawerOpen(false);
+     await dk.evaluate(() => { openDrawerSheet(); setv('drawer-float', '37250'); confirmDrawerOpen(false);
        const d = openDrawer('P1'); return !!d && d.float === 37250 && !S.modal; }));
   ok('C8 — “No sale” needs a reason, and goes on the record with the drawer',
-     await dk.evaluate(() => { goto('drawer'); document.querySelector('.dr-nosale').click(); noSale(); const refused = S.modal && S.modal.err;
-       document.getElementById('nosale-reason').value = 'change for a 25,000 note'; noSale();
+     await dk.evaluate(() => { goto('drawer'); tap('.dr-nosale'); noSale(); const refused = S.modal && S.modal.err;
+       setv('nosale-reason', 'change for a 25,000 note'); noSale();
        return refused && !S.modal && S.tillLog.some(e => e.kind === 'noSale' && e.drawer === openDrawer('P1').id && /25,000/.test(e.reason)); }));
   ok('sales in the session: cash counts toward the drawer; ZainCash is shown apart, to match against the statement (C2)',
      await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
@@ -2822,48 +2826,48 @@ console.log('\ncash, and the offline model (v0.0014)');
        return drawerExpected(d) === before && /Not cash — match against your statement/.test(txt) && /ZainCash/.test(txt) && /2 sales in this session/.test(txt); }));
   ok('a cash refund comes out of the drawer it is paid from',
      await dk.evaluate(() => { const d = openDrawer('P1'), before = drawerExpected(d); const sale = S.sales.find(s => s.tender === 'cash' && s.drawer === d.id);
-       goto('till'); openReceipt(sale.id); document.getElementById('refund-reason').value = 'wrong strength'; refundSale(sale.id); closeReceipt();
+       goto('till'); openReceipt(sale.id); setv('refund-reason', 'wrong strength'); refundSale(sale.id); closeReceipt();
        return drawerExpected(d) === before - sale.total && sale.refunded.drawer === d.id; }));
   ok('the session’s record lists the sale, the refund and the no-sale, with who and when',
      await dk.evaluate(() => { goto('drawer'); const kinds = [...document.querySelectorAll('.dr-trail .dr-ev')].map(x => x.dataset.kind);
        return ['sale', 'refund', 'noSale'].every(k => kinds.includes(k)) && /Rahma/.test(document.querySelector('.dr-trail').innerText); }));
   ok('THE COUNT IS BLIND: what the drawer should hold is nowhere on the page until the count is entered',
      await dk.evaluate(() => { const d = openDrawer('P1'), expected = drawerExpected(d);
-       document.querySelector('.dr-close').click();
+       tap('.dr-close');
        const page = () => document.body.innerText + [...document.querySelectorAll('input')].map(i => i.value + i.placeholder).join(' ');
        const hidden = !page().includes(fmt(expected)) && !document.querySelector('.dr-expected');
-       document.getElementById('dr-count').value = String(expected); submitCount();
+       setv('dr-count', String(expected)); submitCount();
        return hidden && page().includes(fmt(expected)) && /Difference/.test(document.querySelector('.dr-reveal').innerText); }));
   ok('C7 — a count that matches closes without a note, and the close prints on one slip',
-     await dk.evaluate(() => { document.getElementById('dr-left').value = '20000'; finishCount(); const d = S.drawers.find(x => x.id === S.drawerSlip);
+     await dk.evaluate(() => { setv('dr-left', '20000'); finishCount(); const d = S.drawers.find(x => x.id === S.drawerSlip);
        const lines = drawerSlipLines(d, 'en').map(l => l.text + ' ' + (l.amount || '')).join('\n');
        return d.state === 'closed' && d.variance === 0 && d.left === 20000 && !!document.querySelector('.dr-slip') &&
          /Sales \(2\)/.test(lines) && /ZainCash/.test(lines) && /Refunds \(1\)/.test(lines) && /No-sale openings \(1\)/.test(lines) &&
          /Cash at opening 37,250 IQD/.test(lines) && /Difference/.test(lines) && /Closed by: Rahma/.test(lines) && /no sign-off needed/.test(lines); }));
   ok('the next opening is blind too: counted against what was left, and a difference needs a note',
-     await dk.evaluate(() => { S.drawerSlip = null; openDrawerSheet(); document.getElementById('drawer-float').value = '19000'; confirmDrawerOpen(false);
+     await dk.evaluate(() => { S.drawerSlip = null; openDrawerSheet(); setv('drawer-float', '19000'); confirmDrawerOpen(false);
        const shown = /Left in it last night: 20,000 IQD/.test(document.getElementById('modal-root').innerText) && !openDrawer('P1');
        confirmDrawerOpen(false); const needNote = S.modal && S.modal.err === 'note';
-       document.getElementById('drawer-open-note').value = 'bank run'; confirmDrawerOpen(false); const d = openDrawer('P1');
+       setv('drawer-open-note', 'bank run'); confirmDrawerOpen(false); const d = openDrawer('P1');
        return shown && needNote && !!d && d.float === 19000 && d.carried === 20000 && d.openNote === 'bank run'; }));
   ok('C3 — a hand-over is counted blind too; the session carries on',
-     await dk.evaluate(() => { goto('drawer'); document.querySelector('.dr-handover').click(); const blind = !document.querySelector('.dr-expected');
-       document.getElementById('dr-count').value = '18500'; submitCount(); finishCount(); const needNote = S.drawerStep && S.drawerStep.err === 'note';
-       document.getElementById('dr-note').value = '500 short'; document.getElementById('dr-to').value = 'Ahmed'; finishCount();
+     await dk.evaluate(() => { goto('drawer'); tap('.dr-handover'); const blind = !document.querySelector('.dr-expected');
+       setv('dr-count', '18500'); submitCount(); finishCount(); const needNote = S.drawerStep && S.drawerStep.err === 'note';
+       setv('dr-note', '500 short'); setv('dr-to', 'Ahmed'); finishCount();
        const d = openDrawer('P1'); return blind && needNote && !!d && d.handovers.length === 1 && d.handovers[0].variance === -500 && d.handovers[0].to === 'Ahmed'; }));
   ok('C4 — every difference needs a note; above 5,000 IQD the owner signs it off',
-     await dk.evaluate(() => { document.querySelector('.dr-close').click(); document.getElementById('dr-count').value = '10000'; submitCount();
-       finishCount(); const n1 = S.drawerStep.err === 'note'; document.getElementById('dr-note').value = 'counted twice';
+     await dk.evaluate(() => { tap('.dr-close'); setv('dr-count', '10000'); submitCount();
+       finishCount(); const n1 = S.drawerStep.err === 'note'; setv('dr-note', 'counted twice');
        finishCount(); const n2 = S.drawerStep.err === 'sign' && !!document.getElementById('dr-sign');
-       document.getElementById('dr-note').value = 'counted twice'; document.getElementById('dr-sign').checked = true; finishCount();
+       setv('dr-note', 'counted twice'); setc('dr-sign'); finishCount();
        const d = S.drawers.find(x => x.id === S.drawerSlip); return n1 && n2 && d.state === 'closed' && d.signedBy === 'rahma@example.com' && d.variance === -9000; }));
   ok('…anyone but the owner leaves it waiting; the owner is told on the home, and signs',
      await dk.evaluate(() => { S.drawerSlip = null; startDrawer('P1', 0, '', false); const d = openDrawer('P1');
        S.drawerStep = { drawer:d.id, kind:'close', counted:7000 }; render();
-       S.role = 'pharmacist'; document.getElementById('dr-note').value = 'found in the till roll'; finishCount(); S.role = 'owner';
+       S.role = 'pharmacist'; setv('dr-note', 'found in the till roll'); finishCount(); S.role = 'owner';
        const waiting = d.state === 'waiting' && !d.signedBy;
        goto('dashboard'); const home = /Drawers waiting for your sign-off: 1/.test(document.querySelector('.hm-needs').innerText);
-       goto('drawer'); document.querySelector('.dr-signbtn').click();
+       goto('drawer'); tap('.dr-signbtn');
        return waiting && home && d.state === 'closed' && d.signedBy === 'rahma@example.com'; }));
   ok('…and the amount is the owner’s, per pharmacy',
      await dk.evaluate(() => { setSignOffOver(2000); return signOffOver('P1') === 2000 && signOffOver('P8') === 5000 && S.tillLog.some(e => e.kind === 'signOffOver' && e.amount === 2000); }));
@@ -2885,7 +2889,7 @@ console.log('\ncash, and the offline model (v0.0014)');
        const nSup = S.suppliers.length; addSupplier(); return ok1 && S.suppliers.length === nSup && /needs a connection/.test(document.body.innerText); }));
   ok('…but a product with no price is not refused: offline, the price holds for that sale only',
      await dk.evaluate(() => { const p = PRODUCTS.find(x => pharmacyPrice('P1', x.barcode) == null); S.till = tillReset(); tillAdd(p.barcode);
-       const need = S.till.needPrice === p.barcode; render(); document.getElementById('till-price').value = '1750'; tillSetPriceAndAdd(p.barcode);
+       const need = S.till.needPrice === p.barcode; render(); setv('till-price', '1750'); tillSetPriceAndAdd(p.barcode);
        const l = S.till.lines.find(x => x.barcode === p.barcode);
        return need && !!l && l.unit === 1750 && pharmacyPrice('P1', p.barcode) == null && S.tillLog.some(e => e.kind === 'priceOnce'); }));
   ok('a day offline is said louder; after three days every sale says so — and still goes through',
@@ -2901,7 +2905,7 @@ console.log('\ncash, and the offline model (v0.0014)');
        const c = stockCodes('P1').find(x => isControlled(x) && stockOf('P1', x).available > 0);
        /* Bring it to one box, by a correction. */
        goto('product'); openProduct(c); const have = stockOf('P1', c).available;
-       document.getElementById('adj-qty').value = String(1 - have); document.getElementById('adj-why').value = 'miscounted'; adjustStock(c);
+       setv('adj-qty', String(1 - have)); setv('adj-why', 'miscounted'); adjustStock(c);
        const one = stockOf('P1', c).available === 1;
        setOnline(false); goto('till'); S.till = tillReset(); tillAdd(c); confirmCash(); closeReceipt(); const saleA = S.sales[0];
        const aSees = stockOf('P1', c).available === 0;
@@ -2921,8 +2925,8 @@ console.log('\ncash, and the offline model (v0.0014)');
 
   ok('the adjustment form: a correction needs a reason, and is a movement on the record',
      await dk.evaluate(() => { const c = '5000000001002'; openProduct(c); const before = stockOf('P1', c).available;
-       document.getElementById('adj-qty').value = '-2'; adjustStock(c); const refused = stockOf('P1', c).available === before && S.stockNote.kind === 'adjNeed';
-       document.getElementById('adj-qty').value = '-2'; document.getElementById('adj-why').value = 'damaged'; adjustStock(c);
+       setv('adj-qty', '-2'); adjustStock(c); const refused = stockOf('P1', c).available === before && S.stockNote.kind === 'adjNeed';
+       setv('adj-qty', '-2'); setv('adj-why', 'damaged'); adjustStock(c);
        return refused && stockOf('P1', c).available === before - 2 && S.movements.some(m => m.kind === 'adjust' && m.code === c && m.reason === 'damaged'); }));
 
   /* L3 */
