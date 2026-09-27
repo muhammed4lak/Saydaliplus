@@ -1173,6 +1173,15 @@ Pharmacist (non-owner) bar under B: Check-in, Tasks, Till, Products
 Questions: (1) A, B or C; (2) the name — "Products / المواد", "Stock /
 المخزون" or other; (3) mock-ups first, or build straight away as v0.0013.4.
 
+Mock-ups shown 27 Sep 2026 (A: three tabs under "Pharmacy"; B: "Products"
+with one search over the pharmacy's products and the drug reference, stock
+figures and prices in the list, and a product page holding stock, price and a
+link to the drug's information).
+
+Also noticed while making them: the minimum-level box on a product's stock
+card reads "Tell me below…" — unclear. Proposed: "Warn me when fewer than…" /
+"نبّهني عندما يقلّ عن…".
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
