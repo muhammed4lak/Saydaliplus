@@ -1310,7 +1310,10 @@ ok('including by a render that finds itself on one',
 await go(dk, 'checkin');
 ok('check-in says it is coming rather than pretending to work',
    await dk.locator('.soon-tag').count() === 1 && /attendance/i.test(await dk.locator('#app-body').innerText()));
-ok('the Helper is still one tap from the pharmacist’s home', await dk.locator('.check-card').count() === 1);
+/* v0.0013.5 (U5): the Helper is inside Point of sale; the home's one job leads there. */
+ok('the Helper is still one tap from the pharmacist’s home — “Check a prescription”, into Point of sale',
+   await dk.evaluate(() => { const c = [...document.querySelectorAll('#app-body [onclick]')].find(b => /Check a prescription/.test(b.innerText));
+     return !!c && /goto\('till'\)/.test(c.getAttribute('onclick')) && !document.querySelector('.check-card'); }));
 await go(dk, 'tasks');
 ok('so do tasks, with what they will do', await dk.locator('.soon-tag').count() === 1
    && await dk.locator('.soon-list li').count() === 3);
@@ -2111,7 +2114,7 @@ console.log('\nstock and purchasing (v0.0013)');
        countSplit(0); countExpiry(1, '02/28');
        return offered && merged && s.items.length === 2 && s.items[1].expiry === '2028-02'; }));
   ok('progress is a count of drugs and boxes, never a percentage',
-     await dk.evaluate(() => { const t = document.querySelector('.ct-progress').innerText; return t === '1 drugs · 5 boxes' && !/%/.test(document.getElementById('app-body').innerText); }));
+     await dk.evaluate(() => { const t = document.querySelector('.ct-progress').innerText; return t === '1 drug · 5 boxes' && !/%/.test(document.getElementById('app-body').innerText); }));
   ok('save and continue later: it leaves the screen, waits on the hub, and resumes where it was',
      await dk.evaluate(() => { saveCount(); const onHub = /Count: Shelf 3/.test(document.getElementById('app-body').innerText) &&
        !!document.querySelector('.st-draft .btn-small');
@@ -2336,6 +2339,8 @@ console.log('\nthe till and the Helper as one (v0.0013.1)');
        const body = document.getElementById('app-body');
        return body.querySelectorAll('.till-line').length === 2 && !body.querySelector('.qty-btn, .till-void, .link-btn') &&
          body.querySelectorAll('.till-line')[1].querySelector('.till-qty').innerText === '×2'; }));
+  /* A phone or a small screen: the bar is pinned. From 1100px it is a panel (v0.0013.5, U3). */
+  await dk.setViewportSize({ width: 1000, height: 800 });
   ok('U1 — the Pay bar is pinned in view, with the total',
      await dk.evaluate(() => { const bar = document.querySelector('.till-paybar'); const r = bar.getBoundingClientRect();
        return getComputedStyle(bar).position === 'fixed' && r.bottom <= innerHeight + 1 && r.top > innerHeight / 2 &&
@@ -2344,6 +2349,7 @@ console.log('\nthe till and the Helper as one (v0.0013.1)');
      await dk.evaluate(() => { const bar = document.querySelector('.till-paybar').getBoundingClientRect();
        const side = document.querySelector('.sidebar').getBoundingClientRect();
        return bar.left >= side.right - 1 || bar.right <= side.left + 1; }));
+  await dk.setViewportSize({ width: 1440, height: 900 });
   ok('tapping a line opens its sheet: quantity, dose, how to take it, remove',
      await dk.evaluate(() => { tillToggleLine(1); const sh = document.querySelector('.sheet');
        const r = !!sh && !!sh.querySelector('.sheet-stepper') && !!sh.querySelector('.till-dose') && sh.querySelectorAll('.take-chip').length > 5 &&
@@ -2411,12 +2417,13 @@ console.log('\nthe simpler home, and the Ministry sources (v0.0013.2)');
        Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === salesToday('P1').total));
   ok('…the change is against yesterday, named, with an arrow as well as a colour',
      await dk.evaluate(() => { const d = document.querySelector('.hm-delta').innerText;
-       return salesToday('P1').n ? /[▲▼] \d+%/.test(d) && /vs yesterday · \d+ sales/.test(d) : /No sales yet today · yesterday/.test(d); }));
-  ok('…and a week’s line, muted, with only today marked',
-     await dk.evaluate(() => { const svg = document.querySelector('.hm-spark');
-       return !!svg && svg.querySelectorAll('path').length === 1 && svg.querySelectorAll('circle').length === 1 &&
-         (svg.querySelector('path').getAttribute('d').match(/[ML]/g) || []).length === 7 &&
-         document.querySelectorAll('.hm-days span').length === 7 && /Today/.test(document.querySelector('.hm-days').innerText); }));
+       return salesToday('P1').n ? /[▲▼] \d+%/.test(d) && /vs yesterday by now · \d+ sales/.test(d) : /No sales yet · yesterday by now/.test(d); }));
+  ok('…and a week’s line, muted: six days solid, today dashed to a hollow point, “Today so far” (v0.0013.5, U4)',
+     await dk.evaluate(() => { const svg = document.querySelector('.hm-spark'); const paths = svg ? svg.querySelectorAll('path') : [];
+       return !!svg && paths.length === 2 && svg.querySelectorAll('circle').length === 1 &&
+         (paths[0].getAttribute('d').match(/[ML]/g) || []).length === 6 && paths[1].getAttribute('stroke-dasharray') &&
+         svg.querySelector('circle').getAttribute('fill') === '#fff' &&
+         document.querySelectorAll('.hm-days span').length === 7 && /Today so far/.test(document.querySelector('.hm-days').innerText); }));
   ok('a sale moves the figure',
      await dk.evaluate(() => { const before = salesToday('P1').total; goto('till'); S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
        goto('dashboard'); return Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === before + S.sales[0].total &&
@@ -2432,9 +2439,10 @@ console.log('\nthe simpler home, and the Ministry sources (v0.0013.2)');
   ok('…instead of the stack of cards: no catalogue card, no separate Helper card, no till card',
      await dk.evaluate(() => !document.querySelector('#app-body .check-card') && !/products in the catalogue/i.test(document.getElementById('app-body').innerText) &&
        document.querySelectorAll('#app-body .link-card, #app-body .soon-card').length === 0));
-  ok('H4 — the announcement is a quiet line, still labelled as from Saydali+; the trial lives on Profile',
+  /* v0.0013.5 (U9): no longer quiet — bold, slim and pressable; still labelled. */
+  ok('H4 — the announcement is still labelled as from Saydali+; the trial lives on Profile',
      await dk.evaluate(() => { const slot = document.querySelector('.hm-ann .banner-slot.announce');
-       const quiet = !!slot && getComputedStyle(slot.querySelector('.banner-s')).display === 'none' && /from saydali\+/i.test(slot.innerText);
+       const quiet = !!slot && /from saydali\+/i.test(slot.innerText);
        const noTrial = !/fee-free trial/i.test(document.getElementById('app-body').innerText);
        goto('profile'); const onProfile = /trial/i.test(document.getElementById('app-body').innerText); goto('dashboard');
        return quiet && noTrial && onProfile; }));
@@ -2647,9 +2655,9 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
      await dk.evaluate(() => { const en = Object.entries(STRINGS.en).filter(([k, v]) => /\btill\b/i.test(v)).map(x => x[0]);
        const ar = Object.entries(STRINGS.ar).filter(([k, v]) => /الكاشير/.test(v)).map(x => x[0]);
        return !en.length && !ar.length && t('nav.till') === 'Point of sale'; }));
-  ok('in Arabic: الصيدلية, and نقطة البيع',
+  ok('in Arabic: نقطة البيع, under the pharmacy’s name',
      await dk.evaluate(() => { setLang('ar'); goto('till'); const r = document.querySelector('.mod-tab').innerText.trim() === 'نقطة البيع' &&
-       /الصيدلية/.test(document.getElementById('app-header').innerText); setLang('en'); return r; }));
+       /صيدلية الرحمة/.test(document.getElementById('app-header').innerText); setLang('en'); return r; }));
   ok('the home still opens point of sale in one tap',
      await dk.evaluate(() => { goto('dashboard'); document.querySelector('.hm-till').click(); return S.screen === 'till' && /Open point of sale/.test((goto('dashboard'), document.querySelector('.hm-till').innerText)); }));
   ok('a pharmacist sees Point of sale and Drugs; Stock waits for permissions (v0.0015)',
@@ -2674,6 +2682,107 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
       }
     }
     ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Profile${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   v0.0013.5 — the UI review (U1–U9).
+   --------------------------------------------------------------------------- */
+console.log('\nthe UI review (v0.0013.5)');
+{
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.till = tillReset(); goto('dashboard'); });
+  ok('U1 — one slim band: the brand small, then “Good morning, Rahma” (or afternoon, evening)',
+     await dk.evaluate(() => { const h = document.getElementById('app-header');
+       return /^Saydali\+$/.test(h.querySelector('.header-eyebrow').innerText.trim()) &&
+         new RegExp('^' + greeting() + ', Rahma$').test(h.querySelector('.header-title').innerText.trim()); }));
+  ok('…the Pharmacy tabs carry the pharmacy’s name; other screens keep their own line and title',
+     await dk.evaluate(() => { goto('till'); const a = /Al-Rahma Pharmacy/.test(document.querySelector('.header-title').innerText);
+       goto('profile'); const b = /Profile/i.test(document.querySelector('.header-eyebrow').innerText) && /Rahma Al-Jubouri/.test(document.querySelector('.header-title').innerText);
+       return a && b; }));
+  {
+    await dk.setViewportSize({ width: 390, height: 844 });
+    const r = await dk.evaluate(() => { goto('till'); return { strip:getComputedStyle(document.querySelector('.topbar')).display, h:document.getElementById('app-header').getBoundingClientRect().height }; });
+    ok(`…and on a phone the strip above it is gone; the header is ${Math.round(r.h)}px, not ~124`, r.strip === 'none' && r.h < 90);
+    const t = await dk.evaluate(() => [...document.querySelectorAll('#app-header button, .nav-item, .segmented button, .mod-tab')]
+      .filter(b => b.offsetParent).map(b => b.getBoundingClientRect()).filter(x => x.height < 40 || x.width < 40).length);
+    ok('U6 — header buttons, bar items, tabs and Sell / Check are at least 40px', t === 0);
+    ok('U6 — bar labels are 11.5px and the secondary grey is at least 4.5:1 on white',
+       await dk.evaluate(() => { const px = parseFloat(getComputedStyle(document.querySelector('.nav-item span')).fontSize);
+         const c = getComputedStyle(document.documentElement).getPropertyValue('--ink-faint').trim();
+         const lum = h => { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(x => x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4)); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+         return px >= 11.5 && (1.05 / (lum(c) + .05)) >= 4.5; }));
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
+  ok('U2 — Sell / Check only sits beside the basket, with how many items it holds',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); render(); const e = document.querySelector('.till-moderow');
+       const empty = !!e && /Basket is empty/.test(e.innerText) && !!e.querySelector('.till-mode');
+       tillAdd('5000000001002'); const one = /Basket · 1 item$/.test(document.querySelector('.till-count').innerText);
+       tillAdd('5000000001002'); tillAdd('5000000001033'); const three = /Basket · 3 items/.test(document.querySelector('.till-count').innerText);
+       const row = document.querySelector('.till-moderow'), cart = document.querySelector('.till-cart');
+       return empty && one && three && (row.compareDocumentPosition(cart) & Node.DOCUMENT_POSITION_FOLLOWING) > 0 &&
+         document.querySelectorAll('.till-mode').length === 1; }));
+  ok('U3 — on a computer, the payment is a panel beside the basket: total, lines, Pay, keys',
+     await dk.evaluate(() => { const bar = document.querySelector('.till-paybar'), cart = document.querySelector('.till-cart');
+       const b = bar.getBoundingClientRect(), c = cart.getBoundingClientRect();
+       return getComputedStyle(bar).position === 'sticky' && b.left > c.right - 1 && b.top < c.bottom &&
+         bar.querySelectorAll('.till-paybar-lines div').length === 2 && /F2/.test(bar.querySelector('.till-keys').innerText); }));
+  ok('…F2 pays, Esc closes the sheet, then clears the search box',
+     await dk.evaluate(() => { const k = key => document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles:true }));
+       k('F2'); const paid = S.modal && S.modal.kind === 'tillPay'; k('Escape'); const closed = !S.modal;
+       tillQuery('pana'); k('Escape'); return paid && closed && S.till.query === ''; }));
+  ok('…and the keys do nothing off the counter',
+     await dk.evaluate(() => { goto('stock'); document.dispatchEvent(new KeyboardEvent('keydown', { key:'F2', bubbles:true })); return !S.modal; }));
+  ok('U4 — no sales yet reads against yesterday by now, not yesterday’s whole day',
+     await dk.evaluate(() => { S.sales = S.sales.filter(x => x.pharmacy !== 'P1'); goto('dashboard');
+       const y = salesHistory('P1')[5].total; return /No sales yet · yesterday by now/.test(document.querySelector('.hm-delta').innerText) &&
+         document.querySelector('.hm-delta').innerText.includes(fmt(byNow(y))); }));
+  ok('U9 — the announcement is one slim, bold, pressable card, still labelled; a press goes where it says, and is counted',
+     await dk.evaluate(() => { const b = document.querySelector('.hm-ann button.banner-slot.announce');
+       const ok1 = !!b && /From Saydali\+/i.test(b.querySelector('.banner-tag').innerText) && b.getBoundingClientRect().height < 130 && !!b.querySelector('.banner-go');
+       b.click(); return ok1 && S.screen === 'till' && S.bannerTaps['A1|' + TODAY_ISO] === 1; }));
+  ok('…with a sheen that stops for people who turn motion off',
+     await dk.evaluate(() => [...document.styleSheets].some(sh => { try { return [...sh.cssRules].some(r => r.media && /prefers-reduced-motion/.test(r.media.mediaText) && /banner-slot/.test(r.cssText)); } catch (e) { return false; } })));
+  ok('…and never on a clinical surface: Point of sale, Drugs, a drug record',
+     await dk.evaluate(() => ['till', 'drugs'].every(sc => { goto(sc); return !document.querySelector('.banner-slot'); }) && (openDrug('Warfarin'), !document.querySelector('.banner-slot'))));
+  ok('U8 — a back arrow in the header one level down, leading up; the in-page Back buttons are gone',
+     await dk.evaluate(() => { const tap = () => document.querySelector('#app-header .header-back').click();
+       openDrug('Warfarin'); const a = !!document.querySelector('#app-header .header-back') && ![...document.querySelectorAll('#app-body button')].some(b => /^Back$/.test(b.innerText.trim()));
+       tap(); const b = S.screen === 'drugs';
+       goto('count'); tap(); const c = S.screen === 'stock';
+       openProduct('5000000001033'); const noPill = ![...document.querySelectorAll('#app-body button')].some(x => /All products/.test(x.innerText)); tap(); const d = S.screen === 'products';
+       goto('till'); const none = !document.querySelector('#app-header .header-back');
+       return a && b && c && noPill && d && none; }));
+  ok('…pointing the other way in Arabic',
+     await dk.evaluate(() => { setLang('ar'); openDrug('Warfarin'); const r = getComputedStyle(document.querySelector('.header-back svg')).transform !== 'none'; setLang('en'); return r; }));
+  ok('U5 — a pharmacist’s home: the announcement on top, then “Check a prescription”, then check-in',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('checkin');
+       const kids = [...document.querySelector('#app-body .constrain').children];
+       return kids.length === 3 && kids[0].classList.contains('banner-slot') && /Check a prescription/.test(kids[1].innerText) &&
+         /Check in/.test(kids[2].innerText) && !/Look up a product/.test(document.getElementById('app-body').innerText); }));
+  ok('U7 — counting says “1 drug · 1 box” and “Confirm the count — 1 drug”',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('count'); startCount('Shelf 135'); countAdd('5000000001002');
+       return document.querySelector('.ct-progress').innerText === '1 drug · 1 box' && /Confirm the count — 1 drug$/.test(document.querySelector('.ct-confirm').innerText.trim()); }));
+  ok('U7 — the Essential Drugs List reads cleanly: “Warfarin sodium 3 mg Tablet”, no run-on columns or page numbers',
+     await dk.evaluate(() => { const all = Object.values(EDL_BY_DRUG).flat().map(e => e.item);
+       return all.includes('Warfarin sodium 3 mg Tablet') && !all.some(x => /\\\d{3,4}$|\bTablet Tablet$|\d(mg|ml)\b/.test(x)); }));
+  ok('U7 — the profile keeps the name on one line; the badge sits under the email',
+     await dk.evaluate(() => { goto('profile'); const badge = document.querySelector('#app-body .badge-verified');
+       const mail = [...document.querySelectorAll('#app-body .figure')].find(x => /rahma@example\.com/.test(x.innerText));
+       return !!badge && !!mail && badge.getBoundingClientRect().top > mail.getBoundingClientRect().bottom - 1; }));
+  ok('U7 — the sidebar says what the app is now: “Run your pharmacy”',
+     await dk.evaluate(() => document.getElementById('sidebar-sub').textContent === 'Run your pharmacy'));
+  {
+    await dk.setViewportSize({ width: 320, height: 700 });
+    const wide = [];
+    for (const dir of ['ar', 'en']) {
+      for (const [who, fn] of [['rahma@example.com', "goto('dashboard')"], ['rahma@example.com', "goto('till');tillAdd('5000000001002')"], ['rahma@example.com', "openDrug('Warfarin')"], ['ahmed@example.com', "goto('checkin')"]]) {
+        await dk.evaluate(([w, d, f]) => { signOut(); signInAs(w); setLang(d); S.till = tillReset(); eval(f); }, [who, dir, fn]);
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} ${fn} (${dir})`);
+      }
+    }
+    ok(`the slim header, the banner and the basket row fit at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
 }

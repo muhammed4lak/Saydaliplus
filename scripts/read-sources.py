@@ -48,6 +48,19 @@ for line in text.split('\n'):
         if key not in classes:
             classes[key] = clean(arabic.sub('', m.group(2))).rstrip(' -').title()
 UNITS = r'(Tablet|tablet|Ampoul|ampoul|vial|Vial|bottle|Bottle|Capsule|capsule|tube|Tube|sachet|Sachet|pen|Pen|inhaler|Inhaler|supp|Supp|bag|Bag)\b'
+def tidy(s):
+    # The list's text runs on into its own columns: a unit ("Tablet",
+    # "Ampoul"), a stray page number ("976", "\\1070"). Keep the item, drop
+    # the run-on, and space the units ("250mg" -> "250 mg").
+    s = re.sub(r'(\d)(mg|mcg|ml|g|iu|IU)(?=[A-Za-z(]|\b)', r'\1 \2', s)
+    s = re.sub(r'(\d (?:mg|mcg|ml|g))(?=[A-Z])', r'\1 ', s)
+    s = re.sub(r'\s*\\?\d{3,4}\s*$', '', s).strip()
+    # One unit column only: "Tablet or scored Tablet Tablet" keeps its last "Tablet".
+    m = re.search(r'\s+(' + UNITS[1:-4] + r')e?s?(\s+or)?\s*$', s)
+    if m and re.search(r'\b' + m.group(1)[:5], s[:m.start()], re.I):
+        s = s[:m.start()].rstrip(' ,')
+    return re.sub(r'\s{2,}', ' ', s).strip()
+
 items = []
 for m in re.finditer(r'(\d{2})-([A-Z0-9]{3})-(\d{3})\s*(.*)', text):
     code = '%s-%s-%s' % (m.group(1), m.group(2), m.group(3))
@@ -56,7 +69,7 @@ for m in re.finditer(r'(\d{2})-([A-Z0-9]{3})-(\d{3})\s*(.*)', text):
     raw = clean(arabic.sub(' ', m.group(4)))
     raw = re.split(r'\s+\d{2}-[A-Z0-9]{3}-\d{3}', raw)[0]
     group = str(int(m.group(1))) + re.sub(r'[0-9]', '', m.group(2))
-    items.append({ 'code': code, 'item': raw[:160], 'group': group, 'class': classes.get(group) or classes.get(group[:len(str(int(m.group(1)))) + 1]) or classes.get(str(int(m.group(1)))) })
+    items.append({ 'code': code, 'item': tidy(raw)[:160], 'group': group, 'class': classes.get(group) or classes.get(group[:len(str(int(m.group(1)))) + 1]) or classes.get(str(int(m.group(1)))) })
 
 # Which molecules of the drug reference each item names.
 drugs = json.loads(subprocess.check_output(['node', '--input-type=module', '-e',

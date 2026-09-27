@@ -1208,12 +1208,12 @@ card reads "Tell me below…" — unclear. Proposed: "Warn me when fewer than…
 - With the marketplace switched on, the bars are as they were.
 - Checks: 14 new (541 app in all); mutation-tested.
 
-### v0.0013.5 — proposed: a UI review (27 Sep 2026)
+### v0.0013.5 — a UI review (27 Sep 2026) — built
 
 A design review of v0.0013.4 (every main screen, phone and desktop, English
 and Arabic, with an automated scan for small text, small targets and low
-contrast). **Recorded, not built; mock-ups shown; nothing changes until
-"build 13.5".**
+contrast). Mock-ups shown, then **built as v0.0013.5** — see *as built*
+below.
 
 - **U1. A shorter header.** Two dark bands (the "Saydali+" strip and the
   title block) take ~30% of a phone screen before any content; on Point of
@@ -1264,6 +1264,57 @@ the compact header applies to every screen or only Pharmacy.
   mark, and a slow moving sheen that stops for people who turn motion off.
   The pharmacist's home keeps it at the top; U5's "quiet line" is withdrawn.
   Still never on a clinical surface (Point of sale, the Helper, Drugs) — P1.
+
+### v0.0013.5 as built — the UI review
+
+- **U1. One slim header** on every screen (the dark strip above it is gone on
+  phones): a small line, the title, the language and bell buttons. The small
+  line is "Saydali+" on the three Pharmacy tabs (title: the pharmacy's name)
+  and on both homes (title: "Good morning, Rahma" — first name); elsewhere it
+  says where you are ("Stock" over "Count a shelf"). ~68px on a phone, was
+  ~124.
+- **U2. Sell / Check only beside the basket** — "Basket · 3 items" on the
+  left, the switch on the right, directly above the lines.
+- **U3. Point of sale on a computer (1100px and wider):** the basket on the
+  left; on the right a panel with the total, the lines, Pay, and the keys —
+  **F2** pays, **Esc** closes a sheet and then clears the search box (the
+  mock-up said "Esc clear"; clearing the basket by one key is too easy to do by
+  accident, so it clears the search). The Helper's warnings stay under the
+  basket. Below 1100px the Pay bar is pinned as before.
+- **U4. Home, "today so far":** the six past days solid; today dashed to a
+  hollow point, labelled "Today so far". *Changed from the mock-up:* the
+  mock-up drew today level with yesterday; the build draws today's real
+  figure, because a point at yesterday's level would say today had sold as
+  much. The comparison is with **yesterday by this time** — sample data (the
+  prototype takes yesterday's total in proportion to the trading day gone,
+  08:00–22:00) until sales are kept by the hour. More space above "Needs you".
+- **U5. A pharmacist's home:** the announcement on top, "Check a prescription"
+  (into Point of sale), then check-in. The Helper card and "Look up a product"
+  are gone (both inside Pharmacy).
+- **U6.** Secondary grey #6B6785 (≥4.5:1 on white, was 3.4:1); bar labels
+  11.5px (were 10px); header buttons 44px (were 36px); Sell / Check and the
+  form filters 40px (were 31px); the count's − / + 44px (were 34×32); drug
+  interaction links have a 40px+ tap area.
+- **U7.** "1 drug · 1 box" and "Confirm the count — 1 drug"; the count's
+  focused line no longer spills past the card's corners; "Different amount"
+  and "Discount" aligned; **Essential Drugs List names cleaned at the source**
+  (`scripts/read-sources.py`): "Warfarin sodium 3 mg Tablet", not "3mg Tablet
+  Tablet \1070" — 356 of 597 entries had run-on columns or page numbers, 33
+  still carry a note from the list itself; the profile's badge moved under
+  the email; the sidebar says **"Run your pharmacy" / "أدِر صيدليتك"**.
+- **U8. A back arrow in the header** one level below the Pharmacy tabs:
+  counting, import, orders and an order, suppliers, the register, the
+  catalogue, a product (→ the catalogue), a drug record (→ Drugs, where you
+  were). It points the other way in Arabic. The drug record's and product's
+  in-page Back buttons are gone.
+- **U9. The announcement / ads banner:** kept where it was on both homes; now
+  slim (~100px), bold (indigo, gold glow, gold "From Saydali+" label, a star,
+  a slow sheen that stops for anyone with reduced motion on) and **pressable**
+  — the whole card is one button, with a white arrow; "Point of sale is here"
+  leads to Point of sale. Presses are counted like impressions. A paid
+  placement keeps its "Sponsored" label. Still never on Point of sale, Drugs or
+  a drug record (P1).
+- Checks: 21 new (562 app in all); mutation-tested.
 
 ## Unused concepts
 
@@ -1317,8 +1368,9 @@ These are yours, and several gate the production track. None is a coding task.
 
 - **v0.0013.4 built** — one Pharmacy module (Point of sale · Stock ·
   Drugs); the till renamed Point of sale.
-- **v0.0013.5 proposed, not built** — a UI review (U1–U7), mock-ups shown;
-  waiting for answers.
+- **v0.0013.5 built** — the UI review (U1–U9).
+- **Banner presses in the CRM:** the app counts them; the CRM's listing
+  record does not show them yet, nor where an announcement leads.
 - **v0.0013.3 built** (search by any name; stock without barcodes; own
   items). **Permissions moved up to v0.0015** (26 Sep 2026) — it will carry
   "may add items" for staff.
