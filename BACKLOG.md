@@ -759,6 +759,9 @@ days).
 
 ### Before v0.0014 — questions put 27 Sep 2026 (UI approved for now)
 
+**Answered 27 Sep 2026:** C1, C2, C3, C5, C6, C7, C8 as recommended. **C4
+asked back** ("wdym") — explained with an example; waiting.
+
 Already settled (26 Sep): one session per drawer with every sale tagged; the
 opening float counted blind; a note for every variance and the owner's
 sign-off above an amount; offline warns at 24h and on every sale after 72h,
@@ -1411,7 +1414,7 @@ These are yours, and several gate the production track. None is a coding task.
   request (and mapping it) is a CRM change to schedule.
 - **UI amendments continue** until the UI is approved.
   **A controlled-substance schedule** is still needed before production.
-  **UI approved for now (27 Sep 2026).** v0.0014 waits on C1–C8 above.
+  **UI approved for now (27 Sep 2026).** v0.0014 waits on C4, then "go".
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
