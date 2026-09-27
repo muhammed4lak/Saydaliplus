@@ -2938,6 +2938,10 @@ console.log('\ncash, and the offline model (v0.0014)');
      await dk.evaluate(() => { goto('count'); const s = openCountSession(); if (s) discardCount && discardCount(s.id);
        goto('count'); const shelf = S.shelves.P1[0]; countScan(shelfCode('P1', shelf)); const sess = openCountSession();
        return S.screen === 'count' && !!sess && sess.shelf === shelf; }));
+  ok('…and the trainee’s Logbook keeps its own name (the two share no strings)',
+     await dk.evaluate(() => { signOut(); signInAs('zainab@uobaghdad.edu.iq'); setLang('en'); goto('logbook');
+       const a = S.screen === 'logbook' && /Logbook/.test(document.getElementById('app-header').innerText) && !/Shelf labels/.test(document.getElementById('app-header').innerText);
+       signOut(); signInAs('rahma@example.com'); setLang('en'); return a; }));
   ok('a pharmacist has no drawer to open (the owner’s until permissions, v0.0015)',
      await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('drawer'); return S.screen !== 'drawer'; }));
   {
