@@ -1232,9 +1232,8 @@ contrast). **Recorded, not built; mock-ups shown; nothing changes until
   labelled "Today so far", compared with yesterday *by the same time*. Also a
   missing gap between the two buttons and "Needs you".
 - **U5. A pharmacist's home** still leads with a large Dispensing Helper card
-  and "Look up a product", both now inside Pharmacy; the announcement "Point
-  of sale is here" is aimed at owners. Proposed: one "Check a prescription"
-  card, Check-in, and a quiet announcement line.
+  and "Look up a product", both now inside Pharmacy. Proposed: the
+  announcement (U9), one "Check a prescription" card, and Check-in.
 - **U6. Readability and targets (no mock-up needed).** Secondary text
   (#8B87A3) is 3.4:1 on white and 3:1 on the background — below the 4.5:1
   minimum; bar labels are 10px; the language and bell buttons are 36px, Sell /
@@ -1252,6 +1251,19 @@ contrast). **Recorded, not built; mock-ups shown; nothing changes until
 
 Questions put 27 Sep 2026: which of U1–U7 to build; the new tagline; whether
 the compact header applies to every screen or only Pharmacy.
+
+**Answered 27 Sep 2026 (from the before/after pairs):**
+- **U8. Keep a back button** — as an arrow in the slim header, always in the
+  same place, on every screen below the three tabs (counting a shelf, a drug
+  record, a product). It replaces the "Back" pill inside the page, not the
+  way back.
+- **U9. Keep the announcement / ads banner where it is, and make it eye-
+  catching** — on both homes: a bold card in the brand's indigo with a gold
+  glow, a gold "From Saydali+" label (a paid placement's label says
+  "Sponsored" and who paid, as now), a large title, a white button, a star
+  mark, and a slow moving sheen that stops for people who turn motion off.
+  The pharmacist's home keeps it at the top; U5's "quiet line" is withdrawn.
+  Still never on a clinical surface (Point of sale, the Helper, Drugs) — P1.
 
 ## Unused concepts
 
