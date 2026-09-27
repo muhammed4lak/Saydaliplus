@@ -1142,6 +1142,37 @@ pharmacies will not use barcodes at all. *Plan:*
   permissions (v0.0015) grant it.
 - Checks: 35 new (527 app in all); mutation-tested.
 
+### v0.0013.4 — proposed: fewer main modules (27 Sep 2026)
+
+Raised 27 Sep 2026: *Drugs, Till and Stock are three main modules but
+overlap — can they be one, with sub-modules?* **Recorded, not built.**
+
+Why they are separate today: they were built as three jobs — the till
+(every minute, at the counter), stock (back office, weekly), the drug
+reference (looking something up). Since v0.0013.1 and v0.0013.3 the overlap
+is real: all three search the same products the same way, the Helper already
+lives in the till, and Drugs is reference-only.
+
+Options:
+- **A. One module, three tabs** (Till · Stock · Drugs). Bottom bar: Home,
+  Pharmacy, Profile. Cost: the till, the busiest screen, sits behind a tab,
+  and a mis-tap at a queue lands in the wrong place.
+- **B. (Recommended) Till stays alone; Stock and Drugs become one
+  "Products" module.** One search over the pharmacy's products and our drug
+  reference; a product opens one page — its stock and batches, its price,
+  and its drug information (ingredients, interactions, Essential Drugs List,
+  registration). Count, import, orders, suppliers and the controlled register
+  stay as its sub-screens. Bottom bar: Home, Till, Products, Profile (four).
+  The till stays one tap; the duplicate search goes; permissions (v0.0015)
+  map cleanly — a cashier gets Till, a stock-keeper Products.
+- **C. Keep the three**, only share the search (already done in v0.0013.3).
+
+Pharmacist (non-owner) bar under B: Check-in, Tasks, Till, Products
+(reference, and stock read-only until permissions say otherwise), Profile.
+
+Questions: (1) A, B or C; (2) the name — "Products / المواد", "Stock /
+المخزون" or other; (3) mock-ups first, or build straight away as v0.0013.4.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -1192,6 +1223,8 @@ These are yours, and several gate the production track. None is a coding task.
 
 ## Open decisions
 
+- **v0.0013.4 proposed, not built** — fewer main modules (Till alone;
+  Stock + Drugs as one "Products"); three questions waiting.
 - **v0.0013.3 built** (search by any name; stock without barcodes; own
   items). **Permissions moved up to v0.0015** (26 Sep 2026) — it will carry
   "may add items" for staff.
