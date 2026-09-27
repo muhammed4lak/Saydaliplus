@@ -2857,8 +2857,8 @@ console.log('\ncash, and the offline model (v0.0014)');
        const d = openDrawer('P1'); return blind && needNote && !!d && d.handovers.length === 1 && d.handovers[0].variance === -500 && d.handovers[0].to === 'Ahmed'; }));
   ok('C4 — every difference needs a note; above 5,000 IQD the owner signs it off',
      await dk.evaluate(() => { tap('.dr-close'); setv('dr-count', '10000'); submitCount();
-       finishCount(); const n1 = S.drawerStep.err === 'note'; setv('dr-note', 'counted twice');
-       finishCount(); const n2 = S.drawerStep.err === 'sign' && !!document.getElementById('dr-sign');
+       finishCount(); const n1 = (S.drawerStep || {}).err === 'note'; setv('dr-note', 'counted twice');
+       finishCount(); const n2 = (S.drawerStep || {}).err === 'sign' && !!document.getElementById('dr-sign');
        setv('dr-note', 'counted twice'); setc('dr-sign'); finishCount();
        const d = S.drawers.find(x => x.id === S.drawerSlip); return n1 && n2 && d.state === 'closed' && d.signedBy === 'rahma@example.com' && d.variance === -9000; }));
   ok('…anyone but the owner leaves it waiting; the owner is told on the home, and signs',
@@ -2946,6 +2946,10 @@ console.log('\ncash, and the offline model (v0.0014)');
      await dk.evaluate(() => { signOut(); signInAs('zainab@uobaghdad.edu.iq'); setLang('en'); goto('logbook');
        const a = S.screen === 'logbook' && /Logbook/.test(document.getElementById('app-header').innerText) && !/Shelf labels/.test(document.getElementById('app-header').innerText);
        signOut(); signInAs('rahma@example.com'); setLang('en'); return a; }));
+  ok('…typing the label’s number into the shelf box starts it too',
+     await dk.evaluate(() => { const s = openCountSession(); if (s) discardCount(s.id); goto('count');
+       const shelf = S.shelves.P1[1] || S.shelves.P1[0]; setv('shelf-new', shelfCode('P1', shelf)); startCount();
+       const sess = openCountSession(); return !!sess && sess.shelf === shelf; }));
   ok('a pharmacist has no drawer to open (the owner’s until permissions, v0.0015)',
      await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('drawer'); return S.screen !== 'drawer'; }));
   {

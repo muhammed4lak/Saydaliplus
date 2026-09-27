@@ -1412,7 +1412,7 @@ label per shelf, drawn for the receipt printer, with an in-store EAN-13
 (prefix 29, the pharmacy, the shelf). The app's own camera decoder reads it
 back; scanning it (or typing it) starts that shelf's count.
 
-- Checks: 33 new (595 app in all); mutation-tested.
+- Checks: 34 new (596 app in all); mutation-tested (27 of 27 caught).
 
 ## Unused concepts
 
