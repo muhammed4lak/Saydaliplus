@@ -2741,13 +2741,13 @@ console.log('\nthe UI review (v0.0013.5)');
   ok('U9 — the announcement is one slim, bold, pressable card, still labelled; a press goes where it says, and is counted',
      await dk.evaluate(() => { const b = document.querySelector('.hm-ann button.banner-slot.announce');
        const ok1 = !!b && /From Saydali\+/i.test(b.querySelector('.banner-tag').innerText) && b.getBoundingClientRect().height < 130 && !!b.querySelector('.banner-go');
-       b.click(); return ok1 && S.screen === 'till' && S.bannerTaps['A1|' + TODAY_ISO] === 1; }));
+       if (b) b.click(); return ok1 && S.screen === 'till' && S.bannerTaps['A1|' + TODAY_ISO] === 1; }));
   ok('…with a sheen that stops for people who turn motion off',
      await dk.evaluate(() => [...document.styleSheets].some(sh => { try { return [...sh.cssRules].some(r => r.media && /prefers-reduced-motion/.test(r.media.mediaText) && /banner-slot/.test(r.cssText)); } catch (e) { return false; } })));
   ok('…and never on a clinical surface: Point of sale, Drugs, a drug record',
      await dk.evaluate(() => ['till', 'drugs'].every(sc => { goto(sc); return !document.querySelector('.banner-slot'); }) && (openDrug('Warfarin'), !document.querySelector('.banner-slot'))));
   ok('U8 — a back arrow in the header one level down, leading up; the in-page Back buttons are gone',
-     await dk.evaluate(() => { const tap = () => document.querySelector('#app-header .header-back').click();
+     await dk.evaluate(() => { const tap = () => { const b = document.querySelector('#app-header .header-back'); if (b) b.click(); };
        openDrug('Warfarin'); const a = !!document.querySelector('#app-header .header-back') && ![...document.querySelectorAll('#app-body button')].some(b => /^Back$/.test(b.innerText.trim()));
        tap(); const b = S.screen === 'drugs';
        goto('count'); tap(); const c = S.screen === 'stock';

@@ -757,6 +757,38 @@ days).
   not at launch — naming or picking a shelf takes a second — and revisit after
   the owner conversations.
 
+### Before v0.0014 — questions put 27 Sep 2026 (UI approved for now)
+
+Already settled (26 Sep): one session per drawer with every sale tagged; the
+opening float counted blind; a note for every variance and the owner's
+sign-off above an amount; offline warns at 24h and on every sale after 72h,
+never blocks; an adjustment form; D5 (the last box sold twice offline); L3
+shelf labels scheduled here. Still to decide:
+
+- **C1. Selling before the drawer is opened.** *Recommended:* the first sale
+  of the day asks for the opening count, with "Later" — logged, and the
+  session opens uncounted — so the count never stops a sale (as the Helper
+  never does, P9).
+- **C2. What the drawer count covers.** *Recommended:* cash only. ZainCash and
+  Qi Card totals are shown beside it as "to match against your statement",
+  not counted.
+- **C3. Handing the drawer over mid-day.** *Recommended:* optional — a
+  "hand over" count when one person leaves and another takes the drawer;
+  without it the session simply continues, every sale still tagged.
+- **C4. The sign-off amount.** *Recommended:* 5,000 IQD by default, the owner
+  changes it per pharmacy.
+- **C5. What works offline.** *Recommended:* sales, refunds, voids, counts and
+  receiving an order queue and sync; setting a price, suppliers, imports and
+  sending an order wait for the connection (they conflict badly).
+- **C6. Receipt numbers offline.** *Recommended:* each device has a letter —
+  `P1-A-000123` — so two offline devices never print the same number.
+- **C7. The close.** *Recommended:* closing prints a one-slip summary on the
+  receipt printer (sales, tenders, refunds, voids, discounts, the count and
+  the variance, who signed).
+- **C8. "No sale" drawer opens.** *Recommended:* a "No sale" button with a
+  reason, on the audit trail — useful once a cash drawer is wired to the
+  printer; until then it records the event only.
+
 **v0.0014 — cash, and the offline model.**
 Till sessions opened and closed per person. **Blind count**: the drawer total is
 entered before the expected figure is shown. Every variance carries a note and
@@ -1379,7 +1411,7 @@ These are yours, and several gate the production track. None is a coding task.
   request (and mapping it) is a CRM change to schedule.
 - **UI amendments continue** until the UI is approved.
   **A controlled-substance schedule** is still needed before production.
-  Nothing blocks v0.0014.
+  **UI approved for now (27 Sep 2026).** v0.0014 waits on C1–C8 above.
 - **The price of the two systems**, and whether Basic 9,000 / Premium 19,000
   survive as they are once the marketplace is dark.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
