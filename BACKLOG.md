@@ -1464,7 +1464,7 @@ day; an employee reads **their own**, under *My activity* on Profile, with
 what they may do. **The CRM reads none of it** (checked: nothing in the CRM
 build reads the record).
 
-- Checks: 22 new (618 app in all); mutation-tested.
+- Checks: 22 new (618 app in all); mutation-tested (17 of 17 caught).
 
 ## Unused concepts
 
