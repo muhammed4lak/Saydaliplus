@@ -15,8 +15,21 @@ import { fileURLToPath } from 'node:url';
 /* The reference is read from its source rather than a number typed here, so
    adding a drug never means editing a test to match. */
 import PRODUCT_DATA from '../data/products.mjs';
-import DRUG_DATA, { DUPLICATE_RULES } from '../data/drugs.mjs';
+import DRUG_DATA, { DUPLICATE_RULES, TAGS as DRUG_TAGS_DATA, RULES as CLASS_RULES_DATA } from '../data/drugs.mjs';
 import { dirname, join } from 'node:path';
+
+/* v0.0016.2 — the rules the reference carries, counted here from the data
+   file rather than by the build: a pair of drugs, a drug and a class, a class
+   rule, a duplication rule. */
+const BUILT_RULE_IDS = (() => {
+  const scis = new Set(DRUG_DATA.map(d => d.sci)), ids = new Set();
+  DRUG_DATA.forEach(d => (d.interactions || []).forEach(i => {
+    if (scis.has(i.with) || (i.with.startsWith('#') && DRUG_TAGS_DATA[i.with.slice(1)])) ids.add('IX:' + [d.sci, i.with].sort().join('|'));
+  }));
+  CLASS_RULES_DATA.forEach(([a, b]) => ids.add('CLS:' + [a, b].sort().join('|')));
+  DUPLICATE_RULES.forEach(r => ids.add('DUP:' + r.id));
+  return ids;
+})();
 
 
 /* Files carry their version in the name, so this picks the highest-numbered
@@ -283,6 +296,14 @@ ok('every row carries an ATC code, a form and at least one strength',
    await p.evaluate(() => DATA.drugs.every(d => d.atc && d.form && d.doses.length)));
 ok('every row carries both scripts, in the data rather than the interface',
    await p.evaluate(() => DATA.drugs.every(d => /[؀-ۿ]/.test(d.ar) && /^[\x20-\x7E]+$/.test(d.sci))));
+/* v0.0015.3 — a category, and one to three questions to ask, on every drug. */
+ok('every drug has a category and one to three questions to ask',
+   await p.evaluate(() => DATA.drugs.every(d => DRUG_CATEGORIES[d.cat] && d.ask.length >= 1 && d.ask.length <= 3)));
+ok('a drug record shows its category, its class interactions and its questions',
+   await p.evaluate(() => { openRecord('drugs', 'Metformin'); const txt = document.getElementById('work-body').innerText;
+     const ok = txt.includes(L(DRUG_CATEGORIES['end.diabetes'])) && txt.includes(L(DRUG_TAGS.contrast))
+       && document.querySelectorAll('.drug-ask li').length === DATA.drugs.find(d => d.sci === 'Metformin').ask.length;
+     S.record = null; return ok; }));
 ok('the forms offered by the create form are the ones the reference recognises',
    await p.evaluate(() => {
      const used = new Set(DATA.drugs.map(d => d.form));
@@ -366,15 +387,17 @@ await p.waitForTimeout(220);
 ok('a file without the key column is refused outright', await p.locator('.imp-fatal').count() > 0);
 
 // a good file with one bad row and one duplicate
-// Nystatin is deliberately NOT one of the hundred in data/drugs.mjs, so this
-// row is genuinely new. A drug already in the reference would test the update
-// path twice and the insert path not at all.
+// Tiotixene is deliberately NOT in data/drugs.mjs — an old antipsychotic
+// that is not on the Iraqi market — so this row is genuinely new. A drug
+// already in the reference would test the update path twice and the insert
+// path not at all. (Until v0.0015.3 this was Nystatin, which the reference
+// now holds.)
 const csv = [
   'scientific_name,arabic_name,atc,form,doses,notes,interactions,contraindications',
-  'Nystatin,نيستاتين,A07AA02,syrup,100000 IU/mL,"Swish and hold, not swallowed straight down.",Warfarin:warning:May raise INR,Hypersensitivity|Systemic infection',
+  'Tiotixene,تيوتيكسين,N05AF04,capsule,2 mg|5 mg,"Take it at the same time each day, and report stiffness or restlessness.",Haloperidol:serious:Adds to movement side effects,Coma|Parkinson disease',
   'Amoxicillin,أموكسيسيلين,J01CA04,capsule,250 mg|500 mg,Updated note,,',
   ',Missing key,,tablet,,,,',
-  'Nystatin,مكرر,A07AA02,syrup,100000 IU/mL,,,'
+  'Tiotixene,مكرر,N05AF04,capsule,2 mg,,,'
 ].join('\n');
 await p.locator('#imp-text').fill(csv);
 await p.locator('.modal .btn', { hasText: /Check|تحقّق/ }).click();
@@ -385,9 +408,10 @@ ok(`preview counts them: ${counts.new} new, ${counts.update} update, ${counts.er
 ok('a quoted field containing a comma survives parsing',
    await p.evaluate(() => S.modal.parsed.items[0].rec.notes.en.includes(',')));
 ok('interactions parse into structured rows',
-   await p.evaluate(() => S.modal.parsed.items[0].rec.interactions[0].severity === 'warning'));
+   await p.evaluate(() => S.modal.parsed.items[0].rec.interactions[0].severity === 'serious'
+     && S.modal.parsed.items[0].rec.interactions[0].with === 'Haloperidol'));
 ok('nothing is written before Apply',
-   await p.evaluate(() => !DATA.drugs.some(d => d.sci === 'Nystatin')));
+   await p.evaluate(() => !DATA.drugs.some(d => d.sci === 'Tiotixene')));
 const drugsBefore = await p.evaluate(() => DATA.drugs.length);
 await p.locator('.modal .btn.primary').click();
 await p.waitForTimeout(280);
@@ -1360,8 +1384,8 @@ console.log('\nclinical governance and barcode links (v0.0016)');
   const g = await open();
   await g.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); }; });
   const as = async role => g.evaluate(r => signInAs(STAFF.find(s => s.role === r).id), role);
-  ok('every rule the Helper can fire is here: 218 built, 3 from the ledger',
-     await g.evaluate(() => DATA.rules.length === 221 && DATA.rules.filter(r => r.built).length === 218));
+  ok(`every rule the Helper can fire is here: ${BUILT_RULE_IDS.size} built (drug pairs, drug and class, class rules, duplication), 3 from the ledger`,
+     await g.evaluate(n => DATA.rules.length === n + 3 && DATA.rules.filter(r => r.built).length === n, BUILT_RULE_IDS.size));
   ok('the rule set today is version 3, the Stop list is empty and says so',
      await g.evaluate(() => { goTab('rules'); const x = document.querySelector('.rules-asof').innerText;
        return ruleSetVersion(RULES_TODAY) === 3 && /version 3/.test(x) && /0 Stop/.test(x) && /Stop list is empty/.test(x) &&
@@ -1378,8 +1402,14 @@ console.log('\nclinical governance and barcode links (v0.0016)');
   const crmSets = await g.evaluate(ds => ds.map(d => ruleSetVersion(d) + ':' + liveOn(d).map(r => r.id + '=' + r.tier).sort().join(',')), days);
   await ap.close();
   ok('the CRM and the app rebuild the same rule set, at the same version, for any day', appSets.join('\n') === crmSets.join('\n'));
+  ok('a class rule is a rule of its own here too, named by its classes, with its own kind',
+     await g.evaluate(() => { const r = DATA.rules.find(x => x.id === 'CLS:benzo|opioid'); if (!r) return false;
+       openRecord('rules', r.id); const h = document.querySelector('.screen, main, body').innerText;
+       const line = DATA.rules.find(x => /^IX:#/.test(x.id));
+       return r.kind === 'classRule' && r.state === 'approved' && /Class rule/.test(h) &&
+         ruleTitle(r) === L(DRUG_TAGS.benzo) + ' + ' + L(DRUG_TAGS.opioid) && !!line && !/#/.test(ruleTitle(line)); }));
   ok('a rule never approved is not live: the two under review or proposed',
-     await g.evaluate(() => ['IX:Atorvastatin|Fluconazole', 'IX:Clopidogrel|Fluoxetine'].every(id => { const r = DATA.rules.find(x => x.id === id);
+     await g.evaluate(() => ['IX:Allopurinol|Amoxicillin', 'IX:Cimetidine|Metformin'].every(id => { const r = DATA.rules.find(x => x.id === id);
        return r && (r.state === 'review' || r.state === 'proposed') && !liveOn(RULES_TODAY).some(x => x.id === id); })));
   ok('each transition carries a name and a date, and the baseline says it is provisional until the curator reviews it',
      await g.evaluate(() => { openRecord('rules', 'IX:Diclofenac|Ibuprofen'); const h = document.querySelector('.rule-history').innerText;
@@ -1389,21 +1419,21 @@ console.log('\nclinical governance and barcode links (v0.0016)');
   for (const role of ['owner_admin', 'admin', 'employee']) {
     await as(role);
     ok(`the ${role.replace('_', ' ')} cannot approve a rule, and is not offered to`,
-       await g.evaluate(() => { openRecord('rules', 'IX:Atorvastatin|Fluconazole'); const n = DATA.ruleEvents.length;
-         const offered = document.querySelectorAll('.rule-move[data-to^="approved"]').length; const r = ruleMove('IX:Atorvastatin|Fluconazole', 'approved', 'warn');
+       await g.evaluate(() => { openRecord('rules', 'IX:Allopurinol|Amoxicillin'); const n = DATA.ruleEvents.length;
+         const offered = document.querySelectorAll('.rule-move[data-to^="approved"]').length; const r = ruleMove('IX:Allopurinol|Amoxicillin', 'approved', 'warn');
          return !offered && r === false && DATA.ruleEvents.length === n && !!document.querySelector('.mod-note.stage'); }));
   }
   ok('operations propose, and send for review',
-     await g.evaluate(() => { const n = DATA.ruleEvents.length; openRecord('rules', 'IX:Clopidogrel|Fluoxetine'); tap('.rule-move[data-to="review"]');
-       return DATA.ruleEvents.length === n + 1 && DATA.rules.find(r => r.id === 'IX:Clopidogrel|Fluoxetine').state === 'review'; }));
+     await g.evaluate(() => { const n = DATA.ruleEvents.length; openRecord('rules', 'IX:Cimetidine|Metformin'); tap('.rule-move[data-to="review"]');
+       return DATA.ruleEvents.length === n + 1 && DATA.rules.find(r => r.id === 'IX:Cimetidine|Metformin').state === 'review'; }));
   await as('curator');
   ok('the curator approves at a tier — a new version of the rule set, with their name, the date and the reason',
-     await g.evaluate(() => { openRecord('rules', 'IX:Clopidogrel|Fluoxetine'); document.getElementById('rule-why').value = 'Agreed; Warn until we see the override rate';
-       tap('.rule-move[data-to="approved:warn"]'); const r = DATA.rules.find(x => x.id === 'IX:Clopidogrel|Fluoxetine'), e = DATA.ruleEvents[DATA.ruleEvents.length - 1];
+     await g.evaluate(() => { openRecord('rules', 'IX:Cimetidine|Metformin'); document.getElementById('rule-why').value = 'Agreed; Warn until we see the override rate';
+       tap('.rule-move[data-to="approved:warn"]'); const r = DATA.rules.find(x => x.id === 'IX:Cimetidine|Metformin'), e = DATA.ruleEvents[DATA.ruleEvents.length - 1];
        return r.state === 'approved' && r.tier === 'warn' && ruleSetVersion(RULES_TODAY) === 4 && e.by === 'u5' && e.at === RULES_TODAY && /Warn until/.test(L(e.why)); }));
   ok('…and can re-tier and retire a live rule, each a new version; a retired rule has no way back',
-     await g.evaluate(() => { tap('.rule-move[data-to="approved:note"]'); const a = DATA.rules.find(x => x.id === 'IX:Clopidogrel|Fluoxetine').tier === 'note';
-       tap('.rule-move[data-to="retired"]'); const r = DATA.rules.find(x => x.id === 'IX:Clopidogrel|Fluoxetine');
+     await g.evaluate(() => { tap('.rule-move[data-to="approved:note"]'); const a = DATA.rules.find(x => x.id === 'IX:Cimetidine|Metformin').tier === 'note';
+       tap('.rule-move[data-to="retired"]'); const r = DATA.rules.find(x => x.id === 'IX:Cimetidine|Metformin');
        return a && r.state === 'retired' && ruleSetVersion(RULES_TODAY) === 6 && !document.querySelector('.rule-move') && ruleMove(r.id, 'approved', 'warn') === false; }));
   ok('the curator account is a placeholder with one capability, shown on the matrix',
      await g.evaluate(() => { const c = STAFF.find(s => s.role === 'curator'); goTab('team');
@@ -1415,7 +1445,7 @@ console.log('\nclinical governance and barcode links (v0.0016)');
   ok('…the rate is on the rule: 34% · 41/120',
      await g.evaluate(() => { openRecord('rules', 'IX:Aspirin|Ibuprofen'); return /34%/.test(document.getElementById('work-body').innerText) && /41 of 120 times shown/.test(document.getElementById('work-body').innerText); }));
   ok('the rules and their ledger are report tables — and there is no patients table',
-     await g.evaluate(() => { const tb = sqlTables(); return tb.rules.length === 221 && tb.rule_events.length === DATA.ruleEvents.length && !!tb.barcode_links &&
+     await g.evaluate(() => { const tb = sqlTables(); return tb.rules.length === DATA.rules.length && tb.rule_events.length === DATA.ruleEvents.length && !!tb.barcode_links &&
        !Object.keys(tb).some(k => /patient/i.test(k)) && !Object.keys(tb).some(k => Object.keys(tb[k][0] || {}).some(c => /patient/i.test(c))); }));
   ok('NO CRM ROLE CAN READ A PATIENT ROW: nothing in the CRM holds, derives or reads one',
    !/patientById|patientsOf|S\.patients|DATA\.patients|\bpatients\s*:\s*\[/.test(readFileSync(file, 'utf8')) && await g.evaluate(() => !('patients' in DATA)));

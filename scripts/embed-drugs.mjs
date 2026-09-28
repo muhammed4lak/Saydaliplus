@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE } from '../data/drugs.mjs';
+import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE, CATEGORIES, TAGS, RULES, OUTSIDE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -41,7 +41,7 @@ const C_BEGIN = '/* CATALOGUE:BEGIN */', C_END = '/* CATALOGUE:END */';
 /* v0.0016 — the rules ledger (W19): rules defined only there, every state a
    rule has been through with who and when, and the CRM's override counts.
    Both builds: the app fires what is approved, the CRM governs it. */
-const RULES = JSON.parse(readFileSync(join(root, 'data', 'rules.json'), 'utf8'));
+const LEDGER = JSON.parse(readFileSync(join(root, 'data', 'rules.json'), 'utf8'));
 const G_BEGIN = '/* RULES:BEGIN */', G_END = '/* RULES:END */';
 const S_BEGIN = '/* SOURCES:BEGIN */', S_END = '/* SOURCES:END */';
 const R_BEGIN = '/* REGISTER:BEGIN */', R_END = '/* REGISTER:END */';
@@ -55,16 +55,32 @@ const P_END = '/* PRODUCTS:END */';
    rather than in a screen that renders a blank chip. */
 const problems = [];
 const seen = new Set();
+const SCIS = new Set(DRUGS.map(d => d.sci));
+const both = x => x && typeof x.ar === 'string' && x.ar && typeof x.en === 'string' && x.en;
 for (const d of DRUGS) {
   if (seen.has(d.sci)) problems.push(`duplicate scientific name: ${d.sci}`);
   seen.add(d.sci);
-  for (const k of ['sci', 'ar', 'atc', 'form']) if (!d[k]) problems.push(`${d.sci}: missing ${k}`);
+  for (const k of ['sci', 'ar', 'atc', 'form', 'cat']) if (!d[k]) problems.push(`${d.sci}: missing ${k}`);
+  /* v0.0015.3 — the category is a class ("cvs.acei") of a group ("cvs"). */
+  if (!CATEGORIES[d.cat] || !d.cat.includes('.') || !CATEGORIES[d.cat.split('.')[0]]) problems.push(`${d.sci}: unknown category "${d.cat}"`);
+  for (const t of d.tags || []) if (!TAGS[t]) problems.push(`${d.sci}: unknown interaction class "${t}"`);
+  for (const k of ['brand', 'aka']) if (k in d && (!Array.isArray(d[k]) || d[k].some(x => typeof x !== 'string' || !x))) problems.push(`${d.sci}: ${k} must be a list of names`);
+  /* At most three questions — the three whose answer changes what happens
+     next. A fourth is the one nobody asks. */
+  if (!Array.isArray(d.ask) || !d.ask.length || d.ask.length > 3) problems.push(`${d.sci}: needs one to three questions to ask`);
+  for (const q of d.ask || []) if (!both(q)) problems.push(`${d.sci}: a question needs both languages`);
   if (!FORM_KEYS.includes(d.form)) problems.push(`${d.sci}: unknown form "${d.form}"`);
   if (!Array.isArray(d.doses) || !d.doses.length) problems.push(`${d.sci}: no doses`);
   if (!d.notes || !d.notes.ar || !d.notes.en) problems.push(`${d.sci}: notes need both languages`);
   for (const i of d.interactions || []) {
     if (!['warning', 'serious', 'critical'].includes(i.severity)) problems.push(`${d.sci}: bad severity "${i.severity}"`);
     if (!i.with || !i.note || !i.note.ar || !i.note.en) problems.push(`${d.sci}: incomplete interaction`);
+    /* A partner is a drug of the reference, a class ("#nsaid"), or one of the
+       few partners that are not medicines. Anything else is a typo that would
+       never match a basket. */
+    else if (i.with === d.sci) problems.push(`${d.sci}: interacts with itself`);
+    else if (i.with.startsWith('#') ? !TAGS[i.with.slice(1)] : !SCIS.has(i.with) && !OUTSIDE.includes(i.with))
+      problems.push(`${d.sci}: interaction partner "${i.with}" is not a drug, a class or a known outside partner`);
   }
   for (const c of d.contraindications || []) {
     if (!c.ar || !c.en) problems.push(`${d.sci}: contraindication needs both languages`);
@@ -73,6 +89,14 @@ for (const d of DRUGS) {
   if ('controlled' in d && d.controlled !== true) problems.push(`${d.sci}: controlled must be true or absent`);
 }
 for (const [k, v] of Object.entries(TAKE)) if (!v.ar || !v.en) problems.push(`take ${k}: needs both languages`);
+for (const [k, v] of Object.entries(CATEGORIES)) if (!both(v)) problems.push(`category ${k}: needs both languages`);
+for (const [k, v] of Object.entries(TAGS)) if (!both(v)) problems.push(`class ${k}: needs both languages`);
+for (const r of RULES) {
+  const [a, b, severity, en, ar] = r;
+  if (!TAGS[a] || !TAGS[b]) problems.push(`class rule ${a} + ${b}: unknown class`);
+  if (!['warning', 'serious', 'critical'].includes(severity)) problems.push(`class rule ${a} + ${b}: bad severity`);
+  if (!en || !ar) problems.push(`class rule ${a} + ${b}: needs both languages`);
+}
 for (const r of DUPLICATE_RULES) {
   if (!r.id || !r.codes || !r.codes.length) problems.push(`duplicate rule ${r.id}: no codes`);
   if (!['warning', 'serious', 'critical'].includes(r.severity)) problems.push(`duplicate rule ${r.id}: bad severity`);
@@ -118,6 +142,18 @@ const block = BEGIN + '\n' +
   'const DUPLICATE_RULES = [\n' +
   DUPLICATE_RULES.map(r => '  ' + JSON.stringify(r)).join(',\n') +
   '\n];\n' +
+  /* v0.0015.3 — the categories, the interaction classes, and the class rules
+     that hold whichever two members of the classes meet. */
+  'const DRUG_CATEGORIES = {\n' +
+  Object.entries(CATEGORIES).map(([k, v]) => '  ' + JSON.stringify(k) + ':' + JSON.stringify(v)).join(',\n') +
+  '\n};\n' +
+  'const DRUG_TAGS = {\n' +
+  Object.entries(TAGS).map(([k, v]) => '  ' + JSON.stringify(k) + ':' + JSON.stringify(v)).join(',\n') +
+  '\n};\n' +
+  'const DRUG_RULES = [\n' +
+  RULES.map(([a, b, severity, en, ar]) => '  ' + JSON.stringify({ a, b, severity, note:{ ar, en } })).join(',\n') +
+  '\n];\n' +
+  'const DRUG_OUTSIDE = ' + JSON.stringify(OUTSIDE) + ';\n' +
   'const DRUGS = [\n' +
   DRUGS.map(d => '  ' + JSON.stringify(d)).join(',\n') +
   '\n];\n' + END;
@@ -154,33 +190,46 @@ const registerBlock = R_BEGIN + '\n' +
   const known = new Set(DRUGS.map(d => d.sci));
   const pairId = (a, b) => 'IX:' + [a, b].sort().join('|');
   const built = new Set(DUPLICATE_RULES.map(r => 'DUP:' + r.id));
-  DRUGS.forEach(d => (d.interactions || []).forEach(i => { if (known.has(i.with)) built.add(pairId(d.sci, i.with)); }));
+  /* v0.0016.2 — three kinds of interaction rule, as the builds number them: a
+     pair of drugs ("IX:A|B"), a drug and a class ("IX:#nsaid|Warfarin"), and a
+     class rule over two classes ("CLS:benzo|opioid"). */
+  DRUGS.forEach(d => (d.interactions || []).forEach(i => {
+    if (known.has(i.with) || (i.with.startsWith('#') && TAGS[i.with.slice(1)])) built.add(pairId(d.sci, i.with));
+  }));
+  for (const [a, b] of RULES) built.add('CLS:' + [a, b].sort().join('|'));
+  /* A pair the reference already covers — by name, by class or by a class
+     rule — cannot be defined again in the ledger: the reference's rule is the
+     one that fires. */
+  const tagsOf = sci => (DRUGS.find(d => d.sci === sci) || {}).tags || [];
+  const covered = (a, b) => [[a, b], [b, a]].some(([x, y]) => (DRUGS.find(d => d.sci === x)?.interactions || [])
+      .some(i => i.with === y || (i.with.startsWith('#') && tagsOf(y).includes(i.with.slice(1))))) ||
+    RULES.some(([p, q]) => (tagsOf(a).includes(p) && tagsOf(b).includes(q)) || (tagsOf(a).includes(q) && tagsOf(b).includes(p)));
   const ledger = new Set();
-  for (const r of RULES.rules) {
+  for (const r of LEDGER.rules) {
     if (r.kind !== 'interaction') problems.push(`rule ${r.id}: only interaction rules can be defined in the ledger`);
     if (!known.has(r.a) || !known.has(r.b)) problems.push(`rule ${r.id}: both drugs must be in the reference`);
     if (r.id !== pairId(r.a, r.b)) problems.push(`rule ${r.id}: id must be ${pairId(r.a, r.b)}`);
-    if (built.has(r.id)) problems.push(`rule ${r.id}: already in the reference`);
+    if (built.has(r.id) || covered(r.a, r.b)) problems.push(`rule ${r.id}: already in the reference`);
     if (!['warning', 'serious', 'critical'].includes(r.severity)) problems.push(`rule ${r.id}: bad severity`);
     if (!r.note || !r.note.en || !r.note.ar) problems.push(`rule ${r.id}: note needs both languages`);
     ledger.add(r.id);
   }
-  let last = RULES.baseline.at;
-  for (const e of RULES.events) {
+  let last = LEDGER.baseline.at;
+  for (const e of LEDGER.events) {
     if (!built.has(e.rule) && !ledger.has(e.rule)) problems.push(`event for unknown rule ${e.rule}`);
     if (!['proposed', 'review', 'approved', 'retired'].includes(e.state)) problems.push(`event ${e.rule}: bad state ${e.state}`);
     if (e.state === 'approved' && !['note', 'warn', 'stop'].includes(e.tier)) problems.push(`event ${e.rule}: approval needs a tier`);
     if (e.at < last) problems.push(`event ${e.rule}: events must be in date order`);
     last = e.at;
   }
-  for (const id of Object.keys(RULES.overrides30d)) if (!built.has(id) && !ledger.has(id)) problems.push(`override count for unknown rule ${id}`);
+  for (const id of Object.keys(LEDGER.overrides30d)) if (!built.has(id) && !ledger.has(id)) problems.push(`override count for unknown rule ${id}`);
 }
 const rulesBlock = G_BEGIN + '\n' +
-  'const RULE_CURATOR = ' + JSON.stringify(RULES.curator) + ';\n' +
-  'const RULE_BASELINE = ' + JSON.stringify(RULES.baseline) + ';\n' +
-  'const LEDGER_RULES = [\n' + RULES.rules.map(r => '  ' + JSON.stringify(r)).join(',\n') + '\n];\n' +
-  'const RULE_EVENTS = [\n' + RULES.events.map(e => '  ' + JSON.stringify(e)).join(',\n') + '\n];\n' +
-  'const RULE_OVERRIDES_30D = ' + JSON.stringify(RULES.overrides30d) + ';\n' + G_END;
+  'const RULE_CURATOR = ' + JSON.stringify(LEDGER.curator) + ';\n' +
+  'const RULE_BASELINE = ' + JSON.stringify(LEDGER.baseline) + ';\n' +
+  'const LEDGER_RULES = [\n' + LEDGER.rules.map(r => '  ' + JSON.stringify(r)).join(',\n') + '\n];\n' +
+  'const RULE_EVENTS = [\n' + LEDGER.events.map(e => '  ' + JSON.stringify(e)).join(',\n') + '\n];\n' +
+  'const RULE_OVERRIDES_30D = ' + JSON.stringify(LEDGER.overrides30d) + ';\n' + G_END;
 const catalogueBlock = C_BEGIN + '\n' +
   'const CONTROL_SOURCE = ' + JSON.stringify(CONTROLLED.source) + ';\n' +
   'const CONTROL_LIST = [\n' + CONTROLLED.substances.map(c => '  ' + JSON.stringify(c)).join(',\n') + '\n];\n' +
@@ -245,5 +294,5 @@ for (const rel of targets) {
   writeFileSync(path, out);
   console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : '') +
     (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : '') +
-    `, and the rules ledger (${RULES.rules.length} ledger rules, ${RULES.events.length} events)`);
+    `, and the rules ledger (${LEDGER.rules.length} ledger rules, ${LEDGER.events.length} events)`);
 }

@@ -1863,6 +1863,102 @@ yet placed on the version table; v0.0019, beside tasks, unless moved.
   survived only because the person's page already closes itself when that
   person is not at the pharmacy on screen, so the behaviour held.
 
+### v0.0015.3 — the medication database: every drug on the Iraqi market (28 Sep 2026)
+
+*Built in a parallel session on `claude/medication-database-iraqi-oty9g9`, from
+v0.0015.2; merged into this line as **v0.0016.2** (below).*
+
+Asked: a database of every known drug, categorised, with brand and scientific
+names, each with interactions, contraindications and the notes a patient
+should hear, plus the most important questions to ask when dispensing it —
+at most three — kept to the Iraqi market, from the Ministry files already in
+the repository.
+- **1,174 molecules** (from 119), in `data/drugs/`, one file per part of the
+  body (32 files); `data/drugs.mjs` joins them. Each has a **category** (136
+  classes in 20 groups), scientific and Arabic names, other names, the
+  international brands (1,100 have them), ATC, main form, strengths,
+  counselling in both languages, contraindications, **one to three questions
+  to ask**, and interactions. The migrated 119 kept their wording verbatim
+  (checked field by field); metformin's "Contrast media" became the class
+  `#contrast`, and metronidazole gained alcohol as an interaction.
+- **Interactions three ways:** drug → drug (873 lines), drug → class
+  (`#nsaid`, 195 of them), and **57 class rules** that hold whichever two
+  members meet (opioid + benzodiazepine critical; strong CYP3A4 inhibitor +
+  sensitive substrate critical…). 936 molecules have at least one; the rest are
+  mostly topicals, eye drops, fluids and diagnostics.
+- **Skin and eye forms are their own entries** where the molecule is also a
+  tablet (33: `Diclofenac (topical)`, `Ciprofloxacin (eye)`…), so a gel does
+  not raise the tablet's alerts.
+- **The register mapped:** `read-sources.py` now matches ingredients by name,
+  other names and the register's spellings, splits run-together text, puts
+  misspelt names back when one name is clearly nearest (reviewed by hand:
+  *tyrosine* is not *thyroxine*, *gemifloxacin* is not *gatifloxacin*, a trade
+  name alone is never "corrected"), routes creams and eye drops to the right
+  entry, and falls back to brands. **5,103 of 5,186 registered products link**
+  (from 2,245). Every generic the EDL names is now in the reference (it was
+  355 short); 573 of its 597 lines map (the rest are fragments of the PDF).
+- **The app:** the interaction index reads classes and class rules; the
+  Helper's questions are each drug's own (contraindications stay on the
+  record); search ranks names that start with the query first and also finds
+  other names, international brands and registered trade names; the list
+  draws 100 and counts the rest, with category chips; a drug's page shows its
+  category, other names, brands, how to take it, its questions, what it is
+  registered as in Iraq, and its class interactions marked as classes.
+  **The CRM** record shows the category, other names, brands, class partners
+  and questions.
+- **Exports:** `npm run drugs:export` → `data/export/medications.json`,
+  `medications.csv` (one row per molecule, both languages, Excel-ready) and
+  `interactions.csv`.
+- Catalogue fixtures: pseudoephedrine, triprolidine and caffeine are now in
+  the reference, so the "outside the reference" examples are a propolis cough
+  syrup and royal jelly; Mebeverine 135 mg is mapped.
+- **Placeholder clinical content until the clinical curator reviews it** —
+  written from standard formulary knowledge, not yet checked line by line by a
+  pharmacist.
+- Not done: a combination entry for every fixed-dose combination (the
+  register's combinations link to their ingredients instead); interactions for
+  the ~240 molecules with none listed (mostly topicals); the multi-herb
+  formulas (Himalaya and similar) are not in the reference.
+- Checks: app 679, from 671 (the drug-list, search, question, coverage, till
+  and EDL checks rewritten for the new data; 9 new); CRM 273 (2 new; the CSV-import
+  test now adds Tiotixene, since Nystatin is in the reference); unit 135 (11
+  new in `tests/unit/drugs.test.ts`).
+
+### v0.0016.2 as built — the medication database merged, under the rule set
+
+v0.0015.3 (above) was built beside v0.0016 from the same starting point; this
+brings it in. **Decided 28 Sep 2026:** for the prototype every rule in the
+database is approved, like the first 218; **what the rule set looks like at
+launch is a decision for then** (open decisions).
+- **Data and scripts** merged as built there: 1,174 molecules in
+  `data/drugs/`, the register mapping (5,103 of 5,186 products), the exports.
+- **The app and CRM:** its screen changes were carried over onto v0.0016.1 —
+  class-aware interactions, each drug's own questions, ranked search over
+  other names and brands, category chips and the capped list, the richer drug
+  page; in the CRM, category, names, brands, class partners and questions.
+- **The rule set now governs all three kinds of interaction.** Each has an id
+  the curator approves, re-tiers or retires: a drug pair (`IX:A|B`), a drug's
+  line against a class (`IX:#nsaid|Warfarin`), and a class rule
+  (`CLS:benzo|opioid`, shown in the CRM as a *Class rule*, named by its
+  classes). The baseline counts every one of them. Where several rules cover
+  a pair, the till fires the worst **live** one: retiring the opioid +
+  benzodiazepine rule does not silence diazepam + morphine while the
+  opioid + sedative rule still covers it. The app and the CRM rebuild the same
+  rule set for any day (checked).
+- **The ledger's examples changed:** the database already covers fluconazole +
+  atorvastatin and clopidogrel + fluoxetine, so the rules shown *under review*
+  and *proposed* are now **allopurinol + amoxicillin** (rash) and **cimetidine
+  + metformin**. The ledger check refuses a rule for a pair the reference
+  covers by any of the three ways. The data file's class rules are called
+  `RULES` there; the ledger is `LEDGER` in the embed script.
+- Fixed on the way: v0.0016.1's `<meta name="version">` still said v0.0016.
+- Checks: app 725, CRM 295 (the rule counts are now worked out from the data
+  file in each check, independently of the build; 9 new); unit 148; typecheck
+  clean. Mutation-tested on a copy: 8 planted faults in the new rule code, all
+  caught — two only after tightening a check (a milder rule the curator raised
+  to Stop must win over a critical one at Warn; a class rule's CRM title must
+  be the classes' names exactly).
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -1935,6 +2031,11 @@ These are yours, and several gate the production track. None is a coding task.
 - **A pharmacist-side subscription** — still needed before half of W16 is real.
 - **The name** (W9).
 - **W8's legal read**, now extended to patient history kept by the pharmacy (P8).
+- **The rule set at launch (decided to be decided, 28 Sep 2026).** In the
+  prototype every rule in the medication database is approved. Before launch:
+  which of its rules go live on day one, which wait for the clinical curator,
+  and at what tier — the database's clinical content is still a placeholder
+  until a pharmacist checks it line by line.
 - **W7's three leftovers.**
 - **F8**, parked by decision until before the ecosystem step.
 

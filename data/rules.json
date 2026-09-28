@@ -24,25 +24,25 @@
       }
     },
     {
-      "id": "IX:Atorvastatin|Fluconazole",
+      "id": "IX:Allopurinol|Amoxicillin",
       "kind": "interaction",
-      "a": "Atorvastatin",
-      "b": "Fluconazole",
+      "a": "Allopurinol",
+      "b": "Amoxicillin",
       "severity": "warning",
       "note": {
-        "en": "Fluconazole raises atorvastatin levels — ask about muscle pain; a short antifungal course is usually fine.",
-        "ar": "الفلوكونازول يرفع مستوى الأتورفاستاتين — اسأل عن ألم العضلات؛ الكورس القصير مقبول عادةً."
+        "en": "Allopurinol with amoxicillin makes a rash more likely — not an allergy, but worth a word.",
+        "ar": "الألوبيورينول مع الأموكسيسيلين يزيد احتمال الطفح الجلدي — ليس حساسية، لكنه يستحق التنبيه."
       }
     },
     {
-      "id": "IX:Clopidogrel|Fluoxetine",
+      "id": "IX:Cimetidine|Metformin",
       "kind": "interaction",
-      "a": "Clopidogrel",
-      "b": "Fluoxetine",
+      "a": "Cimetidine",
+      "b": "Metformin",
       "severity": "warning",
       "note": {
-        "en": "Fluoxetine can weaken clopidogrel, and an SSRI with an antiplatelet adds to the bleeding risk.",
-        "ar": "قد يُضعف الفلوكستين مفعول الكلوبيدوغريل، ومثبّط استرداد السيروتونين مع مضاد صفيحات يزيد خطر النزف."
+        "en": "Cimetidine raises metformin levels; famotidine does not.",
+        "ar": "السيميتيدين يرفع مستوى الميتفورمين؛ الفاموتيدين لا يفعل."
       }
     }
   ],
@@ -71,17 +71,17 @@
       "by": "curator"
     },
     {
-      "rule": "IX:Atorvastatin|Fluconazole",
+      "rule": "IX:Allopurinol|Amoxicillin",
       "state": "proposed",
       "at": "2026-09-24",
       "by": "u2",
       "why": {
-        "en": "Missing from the reference: clarithromycin–atorvastatin is there, fluconazole–atorvastatin is not.",
-        "ar": "غائبة عن المرجع: كلاريثرومايسين مع أتورفاستاتين موجود، وفلوكونازول مع أتورفاستاتين غير موجود."
+        "en": "Missing from the reference: pharmacies see the rash and ask whether it is an allergy.",
+        "ar": "غائبة عن المرجع: ترى الصيدليات الطفح وتسأل إن كان حساسية."
       }
     },
     {
-      "rule": "IX:Atorvastatin|Fluconazole",
+      "rule": "IX:Allopurinol|Amoxicillin",
       "state": "review",
       "at": "2026-09-25",
       "by": "u2"
@@ -97,7 +97,7 @@
       }
     },
     {
-      "rule": "IX:Clopidogrel|Fluoxetine",
+      "rule": "IX:Cimetidine|Metformin",
       "state": "proposed",
       "at": "2026-09-27",
       "by": "u3",
