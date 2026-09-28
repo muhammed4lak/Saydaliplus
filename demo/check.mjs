@@ -1155,9 +1155,11 @@ ok('an owner without a trainee is not shown someone else’s',
    await d.evaluate(() => { goto('trainees'); return !/Zainab/.test(document.getElementById('app-body').innerText); }));
 ok('signing in again starts on All, not on the last tab somebody chose',
    await d.evaluate(() => { setPharmacy('P8'); signOut(); signInAs('layla@example.com'); return currentPharmacy() === null; }));
-ok('an owner of one sees no tabs at all',
-   await d.evaluate(() => { signOut(); signInAs('rahma@example.com'); goto('dashboard');
-     const n = document.querySelectorAll('.ptab').length; signOut(); signInAs('layla@example.com'); return n === 0; }));
+ok('an owner of one sees no tabs at all — unless she also works somewhere, when that pharmacy is a tab beside hers (v0.0016), still with no All',
+   await d.evaluate(() => { const e = S.staff.find(x => x.id === 'E012'); e.state = 'ended'; signOut(); signInAs('rahma@example.com'); goto('dashboard');
+     const n = document.querySelectorAll('.ptab').length; e.state = 'active'; render();
+     const tabs = [...document.querySelectorAll('.ptab:not(.ptab-add)')].map(b => b.innerText);
+     signOut(); signInAs('layla@example.com'); return n === 0 && tabs.length === 2 && /Al-Hayat · works here/.test(tabs[1]) && !tabs.some(x => /All/.test(x)); }));
 
 console.log('\nwhat an owner of several is charged');
 await d.evaluate(() => goto('billing'));
@@ -1465,8 +1467,8 @@ await dk.fill('#ap-licence', 'IQ-PHM-000999');
 await dk.locator('.btn-primary').click();
 await dk.waitForTimeout(200);
 const added = await dk.evaluate(() => currentPharmacy() && currentPharmacy().id);
-ok('it joins the owner’s pharmacies at once — so an owner of one now has tabs',
-   !!added && await dk.locator('.ptab:not(.ptab-add)').count() === 3);
+ok('it joins the owner’s pharmacies at once — so an owner of one now has tabs (All, her two, and Al-Hayat where she works)',
+   !!added && await dk.locator('.ptab:not(.ptab-add)').count() === 4);
 ok('marked as under review, on its tab and at the top of its screen',
    await dk.locator('.ptab-dot.pending').count() === 1 && await dk.locator('.ap-pending').count() === 1);
 ok('and it is not on the bill until it is verified',
@@ -2337,7 +2339,7 @@ console.log('\nthe till and the Helper as one (v0.0013.1)');
      await dk.evaluate(() => { setPrice('P1', '5000000001224', 6000); setPrice('P1', '4000000001065', 3500);
        tillScan('5000000001224'); tillScan('4000000001065'); tillScan('4000000001065');
        const body = document.getElementById('app-body');
-       return body.querySelectorAll('.till-line').length === 2 && !body.querySelector('.qty-btn, .till-void, .link-btn') &&
+       return body.querySelectorAll('.till-line').length === 2 && !body.querySelector('.qty-btn, .till-void, .till-cart .link-btn') &&
          body.querySelectorAll('.till-line')[1].querySelector('.till-qty').innerText === '×2'; }));
   /* A phone or a small screen: the bar is pinned. From 1100px it is a panel (v0.0013.5, U3). */
   await dk.setViewportSize({ width: 1000, height: 800 });
@@ -3056,12 +3058,13 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        return yday && back && document.querySelector('.tl-next').disabled; }));
   ok('the owner signs the waiting drawer',
      await dk.evaluate(() => { const d = S.drawers.find(x => x.state === 'waiting'); goto('drawer'); tap('.dr-signbtn'); return d.state === 'closed' && d.signedBy === 'rahma@example.com'; }));
-  ok('inviting someone with no account: the code works from the app, and they arrive with selling only',
-     await dk.evaluate(() => { goto('team'); setv('inv-name', 'Sara Hadi'); setv('inv-contact', '+964 770 000 0000'); setv('inv-pos', 'assistant'); inviteStaff();
+  ok('inviting by phone: the code works from the app — for a Syndicate-verified pharmacist only (v0.0016) — and they arrive with selling only',
+     await dk.evaluate(() => { goto('team'); setv('inv-name', 'Sara Hadi'); setv('inv-contact', '+964 770 000 0000'); inviteStaff();
        const x = S.staff.find(s => s.name === 'Sara Hadi'); signOut(); signInAs('noor@example.com'); setLang('en'); goto('checkin');
        const box = !!document.querySelector('.tm-join'); setv('join-code', '000000'); joinByCode(); const bad = x.state === 'invited';
-       setv('join-code', x.code); joinByCode();
-       return box && bad && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'assistant' && x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
+       setv('join-code', x.code); joinByCode(); const pending = x.state === 'invited';
+       ACCOUNTS['noor@example.com'].verified = true; setv('join-code', x.code); joinByCode();
+       return box && bad && pending && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'pharmacist' && x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
   ok('the near-expiry exchange cannot be granted before it exists (v0.0018)',
      await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render();
        const box = document.querySelector('.tm-grant[data-perm="exchange"] input'); setGrant(S.staff[0].id, 'exchange', true);
@@ -3098,7 +3101,7 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
    --------------------------------------------------------------------------- */
 console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
 {
-  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.staff = []; S.customRoles = []; S.roleDraft = null;
+  await dk.evaluate(() => { ACCOUNTS['noor@example.com'].verified = false; signOut(); signInAs('rahma@example.com'); setLang('en'); S.staff = []; S.customRoles = []; S.roleDraft = null;
     S.openStaff = null; S.teamNote = null; S.teamDay = null; S.teamPerson = null; S.till = tillReset(); goto('team'); });
   ok('four ready-made roles on the Team screen — Cashier, Pharmacist, Stock keeper, Manager — with a way to make one',
      await dk.evaluate(() => { const c = document.querySelector('.tm-roles'); if (!c) return false; c.open = true;
@@ -3115,12 +3118,12 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
      await dk.evaluate(() => { const sel = document.getElementById('tm-role'), sell = document.querySelector('.tm-grant[data-perm="sell"]');
        const box = sell && sell.querySelector('input'); return !!sel && sel.value === 'cashier' && !!box && box.checked && box.disabled &&
          /From the role: Cashier/.test(sell.innerText) && !document.querySelector('.tm-grant[data-perm="voids"] input').disabled; }));
-  ok('giving them the Pharmacist role gives voids, discounts and own items — they can void now — and it is on the record',
+  ok('giving them the Pharmacist role gives voids, discounts, own items and patient history — they can void now — and it is on the record',
      await dk.evaluate(() => { const x = S.staff[0]; setRole(x.id, 'pharmacist');
        const g = effectiveGrants(x).join();
        signOut(); signInAs('ahmed@example.com'); const may = can('voids', 'P1') && can('discounts', 'P1') && !can('prices', 'P1');
        signOut(); signInAs('rahma@example.com'); setLang('en'); S.openStaff = null; goto('team');
-       return g === 'sell,voids,discounts,ownItems' && may && [...document.querySelectorAll('.tl-ev')].some(e => /Gave Ahmed Al-Kubaisi the Pharmacist role/.test(e.innerText)); }));
+       return g === 'sell,voids,discounts,ownItems,patients' && may && [...document.querySelectorAll('.tl-ev')].some(e => /Gave Ahmed Al-Kubaisi the Pharmacist role/.test(e.innerText)); }));
   ok('a role’s own permission cannot be taken away one person at a time — change the role instead',
      await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'voids', false); setGrant(x.id, 'voids', true);
        return effectiveGrants(x).includes('voids') && !x.grants.includes('voids'); }));
@@ -3129,7 +3132,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
        return roleLabel(x) === 'Pharmacist + Prices' && effectiveGrants(x).includes('prices') && /Pharmacist \+ Prices/.test(document.querySelector('.tm-row .tm-grants').innerText); }));
   ok('changing role drops extras the new role already covers',
      await dk.evaluate(() => { const x = S.staff[0]; setRole(x.id, 'manager'); const a = !x.grants.length && roleLabel(x) === 'Manager';
-       setRole(x.id, 'pharmacist'); return a && effectiveGrants(x).join() === 'sell,voids,discounts,ownItems'; }));
+       setRole(x.id, 'pharmacist'); return a && effectiveGrants(x).join() === 'sell,voids,discounts,ownItems,patients'; }));
   ok('a custom role needs a name and at least one permission',
      await dk.evaluate(() => { editRole('new'); setv('role-name', ''); saveRole();
        return !S.customRoles.length && /Give the role a name/.test(document.getElementById('app-body').innerText); }));
@@ -3294,6 +3297,157 @@ console.log('\nthe seeded teams, and the view of someone on a team (v0.0015.2)')
   ok('the seeded people’s names are in Arabic when the app is',
      await tp.evaluate(() => { setLang('ar'); const r = personName('hassan@example.com') === 'حسن الدليمي' && personName('zahraa@example.com') === 'زهراء علي'; setLang('en'); return r; }));
   await tp.close();
+}
+
+/* ---------------------------------------------------------------------------
+   v0.0016 — clinical governance; patient history; Syndicate-only teams; an
+   owner who also works elsewhere; the staff home; barcode links. A fresh page.
+   --------------------------------------------------------------------------- */
+console.log('\nclinical governance, patients, teams and barcode links (v0.0016)');
+{
+  const gp = await dk.context().newPage();
+  gp.on('pageerror', e => errs.push('pageerror (v0.0016): ' + e.message));
+  await gp.goto(darkUrl); await gp.waitForTimeout(400);
+  await gp.evaluate(() => {
+    window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+    window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+    window.lines = (...scis) => scis.map(s => ({ molecules:[{ sci:s }] }));
+    window.dayShift = day => { S.clockShift = 0; S.clockShift = new Date(day + 'T12:00:00').getTime() - nowMs(); };
+  });
+
+  /* Teams: a Syndicate badge or nothing. */
+  ok('an invitation has no position to choose — everyone on a team is a pharmacist — and says only the Syndicate-verified join',
+     await gp.evaluate(() => { signInAs('rahma@example.com'); setLang('en'); goto('team'); tap('.tm-invite summary');
+       return !document.getElementById('inv-pos') && /Only a Syndicate-verified pharmacist can join a team/.test(document.querySelector('.tm-badge-note').innerText); }));
+  ok('nobody seeded is an assistant, and every account on a team is a verified pharmacist',
+     await gp.evaluate(() => S.staff.every(x => x.position === 'pharmacist') && !Object.values(ACCOUNTS).some(a => a.assistant) &&
+       S.staff.filter(x => x.email && x.state === 'active').every(x => hasBadge(x.email))));
+  ok('someone still waiting for verification is invited, sees it, and cannot accept until verified',
+     await gp.evaluate(() => { setv('inv-name', 'Noor Al-Sultani'); setv('inv-contact', 'noor@example.com'); inviteStaff();
+       const x = S.staff.find(s => s.email === 'noor@example.com'); signOut(); signInAs('noor@example.com'); setLang('en'); goto('checkin');
+       const card = document.querySelector('.tm-myinv'); const shown = !!card && !card.querySelector('.tm-accept') && /Syndicate verification has to be complete/.test(card.innerText);
+       acceptMyInvite(x.id); const still = x.state === 'invited'; setv('join-code', x.code); joinByCode();
+       return shown && still && x.state === 'invited' && acceptInvite(x.code) === null && x.state === 'invited'; }));
+
+  /* An owner who also works on someone else's team. */
+  ok('Rahma owns Al-Rahma and works at Al-Hayat: her own tab, then “Al-Hayat · works here”, and no All',
+     await gp.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard');
+       const tabs = [...document.querySelectorAll('.ptab:not(.ptab-add)')].map(b => b.innerText);
+       return tabs.join('|') === 'Al-Rahma|Al-Hayat · works here'; }));
+  ok('at Al-Hayat she is staff: a staff home with where she works, no Team, and what her role gives — not everything',
+     await gp.evaluate(() => { setPharmacy('P8'); const card = document.querySelector('.wk-card');
+       return atWorkplace() && !!card && /Al-Hayat Pharmacy/.test(card.innerText) && /Pharmacist/.test(card.innerText) &&
+         !navFor().some(x => x[0] === 'team') && can('sell') && can('voids') && !can('stock') && !can('prices') && !screenAllowed('stock'); }));
+  ok('…she cannot set Al-Hayat’s sign-off amount, invite, or see its drawer settings',
+     await gp.evaluate(() => { const before = signOffOver('P8'); setSignOffOver(12345); goto('drawer');
+       const r = signOffOver('P8') === before && !document.querySelector('.dr-setting');
+       const n = S.staff.length; setv('inv-name', 'X'); setv('inv-contact', 'x@example.com'); inviteStaff(); return r && S.staff.length === n; }));
+  ok('…and back at Al-Rahma she owns everything again, with her Team',
+     await gp.evaluate(() => { setPharmacy('P1'); return !atWorkplace() && can('stock') && can('prices') && navFor().some(x => x[0] === 'team'); }));
+  ok('her own record at Al-Hayat is under My activity, which an owner who works somewhere can open',
+     await gp.evaluate(() => { setPharmacy('P8'); goto('activity'); return S.screen === 'activity' && /Al-Hayat Pharmacy/.test(document.getElementById('app-body').innerText); }));
+
+  /* The staff home. */
+  ok('Hassan’s home opens on where he works: Al-Rahma, since July 2025, Pharmacist + Prices, the drawer and the Point of sale',
+     await gp.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); goto('checkin'); const c = document.querySelector('.wk-card');
+       return !!c && /Al-Rahma Pharmacy/.test(c.innerText) && /since July 2025/.test(c.innerText) && /Pharmacist \+ Prices/.test(c.innerText) &&
+         /The drawer is closed/.test(c.innerText) && !!c.querySelector('.wk-pos') && c === document.querySelector('.stack').firstElementChild; }));
+  ok('…tapping the role opens what he may do',
+     await gp.evaluate(() => { tap('.wk-role'); return S.screen === 'activity'; }));
+  ok('Maryam’s card carries the switch between her two pharmacies, and follows it',
+     await gp.evaluate(() => { signOut(); signInAs('maryam@example.com'); setLang('en'); goto('checkin');
+       const segs = [...document.querySelectorAll('.wk-seg')].map(b => b.innerText); const first = /Pharmacist/.test(document.querySelector('.wk-role-v').innerText);
+       tap('.wk-seg:not(.on)'); const c = document.querySelector('.wk-card');
+       return segs.join() === 'Al-Hayat,Al-Shifa' && first && /Al-Shifa Pharmacy/.test(c.innerText) && /Manager/.test(c.innerText) && S.screen === 'checkin'; }));
+  ok('…in Arabic too',
+     await gp.evaluate(() => { setLang('ar'); render(); const r = /مكان عملك/.test(document.querySelector('.wk-card').innerText); setLang('en'); return r; }));
+
+  /* Barcode links. */
+  const code = await gp.evaluate(() => [...Array(10).keys()].map(d => '625123400005' + d).find(ean13Valid));
+  ok('an unknown barcode can be linked to a registered product, found by name',
+     await gp.evaluate(c => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('till'); ensureDrawer('P1'); S.till = tillReset();
+       tillScan(c); const card = !!document.querySelector('.till-unknown .lk-q'); linkQuery('awalodipin');
+       const hits = [...document.querySelectorAll('.lk-hit')].map(h => h.innerText);
+       return card && S.till.unknown === c && hits.some(h => /Awalodipin 2.5/i.test(h)); }, code));
+  ok('…linked, it rings up as that product at once — asking its price first — marked “linked here, not confirmed yet”',
+     await gp.evaluate(c => { linkBarcode('REG-R0102'); const asked = S.till.needPrice === 'REG-R0102';
+       setPrice('P1', 'REG-R0102', 2750); tillAdd('REG-R0102'); const l = S.till.lines.find(x => x.barcode === 'REG-R0102'); render();
+       return asked && !!l && l.link && l.link.barcode === c && l.link.state === 'local' && /Linked here — not confirmed yet/.test(document.querySelector('.till-cart').innerText) &&
+         S.barcodeLinks.some(x => x.barcode === c && x.pharmacy === 'P1' && x.code === 'REG-R0102' && x.state === 'local') &&
+         S.tillLog.some(e => e.kind === 'barcodeLinked' && e.barcode === c); }, code));
+  ok('…the Helper checks it as that product: amlodipine is on the line',
+     await gp.evaluate(() => S.till.lines.find(x => x.barcode === 'REG-R0102').molecules.some(m => m.sci === 'Amlodipine')));
+  ok('…scanned again here it is that product; at another pharmacy it is still unknown until the CRM confirms it',
+     await gp.evaluate(c => { S.till = tillReset(); tillScan(c); const here = S.till.lines.length === 1 && !S.till.unknown;
+       signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy('P7'); goto('till'); S.till = tillReset(); tillScan(c);
+       return here && S.till.unknown === c && !S.till.lines.length; }, code));
+  ok('a barcode the CRM confirmed rings up everywhere, with no “not confirmed” mark',
+     await gp.evaluate(() => { S.till = tillReset(); S.prices.P7 = S.prices.P7 || {}; S.prices.P7['REG-R0102'] = 2800; tillScan('6251234000012');
+       const l = S.till.lines[0]; render(); return !!l && l.barcode === 'REG-R0102' && l.link.state === 'confirmed' && !document.querySelector('.lk-local'); }));
+
+  /* Clinical governance. */
+  ok('every rule has an id, the built ones form the baseline rule set (20 Sep 2026), and before it nothing fires',
+     await gp.evaluate(() => BUILT_RULES.size === 218 && [...BUILT_RULES.keys()].every(id => /^(IX:[^|]+\|[^|]+|DUP:\w+)$/.test(id)) &&
+       ruleSetAsOf('2026-09-19').live.size === 0 && ruleSetAsOf('2026-09-20').version === 1 && ruleSetAsOf('2026-09-20').live.size === 218));
+  ok('a rule proposed or under review never fires: fluconazole + atorvastatin, clopidogrel + fluoxetine',
+     await gp.evaluate(() => { S.clockShift = 0; return !tillFindings(lines('Atorvastatin', 'Fluconazole')).findings.length &&
+       !tillFindings(lines('Clopidogrel', 'Fluoxetine')).findings.length && LEDGER_INDEX.has('IX:Atorvastatin|Fluconazole'); }));
+  ok('a retired rule stops firing: ibuprofen + diclofenac as a pair fired from 22 to 26 September, and not since (the class rule still does)',
+     await gp.evaluate(() => { dayShift('2026-09-23'); const then = tillFindings(lines('Diclofenac', 'Ibuprofen')).findings.map(x => x.rule);
+       dayShift('2026-09-27'); const now = tillFindings(lines('Diclofenac', 'Ibuprofen')).findings.map(x => x.rule); S.clockShift = 0;
+       return then.includes('IX:Diclofenac|Ibuprofen') && then.includes('DUP:nsaid') && !now.includes('IX:Diclofenac|Ibuprofen') && now.includes('DUP:nsaid'); }));
+  ok('the rule set of any past day can be rebuilt, with its version: v1 on the 20th, v2 on the 23rd, v3 since the 26th',
+     await gp.evaluate(() => ruleSetAsOf('2026-09-21').version === 1 && ruleSetAsOf('2026-09-23').version === 2 && ruleSetAsOf('2026-09-26').version === 3 &&
+       ruleSetAsOf('2026-09-23').live.get('IX:Diclofenac|Ibuprofen').tier === 'note' && liveRules().version === 3));
+  ok('the Stop list ships empty',
+     await gp.evaluate(() => ![...liveRules().live.values()].some(r => r.tier === 'stop')));
+  ok('the Helper names the rule set and who approved it — the curator, still to be named',
+     await gp.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('till'); S.till = tillReset();
+       tillAdd('4000000001065'); tillAdd('5000000001033'); openHelper();
+       const r = /Rule set v3 · approved by Clinical curator — to be named/.test(document.querySelector('.gv-ruleset').innerText); closeModal(); return r; }));
+  ok('a rule approved at Stop: the basket says so, and paying opens the Helper for a reason instead',
+     await gp.evaluate(() => { S.ruleEvents = [{ rule:'IX:Aspirin|Ibuprofen', state:'approved', tier:'stop', at:'2026-09-27', by:'curator' }]; render();
+       const flag = document.querySelector('.till-flag.stop'); openPay();
+       return !!flag && /A Stop needs your reason/.test(flag.innerText) && S.modal.kind === 'tillHelper' && !!document.getElementById('stop-why') && liveRules().version === 4; }));
+  ok('…a tap does not acknowledge a Stop, and an empty reason is not accepted — the sale is not refused, it waits for the reason',
+     await gp.evaluate(() => { const k = tillGroups(S.till.lines).groups[0].key; tillAckGroup(k); const tapped = stopsOpen();
+       tillStopReason(k); return tapped && stopsOpen() && /Type the reason first/.test(document.querySelector('.sheet').innerText); }));
+  ok('…with a reason the sale goes ahead, and records the rule, the Stop, the reason and the rule set version',
+     await gp.evaluate(() => { setv('stop-why', 'Prescriber confirmed; spacing the doses'); tillStopReason(tillGroups(S.till.lines).groups[0].key);
+       closeModal(); openPay(); const pay = S.modal.kind === 'tillPay'; confirmCash(); const s = S.sales[0], f = s.findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen');
+       S.ruleEvents = []; return pay && !!f && f.tier === 'stop' && f.reason === 'Prescriber confirmed; spacing the doses' && s.ruleSet === 4; }));
+
+  /* Patient history (P8). */
+  ok('patient history is its own grant: off for a cashier, in the Pharmacist and Manager roles',
+     await gp.evaluate(() => PERMS.includes('patients') && !roleById('cashier').grants.includes('patients') &&
+       roleById('pharmacist').grants.includes('patients') && roleById('manager').grants.includes('patients') && !DEFAULT_GRANTS.includes('patients')));
+  ok('…so Zahraa (Cashier) sees no patient control, and Hassan (Pharmacist) does',
+     await gp.evaluate(() => { signOut(); signInAs('zahraa@example.com'); setLang('en'); goto('till'); const z = !document.querySelector('.pt-row');
+       openPatients(); const zs = S.modal == null || S.modal.kind !== 'tillPatient';
+       signOut(); signInAs('hassan@example.com'); setLang('en'); goto('till'); return z && zs && !!document.querySelector('.pt-attach'); }));
+  ok('a patient is added and attached; the sheet says the record is the pharmacy’s alone',
+     await gp.evaluate(() => { ensureDrawer('P1'); S.till = tillReset(); openPatients(); const priv = /Saydali\+ cannot read it/.test(document.querySelector('.pt-private').innerText);
+       addPatient(); const needName = !S.till.patient; setv('pt-name', 'Um Ali'); setv('pt-phone', '0770 111 2222'); addPatient();
+       const p = patientById(S.till.patient); return priv && needName && !!p && p.name === 'Um Ali' && p.pharmacy === 'P1' && /For Um Ali/.test(document.querySelector('.pt-row').innerText); }));
+  ok('a Warn can be quieted for this patient: it reads as a quieted note for them, and still warns for anyone else',
+     await gp.evaluate(() => { tillAdd('4000000001065'); tillAdd('5000000001033'); openHelper(); const offered = !!document.querySelector('.pt-quiet');
+       quietForPatient('IX:Aspirin|Ibuprofen'); const f = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen');
+       const pat = S.till.patient; detachPatient(); const other = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen');
+       S.till.patient = pat; closeModal();
+       return offered && f.tier === 'note' && f.quieted && other.tier === 'warn' && !other.quieted; }));
+  ok('…a Stop cannot be quieted',
+     await gp.evaluate(() => { S.ruleEvents = [{ rule:'IX:Aspirin|Ibuprofen', state:'approved', tier:'stop', at:'2026-09-27', by:'curator' }];
+       const f = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen'); S.ruleEvents = []; return f.tier === 'stop' && !f.quieted; }));
+  ok('the sale records the patient, and the patient’s page lists what they bought here and what was quieted — with a way to warn again',
+     await gp.evaluate(() => { openPay(); confirmCash(); const s = S.sales[0]; const id = s.patient;
+       S.till.patient = id; openPatientRecord(id); const txt = document.querySelector('.sheet').innerText;
+       const listed = /Bought here/.test(txt) && /Aspirin|Ibuprofen|Brufen|Panadol/i.test(txt) && !!document.querySelector('.pt-unquiet');
+       tap('.pt-unquiet'); const back = !patientQuieted().length; closeModal(); S.till.patient = null;
+       return !!id && listed && back; }));
+  ok('patients are per pharmacy: another pharmacy has none of them, and cannot attach one',
+     await gp.evaluate(() => { const p = S.patients[0]; signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy('P7'); goto('till'); S.till = tillReset();
+       attachPatient(p.id); return !patientsOf('P7').length && S.till.patient === null; }));
+  await gp.close();
 }
 
 await dk.setViewportSize({ width: 320, height: 700 });

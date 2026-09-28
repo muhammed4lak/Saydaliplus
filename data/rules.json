@@ -1,0 +1,136 @@
+{
+  "curator": {
+    "en": "Clinical curator — to be named",
+    "ar": "المسؤول السريري — لم يُسمَّ بعد",
+    "placeholder": true
+  },
+  "baseline": {
+    "at": "2026-09-20",
+    "note": {
+      "en": "The rule set as built — every interaction pair and duplication rule in the reference, at the tier its severity gives (serious or critical: Warn; the rest: Note). Provisional until the clinical curator reviews it (W19).",
+      "ar": "مجموعة القواعد كما بُنيت — كل تداخل وكل قاعدة تكرار في المرجع، بالمستوى الذي تعطيه شدّتها (خطير أو حرج: تحذير؛ الباقي: ملاحظة). مؤقتة حتى يراجعها المسؤول السريري."
+    }
+  },
+  "rules": [
+    {
+      "id": "IX:Diclofenac|Ibuprofen",
+      "kind": "interaction",
+      "a": "Diclofenac",
+      "b": "Ibuprofen",
+      "severity": "warning",
+      "note": {
+        "en": "Two NSAIDs together — no added relief, twice the stomach and kidney risk.",
+        "ar": "مضادّا التهاب معاً — لا تسكين إضافياً، وخطر مضاعف على المعدة والكلية."
+      }
+    },
+    {
+      "id": "IX:Atorvastatin|Fluconazole",
+      "kind": "interaction",
+      "a": "Atorvastatin",
+      "b": "Fluconazole",
+      "severity": "warning",
+      "note": {
+        "en": "Fluconazole raises atorvastatin levels — ask about muscle pain; a short antifungal course is usually fine.",
+        "ar": "الفلوكونازول يرفع مستوى الأتورفاستاتين — اسأل عن ألم العضلات؛ الكورس القصير مقبول عادةً."
+      }
+    },
+    {
+      "id": "IX:Clopidogrel|Fluoxetine",
+      "kind": "interaction",
+      "a": "Clopidogrel",
+      "b": "Fluoxetine",
+      "severity": "warning",
+      "note": {
+        "en": "Fluoxetine can weaken clopidogrel, and an SSRI with an antiplatelet adds to the bleeding risk.",
+        "ar": "قد يُضعف الفلوكستين مفعول الكلوبيدوغريل، ومثبّط استرداد السيروتونين مع مضاد صفيحات يزيد خطر النزف."
+      }
+    }
+  ],
+  "events": [
+    {
+      "rule": "IX:Diclofenac|Ibuprofen",
+      "state": "proposed",
+      "at": "2026-09-21",
+      "by": "u3",
+      "why": {
+        "en": "A pharmacy reported ibuprofen and diclofenac on one prescription.",
+        "ar": "أبلغت صيدلية عن إيبوبروفين وديكلوفيناك في وصفة واحدة."
+      }
+    },
+    {
+      "rule": "IX:Diclofenac|Ibuprofen",
+      "state": "review",
+      "at": "2026-09-21",
+      "by": "u2"
+    },
+    {
+      "rule": "IX:Diclofenac|Ibuprofen",
+      "state": "approved",
+      "tier": "note",
+      "at": "2026-09-22",
+      "by": "curator"
+    },
+    {
+      "rule": "IX:Atorvastatin|Fluconazole",
+      "state": "proposed",
+      "at": "2026-09-24",
+      "by": "u2",
+      "why": {
+        "en": "Missing from the reference: clarithromycin–atorvastatin is there, fluconazole–atorvastatin is not.",
+        "ar": "غائبة عن المرجع: كلاريثرومايسين مع أتورفاستاتين موجود، وفلوكونازول مع أتورفاستاتين غير موجود."
+      }
+    },
+    {
+      "rule": "IX:Atorvastatin|Fluconazole",
+      "state": "review",
+      "at": "2026-09-25",
+      "by": "u2"
+    },
+    {
+      "rule": "IX:Diclofenac|Ibuprofen",
+      "state": "retired",
+      "at": "2026-09-26",
+      "by": "curator",
+      "why": {
+        "en": "Covered by the class rule “Two NSAIDs”, which already fires for any two.",
+        "ar": "تغطيها قاعدة الفئة «مضادّا التهاب غير ستيرويديين» التي تنطلق مع أي اثنين."
+      }
+    },
+    {
+      "rule": "IX:Clopidogrel|Fluoxetine",
+      "state": "proposed",
+      "at": "2026-09-27",
+      "by": "u3",
+      "why": {
+        "en": "Asked for by a pharmacy whose patient takes both.",
+        "ar": "طلبتها صيدلية لديها مريض يتناول الاثنين."
+      }
+    }
+  ],
+  "overrides30d": {
+    "IX:Aspirin|Ibuprofen": [
+      120,
+      41
+    ],
+    "DUP:acid": [
+      88,
+      30
+    ],
+    "DUP:antihistamine": [
+      64,
+      29
+    ],
+    "IX:Clopidogrel|Omeprazole": [
+      35,
+      4
+    ],
+    "IX:Paracetamol|Warfarin": [
+      40,
+      5
+    ],
+    "IX:Clarithromycin|Simvastatin": [
+      6,
+      0
+    ]
+  }
+}

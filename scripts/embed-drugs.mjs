@@ -38,6 +38,11 @@ const REG_PRODUCTS = JSON.parse(readFileSync(join(root, 'data', 'register-produc
 const EDL_GENERICS = JSON.parse(readFileSync(join(root, 'data', 'edl-generics.json'), 'utf8'));
 const CONTROLLED = JSON.parse(readFileSync(join(root, 'data', 'controlled.json'), 'utf8'));
 const C_BEGIN = '/* CATALOGUE:BEGIN */', C_END = '/* CATALOGUE:END */';
+/* v0.0016 — the rules ledger (W19): rules defined only there, every state a
+   rule has been through with who and when, and the CRM's override counts.
+   Both builds: the app fires what is approved, the CRM governs it. */
+const RULES = JSON.parse(readFileSync(join(root, 'data', 'rules.json'), 'utf8'));
+const G_BEGIN = '/* RULES:BEGIN */', G_END = '/* RULES:END */';
 const S_BEGIN = '/* SOURCES:BEGIN */', S_END = '/* SOURCES:END */';
 const R_BEGIN = '/* REGISTER:BEGIN */', R_END = '/* REGISTER:END */';
 const BEGIN = '/* DRUGS:BEGIN */';
@@ -144,6 +149,38 @@ const registerBlock = R_BEGIN + '\n' +
   }
   for (const g of EDL_GENERICS) if (DRUGS.some(d => d.sci.toLowerCase() === g.sci.toLowerCase())) problems.push(`EDL generic already in the reference: ${g.sci}`);
 }
+/* The rules ledger validates against the reference it governs. */
+{
+  const known = new Set(DRUGS.map(d => d.sci));
+  const pairId = (a, b) => 'IX:' + [a, b].sort().join('|');
+  const built = new Set(DUPLICATE_RULES.map(r => 'DUP:' + r.id));
+  DRUGS.forEach(d => (d.interactions || []).forEach(i => { if (known.has(i.with)) built.add(pairId(d.sci, i.with)); }));
+  const ledger = new Set();
+  for (const r of RULES.rules) {
+    if (r.kind !== 'interaction') problems.push(`rule ${r.id}: only interaction rules can be defined in the ledger`);
+    if (!known.has(r.a) || !known.has(r.b)) problems.push(`rule ${r.id}: both drugs must be in the reference`);
+    if (r.id !== pairId(r.a, r.b)) problems.push(`rule ${r.id}: id must be ${pairId(r.a, r.b)}`);
+    if (built.has(r.id)) problems.push(`rule ${r.id}: already in the reference`);
+    if (!['warning', 'serious', 'critical'].includes(r.severity)) problems.push(`rule ${r.id}: bad severity`);
+    if (!r.note || !r.note.en || !r.note.ar) problems.push(`rule ${r.id}: note needs both languages`);
+    ledger.add(r.id);
+  }
+  let last = RULES.baseline.at;
+  for (const e of RULES.events) {
+    if (!built.has(e.rule) && !ledger.has(e.rule)) problems.push(`event for unknown rule ${e.rule}`);
+    if (!['proposed', 'review', 'approved', 'retired'].includes(e.state)) problems.push(`event ${e.rule}: bad state ${e.state}`);
+    if (e.state === 'approved' && !['note', 'warn', 'stop'].includes(e.tier)) problems.push(`event ${e.rule}: approval needs a tier`);
+    if (e.at < last) problems.push(`event ${e.rule}: events must be in date order`);
+    last = e.at;
+  }
+  for (const id of Object.keys(RULES.overrides30d)) if (!built.has(id) && !ledger.has(id)) problems.push(`override count for unknown rule ${id}`);
+}
+const rulesBlock = G_BEGIN + '\n' +
+  'const RULE_CURATOR = ' + JSON.stringify(RULES.curator) + ';\n' +
+  'const RULE_BASELINE = ' + JSON.stringify(RULES.baseline) + ';\n' +
+  'const LEDGER_RULES = [\n' + RULES.rules.map(r => '  ' + JSON.stringify(r)).join(',\n') + '\n];\n' +
+  'const RULE_EVENTS = [\n' + RULES.events.map(e => '  ' + JSON.stringify(e)).join(',\n') + '\n];\n' +
+  'const RULE_OVERRIDES_30D = ' + JSON.stringify(RULES.overrides30d) + ';\n' + G_END;
 const catalogueBlock = C_BEGIN + '\n' +
   'const CONTROL_SOURCE = ' + JSON.stringify(CONTROLLED.source) + ';\n' +
   'const CONTROL_LIST = [\n' + CONTROLLED.substances.map(c => '  ' + JSON.stringify(c)).join(',\n') + '\n];\n' +
@@ -202,7 +239,11 @@ for (const rel of targets) {
   if (ra >= 0 && rb >= 0) out = out.slice(0, ra) + registerBlock + out.slice(rb + R_END.length);
   const ca = out.indexOf(C_BEGIN), cb = out.indexOf(C_END);
   if (ca >= 0 && cb >= 0) out = out.slice(0, ca) + catalogueBlock + out.slice(cb + C_END.length);
+  const ga = out.indexOf(G_BEGIN), gb = out.indexOf(G_END);
+  if (ga < 0 || gb < 0) { console.error(`${rel}: no ${G_BEGIN} … ${G_END} markers — nothing written`); process.exit(1); }
+  out = out.slice(0, ga) + rulesBlock + out.slice(gb + G_END.length);
   writeFileSync(path, out);
   console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : '') +
-    (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : ''));
+    (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : '') +
+    `, and the rules ledger (${RULES.rules.length} ledger rules, ${RULES.events.length} events)`);
 }

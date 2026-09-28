@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0015.2">
+<meta name="version" content="CRM_v0.0016">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -768,7 +768,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0015.2';
+const VERSION = 'CRM_v0.0016';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1049,7 +1049,7 @@ Object.assign(STRINGS, {
   'mod.listings':'Listings','mod.invoices':'Invoices',
   /* v0.0009 — the product catalogue */
   'mod.catalogue':'Catalogue',
-  'cat.note':'Products — what a point of sale scans — linked to the molecules the Dispensing Helper checks. The mapping queue is every product not linked yet, including barcodes a pharmacy scanned that matched nothing, most-scanned first. Marking a link verified is the clinical curator’s step (W19) and arrives with the Rules module in v0.0016.',
+  'cat.note':'Products — what a point of sale scans — linked to the molecules the Dispensing Helper checks. The mapping queue is every product not linked yet, including barcodes a pharmacy scanned that matched nothing, most-scanned first. Marking a link verified is the clinical curator’s step (W19); the curator is still to be named.',
   'v.allProducts':'All products','v.mappingQueue':'Mapping queue','v.awaitingCheck':'Awaiting a pharmacist’s check',
   'v.partCheckable':'Partly or not checkable','v.nondrugs':'Not medicines',
   'c.barcode':'Barcode','c.mapping':'Mapping','c.molecules':'Ingredients','c.coverage':'Helper coverage',
@@ -1071,9 +1071,9 @@ Object.assign(STRINGS, {
   'cat.molPh':'Molecule — from the reference, or one outside it','cat.addIngredient':'Add an ingredient',
   'cat.ingredientHint':'A name that matches the reference links to it. Anything else is saved as outside the reference, and the Helper will say it cannot check it.',
   'cat.needIngredient':'Link at least one ingredient, or mark it as not a medicine.',
-  'cat.autoNote':'Saved as auto-matched. Marking a link verified is the clinical curator’s step (W19) and arrives with the Rules module — nobody can skip it from here.',
+  'cat.autoNote':'Saved as auto-matched. Marking a link verified is the clinical curator’s step (W19) — nobody can skip it from here.',
   'cat.markNonDrug':'Not a medicine','cat.saveAuto':'Save as auto-matched',
-  'cat.curatorNote':'Verified means a pharmacist checked this link. That step belongs to the clinical curator (W19) and arrives with the Rules module in v0.0016; until then the CRM does not offer it.',
+  'cat.curatorNote':'Verified means a pharmacist checked this link. That step belongs to the clinical curator (W19), who is still to be named; until then the CRM does not offer it.',
   'ls.job':'Job','ls.banner':'Banner','ls.announcement':'Announcement','v.announcements':'Announcements',
   'ls.draft':'Awaiting call','ls.in_review':'In review','ls.live':'Live',
   'ls.ended':'Ended','ls.refused':'Refused',
@@ -1095,7 +1095,31 @@ Object.assign(STRINGS, {
   'own.several':'Owns several','own.one':'Owns one','own.pharmacies':'{n} pharmacies',
   'c.invoiceNo':'Invoice','c.month':'Month','c.amount':'Amount','c.dueOn':'Due',
   'c.collected':'Collected','c.method':'Method',
-  'pay.cash':'Cash','pay.transfer':'Bank transfer','pay.zaincash':'ZainCash'
+  'pay.cash':'Cash','pay.transfer':'Bank transfer','pay.zaincash':'ZainCash',
+  /* v0.0016 — clinical governance, the curator, barcode links */
+  'mod.rules':'Rules','mod.links':'Barcode links',
+  'sr.curator':'Clinical curator','sr.blurb.curator':'Approves rules, sets their tier and retires them — and nothing else. A placeholder until the person is named.',
+  'cap.rules.write':'Propose rules and send them for review','cap.rules.approve':'Approve, re-tier and retire rules',
+  'rl.note':'Every rule the Dispensing Helper can fire. A rule never approved never fires. Only the clinical curator approves, sets a tier or retires — not the owner admin, not operations. Every approval or retirement is a new version of the rule set.',
+  'v.rulesAll':'All rules','v.rulesLive':'Live','v.rulesReview':'Proposed or under review','v.rulesRetired':'Retired',
+  'v.rulesStop':'Stop tier','v.rulesDemote':'Flagged for demotion',
+  'c.rule':'Rule','c.kind':'Kind','c.tier':'Tier','c.since':'Since','c.by':'By','c.overrides':'Overridden (30 days)','c.severity':'Severity',
+  'c.product':'Registered product',
+  'rs.proposed':'Proposed','rs.review':'Under review','rs.approved':'Approved','rs.retired':'Retired',
+  'rt.note':'Note','rt.warn':'Warn','rt.stop':'Stop','rk.interaction':'Interaction','rk.duplicate':'Duplicate therapy',
+  'rl.asOf':'Rule set as of','rl.version':'version {v}','rl.liveCounts':'{n} live — {warn} Warn, {note} Note, {stop} Stop','rl.stopEmpty':'the Stop list is empty until the curator fills it',
+  'rl.toReview':'Send for review','rl.approveAs':'Approve as {tier}','rl.back':'Back to proposed','rl.retier':'Change tier to {tier}','rl.retire':'Retire',
+  'rl.why':'Why (kept in the history)','rl.moved':'{rule}: {state}','rl.history':'History','rl.baseline':'the rule set as built',
+  'rl.source':'Defined in','rl.fromReference':'The drug reference','rl.fromLedger':'The rules ledger',
+  'rl.overN':'{o} of {n} times shown','rl.demote':'Over one in five — for the curator to review',
+  'rl.curatorOnly':'Approving, re-tiering and retiring are the clinical curator’s ({who}). Sign in as the curator to act.',
+  'rl.viewingAsOf':'As it stood on {d} — rule set version {v}. Change the date on the Rules list to return to today.',
+  'bl.note':'Barcodes a pharmacy linked to a product on the Ministry’s register. The link works at that pharmacy at once; for every pharmacy only once confirmed here. Links two pharmacies agree on come first; links that disagree are conflicts, and each pharmacy keeps its own until one is confirmed.',
+  'v.linksAll':'All links','v.linksWaiting':'Waiting to be confirmed','v.linksConflict':'Conflicts','v.linksConfirmed':'Confirmed',
+  'bl.single':'One pharmacy','bl.agreed':'Pharmacies agree','bl.conflict':'Conflict','bl.confirmed':'Confirmed',
+  'bl.disagree':'Pharmacies disagree','bl.nPh':'{n} pharmacies','bl.confirmedAs':'Confirmed as','bl.claims':'What each pharmacy linked it to',
+  'bl.confirm':'Confirm for every pharmacy','bl.confirmedToast':'{barcode} is {name} for every pharmacy now',
+  'bl.conflictNote':'Two pharmacies linked this barcode to different products. Check the box before confirming either.'
 });
 
 /* ==========================================================================
@@ -1111,7 +1135,9 @@ Object.assign(STRINGS, {
    record points at one of these ids, so a staff account is not decoration:
    deleting one orphans work, which is why deactivation below insists on a
    successor rather than letting records fall on the floor. */
-const CRM_ROLES = ['owner_admin', 'admin', 'employee'];
+/* v0.0016: the clinical curator (W19) is a fourth kind of account — the only
+   one that approves a rule, sets its tier or retires it, and nothing else. */
+const CRM_ROLES = ['owner_admin', 'admin', 'employee', 'curator'];
 
 const STAFF = [
   { id:'u1', name:{ar:'مروان العبيدي', en:'Marwan Al-Obaidi'}, initials:{ar:'مع', en:'MO'},
@@ -1121,7 +1147,11 @@ const STAFF = [
   { id:'u3', name:{ar:'حيدر الزبيدي', en:'Haider Al-Zubaidi'}, initials:{ar:'حز', en:'HZ'},
     email:'haider@saydaliplus.iq', role:'employee', active:true, since:'2026-03-02' },
   { id:'u4', name:{ar:'نور الجبوري', en:'Noor Al-Jubouri'}, initials:{ar:'نج', en:'NJ'},
-    email:'noor@saydaliplus.iq', role:'employee', active:true, since:'2026-06-20' }
+    email:'noor@saydaliplus.iq', role:'employee', active:true, since:'2026-06-20' },
+  /* A placeholder until the person is named: the account exists so the
+     approval step has an owner, not so anyone can use it for real. */
+  { id:'u5', name:{ar:'المسؤول السريري — لم يُسمَّ بعد', en:'Clinical curator — to be named'}, initials:{ar:'مس', en:'CC'},
+    email:'curator@saydaliplus.iq', role:'curator', active:true, since:'2026-09-28', placeholder:true }
 ];
 
 /* Every record's `owner` is a staff id, so the lookup stays. It is derived from
@@ -1151,9 +1181,11 @@ const me = () => USERS[ME] || STAFF[0];
    chart's clothes, so it sits at admin. Employees keep RUN on saved reports and
    the dashboard built from them; they just cannot write new SQL. */
 const CAPS = {
-  employee:    ['write'],
-  admin:       ['write', 'delete', 'import', 'reports.edit', 'staff.employee'],
-  owner_admin: ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin']
+  employee:    ['write', 'rules.write'],
+  admin:       ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'rules.write'],
+  owner_admin: ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin', 'rules.write'],
+  /* v0.0016 — approving is the curator's alone; proposing is everyone's. */
+  curator:     ['rules.approve']
 };
 const can = cap => (CAPS[me().role] || []).indexOf(cap) >= 0;
 
@@ -6742,6 +6774,25 @@ const REGISTER_ROWS = [
   ["R5214",null,"Each 5 ml suspension contains; Azithromycin Ph. Eur 200 mg as azithromycin dihydrate.","Mazit 200 mg/ 5 ml susp.","30 ml amber glass bottle sealed with child-resistant cap (CRC) with liner and placed in a printed carton along with a pa","Neopharma, UAE.","UAE","Neopharma, UAE.","546C/18-3-2021",null,"2 YEARS"]
 ];
 /* REGISTER:END */
+/* RULES:BEGIN */
+const RULE_CURATOR = {"en":"Clinical curator — to be named","ar":"المسؤول السريري — لم يُسمَّ بعد","placeholder":true};
+const RULE_BASELINE = {"at":"2026-09-20","note":{"en":"The rule set as built — every interaction pair and duplication rule in the reference, at the tier its severity gives (serious or critical: Warn; the rest: Note). Provisional until the clinical curator reviews it (W19).","ar":"مجموعة القواعد كما بُنيت — كل تداخل وكل قاعدة تكرار في المرجع، بالمستوى الذي تعطيه شدّتها (خطير أو حرج: تحذير؛ الباقي: ملاحظة). مؤقتة حتى يراجعها المسؤول السريري."}};
+const LEDGER_RULES = [
+  {"id":"IX:Diclofenac|Ibuprofen","kind":"interaction","a":"Diclofenac","b":"Ibuprofen","severity":"warning","note":{"en":"Two NSAIDs together — no added relief, twice the stomach and kidney risk.","ar":"مضادّا التهاب معاً — لا تسكين إضافياً، وخطر مضاعف على المعدة والكلية."}},
+  {"id":"IX:Atorvastatin|Fluconazole","kind":"interaction","a":"Atorvastatin","b":"Fluconazole","severity":"warning","note":{"en":"Fluconazole raises atorvastatin levels — ask about muscle pain; a short antifungal course is usually fine.","ar":"الفلوكونازول يرفع مستوى الأتورفاستاتين — اسأل عن ألم العضلات؛ الكورس القصير مقبول عادةً."}},
+  {"id":"IX:Clopidogrel|Fluoxetine","kind":"interaction","a":"Clopidogrel","b":"Fluoxetine","severity":"warning","note":{"en":"Fluoxetine can weaken clopidogrel, and an SSRI with an antiplatelet adds to the bleeding risk.","ar":"قد يُضعف الفلوكستين مفعول الكلوبيدوغريل، ومثبّط استرداد السيروتونين مع مضاد صفيحات يزيد خطر النزف."}}
+];
+const RULE_EVENTS = [
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"proposed","at":"2026-09-21","by":"u3","why":{"en":"A pharmacy reported ibuprofen and diclofenac on one prescription.","ar":"أبلغت صيدلية عن إيبوبروفين وديكلوفيناك في وصفة واحدة."}},
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"review","at":"2026-09-21","by":"u2"},
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"approved","tier":"note","at":"2026-09-22","by":"curator"},
+  {"rule":"IX:Atorvastatin|Fluconazole","state":"proposed","at":"2026-09-24","by":"u2","why":{"en":"Missing from the reference: clarithromycin–atorvastatin is there, fluconazole–atorvastatin is not.","ar":"غائبة عن المرجع: كلاريثرومايسين مع أتورفاستاتين موجود، وفلوكونازول مع أتورفاستاتين غير موجود."}},
+  {"rule":"IX:Atorvastatin|Fluconazole","state":"review","at":"2026-09-25","by":"u2"},
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"retired","at":"2026-09-26","by":"curator","why":{"en":"Covered by the class rule “Two NSAIDs”, which already fires for any two.","ar":"تغطيها قاعدة الفئة «مضادّا التهاب غير ستيرويديين» التي تنطلق مع أي اثنين."}},
+  {"rule":"IX:Clopidogrel|Fluoxetine","state":"proposed","at":"2026-09-27","by":"u3","why":{"en":"Asked for by a pharmacy whose patient takes both.","ar":"طلبتها صيدلية لديها مريض يتناول الاثنين."}}
+];
+const RULE_OVERRIDES_30D = {"IX:Aspirin|Ibuprofen":[120,41],"DUP:acid":[88,30],"DUP:antihistamine":[64,29],"IX:Clopidogrel|Omeprazole":[35,4],"IX:Paracetamol|Warfarin":[40,5],"IX:Clarithromycin|Simvastatin":[6,0]};
+/* RULES:END */
 
 /* ==========================================================================
    PLANS AND THE BILLING LEDGER (W14)
@@ -7869,7 +7920,7 @@ const activityFor = (kind, id) => DATA.activity
 
 /* Records are keyed differently per module — drugs by scientific name, syndicate
    rows by number — so one lookup knows where each module's identity lives. */
-const ID_FIELD = { drugs:'sci', syndicate:'no', catalogue:'barcode', register:'id' };
+const ID_FIELD = { drugs:'sci', syndicate:'no', catalogue:'barcode', register:'id', links:'barcode' };
 const idOf = (mod, r) => r[ID_FIELD[mod] || 'id'];
 function findRecord(mod, id) {
   const set = DATA[mod] || [];
@@ -7882,6 +7933,8 @@ function recordName(kind, id) {
   if (kind === 'catalogue') return r.name ? L(r.name) : t('cat.unknown') + ' · ' + r.barcode;
   if (kind === 'syndicate') return L(r.name);
   if (kind === 'register') return r.trade;
+  if (kind === 'rules') return ruleTitle(r);
+  if (kind === 'links') return r.barcode;
   if (kind === 'orders') return r.id;
   return L(r.name || r.subject);
 }
@@ -8313,6 +8366,7 @@ function listHead(mod) {
     '</div>' +
     (M.note ? '<div class="mod-note">' + icon('alert') + '<span>' + esc(t(M.note)) + '</span></div>' : '') +
     (M.placeholder ? '<div class="mod-note stage">' + icon('flag') + '<span>' + esc(t(M.placeholder)) + '</span></div>' : '') +
+    (M.extra ? M.extra() : '') +
     (picked
       ? '<div class="bulkbar">' + esc(t('a.selected', {n:picked})) +
           '<span class="spacer" style="flex:1"></span>' +
@@ -8713,6 +8767,10 @@ function recordPage(mod, id) {
             return '<div class="task-row"><div style="flex:1;min-width:0;"><button class="cell-link" onclick="openRecord(' + attr('catalogue') + ',' + attr(code) + ')">' +
               esc(p ? L(p.name) : code) + '</button><div class="task-m"><span class="figure" dir="ltr">' + esc(code) + '</span></div></div></div>'; }).join('') + '</div>'
         : '<div class="empty" style="padding:22px;font-size:12px;">' + esc(t('reg.notLinked')) + '</div>') + '</section>';
+
+  /* ---------- A rule, and a barcode pharmacies linked (v0.0016) ---------- */
+  } else if (mod === 'rules' || mod === 'links') {
+    ({ title, sub, actions, details, main, side } = mod === 'rules' ? rulePage(rec) : linkPage(rec));
 
   /* ---------- Catalogue product (v0.0009) ---------- */
   } else if (mod === 'catalogue') {
@@ -9392,7 +9450,18 @@ function sqlTables() {
       priority:x.priority, done:x.done ? 1 : 0,
       related_kind:x.related ? x.related.kind : null,
       related_id:x.related ? x.related.id : null
-    }))
+    })),
+    /* v0.0016 — the rules and their ledger, so the override report and a past
+       day's rule set are reports like any other. There is no patients table:
+       a pharmacy's patients never leave the pharmacy (P8). */
+    rules: rulesAsOf(RULES_TODAY).map(r => ({
+      id:r.id, kind:r.kind, title:ruleTitle(r), severity:r.severity, state:r.state, tier:r.tier,
+      since:r.since, by:r.by, shown_30d:r.shown, overridden_30d:r.overridden,
+      override_rate:r.overrideRate == null ? null : Math.round(r.overrideRate * 1000) / 1000
+    })),
+    rule_events: DATA.ruleEvents.map((e, i) => ({ seq:i + 1, rule:e.rule, state:e.state, tier:e.tier || null, at:e.at, by:e.by })),
+    barcode_links: DATA.barcodeClaims.map(c => ({ barcode:c.barcode, pharmacy_id:c.pharmacy, register_id:c.reg, at:c.at,
+      confirmed:DATA.barcodeConfirmed[c.barcode] && DATA.barcodeConfirmed[c.barcode].reg === c.reg ? 1 : 0 }))
   };
 }
 
@@ -10055,7 +10124,7 @@ function pinReport(id) {
    is decoration — the handler is a global on a page anyone with the file can
    open — and refusing alone leaves a button that does nothing. */
 
-const ROLE_CHIP = { owner_admin:'chip-info', admin:'chip-good', employee:'chip-mute' };
+const ROLE_CHIP = { owner_admin:'chip-info', admin:'chip-good', employee:'chip-mute', curator:'chip-warn' };
 
 /* The collections that carry an `owner`. Named once here so that adding a
    module and forgetting to reassign its records cannot happen quietly: the
@@ -10187,7 +10256,7 @@ function teamBody() {
 /* The matrix, drawn from CAPS rather than retyped. If the two ever disagree it
    is because someone changed the code and not the table — so don't have two. */
 function matrixPanel() {
-  const caps = ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin'];
+  const caps = ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin', 'rules.write', 'rules.approve'];
   return '<section class="panel"><div class="panel-h"><span class="panel-t">' + esc(t('team.matrix')) + '</span></div>' +
     '<div style="overflow-x:auto"><table class="grid matrix"><thead><tr><th>' + esc(t('team.capability')) + '</th>' +
       CRM_ROLES.slice().reverse().map(r => '<th>' + esc(t('sr.' + r)) + '</th>').join('') +
@@ -10428,7 +10497,7 @@ function confirmTransfer() {
    8. STATE & RENDER
    ========================================================================== */
 
-const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'listings', 'invoices', 'universities', 'syndicate', 'drugs', 'catalogue', 'register', 'reports'];
+const TABS = ['home', 'orders', 'users', 'pharmacies', 'companies', 'listings', 'invoices', 'universities', 'syndicate', 'drugs', 'rules', 'catalogue', 'links', 'register', 'reports'];
 
 /* Team sits outside TABS on purpose: it is who may do what, not a pile of
    records the team works through. It is reached from the account menu, the
@@ -10438,12 +10507,13 @@ const S = {
   tab:'home',
   record:null,              // { mod, id }
   view:{ listings:'all', invoices:'all', orders:'all', users:'all', pharmacies:'all', companies:'all',
-         universities:'all', syndicate:'all', drugs:'all', catalogue:'all', register:'all' },
+         universities:'all', syndicate:'all', drugs:'all', catalogue:'all', register:'all', rules:'all', links:'all' },
   filters:{ listings:{}, invoices:{}, orders:{}, users:{}, pharmacies:{}, companies:{},
-            universities:{}, syndicate:{}, drugs:{}, catalogue:{}, register:{} },
+            universities:{}, syndicate:{}, drugs:{}, catalogue:{}, register:{}, rules:{}, links:{} },
   sort:{},
   picked:{ listings:[], invoices:[], orders:[], users:[], pharmacies:[], companies:[],
-           universities:[], syndicate:[], drugs:[], catalogue:[], register:[] },
+           universities:[], syndicate:[], drugs:[], catalogue:[], register:[], rules:[], links:[] },
+  rulesAsOf:null,
   viewMenu:null,
 
   /* The dashboard is a list of tiles, each naming a report. Nothing on it holds
@@ -10530,7 +10600,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0015.2.html';
+const PEER_APP = '../demo/saydali-plus_v0.0016.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
@@ -10902,6 +10972,282 @@ document.addEventListener('keydown', e => {
     else if (S.record) closeRecord();
   }
 });
+/* ==========================================================================
+   18. CLINICAL GOVERNANCE (v0.0016, W19) — AND BARCODES PHARMACIES LINKED
+   The Rules module: every rule the Helper can fire, its state and tier, and
+   who moved it and when. A rule that was never approved never fires. Only
+   the clinical curator approves, changes a tier or retires — not the owner
+   admin, who is conflicted on shipping speed, and not the operations team,
+   who are not qualified. The curator is a placeholder account until the
+   person is named. Every approval or retirement is a new version of the rule
+   set, and the rule set live on any past day can be rebuilt from the ledger.
+   The override report is a view: rules overridden more than one time in
+   five, over at least twenty showings, are flagged for demotion.
+
+   Barcode links: when a pharmacy links an unknown barcode to a product on the
+   Ministry's register, it works there at once; for every pharmacy only once
+   confirmed here. Links two pharmacies agree on come first; links that
+   disagree are flagged as a conflict and each pharmacy keeps its own until
+   one is confirmed.
+   ========================================================================== */
+
+/* The rules ledger is dated by the real calendar, like the app that fires
+   it; the rest of this file's fixtures are frozen at their demo "now". */
+const RULES_TODAY = new Date().toISOString().slice(0, 10);
+const RULE_TIERS = ['note', 'warn', 'stop'];
+const RULE_STATES = ['proposed', 'review', 'approved', 'retired'];
+const tierOfSev = sev => (sev === 'critical' || sev === 'serious') ? 'warn' : 'note';
+const pairRuleId = (a, b) => 'IX:' + [a, b].sort().join('|');
+const ruleActor = by => by === 'curator' ? L(RULE_CURATOR) : (USERS[by] ? L(USERS[by].name) : by);
+
+/* The rules the reference carries, before any event. */
+const BUILT_RULES = (() => {
+  const out = new Map(), known = new Set(DRUGS.map(d => d.sci));
+  DRUGS.forEach(d => (d.interactions || []).forEach(i => {
+    if (!known.has(i.with)) return;
+    const id = pairRuleId(d.sci, i.with), prev = out.get(id);
+    const rank = s => ({ warning:1, serious:2, critical:3 })[s] || 0;
+    if (!prev || rank(i.severity) > rank(prev.severity))
+      out.set(id, { id, kind:'interaction', a:[d.sci, i.with].sort()[0], b:[d.sci, i.with].sort()[1], severity:i.severity, note:i.note, built:true });
+  }));
+  DUPLICATE_RULES.forEach(r => out.set('DUP:' + r.id, { id:'DUP:' + r.id, kind:'duplicate', label:r.label, severity:r.severity, note:r.note, built:true }));
+  LEDGER_RULES.forEach(r => out.set(r.id, Object.assign({ built:false }, r)));
+  return out;
+})();
+
+/* The ledger: the build's events, then what happened here since. */
+DATA.ruleEvents = RULE_EVENTS.map(e => Object.assign({}, e));
+
+/* Each rule as of a day: its state, tier, since when and by whom, and its
+   whole history up to that day. A built rule starts approved at the tier its
+   severity gives, on the baseline date; a ledger rule starts nowhere. */
+function rulesAsOf(day) {
+  const rows = new Map();
+  BUILT_RULES.forEach((r, id) => {
+    const base = r.built && day >= RULE_BASELINE.at;
+    rows.set(id, Object.assign({}, r, {
+      state:base ? 'approved' : r.built ? 'none' : 'none', tier:base ? tierOfSev(r.severity) : null,
+      since:base ? RULE_BASELINE.at : null, by:base ? 'curator' : null,
+      history:base ? [{ state:'approved', tier:tierOfSev(r.severity), at:RULE_BASELINE.at, by:'curator', baseline:true }] : []
+    }));
+  });
+  DATA.ruleEvents.filter(e => e.at <= day).forEach(e => {
+    const r = rows.get(e.rule);
+    if (!r) return;
+    r.state = e.state; r.since = e.at; r.by = e.by;
+    if (e.state === 'approved') r.tier = e.tier;
+    if (e.state === 'retired') r.tier = null;
+    r.history.push(e);
+  });
+  const out = [...rows.values()].filter(r => r.state !== 'none');
+  out.forEach(r => {
+    const o = RULE_OVERRIDES_30D[r.id];
+    r.shown = o ? o[0] : 0; r.overridden = o ? o[1] : 0;
+    r.overrideRate = o && o[0] ? o[1] / o[0] : null;
+  });
+  return out;
+}
+/* The version of the rule set live on a day: one for the baseline, and one
+   more for every approval or retirement since. */
+const ruleSetVersion = day => day < RULE_BASELINE.at ? 0
+  : 1 + DATA.ruleEvents.filter(e => e.at <= day && (e.state === 'approved' || e.state === 'retired')).length;
+const liveOn = day => rulesAsOf(day).filter(r => r.state === 'approved');
+const demoteFlag = r => r.state === 'approved' && r.tier !== 'note' && r.shown >= 20 && r.overrideRate > 0.2;
+function deriveRules() { DATA.rules = rulesAsOf(S && S.rulesAsOf ? S.rulesAsOf : RULES_TODAY); }
+deriveRules();
+
+const ruleTitle = r => r.kind === 'duplicate' ? L(r.label) : r.a + ' + ' + r.b;
+const tierChip = tier => !tier ? chip('chip-mute', null, '—')
+  : chip(tier === 'stop' ? 'chip-bad' : tier === 'warn' ? 'chip-warn' : 'chip-mute', tier === 'stop' ? 'alert' : null, t('rt.' + tier));
+const ruleStateChip = s => chip(s === 'approved' ? 'chip-good' : s === 'retired' ? 'chip-mute' : s === 'review' ? 'chip-info' : 'chip-warn',
+  s === 'approved' ? 'check-circle' : null, t('rs.' + s));
+
+/* Moving a rule. Proposing and sending for review is operations' work; only
+   the curator approves, sets a tier, returns or retires. */
+function ruleMove(id, state, tier) {
+  const r = BUILT_RULES.get(id);
+  if (!r) return false;
+  const cur = rulesAsOf(RULES_TODAY).find(x => x.id === id);
+  const from = cur ? cur.state : 'none';
+  const curatorMove = state === 'approved' || state === 'retired' || (state === 'proposed' && from === 'review');
+  if (curatorMove ? !can('rules.approve') : !can('rules.write')) return deny();
+  const allowed = { none:['proposed'], proposed:['review'], review:['approved', 'proposed'], approved:['approved', 'retired'], retired:[] }[from] || [];
+  if (allowed.indexOf(state) < 0) return false;
+  if (state === 'approved' && RULE_TIERS.indexOf(tier) < 0) return false;
+  const why = ((document.getElementById('rule-why') || {}).value || '').trim();
+  DATA.ruleEvents.push(Object.assign({ rule:id, state, at:RULES_TODAY, by:ME }, state === 'approved' ? { tier } : {}, why ? { why:{ en:why, ar:why } } : {}));
+  deriveRules();
+  toast(t('rl.moved', { rule:ruleTitle(r), state:t('rs.' + state) }));
+  render();
+  return true;
+}
+function setRulesAsOf(day) {
+  S.rulesAsOf = day && day !== RULES_TODAY ? day : null;
+  deriveRules(); S.picked.rules = []; render();
+}
+function rulesExtra() {
+  const day = S.rulesAsOf || RULES_TODAY, live = liveOn(day);
+  const n = k => live.filter(r => r.tier === k).length;
+  return '<div class="mod-note rules-asof">' + icon('calendar') + '<span>' +
+    esc(t('rl.asOf')) + ' <input type="date" id="rules-day" value="' + day + '" max="' + RULES_TODAY + '" onchange="setRulesAsOf(this.value)"> · ' +
+    '<b class="figure rules-version">' + esc(t('rl.version', { v:ruleSetVersion(day) })) + '</b> · ' +
+    esc(t('rl.liveCounts', { n:live.length, warn:n('warn'), note:n('note'), stop:n('stop') })) +
+    (n('stop') ? '' : ' · ' + esc(t('rl.stopEmpty'))) + '</span></div>';
+}
+
+/* ---------- Barcodes pharmacies linked ---------- */
+
+/* What pharmacies sent in (the app's links reach here in production). */
+DATA.barcodeClaims = [
+  { barcode:'6251234000012', pharmacy:'P1', reg:'R0102', by:'u1', at:'2026-09-23' },
+  { barcode:'6251234000029', pharmacy:'P2', reg:'R0089', at:'2026-09-24' },
+  { barcode:'6251234000029', pharmacy:'P7', reg:'R0089', at:'2026-09-26' },
+  { barcode:'6251234000036', pharmacy:'P3', reg:'R0093', at:'2026-09-25' },
+  { barcode:'6251234000036', pharmacy:'P8', reg:'R0102', at:'2026-09-27' },
+  { barcode:'6251234000043', pharmacy:'P4', reg:'R1033', at:'2026-09-27' }
+];
+DATA.barcodeConfirmed = { '6251234000012':{ reg:'R0102', by:'u2', at:'2026-09-25' } };
+function deriveLinks() {
+  const by = {};
+  DATA.barcodeClaims.forEach(c => { (by[c.barcode] = by[c.barcode] || { barcode:c.barcode, claims:[] }).claims.push(c); });
+  DATA.links = Object.values(by).map(l => {
+    const regs = [...new Set(l.claims.map(c => c.reg))], conf = DATA.barcodeConfirmed[l.barcode];
+    l.state = conf ? 'confirmed' : regs.length > 1 ? 'conflict' : l.claims.length > 1 ? 'agreed' : 'single';
+    l.reg = conf ? conf.reg : regs.length === 1 ? regs[0] : null;
+    l.pharmacies = l.claims.length; l.first = l.claims.map(c => c.at).sort()[0];
+    return l;
+  }).sort((a, b) => ['conflict', 'agreed', 'single', 'confirmed'].indexOf(a.state) - ['conflict', 'agreed', 'single', 'confirmed'].indexOf(b.state) ||
+    b.pharmacies - a.pharmacies || a.first.localeCompare(b.first));
+}
+deriveLinks();
+const linkChip = s => chip(s === 'confirmed' ? 'chip-good' : s === 'conflict' ? 'chip-bad' : s === 'agreed' ? 'chip-info' : 'chip-warn',
+  s === 'confirmed' ? 'check-circle' : s === 'conflict' ? 'alert' : null, t('bl.' + s));
+const regTrade = id => { const r = findRecord('register', id); return r ? r.trade : id; };
+function confirmLink(barcode, reg) {
+  if (!can('write')) return deny();
+  const l = DATA.links.find(x => x.barcode === barcode);
+  if (!l || !l.claims.some(c => c.reg === reg)) return false;
+  DATA.barcodeConfirmed[barcode] = { reg, by:ME, at:RULES_TODAY };
+  deriveLinks();
+  toast(t('bl.confirmedToast', { barcode, name:regTrade(reg) }));
+  render();
+  return true;
+}
+
+Object.assign(MODULES, {
+  rules: {
+    icon:'flag', data:() => DATA.rules, note:'rl.note', extra:rulesExtra,
+    views:{
+      all:     { label:'v.rulesAll',     fn:() => true },
+      live:    { label:'v.rulesLive',    fn:r => r.state === 'approved' },
+      review:  { label:'v.rulesReview',  fn:r => r.state === 'proposed' || r.state === 'review' },
+      retired: { label:'v.rulesRetired', fn:r => r.state === 'retired' },
+      stop:    { label:'v.rulesStop',    fn:r => r.state === 'approved' && r.tier === 'stop' },
+      demote:  { label:'v.rulesDemote',  fn:demoteFlag }
+    },
+    facets:['ruleState', 'ruleTier', 'ruleKind'],
+    columns:[
+      { key:'rule',  label:'c.rule',   main:true, get:r => ruleTitle(r) },
+      { key:'kind',  label:'c.kind',   get:r => t('rk.' + r.kind) },
+      { key:'state', label:'c.status', chip:r => ruleStateChip(r.state), sortAs:r => RULE_STATES.indexOf(r.state) },
+      { key:'tier',  label:'c.tier',   chip:r => tierChip(r.tier), sortAs:r => RULE_TIERS.indexOf(r.tier) },
+      { key:'since', label:'c.since',  get:r => r.since ? fmtDate(r.since) : '—', sortAs:r => r.since || '' },
+      { key:'by',    label:'c.by',     get:r => r.by ? ruleActor(r.by) : '—' },
+      { key:'over',  label:'c.overrides', num:true, get:r => r.overrideRate == null ? '—' : pct(Math.round(r.overrideRate * 100)) + ' · ' + r.overridden + '/' + r.shown,
+                     sortAs:r => r.overrideRate == null ? -1 : r.overrideRate }
+    ]
+  },
+  links: {
+    icon:'barcode', data:() => DATA.links, note:'bl.note',
+    views:{
+      all:       { label:'v.linksAll',       fn:() => true },
+      waiting:   { label:'v.linksWaiting',   fn:l => l.state !== 'confirmed' },
+      conflict:  { label:'v.linksConflict',  fn:l => l.state === 'conflict' },
+      confirmed: { label:'v.linksConfirmed', fn:l => l.state === 'confirmed' }
+    },
+    facets:['linkState'],
+    columns:[
+      { key:'barcode', label:'c.barcode', main:true, mono:true, get:l => l.barcode },
+      { key:'state',   label:'c.status',  chip:l => linkChip(l.state), sortAs:l => ['conflict', 'agreed', 'single', 'confirmed'].indexOf(l.state) },
+      { key:'product', label:'c.product', get:l => l.reg ? regTrade(l.reg) : t('bl.disagree') },
+      { key:'n',       label:'c.pharmacies', num:true, get:l => fmt(l.pharmacies), sortAs:l => l.pharmacies },
+      { key:'first',   label:'c.firstSeen', get:l => fmtDate(l.first), sortAs:l => l.first }
+    ]
+  }
+});
+Object.assign(FACETS, {
+  ruleState: { label:'c.status', of:r => r.state, name:v => t('rs.' + v) },
+  ruleTier:  { label:'c.tier',   of:r => r.tier || 'none', name:v => v === 'none' ? '—' : t('rt.' + v) },
+  ruleKind:  { label:'c.kind',   of:r => r.kind, name:v => t('rk.' + v) },
+  linkState: { label:'c.status', of:l => l.state, name:v => t('bl.' + v) }
+});
+
+/* ---------- Their record pages ---------- */
+
+function rulePage(rec) {
+  const day = S.rulesAsOf || RULES_TODAY, asNow = !S.rulesAsOf;
+  const btn = (label, state, tier, primary) => '<button class="btn' + (primary ? ' primary' : '') + ' rule-move" data-to="' + state + (tier ? ':' + tier : '') + '" ' +
+    'onclick="ruleMove(' + attr(rec.id) + ',' + attr(state) + (tier ? ',' + attr(tier) : '') + ')">' + esc(label) + '</button>';
+  const moves = !asNow ? [] : rec.state === 'proposed' ? (can('rules.write') ? [btn(t('rl.toReview'), 'review', null, true)] : [])
+    : rec.state === 'review' ? (can('rules.approve') ? RULE_TIERS.map(k => btn(t('rl.approveAs', { tier:t('rt.' + k) }), 'approved', k, k === tierOfSev(rec.severity))).concat([btn(t('rl.back'), 'proposed')]) : [])
+    : rec.state === 'approved' ? (can('rules.approve') ? RULE_TIERS.filter(k => k !== rec.tier).map(k => btn(t('rl.retier', { tier:t('rt.' + k) }), 'approved', k)).concat([btn(t('rl.retire'), 'retired')]) : [])
+    : [];
+  const waitsCurator = asNow && ['review', 'approved'].includes(rec.state) && !can('rules.approve');
+  return {
+    title:ruleTitle(rec),
+    sub:ruleStateChip(rec.state) + tierChip(rec.tier) + chip('chip-mute', null, t('rk.' + rec.kind)) + sevChip(rec.severity) +
+      '<span class="figure" dir="ltr">' + esc(rec.id) + '</span>',
+    actions:moves.length ? '<input id="rule-why" class="rule-why" placeholder="' + esc(t('rl.why')) + '">' + moves.join('') : '',
+    details:
+      fieldRow(t('c.rule'), esc(ruleTitle(rec))) +
+      fieldRow(t('c.kind'), esc(t('rk.' + rec.kind))) +
+      fieldRow(t('c.severity'), sevChip(rec.severity)) +
+      fieldRow(t('c.notesF'), esc(L(rec.note))) +
+      fieldRow(t('c.tier'), tierChip(rec.tier)) +
+      fieldRow(t('c.status'), ruleStateChip(rec.state) + (rec.since ? ' ' + esc(fmtDate(rec.since)) + ' · ' + esc(ruleActor(rec.by)) : '')) +
+      fieldRow(t('rl.source'), esc(t(rec.built ? 'rl.fromReference' : 'rl.fromLedger'))) +
+      fieldRow(t('c.overrides'), rec.overrideRate == null ? '—' :
+        '<span class="figure">' + pct(Math.round(rec.overrideRate * 100)) + '</span> · ' + esc(t('rl.overN', { o:rec.overridden, n:rec.shown })) +
+        (demoteFlag(rec) ? ' ' + chip('chip-bad', 'flag', t('rl.demote')) : '')),
+    main:
+      (!asNow ? '<div class="mod-note">' + icon('calendar') + '<span>' + esc(t('rl.viewingAsOf', { d:fmtDate(day), v:ruleSetVersion(day) })) + '</span></div>' : '') +
+      (waitsCurator ? '<div class="mod-note stage">' + icon('badge') + '<span>' + esc(t('rl.curatorOnly', { who:L(RULE_CURATOR) })) + '</span></div>' : '') +
+      '<section class="panel rule-history"><div class="panel-h">' + icon('clock') + esc(t('rl.history')) +
+        '<span class="spacer"></span><span class="chip chip-mute figure">' + fmt(rec.history.length) + '</span></div>' +
+      '<div class="panel-b flush">' + rec.history.slice().reverse().map(e =>
+        '<div class="task-row"><div style="flex:1;min-width:0;"><div class="task-t">' +
+          esc(t('rs.' + e.state)) + (e.tier ? ' · ' + esc(t('rt.' + e.tier)) : '') + (e.baseline ? ' · ' + esc(t('rl.baseline')) : '') + '</div>' +
+          '<div class="task-m"><span>' + esc(fmtDate(e.at)) + '</span><span>' + esc(ruleActor(e.by)) + '</span>' +
+            (e.why ? '<span>' + esc(L(e.why)) + '</span>' : '') + '</div></div></div>').join('') + '</div>' +
+      (rec.history.some(e => e.baseline) ? '<div class="hint" style="padding:8px 14px 12px;">' + esc(L(RULE_BASELINE.note)) + '</div>' : '') +
+      '</section>',
+    side:''
+  };
+}
+function linkPage(rec) {
+  const conf = DATA.barcodeConfirmed[rec.barcode];
+  return {
+    title:rec.barcode,
+    sub:linkChip(rec.state) + '<span>' + esc(t('bl.nPh', { n:rec.pharmacies })) + '</span>',
+    actions:'',
+    details:
+      fieldRow(t('c.barcode'), '<span class="figure" dir="ltr">' + esc(rec.barcode) + '</span>') +
+      fieldRow(t('c.status'), linkChip(rec.state)) +
+      fieldRow(t('bl.confirmedAs'), conf ? '<button class="cell-link" onclick="openRecord(' + attr('register') + ',' + attr(conf.reg) + ')">' + esc(regTrade(conf.reg)) + '</button> · ' +
+        esc(fmtDate(conf.at)) + ' · ' + esc(ruleActor(conf.by)) : '—'),
+    main:(rec.state === 'conflict' ? '<div class="mod-note">' + icon('alert') + '<span>' + esc(t('bl.conflictNote')) + '</span></div>' : '') +
+      '<section class="panel link-claims"><div class="panel-h">' + icon('building') + esc(t('bl.claims')) + '</div>' +
+      '<div class="panel-b flush">' + [...new Set(rec.claims.map(c => c.reg))].map(reg => {
+        const who = rec.claims.filter(c => c.reg === reg);
+        return '<div class="task-row"><div style="flex:1;min-width:0;"><button class="cell-link task-t" onclick="openRecord(' + attr('register') + ',' + attr(reg) + ')">' + esc(regTrade(reg)) + '</button>' +
+          '<div class="task-m">' + who.map(c => '<span>' + esc(recordName('pharmacies', c.pharmacy)) + ' · ' + esc(fmtDate(c.at)) + '</span>').join('') + '</div></div>' +
+          (!conf || conf.reg !== reg
+            ? (can('write') ? '<button class="btn primary link-confirm" onclick="confirmLink(' + attr(rec.barcode) + ',' + attr(reg) + ')">' + icon('check') + esc(t('bl.confirm')) + '</button>' : '')
+            : chip('chip-good', 'check-circle', t('bl.confirmed'))) + '</div>';
+      }).join('') + '</div></section>',
+    side:''
+  };
+}
 
 /* ==========================================================================
    12. CREATE FORMS

@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0015.2">
+<meta name="version" content="App_v0.0016">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -998,6 +998,37 @@
   .tm-accept-proto{ margin-top:10px; }
   .tm-grant{ cursor:pointer; align-items:center; gap:12px; }
   .tm-grant input:disabled{ opacity:.45; }
+  /* v0.0016 — governance and patients */
+  .till-finding.tier-stop{ border-inline-start:4px solid var(--clay); }
+  .chip-stop{ font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:100px; background:var(--clay); color:#fff; }
+  .till-flag.stop{ border-color:var(--clay); }
+  .stop-why{ width:100%; margin-bottom:8px; }
+  .till-quieted{ margin:4px 0 0; font-size:12.5px; color:var(--ink-faint); font-style:italic; }
+  .pt-row{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--ink-faint); min-height:44px; }
+  .pt-row .link-btn{ min-height:44px; }
+  .pt-detach{ font-size:20px; padding:0 10px; }
+  .pt-quiet{ display:block; margin-top:8px; min-height:44px; }
+  /* v0.0016 — barcode links */
+  .lk-q{ width:100%; min-height:44px; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card); color:var(--ink); }
+  .lk-hits{ display:flex; flex-direction:column; margin-top:6px; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .lk-hit{ width:100%; text-align:start; align-items:center; gap:10px; }
+  .till-tag.lk-local{ background:var(--amber-tint); color:#8A5610; }
+  /* v0.0016 — where you work */
+  .wk-card{ padding:0; overflow:hidden; border:1.4px solid var(--indigo-tint); }
+  .wk-switch{ display:flex; gap:4px; padding:8px 8px 0; }
+  .wk-seg{ flex:1; min-height:44px; border-radius:10px; font-weight:600; font-size:13.5px; color:var(--ink); border:1.4px solid var(--border); }
+  .wk-seg.on{ background:var(--indigo); color:#fff; border-color:var(--indigo); }
+  .wk-top{ display:flex; gap:12px; align-items:center; padding:14px 16px 10px; }
+  .wk-eyebrow{ margin:0; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); font-weight:600; }
+  .wk-name{ margin:2px 0 0; font-size:17px; font-weight:700; color:var(--ink); }
+  .wk-sub{ margin:2px 0 0; font-size:13px; color:var(--ink-faint); }
+  .wk-role{ display:flex; align-items:center; gap:10px; width:100%; padding:10px 16px 12px; border-top:1px solid var(--border); min-height:44px; }
+  .wk-role-l{ display:block; font-size:11.5px; color:var(--ink-faint); }
+  .wk-role-v{ display:block; font-size:15px; font-weight:600; color:var(--indigo); }
+  .wk-may{ display:block; font-size:12.5px; color:var(--ink-faint); margin-top:2px; }
+  .wk-foot{ display:flex; align-items:center; gap:10px; padding:10px 16px; border-top:1px solid var(--border); font-size:13.5px; background:var(--indigo-tint); }
+  .wk-dot{ width:9px; height:9px; border-radius:50%; background:var(--ink-faint); }
+  .wk-dot.open{ background:var(--palm); }
   /* v0.0015.1 — roles, the controlled list, the drug lists */
   .tm-grant[data-role] input:disabled{ opacity:1; accent-color:var(--ink-faint); }
   .tm-rolepick select{ width:100%; min-height:44px; }
@@ -1846,7 +1877,9 @@ Object.assign(STRINGS.ar, {
   'tm.prevDay':'اليوم السابق','tm.nextDay':'اليوم التالي','tm.nothing':'لا شيء مسجّل في هذا اليوم.','tm.privacy':'السجلّ للصيدلية وحدها: لا يقرؤه فريق صيدلي+.',
   'tm.youMay':'مسموح لك','tm.notEmployed':'لست موظفاً في صيدلية بعد.','tm.myDay':'يومي','tm.ownOnly':'ترى سجلّك أنت فقط؛ المالك يرى سجلّ الجميع.',
   'tm.invitesYou':'{ph} تدعوك للعمل فيها','tm.invitesYouS':'بصفة {pos}. تبدأ بالبيع؛ يمنحك المالك ما سواه.','tm.accept':'اقبل','tm.haveCode':'لديك رمز دعوة؟','tm.join':'انضم',
-  'tm.badCode':'الرمز غير صحيح.','tm.note.needInvite':'اكتب الاسم ورقم الهاتف أو البريد.','tm.note.already':'هذا الشخص في الفريق أو مدعوّ بالفعل.',
+  'wk.tab':'{ph} · تعمل فيها','wk.eyebrow':'مكان عملك','wk.since':'منذ {d}','wk.role':'دورك','wk.more':'و{n} غيرها',
+  'wk.drawerOpen':'الصندوق مفتوح','wk.drawerClosed':'الصندوق مغلق','tm.badCode':'الرمز غير صحيح.','tm.needBadge':'يجب أن يكتمل توثيقك من النقابة قبل أن تنضم إلى فريق صيدلية.',
+  'tm.badgeRule':'ينضم إلى الفريق الصيدلاني الموثّق من النقابة فقط. من ينتظر التوثيق يقبل الدعوة بعد اكتماله.','tm.note.needInvite':'اكتب الاسم ورقم الهاتف أو البريد.','tm.note.already':'هذا الشخص في الفريق أو مدعوّ بالفعل.',
   'tk.drawerClose':'إغلاق الصندوق · فرق {v}','tk.price':'سعر {name}: {to}','tk.adjust':'تصحيح {name} {n} — {why}','tk.grant':'منح {who}: {what}','tk.revoke':'سحب من {who}: {what}',
   'tk.denied':'رُفض: {what} (غير ممنوح)','tk.invited':'دعوة {who}','tk.ended':'انتهى عمل {who}','tk.staffJoined':'قبول دعوة والانضمام','tk.inviteWithdrawn':'سحب دعوة',
   'tk.cleared':'إفراغ السلّة','tk.countStarted':'بدء جرد رف','tk.countCommitted':'تأكيد جرد','tk.drawerSigned':'توقيع على فرق صندوق','tk.priceOnce':'سعر لبيع واحد دون اتصال',
@@ -1929,7 +1962,9 @@ Object.assign(STRINGS.en, {
   'tm.prevDay':'Previous day','tm.nextDay':'Next day','tm.nothing':'Nothing recorded on this day.','tm.privacy':'The record is the pharmacy’s alone: the Saydali+ team cannot read it.',
   'tm.youMay':'You may','tm.notEmployed':'You do not work at a pharmacy on Saydali+ yet.','tm.myDay':'My day','tm.ownOnly':'You see your own record; the owner sees everyone’s.',
   'tm.invitesYou':'{ph} invites you to work there','tm.invitesYouS':'As {pos}. You start with selling; the owner grants anything else.','tm.accept':'Accept','tm.haveCode':'Have an invitation code?','tm.join':'Join',
-  'tm.badCode':'That code is not right.','tm.note.needInvite':'Type a name, and a phone number or email.','tm.note.already':'This person is already on the team or invited.',
+  'wk.tab':'{ph} · works here','wk.eyebrow':'Where you work','wk.since':'since {d}','wk.role':'Your role','wk.more':'+ {n} more',
+  'wk.drawerOpen':'The drawer is open','wk.drawerClosed':'The drawer is closed','tm.badCode':'That code is not right.','tm.needBadge':'Your Syndicate verification has to be complete before you can join a pharmacy’s team.',
+  'tm.badgeRule':'Only a Syndicate-verified pharmacist can join a team. Someone still waiting for verification can accept once it is done.','tm.note.needInvite':'Type a name, and a phone number or email.','tm.note.already':'This person is already on the team or invited.',
   'tk.drawerClose':'Closed the drawer · difference {v}','tk.price':'Price of {name}: {to}','tk.adjust':'Corrected {name} {n} — {why}','tk.grant':'Granted {who}: {what}','tk.revoke':'Took from {who}: {what}',
   'tk.denied':'Refused: {what} (not granted)','tk.invited':'Invited {who}','tk.ended':'Ended {who}’s employment','tk.staffJoined':'Accepted the invitation and joined','tk.inviteWithdrawn':'Withdrew an invitation',
   'tk.cleared':'Emptied the basket','tk.countStarted':'Started counting a shelf','tk.countCommitted':'Confirmed a count','tk.drawerSigned':'Signed off a drawer difference','tk.priceOnce':'A price for one sale, offline',
@@ -2231,6 +2266,21 @@ Object.assign(STRINGS.ar, {
   'till.needPrice':'لم تسعّر صيدليتك هذه المادة بعد، ولا يوجد متوسط سوقي كافٍ. حدّد سعرها.',
   'till.needPriceStaff':'لم تُسعَّر هذه المادة بعد. اطلب من المالك تسعيرها.',
   'till.priceIQD':'السعر (د.ع)','till.setAndAdd':'اعتمد وأضِف',
+  'pm.patients':'سجلّ المرضى','pm.patientsS':'ربط البيع بمريض تحتفظ به الصيدلية، ورؤية ما اشتراه هنا، وإسكات تحذير له.',
+  'pt.attach':'+ مريض','pt.for':'لـ {who}','pt.detach':'إزالة المريض من هذا البيع','pt.title':'المريض',
+  'pt.private':'سجلّ الصيدلية الخاص. لا يستطيع صيدلي+ قراءته، ولا تشاركه أي صيدلية أخرى.',
+  'pt.search':'الاسم أو رقم الهاتف','pt.none':'لا مريض بهذا الاسم هنا بعد.','pt.new':'مريض جديد','pt.phone':'الهاتف (اختياري)',
+  'pt.add':'أضف واربط','pt.needName':'اكتب اسم المريض.','pt.bought':'{n} مشتريات هنا',
+  'pt.notRegister':'ليس السجلّ القانوني: الأدوية الخاضعة للرقابة تُسجَّل كما يطلب القانون.',
+  'pt.quiet':'لا تحذّر مجدداً لـ {who}','pt.quietedFor':'أُسكت لـ {who} في هذه الصيدلية.','pt.history':'اشترى هنا','pt.noHistory':'لم يشترِ شيئاً هنا بعد.',
+  'pt.quietT':'تحذيرات أُسكتت له','pt.noneQuiet':'لا شيء.','pt.unquiet':'حذّر مجدداً',
+  'tk.patientAdded':'أضاف مريضاً: {who}','tk.quieted':'أسكت «{rule}» لـ {who}',
+  'gv.stop':'إيقاف','gv.stopFlag':'الإيقاف يحتاج سببك قبل البيع','gv.stopWhy':'لماذا تمضي؟ (يُسجَّل مع البيع)',
+  'gv.goAhead':'امضِ بهذا السبب','gv.needReason':'اكتب السبب أولاً. البيع لا يُرفض — يحتاج السبب مسجّلاً.',
+  'gv.reasonGiven':'المضيّ: {why}','gv.ruleSet':'مجموعة القواعد v{v} · اعتمدها {who}',
+  'lk.title':'أو اربطه بمنتج مسجّل','lk.find':'الاسم التجاري أو العلمي','lk.link':'اربط',
+  'lk.note':'يُربط لهذه الصيدلية فوراً، ويفحصه المساعد على أنه ذلك المنتج. يؤكده صيدلي+ لكل الصيدليات.',
+  'lk.localTag':'رُبط هنا — لم يُؤكَّد بعد','tk.barcodeLinked':'ربط الباركود {barcode} بـ {name}',
   'till.unknownT':'الباركود {code} غير موجود في الكتالوج','till.unknownS':'يُباع باسمه وسعره، ولن يفحصه المساعد. أُرسل للربط.',
   'till.unknownName':'اسم المادة','till.add':'أضِف',
   'till.notChecked':'غير مفحوص','till.partChecked':'مفحوص جزئياً','till.instructions':'الإرشادات','till.remove':'احذف',
@@ -2274,6 +2324,21 @@ Object.assign(STRINGS.en, {
   'till.needPrice':'Your pharmacy has not priced this, and there is no market average to fall back on. Set its price.',
   'till.needPriceStaff':'This has not been priced yet. Ask the owner to price it.',
   'till.priceIQD':'Price (IQD)','till.setAndAdd':'Set and add',
+  'pm.patients':'Patient history','pm.patientsS':'Attach a sale to a patient the pharmacy keeps, see what they bought here, and quiet a warning for them.',
+  'pt.attach':'+ Patient','pt.for':'For {who}','pt.detach':'Take the patient off this sale','pt.title':'Patient',
+  'pt.private':'This pharmacy’s own record. Saydali+ cannot read it, and no other pharmacy shares it.',
+  'pt.search':'Name or phone number','pt.none':'No patient by that name here yet.','pt.new':'Someone new','pt.phone':'Phone (optional)',
+  'pt.add':'Add and attach','pt.needName':'Type the patient’s name.','pt.bought':'{n} purchases here',
+  'pt.notRegister':'Not the legal register: controlled medicines are still recorded as the law requires.',
+  'pt.quiet':'Don’t warn again for {who}','pt.quietedFor':'Quieted for {who} at this pharmacy.','pt.history':'Bought here','pt.noHistory':'Nothing bought here yet.',
+  'pt.quietT':'Warnings quieted for them','pt.noneQuiet':'None.','pt.unquiet':'Warn again',
+  'tk.patientAdded':'Added a patient: {who}','tk.quieted':'Quieted “{rule}” for {who}',
+  'gv.stop':'Stop','gv.stopFlag':'A Stop needs your reason before the sale','gv.stopWhy':'Why go ahead? (recorded with the sale)',
+  'gv.goAhead':'Go ahead, with this reason','gv.needReason':'Type the reason first. The sale is not refused — it needs the reason on record.',
+  'gv.reasonGiven':'Going ahead: {why}','gv.ruleSet':'Rule set v{v} · approved by {who}',
+  'lk.title':'Or link it to a registered product','lk.find':'Trade or scientific name','lk.link':'Link',
+  'lk.note':'Linked for this pharmacy at once, and checked by the Helper as that product. Saydali+ confirms it for every pharmacy.',
+  'lk.localTag':'Linked here — not confirmed yet','tk.barcodeLinked':'Linked barcode {barcode} to {name}',
   'till.unknownT':'Barcode {code} is not in the catalogue','till.unknownS':'It can be sold by name and price; the Helper will not check it. Sent for mapping.',
   'till.unknownName':'Item name','till.add':'Add',
   'till.notChecked':'Not checked','till.partChecked':'Checked in part','till.instructions':'Instructions','till.remove':'Remove',
@@ -8757,6 +8822,25 @@ const EDL_GENERICS = [
   {"sci":"Zoledronic acid","items":[{"code":"06-IB0-010","item":"Zoledronic acid 4 mg/ 5 ml concentrate for I.V infution vial","cls":"Drugs Affecting Bone Metabolism"}]}
 ];
 /* CATALOGUE:END */
+/* RULES:BEGIN */
+const RULE_CURATOR = {"en":"Clinical curator — to be named","ar":"المسؤول السريري — لم يُسمَّ بعد","placeholder":true};
+const RULE_BASELINE = {"at":"2026-09-20","note":{"en":"The rule set as built — every interaction pair and duplication rule in the reference, at the tier its severity gives (serious or critical: Warn; the rest: Note). Provisional until the clinical curator reviews it (W19).","ar":"مجموعة القواعد كما بُنيت — كل تداخل وكل قاعدة تكرار في المرجع، بالمستوى الذي تعطيه شدّتها (خطير أو حرج: تحذير؛ الباقي: ملاحظة). مؤقتة حتى يراجعها المسؤول السريري."}};
+const LEDGER_RULES = [
+  {"id":"IX:Diclofenac|Ibuprofen","kind":"interaction","a":"Diclofenac","b":"Ibuprofen","severity":"warning","note":{"en":"Two NSAIDs together — no added relief, twice the stomach and kidney risk.","ar":"مضادّا التهاب معاً — لا تسكين إضافياً، وخطر مضاعف على المعدة والكلية."}},
+  {"id":"IX:Atorvastatin|Fluconazole","kind":"interaction","a":"Atorvastatin","b":"Fluconazole","severity":"warning","note":{"en":"Fluconazole raises atorvastatin levels — ask about muscle pain; a short antifungal course is usually fine.","ar":"الفلوكونازول يرفع مستوى الأتورفاستاتين — اسأل عن ألم العضلات؛ الكورس القصير مقبول عادةً."}},
+  {"id":"IX:Clopidogrel|Fluoxetine","kind":"interaction","a":"Clopidogrel","b":"Fluoxetine","severity":"warning","note":{"en":"Fluoxetine can weaken clopidogrel, and an SSRI with an antiplatelet adds to the bleeding risk.","ar":"قد يُضعف الفلوكستين مفعول الكلوبيدوغريل، ومثبّط استرداد السيروتونين مع مضاد صفيحات يزيد خطر النزف."}}
+];
+const RULE_EVENTS = [
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"proposed","at":"2026-09-21","by":"u3","why":{"en":"A pharmacy reported ibuprofen and diclofenac on one prescription.","ar":"أبلغت صيدلية عن إيبوبروفين وديكلوفيناك في وصفة واحدة."}},
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"review","at":"2026-09-21","by":"u2"},
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"approved","tier":"note","at":"2026-09-22","by":"curator"},
+  {"rule":"IX:Atorvastatin|Fluconazole","state":"proposed","at":"2026-09-24","by":"u2","why":{"en":"Missing from the reference: clarithromycin–atorvastatin is there, fluconazole–atorvastatin is not.","ar":"غائبة عن المرجع: كلاريثرومايسين مع أتورفاستاتين موجود، وفلوكونازول مع أتورفاستاتين غير موجود."}},
+  {"rule":"IX:Atorvastatin|Fluconazole","state":"review","at":"2026-09-25","by":"u2"},
+  {"rule":"IX:Diclofenac|Ibuprofen","state":"retired","at":"2026-09-26","by":"curator","why":{"en":"Covered by the class rule “Two NSAIDs”, which already fires for any two.","ar":"تغطيها قاعدة الفئة «مضادّا التهاب غير ستيرويديين» التي تنطلق مع أي اثنين."}},
+  {"rule":"IX:Clopidogrel|Fluoxetine","state":"proposed","at":"2026-09-27","by":"u3","why":{"en":"Asked for by a pharmacy whose patient takes both.","ar":"طلبتها صيدلية لديها مريض يتناول الاثنين."}}
+];
+const RULE_OVERRIDES_30D = {"IX:Aspirin|Ibuprofen":[120,41],"DUP:acid":[88,30],"DUP:antihistamine":[64,29],"IX:Clopidogrel|Omeprazole":[35,4],"IX:Paracetamol|Warfarin":[40,5],"IX:Clarithromycin|Simvastatin":[6,0]};
+/* RULES:END */
 
 const DATA = {
   listings: [
@@ -8890,12 +8974,12 @@ const ACCOUNTS = {
      the others are there so the owners' Team screens have people on them. */
   'hassan@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.hassan', tagKey:'acc.hassanTag', initials:{ar:'حد',en:'HD'}, trial:false },
   'maryam@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.maryam', tagKey:'acc.maryamTag', initials:{ar:'مك',en:'MK'}, trial:false },
-  'zahraa@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.zahraa', tagKey:'acc.staffTag', initials:{ar:'زع',en:'ZA'}, trial:false, assistant:true, listed:false },
-  'omar@example.com':       { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.omar',   tagKey:'acc.staffTag', initials:{ar:'عف',en:'OF'}, trial:false, assistant:true, listed:false },
-  'duaa@example.com':       { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.duaa',   tagKey:'acc.staffTag', initials:{ar:'دس',en:'DS'}, trial:false, assistant:true, listed:false },
+  'zahraa@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.zahraa', tagKey:'acc.staffTag', initials:{ar:'زع',en:'ZA'}, trial:false, listed:false },
+  'omar@example.com':       { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.omar',   tagKey:'acc.staffTag', initials:{ar:'عف',en:'OF'}, trial:false, listed:false },
+  'duaa@example.com':       { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.duaa',   tagKey:'acc.staffTag', initials:{ar:'دس',en:'DS'}, trial:false, listed:false },
   'karim@example.com':      { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.karim',  tagKey:'acc.staffTag', initials:{ar:'كم',en:'KM'}, trial:false, listed:false },
-  'rusul@example.com':      { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.rusul',  tagKey:'acc.staffTag', initials:{ar:'رع',en:'RA'}, trial:false, assistant:true, listed:false },
-  'ali@example.com':        { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.ali',    tagKey:'acc.staffTag', initials:{ar:'عح',en:'AH'}, trial:false, assistant:true, listed:false }
+  'rusul@example.com':      { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.rusul',  tagKey:'acc.staffTag', initials:{ar:'رع',en:'RA'}, trial:false, listed:false },
+  'ali@example.com':        { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.ali',    tagKey:'acc.staffTag', initials:{ar:'عح',en:'AH'}, trial:false, listed:false }
 };
 
 /* PARTNER / شريك (W15) — a company account, not a clinician.
@@ -8927,12 +9011,19 @@ const myVerifiedPharmacies = () => myPharmacies().filter(p => p.verification ===
    owner of several is looking at all of them. */
 function currentPharmacy() {
   const mine = myPharmacies();
-  /* v0.0015: someone who owns none works where they are employed. */
-  /* v0.0015.2: working at several, the one chosen — the first until then. */
-  if (!mine.length && S.staff && S.staff.length) { const w = workPharmacies(); return w.find(p => p.id === S.pharmacyTab) || w[0] || null; }
+  const w = S.staff && S.staff.length ? workPharmacies() : [];
+  /* v0.0015: someone who owns none works where they are employed.
+     v0.0015.2: working at several, the one chosen — the first until then. */
+  if (!mine.length && w.length) return w.find(p => p.id === S.pharmacyTab) || w[0];
+  /* v0.0016: an owner may also work on someone else's team; that pharmacy is
+     one of their tabs, and there they are staff like anyone else. */
+  const pick = S.pharmacyTab && (mine.find(p => p.id === S.pharmacyTab) || w.find(p => p.id === S.pharmacyTab));
+  if (pick) return pick;
   if (mine.length === 1) return mine[0];
-  return mine.find(p => p.id === S.pharmacyTab) || null;
+  return null;
 }
+/* An owner looking at a pharmacy they do not own: working there, not owning it. */
+const atWorkplace = () => { const ph = currentPharmacy(); return S.role === 'owner' && !!ph && !ownsPharmacy(ph.id); };
 
 /* Levantine month names — حزيران، تموز، آب، أيلول — not the Gulf
    transliterations Intl produces for `ar`. */
@@ -8980,7 +9071,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0015.2';
+const VERSION = 'App_v0.0016';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -9052,11 +9143,13 @@ function screenAllowed(screen, role) {
   /* Stock is the owner's until permissions make it grantable (v0.0015). */
   /* v0.0015: the owner's, or granted — Stock by the stock grant, the drawer
      with selling. */
-  const granted = p => role === 'pharmacist' && S.role === 'pharmacist' && can(p);
-  if (STOCK_SCREENS.includes(screen)) return role === 'owner' || granted('stock');
-  if (screen === 'drawer') return role === 'owner' || granted('sell');
-  if (screen === 'team') return role === 'owner';
-  if (screen === 'activity') return role === 'pharmacist';
+  /* v0.0016: an owner at a pharmacy they work at is staff there. */
+  const owns = role === 'owner' && !(role === S.role && atWorkplace());
+  const granted = p => (role === 'pharmacist' || role === 'owner') && role === S.role && can(p);
+  if (STOCK_SCREENS.includes(screen)) return owns || granted('stock');
+  if (screen === 'drawer') return owns || granted('sell');
+  if (screen === 'team') return owns;
+  if (screen === 'activity') return role === 'pharmacist' || (role === 'owner' && role === S.role && workPharmacies().length > 0);
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -9166,6 +9259,9 @@ const S = {
   openProduct: null,
   scanNote: null,
   mappingRequests: [],
+  /* v0.0016 — barcodes a pharmacy linked to a registered product: for that
+     pharmacy at once, for everyone once the CRM confirms. */
+  barcodeLinks: [], linkQuery: '',
   /* W7 — which pharmacy an owner of several is looking at; null is all of
      them, which is where they start, because the question they open the app
      with is which pharmacy needs them. */
@@ -9198,6 +9294,9 @@ const S = {
   /* v0.0015 — the staff list, and who may do what. */
   staff: [], openStaff: null, teamDay: null, teamPerson: null, teamNote: null,
   customRoles: [], roleDraft: null,
+  /* v0.0016 — each pharmacy's own patients (P8), warnings quieted for them,
+     and rule events released since the build (the CRM's, in production). */
+  patients: [], quieted: [], patientQ: '', ruleEvents: [],
   /* v0.0014 — the drawer, and the devices. */
   drawers: [], drawerStep: null, drawerSlip: null, signOffOver: {},
   devices: { A:{ online:true, since:null, queue:[], seq:{} }, B:{ online:true, since:null, queue:[], seq:{} } },
@@ -10481,7 +10580,8 @@ function setPharmacy(id) {
 function pharmacyTabs() {
   const mine = myPharmacies();
   if (!mine.length) return workTabs();
-  if (mine.length < 2) return '';
+  const work = workPharmacies().filter(p => !mine.includes(p));
+  if (mine.length < 2 && !work.length) return '';
   const cur = currentPharmacy();
   const on = id => (cur ? cur.id : null) === id;
   const tab = (id, label, flag, pending) =>
@@ -10491,8 +10591,10 @@ function pharmacyTabs() {
       (pending ? '<span class="ptab-dot pending" title="' + esc(t('ap.pendingT')) + '"></span>' : '') +
     '</button>';
   return '<div class="constrain"><div class="ptabs" role="tablist">' +
-    tab(null, t('g.allPharmacies')) +
+    (mine.length > 1 ? tab(null, t('g.allPharmacies')) : '') +
     mine.map(p => tab(p.id, L(p.short || p.name), !p.responsible, p.verification === 'pending')).join('') +
+    /* v0.0016: where they work without owning it, marked as such. */
+    work.map(p => tab(p.id, t('wk.tab', { ph:L(p.short || p.name) }))).join('') +
     /* The way to a further pharmacy, at the end of the strip it would join. */
     '<button class="ptab ptab-add" onclick="goto(\'addPharmacy\')" aria-label="' + esc(t('ap.title')) + '">+</button>' +
   '</div></div>';
@@ -10812,6 +10914,8 @@ function homeAll(lead) {
 function screenDashboard() {
   const mine = myPharmacies();
   const tabs = pharmacyTabs();
+  /* v0.0016: at a pharmacy they work at, an owner gets a staff member's home. */
+  if (atWorkplace()) return staffHome(tabs);
   /* v0.0013.2 — with the market off, the simpler home (H1–H5). */
   if (!FLAGS.marketplace) {
     if (mine.length > 1 && !currentPharmacy()) return homeAll(tabs);
@@ -10852,16 +10956,49 @@ function linkCard(ic, title, sub, go) {
     icon('chevron', 'more-chevron') + '</button></div>';
 }
 
-function screenCheckin() {
-  /* v0.0013.5 (U5): with the Helper and the products inside Pharmacy, the
-     home keeps the announcement, one job — check a prescription — and
-     check-in. */
-  if (helperInTill()) return '<div class="screen-body"><div class="constrain stack">' +
+/* v0.0016 — where you work, first on the home of anyone on a team: the
+   pharmacy and since when, their role and what it gives (opening My
+   activity), and, for someone who sells, the drawer and the way to the Point
+   of sale. Working at two, the switch is here too. */
+function workCard() {
+  const ph = currentPharmacy(), rec = ph && staffRecord(ph.id);
+  if (!ph || !rec) return '';
+  const may = effectiveGrants(rec).map(p => t('pm.' + p));
+  const since = new Date(rec.start + 'T12:00:00');
+  const mon = (lang === 'ar' ? MONTHS_AR : MONTHS_EN)[since.getMonth()] + ' ' + since.getFullYear();
+  const w = myPharmacies().length ? [] : workPharmacies();
+  const d = openDrawer(ph.id);
+  return '<div class="card wk-card">' +
+    (w.length > 1 ? '<div class="wk-switch" role="tablist">' + w.map(p => '<button class="wk-seg' + (p.id === ph.id ? ' on' : '') + '" role="tab" aria-selected="' + (p.id === ph.id) + '" onclick="setPharmacy(' + attr(p.id) + ')">' + esc(L(p.short || p.name)) + '</button>').join('') + '</div>' : '') +
+    '<div class="wk-top"><span class="soon-ico">' + icon('store') + '</span><div style="flex:1;min-width:0;">' +
+      '<p class="wk-eyebrow">' + esc(t('wk.eyebrow')) + '</p>' +
+      '<p class="wk-name">' + esc(L(ph.name)) + '</p>' +
+      '<p class="wk-sub">' + esc(L(ph.district) + ' · ' + t('wk.since', { d:mon })) + '</p></div></div>' +
+    '<button class="wk-role" onclick="goto(\'activity\')"><span style="flex:1;min-width:0;text-align:start;">' +
+      '<span class="wk-role-l">' + esc(t('wk.role')) + '</span>' +
+      '<span class="wk-role-v">' + esc(roleLabel(rec)) + '</span>' +
+      '<span class="wk-may">' + esc(may.slice(0, 3).join(' · ') + (may.length > 3 ? ' ' + t('wk.more', { n:may.length - 3 }) : '')) + '</span></span>' +
+      icon('chevron', 'more-chevron') + '</button>' +
+    (can('sell') ? '<div class="wk-foot"><span class="wk-dot' + (d ? ' open' : '') + '"></span><span style="flex:1;">' + esc(t(d ? 'wk.drawerOpen' : 'wk.drawerClosed')) + '</span>' +
+      '<button class="btn-small wk-pos" onclick="goto(\'till\')">' + esc(t('nav.till')) + '</button></div>' : '') +
+  '</div>';
+}
+/* The home of someone on a team — a pharmacist's, or an owner's at a
+   pharmacy they work at. */
+function staffHome(tabs) {
+  return '<div class="screen-body">' + (tabs || '') + '<div class="constrain stack">' +
+    workCard() +
     myInvitesCard() +
     bannerFor('home') +
     linkCard('till', t('hm.checkRx'), t('hm.checkRxS'), "goto('till')") +
     soonCard('clock', 'soon.checkinT', 'soon.checkinS') +
     '</div></div>';
+}
+function screenCheckin() {
+  /* v0.0013.5 (U5): with the Helper and the products inside Pharmacy, the
+     home keeps the announcement, one job — check a prescription — and
+     check-in. v0.0016: where you work, first. */
+  if (helperInTill()) return staffHome('');
   return '<div class="screen-body"><div class="constrain stack">' +
     bannerFor('home') +
     soonCard('clock', 'soon.checkinT', 'soon.checkinS') +
@@ -10990,7 +11127,7 @@ function scanProduct(raw) {
    ========================================================================== */
 
 const tillReset = () => ({ lines:[], discount:0, discountReason:'', discountOpen:false, tender:'cash',
-  given:'', ref:'', ack:{}, unknown:null, needPrice:null, note:null, query:'',
+  given:'', ref:'', ack:{}, reason:{}, patient:null, unknown:null, needPrice:null, note:null, query:'',
   cashManual:false, cashConfirmed:false });
 
 /* ---------- Prices ---------- */
@@ -11091,6 +11228,8 @@ function tillAdd(code) {
   /* Never a block (S1): a line whose recorded stock is only expired says so. */
   const st = ph ? stockOf(ph.id, code) : null;
   if (st && st.available <= 0 && st.expired > 0) line2.onlyExpired = true;
+  /* Rung up from a linked barcode (asked for a price first, perhaps). */
+  if (T.linkFor && T.linkFor.code === code) { line2.link = { barcode:T.linkFor.barcode, state:T.linkFor.state }; T.linkFor = null; }
   T.lines.push(line2);
   T.needPrice = null; T.note = null;
   render();
@@ -11134,11 +11273,39 @@ function tillScan(raw) {
   T.query = '';
   if (!ean13Valid(code)) { T.note = { kind:'misread', code }; render(); return; }
   if (productByCode(code)) { tillAdd(code); return; }
+  /* v0.0016: a barcode linked to a registered product — here, or confirmed
+     for everyone — rings up as that product. */
+  const link = barcodeLink(code, (tillPharmacy() || {}).id);
+  if (link) { T.linkFor = { code:link.code, barcode:code, state:link.state }; tillAdd(link.code); return; }
   /* Unknown: still sellable, by name and price, and sent for mapping. */
   const known = S.mappingRequests.find(r => r.barcode === code);
   if (known) known.times++; else S.mappingRequests.push({ barcode:code, times:1, first:TODAY_ISO });
-  T.unknown = code; T.note = null;
+  T.unknown = code; T.note = null; S.linkQuery = '';
   render();
+}
+/* v0.0016 — linking a barcode to a product on the Ministry's register.
+   CONFIRMED_LINKS stands for what the CRM has confirmed for every pharmacy. */
+const CONFIRMED_LINKS = { '6251234000012':'REG-R0102' };
+function barcodeLink(barcode, phId) {
+  const here = (S.barcodeLinks || []).find(l => l.barcode === barcode && l.pharmacy === phId);
+  if (here) return { code:here.code, state:'local' };
+  return CONFIRMED_LINKS[barcode] ? { code:CONFIRMED_LINKS[barcode], state:'confirmed' } : null;
+}
+function linkQuery(v) {
+  S.linkQuery = v; render();
+  const el = document.getElementById('lk-q');
+  if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+function linkBarcode(regCode) {
+  const T = S.till, ph = tillPharmacy(), barcode = T.unknown, p = REG_BY_CODE.get(regCode);
+  if (!barcode || !ph || !p) return;
+  S.barcodeLinks = (S.barcodeLinks || []).filter(l => !(l.barcode === barcode && l.pharmacy === ph.id));
+  S.barcodeLinks.push({ barcode, pharmacy:ph.id, code:regCode, by:S.email, at:nowIso(), state:'local' });
+  const req = S.mappingRequests.find(r => r.barcode === barcode);
+  if (req) req.linkedTo = regCode;
+  tillLog('barcodeLinked', { barcode, code:regCode });
+  T.unknown = null; S.linkQuery = '';
+  tillScan(barcode);
 }
 function tillQuery(v) {
   S.till.query = v;
@@ -11228,13 +11395,71 @@ function tillScis(lines) {
    The Stop tier exists and is empty until the curator fills it (v0.0016). */
 const tierOf = sev => (sev === 'critical' || sev === 'serious') ? 'warn' : 'note';
 
+/* ==========================================================================
+   v0.0016 — CLINICAL GOVERNANCE (W19, P9)
+
+   Every rule has an id — an interaction pair, "IX:A|B"; a duplication rule,
+   "DUP:id" — and a history: proposed, under review, approved at a tier by a
+   named person on a date, retired. A rule that was never approved never
+   fires. The rules built so far form the baseline rule set, approved at the
+   tier their severity gives, provisionally, until the clinical curator —
+   still to be named — reviews them. Every approval and retirement makes a
+   new version of the rule set, and the rule set of any day can be rebuilt,
+   so a dispensing decision questioned later is shown against the rules live
+   that day. The tiers are Note, Warn and Stop; Stop ships empty, and a Stop
+   asks for a typed reason and then lets the sale go ahead (P9).
+   ========================================================================== */
+const pairRuleId = (a, b) => 'IX:' + [a, b].sort().join('|');
+const LEDGER_INDEX = new Map(LEDGER_RULES.map(r => [r.id, r]));
+const BUILT_RULES = (() => {
+  const out = new Map();
+  DRUGS.forEach(d => (d.interactions || []).forEach(i => {
+    if (!DRUGS.some(x => x.sci === i.with)) return;
+    const id = pairRuleId(d.sci, i.with), prev = out.get(id);
+    if (!prev || (SEVERITY_ORDER[i.severity] || 0) > (SEVERITY_ORDER[prev.severity] || 0)) out.set(id, { id, kind:'interaction', severity:i.severity });
+  }));
+  DUPLICATE_RULES.forEach(r => out.set('DUP:' + r.id, { id:'DUP:' + r.id, kind:'duplicate', severity:r.severity }));
+  return out;
+})();
+/* The ledger's events, and any the CRM released since this build (S.ruleEvents
+   stands for them in the prototype), in date order. */
+const ruleEvents = () => RULE_EVENTS.concat(S.ruleEvents || []).map((e, i) => [e, i])
+  .sort((x, y) => x[0].at < y[0].at ? -1 : x[0].at > y[0].at ? 1 : x[1] - y[1]).map(x => x[0]);
+function ruleSetAsOf(day) {
+  const live = new Map();
+  if (day < RULE_BASELINE.at) return { live, version:0 };
+  BUILT_RULES.forEach((r, id) => live.set(id, { id, tier:tierOf(r.severity), since:RULE_BASELINE.at, by:'curator' }));
+  let version = 1;
+  ruleEvents().filter(e => e.at <= day).forEach(e => {
+    if (e.state === 'approved') { live.set(e.rule, { id:e.rule, tier:e.tier, since:e.at, by:e.by }); version++; }
+    else if (e.state === 'retired' && live.delete(e.rule)) version++;
+  });
+  return { live, version };
+}
+const liveRules = () => ruleSetAsOf(todayKey());
+const TIER_RANK = { note:0, warn:1, stop:2 };
+
 function tillFindings(lines) {
-  const scis = tillScis(lines);
-  const pairs = basketInteractions(scis).map(x => ({ key:[x.a, x.b].sort().join('|'), kind:'interaction',
-    a:x.a, b:x.b, severity:x.severity, tier:tierOf(x.severity), note:x.note }));
-  const dupes = basketDuplicates(scis).map(x => ({ key:'dup|' + x.rule.id, kind:'duplicate',
-    members:x.members, severity:x.rule.severity, tier:tierOf(x.rule.severity), label:x.rule.label }));
-  return { findings:pairs.concat(dupes), questions:basketQuestions(scis) };
+  const scis = tillScis(lines), rs = liveRules();
+  const pairs = basketInteractions(scis).map(x => ({ key:[x.a, x.b].sort().join('|'), kind:'interaction', rule:pairRuleId(x.a, x.b),
+    a:x.a, b:x.b, severity:x.severity, note:x.note }));
+  /* Rules defined in the ledger rather than the reference fire once approved. */
+  for (let i = 0; i < scis.length; i++) for (let j = i + 1; j < scis.length; j++) {
+    const lr = LEDGER_INDEX.get(pairRuleId(scis[i], scis[j]));
+    if (lr && !INTERACTION_INDEX.get(scis[i], scis[j]))
+      pairs.push({ key:[lr.a, lr.b].sort().join('|'), kind:'interaction', rule:lr.id, a:lr.a, b:lr.b, severity:lr.severity, note:lr.note });
+  }
+  const dupes = basketDuplicates(scis).map(x => ({ key:'dup|' + x.rule.id, kind:'duplicate', rule:'DUP:' + x.rule.id,
+    members:x.members, severity:x.rule.severity, label:x.rule.label }));
+  const quiet = patientQuieted();
+  const findings = pairs.concat(dupes).filter(x => rs.live.has(x.rule)).map(x => {
+    x.tier = rs.live.get(x.rule).tier;
+    /* P8: a Warn the pharmacy quieted for this patient reads as a note; a Stop
+       cannot be quieted. */
+    if (x.tier === 'warn' && quiet.includes(x.rule)) { x.tier = 'note'; x.quieted = true; }
+    return x;
+  });
+  return { findings, questions:basketQuestions(scis), version:rs.version };
 }
 
 /* How much of the basket was checked. A line is checked in full, in part, or
@@ -11322,6 +11547,7 @@ function completeSale() {
   const ph = tillPharmacy();
   if (ph && !need('sell', ph.id)) return;
   if (tillBlock(ph) || !T.lines.length || tillMode() !== 'sell' || T.lines.some(l => l.unit == null)) return;
+  if (stopsOpen()) { S.till.note = { kind:'stopReason' }; openHelper(); return; }
   const { subtotal, discount, total } = tillTotals();
   let given = null, change = null;
   if (T.tender === 'cash') {
@@ -11345,8 +11571,10 @@ function completeSale() {
     /* Every warning shown, and whether it was acknowledged. The sale went
        ahead either way — the till never refuses a pharmacist (P9) — and the
        record is what the curator's override report is built from. */
-    findings:f.findings.map(x => ({ kind:x.kind, a:x.a, b:x.b, members:x.members, severity:x.severity,
-      tier:x.tier, acknowledged:!!T.ack[x.key] })),
+    findings:f.findings.map(x => ({ kind:x.kind, rule:x.rule, a:x.a, b:x.b, members:x.members, severity:x.severity,
+      tier:x.tier, acknowledged:!!T.ack[x.key], reason:(T.reason || {})[x.key] || null, quieted:!!x.quieted })),
+    /* v0.0016: the rule set it was checked against, and the patient (P8). */
+    ruleSet:f.version, patient:T.patient || null,
     coverage:tillCoverage(T.lines), refunded:null
   };
   S.sales.unshift(sale);
@@ -11767,20 +11995,34 @@ function tillGroups(lines) {
     const k = mem.join('+');
     const g = by[k] = by[k] || { key:k, members:mem, items:[], tier:'note', severity:'warning' };
     g.items.push(x);
-    if (x.tier === 'warn') g.tier = 'warn';
+    if (TIER_RANK[x.tier] > TIER_RANK[g.tier]) g.tier = x.tier;
     if ((SEVERITY_ORDER[x.severity] || 0) > (SEVERITY_ORDER[g.severity] || 0)) g.severity = x.severity;
   });
-  const groups = Object.values(by).sort((a, b) => ((b.tier === 'warn') - (a.tier === 'warn')) ||
+  const groups = Object.values(by).sort((a, b) => (TIER_RANK[b.tier] - TIER_RANK[a.tier]) ||
     ((SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0)));
-  groups.forEach(g => { g.acked = g.tier === 'warn' && g.items.filter(x => x.tier === 'warn').every(x => S.till.ack[x.key]); });
+  /* A Warn is acknowledged with a tap; a Stop with a typed reason. */
+  groups.forEach(g => { g.acked = g.tier !== 'note' && g.items.filter(x => x.tier !== 'note')
+    .every(x => x.tier === 'stop' ? !!(S.till.reason || {})[x.key] : S.till.ack[x.key]); });
   return { groups, questions:f.questions };
 }
 function tillAckGroup(k) {
   const g = tillGroups(S.till.lines).groups.find(x => x.key === k);
-  if (!g) return;
+  if (!g || g.tier === 'stop') return;
   g.items.forEach(x => { S.till.ack[x.key] = true; });
   render();
 }
+/* A Stop: the pharmacist types why, and the sale may go ahead (P9). */
+function tillStopReason(k) {
+  const g = tillGroups(S.till.lines).groups.find(x => x.key === k);
+  const why = ((document.getElementById('stop-why') || {}).value || '').trim();
+  if (!g) return;
+  if (!why) { S.till.note = { kind:'stopReason' }; renderModal(); return; }
+  S.till.reason = S.till.reason || {};
+  g.items.forEach(x => { S.till.ack[x.key] = true; if (x.tier === 'stop') S.till.reason[x.key] = why; });
+  S.till.note = null;
+  renderModal(); render();
+}
+const stopsOpen = () => tillGroups(S.till.lines).groups.some(g => g.tier === 'stop' && !g.acked);
 /* A molecule, named the way the pharmacist sees it on the basket. */
 function nameInBasket(sci) {
   const l = S.till.lines.find(x => x.molecules.some(m => m.sci === sci));
@@ -11793,6 +12035,8 @@ function tillToggleLine(i) { if (S.till.lines[i]) openTillSheet('tillLine', { i 
 function openHelper() { openTillSheet('tillHelper'); }
 function openPay() {
   if (tillMode() !== 'sell' || !S.till.lines.length) return;
+  /* A Stop without its reason: the Helper, to give one. Never a refusal. */
+  if (stopsOpen()) { S.till.note = { kind:'stopReason' }; openHelper(); return; }
   if (S.till.lines.some(l => l.unit == null)) { tillPromptPrice(); render(); return; }
   const ph = tillPharmacy();
   if (ph && !openDrawer(ph.id)) { openDrawerSheet('pay'); return; }
@@ -11835,13 +12079,25 @@ function tillHelperSheet() {
   const byCov = k => medicines.filter(l => lineCoverage(l) === k).map(l => L(l.name));
   const checked = byCov('full').concat(byCov('partial').map(n => n + ' ' + t('tl.inPart')));
   const unchecked = byCov('none');
+  const pat = S.till.patient && patientById(S.till.patient);
   const item = gr => '<div class="till-finding tier-' + gr.tier + (gr.acked ? ' acked' : '') + '" data-group="' + esc(gr.key) + '">' +
-    '<div class="till-finding-top">' + sevChip(gr.severity) + '<span class="till-finding-t">' + esc(groupTitle(gr)) + '</span></div>' +
+    '<div class="till-finding-top">' + (gr.tier === 'stop' ? '<span class="chip-stop">' + esc(t('gv.stop')) + '</span>' : sevChip(gr.severity)) +
+      '<span class="till-finding-t">' + esc(groupTitle(gr)) + '</span></div>' +
     gr.items.map(x => '<p class="till-finding-s"><b>' + esc(t(x.kind === 'interaction' ? 'tl.interaction' : 'tl.duplication')) + ':</b> ' +
-      esc(x.kind === 'interaction' ? L(x.note) : L(x.label)) + '</p>').join('') +
-    (gr.tier === 'warn'
+      esc(x.kind === 'interaction' ? L(x.note) : L(x.label)) + '</p>' +
+      (x.quieted ? '<p class="till-quieted">' + esc(t('pt.quietedFor', { who:pat ? pat.name : '' })) + '</p>' : '')).join('') +
+    (gr.tier === 'stop'
+      ? (gr.acked ? '<p class="till-acked">' + esc(t('gv.reasonGiven', { why:S.till.reason[gr.items.find(x => x.tier === 'stop').key] })) + '</p>'
+                  : '<label class="sheet-label" for="stop-why">' + esc(t('gv.stopWhy')) + '</label>' +
+                    '<textarea id="stop-why" class="till-note stop-why" rows="2"></textarea>' +
+                    (S.till.note && S.till.note.kind === 'stopReason' ? '<p class="auth-error" style="margin:6px 0;">' + esc(t('gv.needReason')) + '</p>' : '') +
+                    '<button class="btn-primary till-stop-go" onclick="tillStopReason(' + attr(gr.key) + ')">' + esc(t('gv.goAhead')) + '</button>')
+      : gr.tier === 'warn'
       ? (gr.acked ? '<p class="till-acked">' + esc(t('till.acked')) + '</p>'
-                  : '<button class="btn-primary till-ack" onclick="tillAckGroup(' + attr(gr.key) + ')">' + esc(t('till.ack')) + '</button>')
+                  : '<button class="btn-primary till-ack" onclick="tillAckGroup(' + attr(gr.key) + ')">' + esc(t('till.ack')) + '</button>') +
+        /* P8: quieting a Warn for the patient on the sale, in this pharmacy only. */
+        (pat && can('patients') ? gr.items.filter(x => x.tier === 'warn').map(x =>
+          '<button class="link-btn pt-quiet" onclick="quietForPatient(' + attr(x.rule) + ')">' + esc(t('pt.quiet', { who:pat.name })) + '</button>').join('') : '')
       : '') + '</div>';
   return '<h3 class="sheet-title">' + esc(t('tl.beforeHand')) + '</h3>' +
     '<p class="sheet-sub till-covdetail">' +
@@ -11852,6 +12108,7 @@ function tillHelperSheet() {
       ? '<details class="till-notes"><summary>' + esc(t('till.questions', { n:g.questions.length })) + '</summary><ul>' +
           g.questions.map(q => '<li>' + esc(L(q.text)) + '</li>').join('') + '</ul></details>' : '') +
     '<p class="inline-note" style="text-align:center;margin-top:10px;">' + esc(t('tl.neverStops')) + '</p>' +
+    '<p class="inline-note gv-ruleset" style="text-align:center;">' + esc(t('gv.ruleSet', { v:liveRules().version, who:L(RULE_CURATOR) })) + '</p>' +
     '<p class="inline-note" style="text-align:center;">' + esc(t('dc.notComplete')) + '</p>';
 }
 
@@ -11904,12 +12161,118 @@ function tillTodaySheet() {
       : '<p class="inline-note">' + esc(t('tl.noSales')) + '</p>');
 }
 
+/* ==========================================================================
+   v0.0016 — PATIENT HISTORY (P8)
+
+   A pharmacy may keep its own patients and attach a sale to one: their
+   purchases at this pharmacy, and a warning quieted for them so it stops
+   interrupting a repeat prescription. "We can't look" is the architecture:
+   the rows are the pharmacy's alone — no Saydali+ role and no report reads
+   them, the same person at two pharmacies is two unrelated rows, and there
+   is never a shared patient identity. Granted as "Patient history"; off by
+   default, in the Pharmacist and Manager roles. A Stop cannot be quieted.
+   ========================================================================== */
+let PATIENT_SEQ = 0;
+const patientsOf = phId => (S.patients || []).filter(p => p.pharmacy === phId);
+const patientById = id => (S.patients || []).find(p => p.id === id) || null;
+function patientQuieted() {
+  const T = S.till, ph = tillPharmacy();
+  if (!T || !T.patient || !ph) return [];
+  return (S.quieted || []).filter(q => q.pharmacy === ph.id && q.patient === T.patient && !q.undone).map(q => q.rule);
+}
+function patientRow() {
+  const ph = tillPharmacy();
+  if (!ph || !can('patients')) return '';
+  const p = S.till.patient && patientById(S.till.patient);
+  return '<div class="pt-row">' + icon('user') + (p
+    ? '<button class="link-btn pt-open" onclick="openPatientRecord(' + attr(p.id) + ')">' + esc(t('pt.for', { who:p.name })) + '</button>' +
+      '<button class="link-btn pt-detach" onclick="detachPatient()" aria-label="' + esc(t('pt.detach')) + '">&times;</button>'
+    : '<button class="link-btn pt-attach" onclick="openPatients()">' + esc(t('pt.attach')) + '</button>') + '</div>';
+}
+function openPatients() { if (!need('patients')) return; S.patientQ = ''; openTillSheet('tillPatient'); }
+function openPatientRecord(id) { if (!need('patients')) return; openTillSheet('patientRecord', { id }); }
+function setPatientQ(v) { S.patientQ = v; renderModal(); const el = document.getElementById('pt-q'); if (el) { el.focus(); el.setSelectionRange(v.length, v.length); } }
+function patientSheet() {
+  const ph = tillPharmacy(), q = drugNorm(S.patientQ || '');
+  const list = patientsOf(ph.id).filter(p => !q || drugNorm(p.name + ' ' + (p.phone || '')).includes(q));
+  return '<h3 class="sheet-title">' + esc(t('pt.title')) + '</h3>' +
+    '<p class="sheet-sub pt-private">' + esc(t('pt.private')) + '</p>' +
+    '<input id="pt-q" class="lk-q" type="search" autocomplete="off" value="' + esc(S.patientQ || '') + '" placeholder="' + esc(t('pt.search')) + '" oninput="setPatientQ(this.value)">' +
+    (list.length ? '<div class="lk-hits">' + list.slice(0, 8).map(p =>
+      '<button class="row pt-pick" onclick="attachPatient(' + attr(p.id) + ')"><span class="row-body"><span class="row-title" style="display:block;">' + esc(p.name) + '</span>' +
+      '<span class="row-sub" style="display:block;" dir="ltr">' + esc([p.phone, t('pt.bought', { n:patientSales(p.id).length })].filter(Boolean).join(' · ')) + '</span></span></button>').join('') + '</div>'
+      : '<p class="inline-note">' + esc(t('pt.none')) + '</p>') +
+    '<p class="sheet-label" style="margin-top:14px;">' + esc(t('pt.new')) + '</p>' +
+    '<div class="own-grid"><input id="pt-name" placeholder="' + esc(t('tm.name')) + '"><input id="pt-phone" dir="ltr" inputmode="tel" placeholder="' + esc(t('pt.phone')) + '"></div>' +
+    (S.till.note && S.till.note.kind === 'patientName' ? '<p class="auth-error" style="margin:6px 0;">' + esc(t('pt.needName')) + '</p>' : '') +
+    '<button class="btn-primary pt-add" style="width:100%;margin-top:10px;" onclick="addPatient()">' + esc(t('pt.add')) + '</button>' +
+    '<p class="inline-note" style="margin-top:10px;">' + esc(t('pt.notRegister')) + '</p>';
+}
+function addPatient() {
+  const ph = tillPharmacy();
+  if (!ph || !need('patients', ph.id)) return;
+  const name = ((document.getElementById('pt-name') || {}).value || '').trim();
+  const phone = ((document.getElementById('pt-phone') || {}).value || '').trim();
+  if (!name) { S.till.note = { kind:'patientName' }; renderModal(); return; }
+  const id = 'PT' + String(++PATIENT_SEQ).padStart(4, '0');
+  S.patients.push({ id, pharmacy:ph.id, name, phone:phone || null, since:TODAY_ISO, by:S.email });
+  tillLog('patientAdded', { patient:id, name });
+  S.till.note = null;
+  attachPatient(id);
+}
+function attachPatient(id) {
+  const ph = tillPharmacy(), p = patientById(id);
+  if (!ph || !p || p.pharmacy !== ph.id || !need('patients', ph.id)) return;
+  S.till.patient = id; closeModal(); render();
+}
+function detachPatient() { S.till.patient = null; render(); }
+const patientSales = id => S.sales.filter(s => s.patient === id);
+function quietForPatient(rule) {
+  const ph = tillPharmacy(), p = S.till.patient && patientById(S.till.patient);
+  if (!ph || !p || !need('patients', ph.id)) return;
+  if (!(S.quieted || []).some(q => q.pharmacy === ph.id && q.patient === p.id && q.rule === rule && !q.undone))
+    S.quieted.push({ pharmacy:ph.id, patient:p.id, rule, by:S.email, at:nowIso() });
+  tillLog('quieted', { patient:p.id, name:p.name, rule });
+  renderModal(); render();
+}
+function unquiet(patient, rule) {
+  const ph = tillPharmacy();
+  if (!ph || !need('patients', ph.id)) return;
+  (S.quieted || []).filter(q => q.pharmacy === ph.id && q.patient === patient && q.rule === rule && !q.undone).forEach(q => { q.undone = nowIso(); });
+  renderModal(); render();
+}
+/* A rule, named the way a pharmacist reads it. */
+function ruleText(id) {
+  if (id.startsWith('DUP:')) { const r = DUPLICATE_RULES.find(x => 'DUP:' + x.id === id); return r ? L(r.label) : id; }
+  return id.slice(3).split('|').map(s => drugBySci(s) ? drugName(drugBySci(s)) : s).join(' + ');
+}
+function patientRecordSheet(id) {
+  const p = patientById(id), ph = tillPharmacy();
+  if (!p || !ph || p.pharmacy !== ph.id) return '';
+  const sales = patientSales(id), quiet = (S.quieted || []).filter(q => q.pharmacy === ph.id && q.patient === id && !q.undone);
+  return '<h3 class="sheet-title">' + esc(p.name) + '</h3>' +
+    '<p class="sheet-sub" dir="ltr">' + esc([p.phone, t('wk.since', { d:p.since })].filter(Boolean).join(' · ')) + '</p>' +
+    '<p class="sheet-label">' + esc(t('pt.history')) + '</p>' +
+    (sales.length ? '<div class="lk-hits pt-sales">' + sales.map(s => '<div class="row"><span class="row-body"><span class="row-title" style="display:block;">' +
+        esc(s.lines.map(l => L(l.name) + (l.qty > 1 ? ' ×' + l.qty : '')).join(', ')) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(fmtWhen(s.at) + ' · ' + personName(s.by)) + '</span></span></div>').join('') + '</div>'
+      : '<p class="inline-note">' + esc(t('pt.noHistory')) + '</p>') +
+    '<p class="sheet-label" style="margin-top:12px;">' + esc(t('pt.quietT')) + '</p>' +
+    (quiet.length ? '<div class="lk-hits pt-quietlist">' + quiet.map(q => '<div class="row"><span class="row-body"><span class="row-title" style="display:block;">' + esc(ruleText(q.rule)) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(fmtWhen(q.at) + ' · ' + personName(q.by)) + '</span></span>' +
+        '<button class="btn-small pt-unquiet" onclick="unquiet(' + attr(id) + ',' + attr(q.rule) + ')">' + esc(t('pt.unquiet')) + '</button></div>').join('') + '</div>'
+      : '<p class="inline-note">' + esc(t('pt.noneQuiet')) + '</p>') +
+    '<p class="inline-note pt-private" style="margin-top:10px;">' + esc(t('pt.private')) + '</p>';
+}
+
 function tillSheet() {
   const m = S.modal;
   if (m.kind === 'tillLine') return tillLineSheet(m.i);
   if (m.kind === 'tillHelper') return tillHelperSheet();
   if (m.kind === 'tillPay') return tillPaySheet();
   if (m.kind === 'tillToday') return tillTodaySheet();
+  if (m.kind === 'tillPatient') return patientSheet();
+  if (m.kind === 'patientRecord') return patientRecordSheet(m.id);
   if (m.kind === 'drawerOpen') return drawerOpenSheet();
   if (m.kind === 'drawerNoSale') return noSaleSheet();
   return '';
@@ -11943,7 +12306,15 @@ function tillMain(ph, tabs) {
         '<p class="urgent-s" style="margin-bottom:10px;">' + esc(t('till.unknownS')) + '</p>' +
         '<div class="till-inline"><input id="unk-name" placeholder="' + esc(t('till.unknownName')) + '">' +
         '<input id="unk-price" type="number" inputmode="numeric" dir="ltr" placeholder="' + esc(t('till.priceIQD')) + '">' +
-        '<button class="btn-small" onclick="tillAddUnknown()">' + esc(t('till.add')) + '</button></div></div>'
+        '<button class="btn-small" onclick="tillAddUnknown()">' + esc(t('till.add')) + '</button></div>' +
+        /* v0.0016: or linked to a product on the register. */
+        '<p class="section-eyebrow lk-t" style="margin-top:14px;">' + esc(t('lk.title')) + '</p>' +
+        '<input id="lk-q" class="lk-q" type="search" autocomplete="off" value="' + esc(S.linkQuery || '') + '" placeholder="' + esc(t('lk.find')) + '" oninput="linkQuery(this.value)">' +
+        (S.linkQuery && S.linkQuery.trim().length > 1 ? '<div class="lk-hits">' + findProducts(S.linkQuery, null, 400).filter(r => r.p.reg && r.p.status !== 'suspended').slice(0, 6).map(r =>
+          '<button class="row lk-hit" onclick="linkBarcode(' + attr(r.p.barcode) + ')"><span class="row-body"><span class="row-title" style="display:block;">' + esc(L(r.p.name)) + '</span>' +
+          '<span class="row-sub" style="display:block;">' + esc([r.p.strength, r.p.maker, r.p.country].filter(Boolean).join(' · ')) + '</span></span>' +
+          '<span class="btn-small">' + esc(t('lk.link')) + '</span></button>').join('') + '</div>' : '') +
+        '<p class="inline-note">' + esc(t('lk.note')) + '</p></div>'
     : '';
 
   const line = (l, i) => {
@@ -11955,17 +12326,19 @@ function tillMain(ph, tabs) {
       '<span class="till-line-body"><span class="till-line-name">' + esc(L(l.name)) + '</span>' +
         '<span class="till-line-sub">' +
           (l.onlyExpired ? '<span class="till-line-instr till-onlyexp">' + esc(t('till.onlyExpired')) + '</span>' : '') +
+          (l.link && l.link.state === 'local' ? '<span class="till-tag lk-local">' + esc(t('lk.localTag')) + '</span>' : '') +
           tag + (instr ? '<span class="till-line-instr">' + esc(instr) + '</span>' : '') + '</span></span>' +
       '<span class="till-qty figure">×' + l.qty + '</span>' +
       (selling ? '<span class="till-line-total figure">' + (l.unit == null ? '—' : fmt(l.qty * l.unit)) + '</span>' : '') +
     '</button>';
   };
 
-  const warns = g.groups.filter(x => x.tier === 'warn');
+  const warns = g.groups.filter(x => x.tier !== 'note');
   const open = warns.filter(x => !x.acked);
+  const stopOpen = open.some(x => x.tier === 'stop');
   const flag = !T.lines.length ? '' : open.length
-    ? '<button class="till-flag warn" onclick="openHelper()">' + icon('alert') + '<span class="till-flag-body"><b>' +
-        esc(t(open.length === 1 ? 'tl.warn1' : 'tl.warnN', { n:open.length })) + '</b><span>' +
+    ? '<button class="till-flag warn' + (stopOpen ? ' stop' : '') + '" onclick="openHelper()">' + icon('alert') + '<span class="till-flag-body"><b>' +
+        esc(stopOpen ? t('gv.stopFlag') : t(open.length === 1 ? 'tl.warn1' : 'tl.warnN', { n:open.length })) + '</b><span>' +
         esc(groupTitle(open[0]) + ' · ' + (open[0].items.find(x => x.kind === 'interaction') ? L(open[0].items.find(x => x.kind === 'interaction').note) : L(open[0].items[0].label))) +
         '</span></span>' + icon('chevron', 'more-chevron') + '</button>'
     : warns.length
@@ -12021,7 +12394,7 @@ function tillMain(ph, tabs) {
       ? '<div class="card till-hits">' + resultRows(hits, c => 'tillQuery(\'\');tillAdd(' + attr(c) + ')') + offer + '</div>'
       : '') +
     (S.ownDraft && S.ownDraft.where === 'till' ? ownItemCard() : '') +
-    note + needPrice + unknown + modeRow +
+    note + needPrice + unknown + modeRow + patientRow() +
     (T.lines.length ? '<div class="card till-cart">' + T.lines.map(line).join('') + '</div>' : T.query.trim() || S.ownDraft ? '' : empty) +
     (T.lines.length ? '<div class="till-helper">' + flag + coverage + '</div>' : '') +
     bar +
@@ -12423,6 +12796,7 @@ const ymOffset = k => { const d = new Date(nowMs()); d.setDate(1); d.setMonth(d.
    grant, a cashier, a stock keeper, someone who left and an invitation not yet
    accepted; at Layla's, a custom role, and Maryam, who works at two of them
    under different roles (a pharmacist at Al-Hayat, the manager at Al-Shifa).
+   v0.0016: Rahma, who owns Al-Rahma, also works shifts at Al-Hayat.
    A little of the record, today and before. */
 function seedTeams() {
   /* Earlier today, never before midnight. */
@@ -12435,16 +12809,18 @@ function seedTeams() {
   const R = 'rahma@example.com', Ly = 'layla@example.com';
   S.staff.push(
     rec('E001', 'P1', who('hassan@example.com', 'Hassan Al-Dulaimi', 'pharmacist'), 'active', 'pharmacist', ['prices'], '2025-07-01', null, R),
-    rec('E002', 'P1', who('zahraa@example.com', 'Zahraa Ali', 'assistant'),         'active', 'cashier',     [], '2026-03-15', null, R),
-    rec('E003', 'P1', who('omar@example.com', 'Omar Faisal', 'assistant'),          'active', 'stockKeeper', [], '2026-01-10', null, R),
-    rec('E004', 'P1', who('duaa@example.com', 'Duaa Salim', 'assistant'),           'ended',  'cashier',     [], '2025-09-01', '2026-06-30', R),
+    rec('E002', 'P1', who('zahraa@example.com', 'Zahraa Ali', 'pharmacist'),         'active', 'cashier',     [], '2026-03-15', null, R),
+    rec('E003', 'P1', who('omar@example.com', 'Omar Faisal', 'pharmacist'),          'active', 'stockKeeper', [], '2026-01-10', null, R),
+    rec('E004', 'P1', who('duaa@example.com', 'Duaa Salim', 'pharmacist'),           'ended',  'cashier',     [], '2025-09-01', '2026-06-30', R),
     rec('E005', 'P1', { email:null, name:'Mustafa Naji', contact:'+964 780 555 0142', position:'pharmacist' }, 'invited', 'cashier', [], null, null, R),
     rec('E006', 'P7', who('karim@example.com', 'Karim Mahdi', 'pharmacist'),        'active', 'CR1',         [], '2024-11-01', null, Ly),
-    rec('E007', 'P7', who('rusul@example.com', 'Rusul Adnan', 'assistant'),         'active', 'cashier',     [], '2026-05-02', null, Ly),
+    rec('E007', 'P7', who('rusul@example.com', 'Rusul Adnan', 'pharmacist'),         'active', 'cashier',     [], '2026-05-02', null, Ly),
     rec('E008', 'P8', who('maryam@example.com', 'Maryam Kadhim', 'pharmacist'),     'active', 'pharmacist',  [], '2025-02-15', null, Ly),
-    rec('E009', 'P8', who('ali@example.com', 'Ali Hussein', 'assistant'),           'active', 'stockKeeper', ['discounts'], '2025-10-20', null, Ly),
+    rec('E009', 'P8', who('ali@example.com', 'Ali Hussein', 'pharmacist'),           'active', 'stockKeeper', ['discounts'], '2025-10-20', null, Ly),
     rec('E010', 'P7', who('maryam@example.com', 'Maryam Kadhim', 'pharmacist'),     'active', 'manager',     [], '2026-04-01', null, Ly),
-    rec('E011', 'P9', { email:null, name:'Hiba Saad', contact:'+964 771 404 2210', position:'pharmacist' }, 'invited', 'cashier', [], null, null, Ly));
+    rec('E011', 'P9', { email:null, name:'Hiba Saad', contact:'+964 771 404 2210', position:'pharmacist' }, 'invited', 'cashier', [], null, null, Ly),
+    /* v0.0016 — an owner who also works on someone else's team. */
+    rec('E012', 'P8', who('rahma@example.com', 'Rahma Al-Jubouri', 'pharmacist'), 'active', 'pharmacist', [], '2026-08-01', null, Ly));
   S.staff.filter(x => x.state === 'invited').forEach(x => {
     x.invitedAt = at(2, 11); x.code = inviteCode(x.id);
     x.link = 'https://saydali.example/join/' + x.pharmacy.toLowerCase() + '-' + x.code;
@@ -13991,7 +14367,7 @@ function signDrawer(id) {
 function setSignOffOver(v) {
   const ph = tillPharmacy();
   const n = Math.round(Number(v));
-  if (!ph || S.role !== 'owner' || !isFinite(n) || n < 0) return;
+  if (!ph || S.role !== 'owner' || !ownsPharmacy(ph.id) || !isFinite(n) || n < 0) return;
   S.signOffOver[ph.id] = n;
   tillLog('signOffOver', { pharmacy:ph.id, amount:n });
   render();
@@ -14124,7 +14500,7 @@ function screenDrawer() {
       '<span class="row-title" style="display:block;">' + esc(p.id + ' · ' + fmtWhen(p.closedAt)) + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(t('sl.variance') + ' ' + signed(p.variance) + ' · ' + t(p.state === 'waiting' ? 'dr.stWaiting' : 'dr.stClosed')) + '</span></span>' +
       icon('chevron', 'more-chevron') + '</button>').join('') + '</div>' : '') +
-    (S.role === 'owner' ? '<div class="card card-pad dr-setting"><label class="field-label" for="dr-over">' + esc(t('dr.overL')) + '</label>' +
+    (S.role === 'owner' && ownsPharmacy(ph.id) ? '<div class="card card-pad dr-setting"><label class="field-label" for="dr-over">' + esc(t('dr.overL')) + '</label>' +
       '<div class="till-inline"><input id="dr-over" type="number" inputmode="numeric" dir="ltr" value="' + signOffOver(ph.id) + '">' +
       '<button class="btn-small" onclick="setSignOffOver(document.getElementById(\'dr-over\').value)">' + esc(t('sk.minSave')) + '</button></div>' +
       '<p class="inline-note">' + esc(t('dr.overS')) + '</p></div>' : '') +
@@ -14276,7 +14652,7 @@ function screenLabels() {
    their own. The CRM reads none of it.
    ========================================================================== */
 
-const PERMS = ['sell', 'voids', 'discounts', 'prices', 'stock', 'writeoffs', 'cashVariance', 'receipt', 'market', 'ownItems', 'exchange'];
+const PERMS = ['sell', 'voids', 'discounts', 'prices', 'stock', 'writeoffs', 'cashVariance', 'receipt', 'market', 'ownItems', 'patients', 'exchange'];
 const DEFAULT_GRANTS = ['sell'];
 /* Grantable only once the feature exists. */
 const PERM_LATER = { exchange:'v0.0018' };
@@ -14292,7 +14668,7 @@ const workPharmacies = () => (S.staff || []).filter(x => x.email === S.email && 
    none is named)? The owner may do everything at a pharmacy they own. */
 function can(perm, phId) {
   if (phId === undefined) { const p = currentPharmacy(); phId = p ? p.id : null; }
-  if (S.role === 'owner') return phId ? ownsPharmacy(phId) : true;
+  if (S.role === 'owner' && (!phId || ownsPharmacy(phId))) return true;
   if (!phId) return false;
   const st = staffRecord(phId);
   return !!st && effectiveGrants(st).includes(perm);
@@ -14316,10 +14692,11 @@ function inviteCode(id) {
 }
 function inviteStaff() {
   const ph = currentPharmacy();
-  if (!ph || S.role !== 'owner') return;
+  if (!ph || S.role !== 'owner' || !ownsPharmacy(ph.id)) return;
   const name = ((document.getElementById('inv-name') || {}).value || '').trim();
   const contact = ((document.getElementById('inv-contact') || {}).value || '').trim();
-  const position = (document.getElementById('inv-pos') || {}).value || 'pharmacist';
+  /* v0.0016: everyone on a team is a pharmacist — no Syndicate badge, no app. */
+  const position = 'pharmacist';
   if (!name || !contact) { S.teamNote = { kind:'needInvite' }; render(); return; }
   /* An existing account is invited by its email; anyone else by phone. */
   const mail = ACCOUNTS[contact.toLowerCase()] ? contact.toLowerCase() : null;
@@ -14339,11 +14716,14 @@ function inviteStaff() {
 function acceptInvite(code) {
   const rec = (S.staff || []).find(x => x.state === 'invited' && x.code === String(code || '').trim());
   if (!rec) return null;
+  /* v0.0016: only a Syndicate-verified pharmacist joins a team. */
+  if (rec.email && !hasBadge(rec.email)) return null;
   if (!rec.email) {
+    /* Prototype: as if they had signed up and the Syndicate had verified them. */
     const mail = 'staff' + rec.id.toLowerCase() + '@example.com', key = 'acc.staff' + rec.id;
     STRINGS.en[key] = rec.name; STRINGS.ar[key] = rec.name;
     ACCOUNTS[mail] = { type:'pharmacist', pharmacy:null, verified:true, nameKey:key, tagKey:key,
-                       initials:{ ar:initialsOf(rec.name), en:initialsOf(rec.name) }, trial:false, assistant:rec.position === 'assistant' };
+                       initials:{ ar:initialsOf(rec.name), en:initialsOf(rec.name) }, trial:false };
     rec.email = mail;
   }
   rec.state = 'active'; rec.start = TODAY_ISO; rec.acceptedAt = nowIso();
@@ -14352,15 +14732,20 @@ function acceptInvite(code) {
   return rec;
 }
 /* A pharmacist invited by their email accepts on their own home. */
+/* No Syndicate badge, no app: someone whose verification is still pending
+   cannot join a team until it is done. */
+const hasBadge = mail => { const a = ACCOUNTS[mail]; return !!a && a.type === 'pharmacist' && !!a.verified; };
 function acceptMyInvite(id) {
   const rec = (S.staff || []).find(x => x.id === id && x.email === S.email && x.state === 'invited');
   if (!rec) return;
+  if (!hasBadge(S.email)) { toast(t('tm.needBadge')); return; }
   acceptInvite(rec.code); render();
 }
 function joinByCode() {
   const code = ((document.getElementById('join-code') || {}).value || '').trim();
   const rec = (S.staff || []).find(x => x.state === 'invited' && x.code === code);
   if (!rec || (rec.email && rec.email !== S.email)) { toast(t('tm.badCode')); return; }
+  if (!hasBadge(S.email)) { toast(t('tm.needBadge')); return; }
   if (!rec.email) rec.email = S.email;
   acceptInvite(code); render();
 }
@@ -14412,6 +14797,9 @@ function timelineText(e) {
     case 'staffInvited': return t('tk.invited', { who:e.name });
     case 'staffEnded': return t('tk.ended', { who:e.name });
     case 'roleSet': return t('tk.roleSet', { who:e.name, role:e.role });
+    case 'barcodeLinked': return t('tk.barcodeLinked', { barcode:e.barcode, name:productName(e.code) });
+    case 'patientAdded': return t('tk.patientAdded', { who:e.name });
+    case 'quieted': return t('tk.quieted', { who:e.name, rule:ruleText(e.rule) });
     case 'roleCreated': return t('tk.roleCreated', { role:e.role });
     case 'roleEdited': return t('tk.roleEdited', { role:e.role, n:e.holders });
     case 'roleDeleted': return t('tk.roleDeleted', { role:e.role });
@@ -14463,8 +14851,8 @@ function screenTeam() {
     '<details class="card card-pad tm-invite"' + (active.length ? '' : ' open') + '><summary>' + esc(t('tm.invite')) + '</summary>' +
       '<p class="inline-note" style="margin:8px 0;">' + esc(t('tm.inviteS')) + '</p>' +
       '<div class="own-grid"><input id="inv-name" placeholder="' + esc(t('tm.name')) + '">' +
-        '<input id="inv-contact" dir="ltr" placeholder="' + esc(t('tm.contact')) + '">' +
-        '<select id="inv-pos"><option value="pharmacist">' + esc(t('tm.pos.pharmacist')) + '</option><option value="assistant">' + esc(t('tm.pos.assistant')) + '</option></select></div>' +
+        '<input id="inv-contact" dir="ltr" placeholder="' + esc(t('tm.contact')) + '"></div>' +
+      '<p class="inline-note tm-badge-note">' + esc(t('tm.badgeRule')) + '</p>' +
       '<p class="inline-note">' + esc(t('tm.defaultS')) + '</p>' +
       '<button class="btn-primary tm-invite-go" onclick="inviteStaff()">' + esc(t('tm.inviteGo')) + '</button></details>' +
     rolesCard() +
@@ -14533,7 +14921,8 @@ function myInvitesCard() {
   const mine = (S.staff || []).filter(x => x.state === 'invited' && x.email === S.email);
   return mine.map(x => '<div class="card card-pad tm-myinv"><p class="urgent-t">' + esc(t('tm.invitesYou', { ph:L(PHARMACIES[x.pharmacy].name) })) + '</p>' +
     '<p class="urgent-s">' + esc(t('tm.invitesYouS', { pos:t('tm.pos.' + x.position) })) + '</p>' +
-    '<button class="btn-primary tm-accept" onclick="acceptMyInvite(' + attr(x.id) + ')">' + esc(t('tm.accept')) + '</button></div>').join('') +
+    (hasBadge(S.email) ? '<button class="btn-primary tm-accept" onclick="acceptMyInvite(' + attr(x.id) + ')">' + esc(t('tm.accept')) + '</button>'
+      : '<p class="inline-note tm-needbadge">' + esc(t('tm.needBadge')) + '</p>') + '</div>').join('') +
     (workPharmacies().length ? '' : '<details class="card card-pad tm-join"><summary>' + esc(t('tm.haveCode')) + '</summary>' +
       '<div class="till-inline" style="margin-top:10px;"><input id="join-code" inputmode="numeric" dir="ltr" placeholder="000000">' +
       '<button class="btn-small" onclick="joinByCode()">' + esc(t('tm.join')) + '</button></div></details>');
@@ -14566,7 +14955,7 @@ function myInvitesCard() {
 
 const ROLE_PRESETS = [
   { id:'cashier',     grants:['sell'] },
-  { id:'pharmacist',  grants:['sell', 'voids', 'discounts', 'ownItems'] },
+  { id:'pharmacist',  grants:['sell', 'voids', 'discounts', 'ownItems', 'patients'] },
   { id:'stockKeeper', grants:['sell', 'stock', 'writeoffs'] },
   { id:'manager',     grants:PERMS.filter(p => !PERM_LATER[p]) }
 ];
@@ -16489,7 +16878,7 @@ function renderModal() {
   if (!S.modal) { root.innerHTML = ''; return; }
   if (S.modal.kind === 'camera' && !S.modal.error && document.getElementById('cam')) { cameraStatus(); return; }
   /* v0.0013.1 — the till's sheets rise from the bottom rather than float. */
-  if (/^(till(Line|Helper|Pay|Today)|drawer(Open|NoSale))$/.test(S.modal.kind)) { root.innerHTML = sheetWrap(tillSheet()); return; }
+  if (/^(till(Line|Helper|Pay|Today|Patient)|drawer(Open|NoSale)|patientRecord)$/.test(S.modal.kind)) { root.innerHTML = sheetWrap(tillSheet()); return; }
 
   let inner = '';
   if (S.modal.kind === 'txn') {
@@ -16536,7 +16925,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0015.2.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0016.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

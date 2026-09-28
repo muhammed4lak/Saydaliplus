@@ -77,7 +77,7 @@ ok('the file states the build its name claims',
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
-ok('thirteen tabs: home, the eleven modules, and reports', await p.locator('.tab').count() === 13);
+ok('fifteen tabs: home, the thirteen modules (Rules and Barcode links since v0.0016), and reports', await p.locator('.tab').count() === 15);
 ok('the document is English, left to right', await p.evaluate(() =>
    document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
 ok('there is no language toggle left to press',
@@ -784,9 +784,9 @@ ok('the mapping queue is what is not linked, most-scanned first',
    }));
 /* v0.0012.1 (A3): the version the curator's step arrives in. It said
    v0.0013 — stock and purchasing — when the Rules module is v0.0016. */
-ok('the catalogue names the right version for the curator’s step (v0.0016, clinical governance)',
+ok('the catalogue says the curator’s step waits for the curator, not for a version (v0.0016: the Rules module is built)',
    await p.evaluate(() => { const keys = ['cat.note', 'cat.curatorNote'];
-     return keys.every(k => /Rules module in v0\.0016/.test(t(k))) && !keys.some(k => /v0\.001[35]\b/.test(t(k))); }));
+     return keys.every(k => /clinical curator/.test(t(k)) && /still to be named/.test(t(k))) && !keys.some(k => /v0\.001\d\b/.test(t(k))); }));
 /* v0.0013 (S4): suppliers pharmacies named — one task per supplier, and a
    link the owner confirms, never the team. */
 ok('the storage house pharmacies named is a record, with the pharmacies that named it',
@@ -1104,7 +1104,7 @@ ok('the matrix on screen is drawn from CAPS rather than retyped beside it',
      const ticks = [...document.querySelectorAll('table.matrix tbody tr')].map(tr =>
        [...tr.querySelectorAll('td')].slice(1).map(td => td.classList.contains('yes')));
      // rows after the first are CAPS keys, columns are CRM_ROLES reversed
-     const caps = ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin'];
+     const caps = ['write', 'delete', 'import', 'reports.edit', 'staff.employee', 'staff.admin', 'rules.write', 'rules.approve'];
      const cols = CRM_ROLES.slice().reverse();
      return ticks.slice(1).every((row, i) =>
        row.every((on, j) => on === (CAPS[cols[j]] || []).includes(caps[i])));
@@ -1350,6 +1350,90 @@ ok('Arabic data is still held, and still shown where it is the record',
      return d.ar === 'أموكسيسيلين'
        && AR(DATA.pharmacies[0].name).startsWith('صيدلية الرحمة');
    }));
+
+/* ---------------------------------------------------------------------------
+   v0.0016 — the Rules module (W19), the override report, barcode links, and
+   nothing of a pharmacy's patients (P8).
+   --------------------------------------------------------------------------- */
+console.log('\nclinical governance and barcode links (v0.0016)');
+{
+  const g = await open();
+  await g.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); }; });
+  const as = async role => g.evaluate(r => signInAs(STAFF.find(s => s.role === r).id), role);
+  ok('every rule the Helper can fire is here: 218 built, 3 from the ledger',
+     await g.evaluate(() => DATA.rules.length === 221 && DATA.rules.filter(r => r.built).length === 218));
+  ok('the rule set today is version 3, the Stop list is empty and says so',
+     await g.evaluate(() => { goTab('rules'); const x = document.querySelector('.rules-asof').innerText;
+       return ruleSetVersion(RULES_TODAY) === 3 && /version 3/.test(x) && /0 Stop/.test(x) && /Stop list is empty/.test(x) &&
+         !DATA.rules.some(r => r.state === 'approved' && r.tier === 'stop'); }));
+  ok('a past day is rebuilt: on 23 September, version 2, with the ibuprofen + diclofenac pair live; before the baseline, nothing',
+     await g.evaluate(() => { setRulesAsOf('2026-09-23'); const r = DATA.rules.find(x => x.id === 'IX:Diclofenac|Ibuprofen');
+       const v = /version 2/.test(document.querySelector('.rules-asof').innerText); const pre = liveOn('2026-09-19').length;
+       setRulesAsOf(null); return v && r.state === 'approved' && r.tier === 'note' && pre === 0 && DATA.rules.find(x => x.id === 'IX:Diclofenac|Ibuprofen').state === 'retired'; }));
+  /* The same ledger, read by the app: the two must agree on every day. */
+  const appFile = join(here, '..', 'demo', newestBuild(join(here, '..', 'demo'), 'saydali-plus_v'));
+  const ap = await b.newPage(); await ap.goto('file://' + appFile); await ap.waitForTimeout(500);
+  const days = ['2026-09-19', '2026-09-20', '2026-09-22', '2026-09-24', '2026-09-26', '2026-09-28'];
+  const appSets = await ap.evaluate(ds => ds.map(d => { const r = ruleSetAsOf(d); return r.version + ':' + [...r.live.entries()].map(([k, v]) => k + '=' + v.tier).sort().join(','); }), days);
+  const crmSets = await g.evaluate(ds => ds.map(d => ruleSetVersion(d) + ':' + liveOn(d).map(r => r.id + '=' + r.tier).sort().join(',')), days);
+  await ap.close();
+  ok('the CRM and the app rebuild the same rule set, at the same version, for any day', appSets.join('\n') === crmSets.join('\n'));
+  ok('a rule never approved is not live: the two under review or proposed',
+     await g.evaluate(() => ['IX:Atorvastatin|Fluconazole', 'IX:Clopidogrel|Fluoxetine'].every(id => { const r = DATA.rules.find(x => x.id === id);
+       return r && (r.state === 'review' || r.state === 'proposed') && !liveOn(RULES_TODAY).some(x => x.id === id); })));
+  ok('each transition carries a name and a date, and the baseline says it is provisional until the curator reviews it',
+     await g.evaluate(() => { openRecord('rules', 'IX:Diclofenac|Ibuprofen'); const h = document.querySelector('.rule-history').innerText;
+       openRecord('rules', 'IX:Aspirin|Ibuprofen'); const b0 = document.querySelector('.rule-history').innerText;
+       return /Retired/.test(h) && /26 September 2026/.test(h) && /Clinical curator — to be named/.test(h) && /Haider Al-Zubaidi/.test(h) &&
+         /the rule set as built/.test(b0) && /Provisional until the clinical curator reviews it/.test(b0); }));
+  for (const role of ['owner_admin', 'admin', 'employee']) {
+    await as(role);
+    ok(`the ${role.replace('_', ' ')} cannot approve a rule, and is not offered to`,
+       await g.evaluate(() => { openRecord('rules', 'IX:Atorvastatin|Fluconazole'); const n = DATA.ruleEvents.length;
+         const offered = document.querySelectorAll('.rule-move[data-to^="approved"]').length; const r = ruleMove('IX:Atorvastatin|Fluconazole', 'approved', 'warn');
+         return !offered && r === false && DATA.ruleEvents.length === n && !!document.querySelector('.mod-note.stage'); }));
+  }
+  ok('operations propose, and send for review',
+     await g.evaluate(() => { const n = DATA.ruleEvents.length; openRecord('rules', 'IX:Clopidogrel|Fluoxetine'); tap('.rule-move[data-to="review"]');
+       return DATA.ruleEvents.length === n + 1 && DATA.rules.find(r => r.id === 'IX:Clopidogrel|Fluoxetine').state === 'review'; }));
+  await as('curator');
+  ok('the curator approves at a tier — a new version of the rule set, with their name, the date and the reason',
+     await g.evaluate(() => { openRecord('rules', 'IX:Clopidogrel|Fluoxetine'); document.getElementById('rule-why').value = 'Agreed; Warn until we see the override rate';
+       tap('.rule-move[data-to="approved:warn"]'); const r = DATA.rules.find(x => x.id === 'IX:Clopidogrel|Fluoxetine'), e = DATA.ruleEvents[DATA.ruleEvents.length - 1];
+       return r.state === 'approved' && r.tier === 'warn' && ruleSetVersion(RULES_TODAY) === 4 && e.by === 'u5' && e.at === RULES_TODAY && /Warn until/.test(L(e.why)); }));
+  ok('…and can re-tier and retire a live rule, each a new version; a retired rule has no way back',
+     await g.evaluate(() => { tap('.rule-move[data-to="approved:note"]'); const a = DATA.rules.find(x => x.id === 'IX:Clopidogrel|Fluoxetine').tier === 'note';
+       tap('.rule-move[data-to="retired"]'); const r = DATA.rules.find(x => x.id === 'IX:Clopidogrel|Fluoxetine');
+       return a && r.state === 'retired' && ruleSetVersion(RULES_TODAY) === 6 && !document.querySelector('.rule-move') && ruleMove(r.id, 'approved', 'warn') === false; }));
+  ok('the curator account is a placeholder with one capability, shown on the matrix',
+     await g.evaluate(() => { const c = STAFF.find(s => s.role === 'curator'); goTab('team');
+       return c.placeholder && CAPS.curator.join() === 'rules.approve' && /Clinical curator/i.test(document.querySelector('table.matrix').textContent) &&
+         !CAPS.owner_admin.includes('rules.approve'); }));
+  ok('the override report: over one in five of at least twenty showings is flagged for demotion — a Note is never flagged',
+     await g.evaluate(() => { goTab('rules'); pickView('rules', 'demote'); const ids = visibleRows('rules').map(r => r.id);
+       pickView('rules', 'all'); return ids.join() === 'IX:Aspirin|Ibuprofen' && !ids.includes('DUP:acid') && !ids.includes('IX:Paracetamol|Warfarin'); }));
+  ok('…the rate is on the rule: 34% · 41/120',
+     await g.evaluate(() => { openRecord('rules', 'IX:Aspirin|Ibuprofen'); return /34%/.test(document.getElementById('work-body').innerText) && /41 of 120 times shown/.test(document.getElementById('work-body').innerText); }));
+  ok('the rules and their ledger are report tables — and there is no patients table',
+     await g.evaluate(() => { const tb = sqlTables(); return tb.rules.length === 221 && tb.rule_events.length === DATA.ruleEvents.length && !!tb.barcode_links &&
+       !Object.keys(tb).some(k => /patient/i.test(k)) && !Object.keys(tb).some(k => Object.keys(tb[k][0] || {}).some(c => /patient/i.test(c))); }));
+  ok('NO CRM ROLE CAN READ A PATIENT ROW: nothing in the CRM holds, derives or reads one',
+   !/patientById|patientsOf|S\.patients|DATA\.patients|\bpatients\s*:\s*\[/.test(readFileSync(file, 'utf8')) && await g.evaluate(() => !('patients' in DATA)));
+
+  /* Barcode links. */
+  await as('employee');
+  ok('barcode links: conflicts first, then links pharmacies agree on, then single ones, then confirmed',
+     await g.evaluate(() => { goTab('links'); return DATA.links.map(l => l.state).join() === 'conflict,agreed,single,confirmed'; }));
+  ok('a conflict says so and shows what each pharmacy linked it to',
+     await g.evaluate(() => { openRecord('links', '6251234000036'); const t0 = document.getElementById('work-body').innerText;
+       return /linked this barcode to different products/.test(t0) && document.querySelectorAll('.link-claims .task-row').length === 2; }));
+  ok('confirming one makes it the link for every pharmacy',
+     await g.evaluate(() => { tap('.link-confirm'); const l = DATA.links.find(x => x.barcode === '6251234000036');
+       return l.state === 'confirmed' && !!DATA.barcodeConfirmed['6251234000036'] && DATA.barcodeConfirmed['6251234000036'].by === ME; }));
+  ok('the one already confirmed matches the app’s', await g.evaluate(() => DATA.barcodeConfirmed['6251234000012'].reg === 'R0102') &&
+     /'6251234000012':'REG-R0102'/.test(readFileSync(appFile, 'utf8')));
+  await as('owner_admin');
+}
 
 console.log('\nnarrow viewport');
 const m = await open(430, 900);
