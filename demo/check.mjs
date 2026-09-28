@@ -2620,7 +2620,7 @@ console.log('\nsearch by any name, and stock without barcodes (v0.0013.3)');
      await dk.evaluate(() => { confirmCash(); closeReceipt(); return S.sales[0].lines.some(l => l.barcode === 'L-P1-001'); }));
   ok('…and it is found by name from then on, labelled as the pharmacy’s own',
      await dk.evaluate(() => { const r = findProducts('zaatar', 'P1', 5); tillQuery('zaatar');
-       const row = document.querySelector('.till-hits .find-row'); const ok1 = r.length === 1 && !!row && /your pharmacy’s own item/i.test(row.innerText); tillQuery(''); return ok1; }));
+       const row = document.querySelector('.till-hits .find-row'); const ok1 = r.length === 1 && !!row && /own item/i.test(row.querySelector('.find-tag').innerText); tillQuery(''); return ok1; }));
   ok('…in this pharmacy only',
      await dk.evaluate(() => findProducts('zaatar', 'P9', 5).length === 0));
   ok('…the same name twice is the same item',
@@ -3624,6 +3624,66 @@ console.log('\nan owner of several stays in the module they chose a pharmacy fro
      await np.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); const ownT = S.screen === 'team';
        setPharmacy('P8'); return ownT && S.screen !== 'team' && !!document.querySelector('.wk-card'); }));
   await np.close();
+}
+
+console.log('\nevery search result the same shape (v0.0016.3)');
+{
+  const rp = await dk.context().newPage();
+  rp.on('pageerror', e => errs.push('pageerror (v0.0016.3): ' + e.message));
+  await rp.setViewportSize({ width:390, height:844 });
+  await rp.goto(darkUrl); await rp.waitForTimeout(400);
+  const shape = sel => rp.evaluate(sel => [...document.querySelectorAll(sel + ' .find-row')].map(r => {
+    const n = r.querySelector('.find-name'), w = r.querySelector('.find-what');
+    return { h:Math.round(r.querySelector('.row-body').getBoundingClientRect().height), name:n ? n.textContent : null, what:w ? w.textContent : null,
+      nameOne:!!n && getComputedStyle(n).whiteSpace === 'nowrap' && n.getBoundingClientRect().height < parseFloat(getComputedStyle(n).fontSize) * 2,
+      whatOne:!!w && getComputedStyle(w).whiteSpace === 'nowrap' && w.getBoundingClientRect().height < parseFloat(getComputedStyle(w).fontSize) * 2,
+      lines:r.querySelectorAll('.row-body > span').length, tags:r.querySelectorAll('.find-tag').length };
+  }), sel);
+  ok('the register\'s names are tidied as on the pack: no ®, no trailing full stop, no packaging words — and the name as registered is kept',
+     await rp.evaluate(() => { const w = REG_PRODUCTS.find(p => p.trade === 'Warfarin 5mg tab.');
+       return !!w && w.name.en === 'Warfarin 5 mg' && REG_PRODUCTS.every(p => !/[®™]|[.,]$/.test(p.name.en) && /[a-z]{3}/i.test(p.name.en)); }));
+  ok('…and the registered wording still finds it',
+     await rp.evaluate(() => { const solu = REG_PRODUCTS.find(p => p.regId === 'R0006');
+       /* "pyrogenic" is only in the name as registered: not in the tidied name, nor the composition. */
+       return !/pyrogenic/i.test(solu.name.en + ' ' + solu.sciText) && findProducts('pyrogenic', 'P1', 8).some(r => r.p === solu) &&
+         findProducts('warfarin 5mg tab', 'P1', 8).some(r => r.p.trade === 'Warfarin 5mg tab.'); }));
+  await rp.evaluate(() => { signInAs('rahma@example.com'); setLang('ar'); setPharmacy('P1'); goto('till'); S.till = tillReset(); tillQuery('Warf'); });
+  const ar = await shape('.till-hits');
+  const heights = [...new Set(ar.map(x => x.h))];
+  ok(`searching "Warf" in Arabic: every row has the same two lines, each one line, and every row is the same height (${ar.length} rows, heights ${heights.join('/')})`,
+     ar.length >= 3 && ar.every(x => x.lines === 2 && x.nameOne && x.whatOne && x.tags <= 1) && heights.length === 1);
+  ok('…line 1 is the name on the pack in Latin script, catalogue and register alike; line 2 is molecule · strength · form in Arabic',
+     ar.every(x => !/[؀-ۿ]/.test(x.name) && !/[.®]$/.test(x.name.trim()) && /وارفارين/.test(x.what) && x.what.split(' · ').length === 3 && /أقراص/.test(x.what)));
+  ok('…the catalogue\'s Marevan and the register\'s Warfarin 5 mg are both there, and only the register\'s carries the "no barcode yet" tag',
+     await rp.evaluate(() => { const rows = [...document.querySelectorAll('.till-hits .find-row')];
+       const mar = rows.find(r => /Marevan 5 mg/.test(r.textContent) && !r.querySelector('.find-tag'));
+       const reg = rows.find(r => /^Warfarin 5 mg$/.test(r.querySelector('.find-name').textContent) && /بلا باركود بعد/.test(r.querySelector('.find-tag').textContent));
+       return !!mar && !!reg; }));
+  await rp.evaluate(() => { setLang('en'); tillQuery('Warf'); });
+  const en = await shape('.till-hits');
+  ok('…the same in English, line 2 in English',
+     en.length === ar.length && en.every(x => x.lines === 2 && /Warfarin/.test(x.what) && /Tablet/.test(x.what)) && new Set(en.map(x => x.h)).size === 1);
+  ok('a long registered name is cut on one line, not wrapped, and the page does not scroll sideways at 320px',
+     await rp.evaluate(async () => { tillQuery('gentamicin'); return true; }) && await (async () => {
+       await rp.setViewportSize({ width:320, height:700 }); await rp.waitForTimeout(150);
+       const s = await shape('.till-hits'); const wide = await rp.evaluate(() => document.body.scrollWidth);
+       await rp.setViewportSize({ width:390, height:844 });
+       return s.length > 0 && s.every(x => x.nameOne && x.whatOne) && new Set(s.map(x => x.h)).size === 1 && wide <= 320; })());
+  ok('the count and a purchase order list results in the same shape',
+     await rp.evaluate(() => { S.till = tillReset(); goto('count'); startCount('Shelf W'); countQueryInput('warf');
+       const c = [...document.querySelectorAll('.ct-hits .find-row')];
+       const okC = c.length > 0 && c.every(r => r.querySelectorAll('.row-body > span').length === 2 && r.querySelector('.find-name') && r.querySelector('.find-what'));
+       const sess = openCountSession(); if (sess) discardCount(sess.id);
+       goto('orders'); newOrder(); orderQueryInput('warf');
+       const o = [...document.querySelectorAll('.po-hits .find-row')];
+       return okC && o.length > 0 && o.every(r => r.querySelectorAll('.row-body > span').length === 2 && r.querySelector('.find-name') && r.querySelector('.find-what')); }));
+  ok('a suspended registration and the pharmacy\'s own item each carry their one tag, in the same place',
+     await rp.evaluate(() => { const sus = REG_PRODUCTS.find(p => p.status === 'suspended'), own = { p:{ local:true, name:{ ar:'زعتر', en:'زعتر' }, molecules:[], form:null, strength:'', barcode:'L-X' }, why:'brand' };
+       const html = resultRows([{ p:sus, why:'brand' }, own], () => '');
+       const d = document.createElement('div'); d.innerHTML = html; const rows = d.querySelectorAll('.find-row');
+       return rows.length === 2 && /Suspended/.test(rows[0].querySelector('.find-tag-bad').textContent) && /Own item/.test(rows[1].querySelector('.find-tag-own').textContent) &&
+         [...rows].every(r => r.lastElementChild.previousElementSibling.classList.contains('find-tag')); }));
+  await rp.close();
 }
 
 console.log('\nlayout');

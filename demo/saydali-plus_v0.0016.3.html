@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0016.2">
+<meta name="version" content="App_v0.0016.3">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -1159,7 +1159,14 @@
   .mod-tab.on{ color:var(--indigo); border-color:var(--indigo); }
   @media (max-width:380px){ .mod-tab .ico{ display:none; } .mod-tab{ font-size:13.5px; } }
   /* v0.0013.3 — search, own items, barcodes */
-  .find-why[data-why="sci"]{ color:var(--indigo); }
+  /* v0.0016.3 — every result row the same shape and height. */
+  .find-row .row-body{ min-width:0; flex:1; }
+  .find-name, .find-what{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .find-what{ color:var(--ink-soft); }
+  .find-tag{ flex:none; font-size:11.5px; font-weight:600; padding:3px 8px; border-radius:999px; white-space:nowrap;
+    background:var(--mist); color:var(--ink-soft); margin-inline:6px; }
+  .find-tag-bad{ background:var(--clay-tint); color:var(--clay); }
+  .find-tag-own{ background:var(--indigo-tint); color:var(--indigo); }
   .own-offer .row-title{ color:var(--indigo); }
   .own-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:8px; }
   .own-grid input, .own-grid select{ width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card); }
@@ -1860,7 +1867,7 @@ Object.assign(STRINGS.ar, {
   'cl.source':'قائمة المواد الخاضعة للرقابة: اتفاقيات الأمم المتحدة (1961 و1971 و1988)، إلى أن يحل محلها جدول العراق. لم يؤكدها المسؤول السريري بعد.',
   'rg.preT':'السلائف — تُسجَّل على حدة',
   'rp.suspended':'موقوف — لا يُباع','rp.suspendedLong':'هذا المنتج موقوف في سجل وزارة الصحة: يظهر للعلم ولا يُعرض للبيع.','rp.suspendedNoSale':'منتج موقوف في السجل — لا يُباع.',
-  'rp.noBarcode':'بلا باركود بعد','rp.code':'رمز داخلي','rp.noBarcodeT':'الباركود','rp.noBarcodeS':'غير معروف بعد. يُربط عند أول مسح.',
+  'rp.noBarcode':'بلا باركود بعد','rp.notLinked':'غير مربوط بدواء بعد','rp.otherIngr':'مكونات أخرى','rp.suspendedShort':'موقوف','own.tagShort':'مادة خاصة','rp.code':'رمز داخلي','rp.noBarcodeT':'الباركود','rp.noBarcodeS':'غير معروف بعد. يُربط عند أول مسح.',
   'rp.composition':'التركيب كما في السجل','rp.note':'ويضم الدليل {n} منتجاً من سجل وزارة الصحة بلا باركود بعد: تظهر عند البحث.',
   'pd.more':'و{n} أخرى — ضيّق البحث.',
   'eg.title':'في قائمة الأدوية الأساسية — بلا معلومات سريرية بعد · {n}','eg.tag':'بلا معلومات','eg.more':'و{n} أخرى — ابحث بالاسم.',
@@ -1945,7 +1952,7 @@ Object.assign(STRINGS.en, {
   'cl.source':'Controlled list: the UN conventions (1961, 1971, 1988), until Iraq’s own schedule replaces it. Not yet confirmed by the clinical curator.',
   'rg.preT':'Precursors — kept apart',
   'rp.suspended':'Suspended — not for sale','rp.suspendedLong':'This product is suspended in the Ministry of Health register: shown for information, not offered for sale.','rp.suspendedNoSale':'Suspended in the register — not for sale.',
-  'rp.noBarcode':'no barcode yet','rp.code':'Internal code','rp.noBarcodeT':'Barcode','rp.noBarcodeS':'Not known yet. Linked the first time it is scanned.',
+  'rp.noBarcode':'no barcode yet','rp.notLinked':'not linked to a medicine yet','rp.otherIngr':'other ingredients','rp.suspendedShort':'Suspended','own.tagShort':'Own item','rp.code':'Internal code','rp.noBarcodeT':'Barcode','rp.noBarcodeS':'Not known yet. Linked the first time it is scanned.',
   'rp.composition':'Composition, as registered','rp.note':'The catalogue also holds {n} products from the Ministry of Health register with no barcode yet: they come up when searched for.',
   'pd.more':'And {n} more — narrow the search.',
   'eg.title':'On the Essential Drugs List — no clinical information yet · {n}','eg.tag':'No clinical info','eg.more':'And {n} more — search by name.',
@@ -10440,7 +10447,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0016.2';
+const VERSION = 'App_v0.0016.3';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -15492,7 +15499,7 @@ const pharmacyItems = phId => (S.localItems || []).filter(x => x.pharmacy === ph
    pharmacy's own items. */
 const searchPool = phId => PRODUCTS.concat(REG_PRODUCTS, phId ? pharmacyItems(phId) : []);
 const moleculeNames = p => p.molecules.map(m => { const d = m.ref === false ? null : drugBySci(m.sci);
-  return d ? drugName(d) : m.sci; });
+  return d ? drugName(d) : m.other ? t('rp.otherIngr') : m.sci; });
 
 function findProducts(q, phId, n) {
   const nq = drugNorm(q);
@@ -15503,7 +15510,7 @@ function findProducts(q, phId, n) {
     /* A registered product never changes, so its text is normalised once and
        kept: 5,000 of them are searched on every keystroke. */
     const hay = p.reg && p._hay ? p._hay : (() => {
-      const b = drugNorm([p.name.en, p.name.ar].join(' '));
+      const b = drugNorm([p.name.en, p.name.ar, p.trade || ''].join(' '));
       return { brand:b, all:b + ' ' + drugNorm(p.molecules.map(m => { const d = drugBySci(m.sci); return m.sci + ' ' + (d ? d.ar : ''); }).join(' ') + ' ' + (p.sciText || '')) +
         ' ' + drugNorm(p.strength || '') };
     })();
@@ -15517,15 +15524,6 @@ function findProducts(q, phId, n) {
   /* What can be scanned — what the pharmacy can have on its shelves — comes
      before what is only registered. */
   return out.sort((a, b) => !!a.p.reg - !!b.p.reg || a.rank - b.rank || L(a.p.name).localeCompare(L(b.p.name), lang === 'ar' ? 'ar' : 'en')).slice(0, n || 8);
-}
-/* The second line of a result: what it is made of when that is why it
-   matched, its pack otherwise; one of the pharmacy's own items says so. */
-function whyLine(r) {
-  if (r.p.local) return t('own.tag');
-  if (r.p.status === 'suspended') return t('rp.suspended');
-  if (r.p.reg) return (r.why === 'sci' && r.p.molecules.length ? moleculeNames(r.p).join(' + ') : [r.p.strength, r.p.maker].filter(Boolean).join(' · ')) + ' · ' + t('rp.noBarcode');
-  if (r.why === 'sci') return moleculeNames(r.p).join(' + ');
-  return L(r.p.pack);
 }
 /* In the drug reference: the brands a drug is sold under. */
 const drugBrands = d => PRODUCTS.filter(p => p.molecules.some(m => m.sci === d.sci)).map(p => L(p.name));
@@ -15559,12 +15557,35 @@ function drugBrandsMatching(d, q) {
   return [...new Set(hit.length ? hit : all)].slice(0, 4);
 }
 
-/* A result row, shared by the till, the count and the purchase order. */
+/* A result row, shared by the till, the count and the purchase order.
+   v0.0016.3 (A1) — one shape, whatever the product is and however it
+   matched: line 1 is the name on the pack, in Latin script as printed; line 2
+   is what it is in the page's language — molecule · strength · form, always
+   those three in that order; and at most one tag, always in the same place.
+   Each line is one line: a long name is cut, never wrapped, so every row is
+   the same height. */
+const productPackName = p => p.local ? L(p.name) : (p.name.en || L(p.name));
+const tidyStrength = x => String(x || '').replace(/(\d)\s*(mg|mcg|µg|g|ml|iu)\b/gi, (m, d, u) => d + ' ' + u.toLowerCase()).trim();
+function productWhat(p) {
+  return [p.molecules.length ? moleculeNames(p).join(' + ') : t('rp.notLinked'),
+          tidyStrength(p.strength), p.form ? t('df.' + p.form) : ''].filter(Boolean);
+}
+function productTag(p) {
+  if (p.local) return { kind:'own', text:t('own.tagShort') };
+  if (p.status === 'suspended') return { kind:'bad', text:t('rp.suspendedShort') };
+  if (p.reg) return { kind:'mute', text:t('rp.noBarcode') };
+  return null;
+}
 function resultRows(results, act) {
-  return results.map(r => '<button class="row find-row" style="width:100%;text-align:start;" onclick="' + act(r.p.barcode) + '">' +
-    '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(r.p.name)) + '</span>' +
-    '<span class="row-sub find-why" data-why="' + r.why + '" style="display:block;">' + esc(whyLine(r)) + '</span></span>' +
-    icon('plus') + '</button>').join('');
+  return results.map(r => {
+    const tag = productTag(r.p);
+    return '<button class="row find-row" style="width:100%;text-align:start;" onclick="' + act(r.p.barcode) + '">' +
+      '<span class="row-body"><span class="row-title find-name"><bdi>' + esc(productPackName(r.p)) + '</bdi></span>' +
+      '<span class="row-sub find-what find-why" data-why="' + r.why + '">' +
+        productWhat(r.p).map(x => '<bdi>' + esc(x) + '</bdi>').join(' · ') + '</span></span>' +
+      (tag ? '<span class="find-tag find-tag-' + tag.kind + '">' + esc(tag.text) + '</span>' : '') +
+      icon('plus') + '</button>';
+  }).join('');
 }
 
 /* ---------- The pharmacy's own items ---------- */
@@ -16639,6 +16660,25 @@ function precursorRegister(ph) {
 
 /* ---------- The registered products ---------- */
 
+/* v0.0016.3 (A1) — the register's trade name as a pharmacist reads it off the
+   pack: its brand and strength, without the Ministry file's full stops, ®,
+   packaging words and brackets ("Warfarin 5mg tab." is "Warfarin 5 mg").
+   The name as registered is kept (trade) and is still searched. */
+const TRADE_CUT = /(?:,\s|[\s/](?:tabs?|tablets?|f\.?c\.?t|caps?|capsules?|capsul|inj|injections?|injectable|syrup|syr|susp|suspension|cream|oint|ointment|gel|drops?|sol|solution|powder|pwd|supp|suppositor(?:y|ies)|film|f\.c|coated|enteric|entric|gastro\w*|chewable|effervescent|dispersible|sachets?|vials?|amp|ampoules?|sterile|for|i\.?v|i\.?m|oral|spray|inhaler|pessar(?:y|ies)|lotion|shampoo|emulsion|sr|er|xr|prolonged|extended|modified|sustained|delayed|infusion|concentrate|lyophili[sz]ed|pre-?filled|syringe|elixir|solut\w*|with|in|b\.?p|u\.?s\.?p|nasal|vaginal|rectal|topical|cough|granules?|cartridges?|caplets?|pen\s?fill|penfill|freeze|intravenous|metered|microgram|suppos\w*|inhalation|pressuri[sz]ed|controlled|application|concentrat\w*|use|s\.c)\b)/i;
+function tidyTrade(raw) {
+  let s = String(raw || '').replace(/[®™©]/g, ' ').replace(/\([^)]*\)?|\[[^\]]*\]?/g, ' ').replace(/\s+/g, ' ').trim();
+  const cut = s.search(TRADE_CUT);
+  if (cut > 2) s = s.slice(0, cut);
+  s = s.replace(/[\s\-–—,./:;&+*]+$/, '').replace(/^[\s\-–—,./:;]+/, '')
+       .replace(/\s*\/\s*/g, '/').replace(/(\d)\s*(mg|mcg|µg|g|ml|iu|%)\b/gi, (m, d, u) => d + (u === '%' ? '%' : ' ' + u.toLowerCase()))
+       .replace(/\s+/g, ' ').trim();
+  if (s.replace(/[^a-z]/gi, '').length < 3) s = String(raw || '').replace(/[®™©]/g, '').replace(/[\s.,;:]+$/, '').trim();
+  const letters = s.replace(/[^a-z]/gi, '');
+  if (letters && (letters === letters.toLowerCase() || (letters === letters.toUpperCase() && letters.length > 4)))
+    s = s.toLowerCase().replace(/(^|[\s\-/])([a-z])/g, (m, p, c) => p + c.toUpperCase()).replace(/(\d |\/)(Mg|Mcg|G|Ml|Iu)\b/g, (m, d, u) => d + u.toLowerCase());
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 const REG_PRODUCTS = (() => {
   const F = REG_PRODUCT_FIELDS, ix = k => F.indexOf(k);
   return REG_PRODUCT_ROWS.map(r => {
@@ -16652,7 +16692,8 @@ const REG_PRODUCTS = (() => {
       .reduce((n, seg) => n + Math.max(1, seg.split(/,\s*(?=[a-z])/i).filter(x => named(x) && dosed(x)).length), 0);
     const molecules = mols.map(sci => ({ sci, strength:'' }));
     if (mols.length && parts > mols.length) molecules.push({ sci:'Other ingredients', strength:'', ref:false, other:true });
-    return { barcode:'REG-' + r[ix('id')], reg:true, regId:r[ix('id')], name:{ en:r[ix('trade')], ar:r[ix('trade')] },
+    const name = tidyTrade(r[ix('trade')]);
+    return { barcode:'REG-' + r[ix('id')], reg:true, regId:r[ix('id')], name:{ en:name, ar:name }, trade:r[ix('trade')],
       form:r[ix('form')], strength:r[ix('strength')], pack:{ en:r[ix('pack')], ar:r[ix('pack')] }, price:null,
       mapping:mols.length ? 'auto' : 'unmapped', molecules, sciText, control:r[ix('control')], status:r[ix('status')],
       regNo:r[ix('reg')], /* The maker's name, not its postal address. */
@@ -18494,7 +18535,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0016.2.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0016.3.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

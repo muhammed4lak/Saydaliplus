@@ -2019,6 +2019,32 @@ strength and form in the page's language.
 The register has none; they could be written by hand for the most-sold
 products first, or generated and marked unchecked. Recommended: keep the
 pack's Latin name, which is what a pharmacist reads off the box.
+**Decided 28 Sep 2026: keep the Latin names** as on the pack.
+
+### v0.0016.3 as built — one shape for every search result
+
+- **One row everywhere a product is searched** — Point of sale, the count, a
+  purchase order: line 1 the name on the pack, in Latin script, for catalogue
+  and register products alike (a catalogue product's Arabic name stays on its
+  page and on the cart, not on the search row; a pharmacy's own item shows the
+  name it was given); line 2 molecule · strength · form in the page's
+  language; one tag at the end, in the same place, only when it applies —
+  *no barcode yet*, *Suspended* or *Own item*. The maker left the row. Each
+  line is one line, cut rather than wrapped, so every row is the same height.
+- **The register's names are tidied once, where the products are built**, so
+  the cart, the stock screens and the product page read the same: ®, ™,
+  brackets, trailing full stops and packaging words ("tab.", "Inj.", "powder
+  for solution for infusion…") are dropped, units spaced ("5mg" → "5 mg") and
+  all-capital or all-lower names given ordinary capitals. "Warfarin 5mg tab."
+  is **Warfarin 5 mg**. Tried on all 5,186: none comes out empty. The name as
+  registered is kept (`trade`) and still searched.
+- A product with no molecule linked says *not linked to a medicine yet* on
+  line 2; a combination's unknown part reads *other ingredients* in the page's
+  language.
+- Checks: app 734 (9 new), CRM 295. Mutation-tested on a copy: 6 planted
+  faults, all caught — one only after tightening a check (the registered
+  wording is searched: "pyrogenic", which is only in the name as registered,
+  finds Solu-pac).
 
 ## Unused concepts
 
