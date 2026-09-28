@@ -1606,6 +1606,36 @@ showed up.
 - Checks: 13 new (671 app in all); CRM unchanged (271). Mutation-tested: 7 of
   7 caught (two checks tightened after the first run).
 
+### After v0.0015.2 — answered 28 Sep 2026
+
+- **The staff home (1: yes, a mock-up).** Shown: **A** — a *Where you work*
+  card at the top of a staff member's home: the pharmacy, district and since
+  when; their role ("Pharmacist + Prices") with what it gives, opening *My
+  activity*; the drawer's state and a *Point of sale* button for someone who
+  sells. Working at two pharmacies, the switch between them sits in the card.
+  **B** — only the header changes: "Al-Rahma · Pharmacist + Prices" above
+  their name. Waiting for a pick. (Arabic "+ N more" wording to tidy when
+  built.)
+- **Seed file (2: "seed file").** Looked into it: the codebase's schema is
+  still the marketplace model — a pharmacy *is* an account (`profiles.role =
+  'pharmacy'`), there is no pharmacist-owns-pharmacies link, and no staff,
+  roles or grants tables (nor the till, stock or drawer). Seeding the teams
+  properly needs those tables, with their RLS and policy tests, first. Asked
+  which way to go.
+- **The clinical curator (3a): not yet.** The placeholder stays.
+- **Patient history in the Pharmacist role (3b): yes** — the ready-made
+  *Pharmacist* role includes it when it exists (v0.0016); still off for
+  everyone else unless granted.
+- **Linking a register product's barcode (3c): "wdyt".** Proposed: the first
+  scan links it **for that pharmacy at once** (the sale goes on — P9), marked
+  *linked here, not yet confirmed*, and the Helper says so on that line; it
+  becomes the link **for every pharmacy only when the CRM confirms it**. Two
+  pharmacies linking the same barcode to the same product put it first in the
+  CRM's queue; to different products, it is flagged as a conflict and each
+  keeps its own until the CRM decides. Why: a wrong link means the Helper
+  checks the wrong ingredients, and one counter's mistake should not reach
+  every pharmacy's Helper. Waiting for an ok.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
