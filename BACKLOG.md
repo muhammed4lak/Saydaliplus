@@ -1756,6 +1756,63 @@ a team (the server actions exist); they come with the catch-up.
   policy, or a status check behind a date check) still refused, so the rule
   held; one visibility check tightened after the first run.
 
+### v0.0016.1 — reported 28 Sep 2026: an owner's pharmacies, tasks, two kinds of report, a person's record
+
+Reported 28 Sep 2026, as the owner of several pharmacies. **Not built** — each
+item says what will be done; A2–A4 wait on the decisions listed with them.
+
+**A1. Choosing a pharmacy throws the owner out of the module they were in.**
+On Team with *All* selected, the owner is asked which pharmacy; tapping one
+opens that pharmacy's **Home**, and they must tap Team again. The same happens
+from the tab strip on any screen but Point of sale and Stock. Cause:
+`setPharmacy()` keeps only the till and the stock screens and sends everything
+else to the dashboard. **Fix:** choosing a pharmacy keeps you where you are —
+Team stays Team (and a person's page closes, since they belong to the other
+pharmacy), and the same for every per-pharmacy screen. Home goes to Home only
+from Home or the *All* board. *The check asserts:* from Team, choosing a
+pharmacy by tab or by the chooser lands on that pharmacy's Team.
+
+**A2. There is nowhere for the owner to give out tasks.** Intentional so far:
+tasks are v0.0019 (W18) — due dates, recurrence (the daily fridge-temperature
+check is the design case) and completion. The pharmacist's bar already has a
+*Tasks* slot marked as coming; the owner has no entry at all, which reads as
+missing rather than planned. **To do:** the owner gets *Tasks* in Team (assign
+to a person or to whoever is on shift, due date, repeat) and the staff side
+fills its existing slot. *Needs deciding:* whether tasks stay at v0.0019 or
+move forward.
+
+**A3. Two report sections, not one.**
+- **Incidents (البلاغات)** — one person reporting another. Today there is only
+  the marketplace's incident screen: tied to a booking, behind Profile, and
+  labelled "Reports" in English. With the marketplace off, a pharmacy's own
+  people have no way to report anything. **To do:** incidents inside a
+  pharmacy — anyone on the team can report, about a colleague or an event;
+  the owner receives them. The English label becomes **Incidents**, so
+  "Reports" is free for the second section. *Needs deciding:* can staff report
+  the owner (and then to whom — the Syndicate escalation is still off); does
+  the person reported see it; can a report be anonymous to the owner.
+- **Reports (التقارير)** — the owner's module for how the pharmacy and each
+  person are doing: the pharmacy's sales and receipts per day, week and month,
+  and the same per person (A4). Owner only — not a Manager role, not staff
+  (decided 28 Sep 2026). Under **P7** it never ranks people against each other
+  by sales: each person is shown on their own page, against the pharmacy's
+  average, never in a league table.
+
+**A4. A team member's page: their record, their performance, their access.**
+Opened by the owner from Team. Three parts:
+- **Timeline** — what they did, shift by shift, not only one day at a time as
+  now.
+- **Performance** — for a day, a week or a month: shifts worked; per shift,
+  sales (IQD) and number of sales, each as **average and median**; the
+  period's totals. "Orders" is read here as sales rung up at the Point of
+  sale (receipts), not purchase orders — to be confirmed.
+- **Permissions** — the role and extras, as now.
+A *shift* needs attendance: v0.0017 defines it (check-in to check-out, tied to
+opening the drawer). Until then the nearest thing is a drawer session.
+*Needs deciding:* whether performance comes with attendance (v0.0017, where
+shifts first exist) rather than waiting for v0.0019; whether a person sees
+their own figures in My activity.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
