@@ -880,8 +880,9 @@ figures.
    change to someone's schedule is written to the timeline** — who changed
    it, from what, to what, when — **and shown to both** the owner and that
    person.
-3. **Reports in the CRM are the owner's choice**: a setting, **off by
-   default**, that the owner turns on or off per pharmacy. Off, the CRM sees
+3. **Reports in the CRM are the owner's choice**: a setting, **on by
+   default** (changed from off, 28 Sep 2026), that the owner turns on or off
+   per pharmacy. Off, the CRM sees
    none of that pharmacy's Reports figures; on, the Saydali+ team sees the
    pharmacy-level figures (never a person's). Turning it on or off is itself
    on the record, and the CRM shows only pharmacies that have it on.
@@ -1975,6 +1976,49 @@ launch is a decision for then** (open decisions).
   caught — two only after tightening a check (a milder rule the curator raised
   to Stop must win over a critical one at Warn; a class rule's CRM title must
   be the classes' names exactly).
+
+### v0.0016.3 — reported 28 Sep 2026: search results that all look alike
+
+Reported from Point of sale on a phone (searching "Warf"). **Not built.**
+
+**A1. A search lists three shapes of row.** The same search shows:
+- a catalogue product with an Arabic name, and under it the molecule
+  ("ماريفان 5 ملغ" / وارفارين);
+- a register product found by its trade name, with its name as the Ministry's
+  file spells it, full stop and all, and under it strength · maker · *no
+  barcode yet* ("Warfarin 5mg tab." / 5mg · Bristol Lab. Ltd · …);
+- a register product found by its molecule, with the molecule and *no barcode
+  yet* under it ("Marevan 1mg tab." / وارفارين · …).
+So the first line switches script and the second switches content depending
+on where the row came from and how it matched.
+
+**Where the names stand.** Every one of the 1,174 molecules has an Arabic
+name as well as its scientific one (the build refuses one without). Of the
+products, the 61 in the catalogue have both; **the 5,186 register products
+have only the trade name the Ministry publishes, in Latin script** — the file
+has no Arabic names, and it is the name printed on the pack.
+
+**Proposed fix — one row shape everywhere a product is searched** (Point of
+sale, the count, a purchase order):
+1. **Line 1 — the trade name as on the pack**, always in Latin script and
+   tidied: the register's trailing full stops, ® and packaging words
+   ("tab.", "Inj.", "sol.for infusion…") stripped, and its capitals made
+   regular. A catalogue product shows its Latin name here too; its Arabic name
+   moves to line 2.
+2. **Line 2 — what it is, in the page's language:** molecule(s) · strength ·
+   form ("وارفارين · 5 ملغ · أقراص"). Always these three, in this order,
+   whatever matched.
+3. **One tag at the end**, the same place on every row, only when it applies:
+   *no barcode yet*, *suspended*, or *own item*. The maker moves off the row
+   (it is on the product's page).
+*The check asserts:* every result row has exactly two lines and at most one
+tag; line 1 has no trailing full stop or ®; line 2 names the molecule,
+strength and form in the page's language.
+
+**Needs deciding:** whether line 1 should also have an **Arabic** trade name.
+The register has none; they could be written by hand for the most-sold
+products first, or generated and marked unchecked. Recommended: keep the
+pack's Latin name, which is what a pharmacist reads off the box.
 
 ## Unused concepts
 
