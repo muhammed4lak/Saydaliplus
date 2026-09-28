@@ -3240,6 +3240,62 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
   await dk.evaluate(() => { S.staff = []; S.openDrug = null; goto('home'); });
 }
 
+/* ---------------------------------------------------------------------------
+   v0.0015.2 — the owners' teams filled in, and a pharmacist on a team to
+   sign in as. A fresh page: the blocks above empty the staff list.
+   --------------------------------------------------------------------------- */
+console.log('\nthe seeded teams, and the view of someone on a team (v0.0015.2)');
+{
+  const tp = await dk.context().newPage();
+  tp.on('pageerror', e => errs.push('pageerror (teams): ' + e.message));
+  await tp.goto(darkUrl); await tp.waitForTimeout(400);
+  await tp.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); }; });
+  ok('the demo list offers two people on a team — Hassan (Al-Rahma) and Maryam (two of Layla’s) — and not every seeded employee',
+     await tp.evaluate(() => { signOut(); const m = [...document.querySelectorAll('.account-mail')].map(e => e.textContent);
+       return m.includes('hassan@example.com') && m.includes('maryam@example.com') && !m.includes('zahraa@example.com') && !m.includes('karim@example.com'); }));
+  ok('Al-Rahma’s Team: three staff with their roles, an invitation waiting, and someone who left',
+     await tp.evaluate(() => { signInAs('rahma@example.com'); setLang('en'); goto('team'); const txt = document.getElementById('app-body').innerText;
+       const rows = [...document.querySelectorAll('.tm-row')].map(r => r.innerText);
+       return /Staff · 3/i.test(txt) && rows.some(r => /Hassan Al-Dulaimi/.test(r) && /Pharmacist \+ Prices/.test(r)) &&
+         rows.some(r => /Zahraa Ali/.test(r) && /Cashier/.test(r)) && rows.some(r => /Omar Faisal/.test(r) && /Stock keeper/.test(r)) &&
+         rows.some(r => /Mustafa Naji/.test(r) && /Invited/.test(r)) && rows.some(r => /Duaa Salim/.test(r) && /Ended 2026-06-30/.test(r)); }));
+  ok('…and today’s record has something in it: Hassan’s no-sale, Zahraa’s refused discount',
+     await tp.evaluate(() => { const ev = [...document.querySelectorAll('.tl-ev')].map(e => e.innerText).join('\n');
+       return /No sale — Change for the pharmacy next door/.test(ev) && /Hassan Al-Dulaimi/.test(ev) && /Refused: Discounts/.test(ev) && /Zahraa Ali/.test(ev); }));
+  ok('a staff page left open does not follow anyone into another owner’s Team',
+     await tp.evaluate(() => { S.openStaff = 'E001'; render(); const hassan = /Hassan Al-Dulaimi/.test(document.querySelector('.header-title').innerText);
+       signOut(); signInAs('layla@example.com'); setLang('en'); S.pharmacyTab = 'P8'; goto('team'); S.openStaff = 'E001'; render();
+       return hassan && !document.querySelector('.tm-grantlist') && !/Hassan/.test(document.getElementById('app-body').innerText) && document.querySelector('.header-title').innerText === 'Team'; }));
+  ok('Layla’s Al-Shifa: Karim holds her custom role “Branch lead”, Maryam is the manager, Rusul the cashier',
+     await tp.evaluate(() => { S.openStaff = null; setPharmacy('P7'); goto('team'); const rows = [...document.querySelectorAll('.tm-row')].map(r => r.innerText);
+       const card = document.querySelector('.tm-roles'); card.open = true;
+       return rows.some(r => /Karim Mahdi/.test(r) && /Branch lead/.test(r)) && rows.some(r => /Maryam Kadhim/.test(r) && /Manager/.test(r)) &&
+         rows.some(r => /Rusul Adnan/.test(r) && /Cashier/.test(r)) && /Branch lead[\s\S]*Held by 1/.test(card.innerText) && !rows.some(r => /Hassan|Zahraa/.test(r)); }));
+  ok('Hassan signs in to his workplace: no Team, selling at Al-Rahma, prices yes, stock no',
+     await tp.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); goto('pharmacy');
+       return !navFor(S.role).some(x => x[0] === 'team') && currentPharmacy().id === 'P1' && tillMode() === 'sell' &&
+         /Al-Rahma Pharmacy/.test(document.querySelector('.header-title').innerText) && can('prices') && !can('stock') && !document.querySelector('.work-tabs'); }));
+  ok('…his activity: Pharmacist + Prices, his own record and nobody else’s',
+     await tp.evaluate(() => { goto('activity'); const txt = document.getElementById('app-body').innerText;
+       return /Pharmacist \+ Prices/.test(txt) && /Change for the pharmacy next door/.test(txt) && !/Refused: Discounts/.test(txt); }));
+  ok('Maryam works at two: a switch between them, starting on the first, no “All”',
+     await tp.evaluate(() => { signOut(); signInAs('maryam@example.com'); setLang('en'); goto('pharmacy');
+       const tabs = [...document.querySelectorAll('.work-tabs .ptab')].map(b => b.innerText);
+       return tabs.join() === 'Al-Hayat,Al-Shifa' && (currentPharmacy() || {}).id === 'P8' && /Al-Hayat/.test((document.querySelector('.work-tabs .ptab.on') || {}).innerText || ''); }));
+  ok('…a pharmacist at Al-Hayat, the manager at Al-Shifa: what she may do follows the pharmacy, and switching keeps her where she was',
+     await tp.evaluate(() => { const hayat = !can('stock') && can('voids'); const scr = S.screen;
+       tap('.work-tabs .ptab:nth-child(2)');
+       return hayat && (currentPharmacy() || {}).id === 'P7' && can('stock') && can('cashVariance') && S.screen === scr &&
+         /Al-Shifa/.test(document.querySelector('.header-title').innerText); }));
+  ok('…and her activity is for the pharmacy on screen, and stays open when she switches',
+     await tp.evaluate(() => { goto('activity'); const txt = document.getElementById('app-body').innerText;
+       setPharmacy('P8'); const back = S.screen === 'activity' && /Al-Hayat Pharmacy/.test(document.getElementById('app-body').innerText);
+       return /Al-Shifa Pharmacy/.test(txt) && /Manager/.test(txt) && back; }));
+  ok('the seeded people’s names are in Arabic when the app is',
+     await tp.evaluate(() => { setLang('ar'); const r = personName('hassan@example.com') === 'حسن الدليمي' && personName('zahraa@example.com') === 'زهراء علي'; setLang('en'); return r; }));
+  await tp.close();
+}
+
 await dk.setViewportSize({ width: 320, height: 700 });
 {
   const wide = [];

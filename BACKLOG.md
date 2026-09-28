@@ -1570,6 +1570,42 @@ under 40 ms a keystroke (checked).
 
 - Checks: 40 new (658 app in all); CRM unchanged (271). Mutation-tested: 23 of 23 caught (two checks tightened after the first run: a role's own permission added as an extra, and a crash-proof control banner check).
 
+### v0.0015.2 — the teams filled in, and a pharmacist on a team (28 Sep 2026)
+
+Asked: a view for a pharmacist who is part of a team, and team positions
+filled for the owners, to see how they look. Demo data, plus two fixes it
+showed up.
+- **Two new demo accounts** on the sign-in list: **Hassan Al-Dulaimi**
+  (`hassan@example.com`), a pharmacist at Al-Rahma, *Pharmacist + Prices*;
+  **Maryam Kadhim** (`maryam@example.com`), at two of Layla's pharmacies —
+  *Pharmacist* at Al-Hayat, *Manager* at Al-Shifa.
+- **Al-Rahma's team:** Hassan; Zahraa Ali (assistant, Cashier); Omar Faisal
+  (assistant, Stock keeper); Duaa Salim (left 30 Jun 2026); Mustafa Naji
+  (invited two days ago, not yet accepted). Today's record has Hassan's
+  no-sale and Zahraa's refused discount; the days before, the invitation, a
+  grant and a role change.
+- **Layla's:** her custom role *Branch lead* (selling, voids, discounts,
+  prices, stock, write-offs, cash differences), held by Karim Mahdi at
+  Al-Shifa; Rusul Adnan (Cashier) and Maryam (Manager) there too; at
+  Al-Hayat, Maryam (Pharmacist) and Ali Hussein (Stock keeper + Discounts);
+  at Dar Al-Dawa, Hiba Saad invited. The other seeded staff have accounts
+  (their names show in both languages) but are not on the sign-in list.
+- **Fixed:** someone employed at **two pharmacies** had no way to choose one —
+  the Point of sale fell back to *check only*. They now get a switch between
+  their workplaces (no *All*: they work at one at a time), starting on the
+  first; switching keeps them on the screen they were on, and what they may
+  do follows the pharmacy.
+- **Fixed:** a staff page left open carried over into another owner's Team
+  (Layla could open Hassan's page). Team now opens only someone at the
+  pharmacy on screen, and signing in clears it.
+- Not done — for a mock-up if wanted: a staff member's home says nothing
+  about where they work or their role (that is under Profile → *My
+  activity*).
+- The sign-in list still says the accounts are those of `supabase/seed.sql`;
+  Layla and the staff are prototype-only (so is the staff list itself).
+- Checks: 13 new (671 app in all); CRM unchanged (271). Mutation-tested: 7 of
+  7 caught (two checks tightened after the first run).
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not

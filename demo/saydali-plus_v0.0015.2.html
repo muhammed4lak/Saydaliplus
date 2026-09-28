@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0015.1">
+<meta name="version" content="App_v0.0015.2">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -2342,6 +2342,9 @@ Object.assign(STRINGS.ar, {
   'ad.paid':'إعلان مدفوع','ad.paidBy':'إعلان مدفوع — {company}',
   /* W7 — chains */
   'acc.layla':'ليلى عبد الكريم','acc.laylaTag':'مالكة 3 صيدليات',
+  'acc.hassan':'حسن الدليمي','acc.hassanTag':'في فريق صيدلية الرحمة','acc.maryam':'مريم كاظم','acc.maryamTag':'في فريقين من صيدليات ليلى',
+  'acc.zahraa':'زهراء علي','acc.omar':'عمر فيصل','acc.duaa':'دعاء سالم','acc.karim':'كريم مهدي','acc.rusul':'رسل عدنان','acc.ali':'علي حسين',
+  'acc.staffTag':'موظف صيدلية',
   'g.pharmacyCount':'{n} صيدليات','g.allPharmacies':'الكل',
   'g.needCover':'صيدليات تحتاج تغطية هذا الأسبوع: {n} من {total}',
   'g.needCoverSub':'افتح صيدلية لرؤية مناوباتها ومتقدميها',
@@ -2603,6 +2606,9 @@ Object.assign(STRINGS.en, {
   'ad.paid':'Paid placement','ad.paidBy':'Paid placement — {company}',
   /* W7 — chains */
   'acc.layla':'Layla Abdulkarim','acc.laylaTag':'Owner, 3 pharmacies',
+  'acc.hassan':'Hassan Al-Dulaimi','acc.hassanTag':'On Al-Rahma’s team','acc.maryam':'Maryam Kadhim','acc.maryamTag':'On two of Layla’s teams',
+  'acc.zahraa':'Zahraa Ali','acc.omar':'Omar Faisal','acc.duaa':'Duaa Salim','acc.karim':'Karim Mahdi','acc.rusul':'Rusul Adnan','acc.ali':'Ali Hussein',
+  'acc.staffTag':'Pharmacy staff',
   'g.pharmacyCount':'{n} pharmacies','g.allPharmacies':'All',
   'g.needCover':'Pharmacies needing cover this week: {n} of {total}',
   'g.needCoverSub':'Open a pharmacy for its shifts and its applicants',
@@ -8878,7 +8884,18 @@ const ACCOUNTS = {
      different kind of account: a pharmacist whose ownership link points at
      more than one pharmacy. She is the responsible pharmacist at one of them;
      the others each need their own. */
-  'layla@example.com':      { type:'pharmacist', pharmacies:['P7','P8','P9'], verified:true, nameKey:'acc.layla', tagKey:'acc.laylaTag', initials:{ar:'لع',en:'LA'}, trial:false }
+  'layla@example.com':      { type:'pharmacist', pharmacies:['P7','P8','P9'], verified:true, nameKey:'acc.layla', tagKey:'acc.laylaTag', initials:{ar:'لع',en:'LA'}, trial:false },
+  /* v0.0015.2 — people who work on a team without owning the pharmacy (the
+     staff seeded in seedTeams). Hassan and Maryam sign in from the demo list;
+     the others are there so the owners' Team screens have people on them. */
+  'hassan@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.hassan', tagKey:'acc.hassanTag', initials:{ar:'حد',en:'HD'}, trial:false },
+  'maryam@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.maryam', tagKey:'acc.maryamTag', initials:{ar:'مك',en:'MK'}, trial:false },
+  'zahraa@example.com':     { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.zahraa', tagKey:'acc.staffTag', initials:{ar:'زع',en:'ZA'}, trial:false, assistant:true, listed:false },
+  'omar@example.com':       { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.omar',   tagKey:'acc.staffTag', initials:{ar:'عف',en:'OF'}, trial:false, assistant:true, listed:false },
+  'duaa@example.com':       { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.duaa',   tagKey:'acc.staffTag', initials:{ar:'دس',en:'DS'}, trial:false, assistant:true, listed:false },
+  'karim@example.com':      { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.karim',  tagKey:'acc.staffTag', initials:{ar:'كم',en:'KM'}, trial:false, listed:false },
+  'rusul@example.com':      { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.rusul',  tagKey:'acc.staffTag', initials:{ar:'رع',en:'RA'}, trial:false, assistant:true, listed:false },
+  'ali@example.com':        { type:'pharmacist', pharmacy:null, verified:true, nameKey:'acc.ali',    tagKey:'acc.staffTag', initials:{ar:'عح',en:'AH'}, trial:false, assistant:true, listed:false }
 };
 
 /* PARTNER / شريك (W15) — a company account, not a clinician.
@@ -8911,7 +8928,8 @@ const myVerifiedPharmacies = () => myPharmacies().filter(p => p.verification ===
 function currentPharmacy() {
   const mine = myPharmacies();
   /* v0.0015: someone who owns none works where they are employed. */
-  if (!mine.length && S.staff && S.staff.length) { const w = workPharmacies(); return w.length === 1 ? w[0] : w.find(p => p.id === S.pharmacyTab) || null; }
+  /* v0.0015.2: working at several, the one chosen — the first until then. */
+  if (!mine.length && S.staff && S.staff.length) { const w = workPharmacies(); return w.find(p => p.id === S.pharmacyTab) || w[0] || null; }
   if (mine.length === 1) return mine[0];
   return mine.find(p => p.id === S.pharmacyTab) || null;
 }
@@ -8962,7 +8980,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0015.1';
+const VERSION = 'App_v0.0015.2';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -10450,6 +10468,8 @@ function setPharmacy(id) {
   if (open && (id || null) !== open.pharmacy) { open.state = 'saved'; open.savedAt = nowIso(); S.openCount = null; saveDrafts(); }
   S.pharmacyTab = id || null;
   S.receiptFor = null;
+  /* Staff stay on the screen they were on; only an owner has the pharmacy's dashboard. */
+  if (!myPharmacies().length) { S.modal = null; render(); scrollTop(); return; }
   S.screen = S.screen === 'till' ? 'till' : ['stock', 'count', 'import', 'orders', 'suppliers', 'register'].includes(S.screen) ? S.screen
            : S.screen === 'order' ? 'orders' : 'dashboard';
   S.modal = null; render(); scrollTop();
@@ -10460,6 +10480,7 @@ function setPharmacy(id) {
    sign for carries a mark on its tab, so it is visible from any of them. */
 function pharmacyTabs() {
   const mine = myPharmacies();
+  if (!mine.length) return workTabs();
   if (mine.length < 2) return '';
   const cur = currentPharmacy();
   const on = id => (cur ? cur.id : null) === id;
@@ -10475,6 +10496,17 @@ function pharmacyTabs() {
     /* The way to a further pharmacy, at the end of the strip it would join. */
     '<button class="ptab ptab-add" onclick="goto(\'addPharmacy\')" aria-label="' + esc(t('ap.title')) + '">+</button>' +
   '</div></div>';
+}
+
+/* v0.0015.2 — someone employed at more than one pharmacy switches between
+   them; there is no All: they work at one at a time. */
+function workTabs() {
+  const w = workPharmacies(), cur = currentPharmacy();
+  if (w.length < 2) return '';
+  return '<div class="constrain"><div class="ptabs work-tabs" role="tablist">' + w.map(p => {
+    const on = !!cur && cur.id === p.id;
+    return '<button class="ptab' + (on ? ' on' : '') + '" role="tab" aria-selected="' + on + '" onclick="setPharmacy(' + attr(p.id) + ')">' + esc(L(p.short || p.name)) + '</button>';
+  }).join('') + '</div></div>';
 }
 
 /* The "All" tab. */
@@ -12386,6 +12418,50 @@ const stockOps = () => S.countSessions.concat(S.imports);
    suppliers: one linked, one the CRM team has proposed a link for. */
 const ymOffset = k => { const d = new Date(nowMs()); d.setDate(1); d.setMonth(d.getMonth() + k);
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+/* v0.0015.2 — the owners' teams, so Team, a staff page and a staff member's
+   own view have something in them: at Al-Rahma a pharmacist with an extra
+   grant, a cashier, a stock keeper, someone who left and an invitation not yet
+   accepted; at Layla's, a custom role, and Maryam, who works at two of them
+   under different roles (a pharmacist at Al-Hayat, the manager at Al-Shifa).
+   A little of the record, today and before. */
+function seedTeams() {
+  /* Earlier today, never before midnight. */
+  const today = mins => { const sod = new Date(); sod.setHours(0, 1, 0, 0); return new Date(Math.max(sod.getTime(), nowMs() - mins * 6e4)).toISOString(); };
+  const at = (days, h) => { const d = new Date(nowMs() - days * 864e5); d.setHours(h, 10, 0, 0); return d.toISOString(); };
+  const who = (mail, name, position) => ({ email:mail, name, contact:mail, position });
+  const rec = (id, ph, person, state, role, grants, start, end, invitedBy) => Object.assign({ id, pharmacy:ph, state, role, grants,
+    start, end:end || null, invitedAt:start ? start + 'T09:00:00.000Z' : null, invitedBy, code:null, link:null }, person);
+  S.customRoles.push({ id:'CR1', owner:'layla@example.com', name:'Branch lead', grants:['sell', 'voids', 'discounts', 'prices', 'stock', 'writeoffs', 'cashVariance'] });
+  const R = 'rahma@example.com', Ly = 'layla@example.com';
+  S.staff.push(
+    rec('E001', 'P1', who('hassan@example.com', 'Hassan Al-Dulaimi', 'pharmacist'), 'active', 'pharmacist', ['prices'], '2025-07-01', null, R),
+    rec('E002', 'P1', who('zahraa@example.com', 'Zahraa Ali', 'assistant'),         'active', 'cashier',     [], '2026-03-15', null, R),
+    rec('E003', 'P1', who('omar@example.com', 'Omar Faisal', 'assistant'),          'active', 'stockKeeper', [], '2026-01-10', null, R),
+    rec('E004', 'P1', who('duaa@example.com', 'Duaa Salim', 'assistant'),           'ended',  'cashier',     [], '2025-09-01', '2026-06-30', R),
+    rec('E005', 'P1', { email:null, name:'Mustafa Naji', contact:'+964 780 555 0142', position:'pharmacist' }, 'invited', 'cashier', [], null, null, R),
+    rec('E006', 'P7', who('karim@example.com', 'Karim Mahdi', 'pharmacist'),        'active', 'CR1',         [], '2024-11-01', null, Ly),
+    rec('E007', 'P7', who('rusul@example.com', 'Rusul Adnan', 'assistant'),         'active', 'cashier',     [], '2026-05-02', null, Ly),
+    rec('E008', 'P8', who('maryam@example.com', 'Maryam Kadhim', 'pharmacist'),     'active', 'pharmacist',  [], '2025-02-15', null, Ly),
+    rec('E009', 'P8', who('ali@example.com', 'Ali Hussein', 'assistant'),           'active', 'stockKeeper', ['discounts'], '2025-10-20', null, Ly),
+    rec('E010', 'P7', who('maryam@example.com', 'Maryam Kadhim', 'pharmacist'),     'active', 'manager',     [], '2026-04-01', null, Ly),
+    rec('E011', 'P9', { email:null, name:'Hiba Saad', contact:'+964 771 404 2210', position:'pharmacist' }, 'invited', 'cashier', [], null, null, Ly));
+  S.staff.filter(x => x.state === 'invited').forEach(x => {
+    x.invitedAt = at(2, 11); x.code = inviteCode(x.id);
+    x.link = 'https://saydali.example/join/' + x.pharmacy.toLowerCase() + '-' + x.code;
+  });
+  STAFF_SEQ = S.staff.length;
+  const log = (kind, iso, by, ph, detail) => S.tillLog.push(Object.assign({ kind, at:iso, by, pharmacy:ph, drawer:null, device:'A' }, detail));
+  log('staffInvited', at(2, 11), R, 'P1', { person:'E005', name:'Mustafa Naji', position:'pharmacist' });
+  log('grant', at(1, 10), R, 'P1', { person:'E001', name:'Hassan Al-Dulaimi', perm:'prices' });
+  log('roleSet', at(1, 10), R, 'P1', { person:'E003', name:'Omar Faisal', role:'Stock keeper' });
+  log('noSale', today(95), 'hassan@example.com', 'P1', { reason:'Change for the pharmacy next door' });
+  log('denied', today(40), 'zahraa@example.com', 'P1', { perm:'discounts' });
+  log('roleCreated', at(3, 9), Ly, 'P7', { role:'Branch lead', grants:S.customRoles[0].grants });
+  log('roleSet', at(3, 9), Ly, 'P7', { person:'E006', name:'Karim Mahdi', role:'Branch lead' });
+  log('staffInvited', at(2, 11), Ly, 'P9', { person:'E011', name:'Hiba Saad', position:'pharmacist' });
+  log('denied', today(20), 'ali@example.com', 'P8', { perm:'prices' });
+}
+
 function seedStock() {
   const keepMail = S.email;
   S.email = 'rahma@example.com'; S.clockShift = -3 * 864e5;
@@ -14365,7 +14441,8 @@ function setTeamPerson(mail) { S.teamPerson = mail || null; render(); }
 function screenTeam() {
   const ph = currentPharmacy(), tabs = pharmacyTabs();
   if (!ph) return stockChooser(tabs, 'team');
-  if (S.openStaff) return staffPage(ph, (S.staff || []).find(x => x.id === S.openStaff));
+  /* Only someone at the pharmacy on screen: a page left open elsewhere is not carried here. */
+  if (S.openStaff) return staffPage(ph, staffOf(ph.id).find(x => x.id === S.openStaff));
   const list = staffOf(ph.id), active = list.filter(x => x.state === 'active'), invited = list.filter(x => x.state === 'invited'), ended = list.filter(x => x.state === 'ended');
   const day = S.teamDay || todayKey();
   const note = S.teamNote;
@@ -15819,7 +15896,7 @@ const SCREENS = {
   count:         { eyebrow:()=>t('nav.stock'), title:()=>t('st.countShelf'), body:screenCount },
   drawer:        { eyebrow:()=>t('nav.till'), title:()=>t('dr.title'), body:screenDrawer },
   team:          { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); },
-                   title:()=>{ const x = S.openStaff && (S.staff || []).find(y => y.id === S.openStaff); return x ? staffName(x) : t('nav.team'); }, body:screenTeam },
+                   title:()=>{ const ph = currentPharmacy(), x = S.openStaff && ph && staffOf(ph.id).find(y => y.id === S.openStaff); return x ? staffName(x) : t('nav.team'); }, body:screenTeam },
   activity:      { eyebrow:()=>currentName(), title:()=>t('nav.activity'), body:screenActivity },
   labels:        { eyebrow:()=>t('nav.stock'), title:()=>t('shl.titleShort'), body:screenLabels },
   import:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.importSheet'), body:screenImport },
@@ -16247,7 +16324,7 @@ function renderAuth() {
 
   if (authScreen === 'signin') {
     /* Partner accounts are hidden while partners are switched off. */
-    const accounts = Object.keys(ACCOUNTS).filter(mail => FLAGS.partners || !isPartner(ACCOUNTS[mail])).map(mail => {
+    const accounts = Object.keys(ACCOUNTS).filter(mail => (FLAGS.partners || !isPartner(ACCOUNTS[mail])) && ACCOUNTS[mail].listed !== false).map(mail => {
       const a = ACCOUNTS[mail];
       const tone = a.verified
         ? 'background:var(--palm-tint);color:var(--palm);'
@@ -16459,7 +16536,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0015.1.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0015.2.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -16513,6 +16590,7 @@ function signInAs(mail){
   S.takesShifts = isOwner(a) ? !!a.takesShifts : true;
   /* An owner of several starts on All, whoever signed in last. */
   S.pharmacyTab = null;
+  S.openStaff = null; S.teamNote = null; S.teamPerson = null; S.roleDraft = null;
   S.till = tillReset();
   S.receiptFor = null;
   S.openCount = null; S.openImport = null; S.openOrder = null; S.stockNote = null; S.importNote = null;
@@ -16799,6 +16877,7 @@ document.addEventListener('keydown', e => {
 readFlags();
 restoreLogos();
 seedStock();
+seedTeams();
 render();
 </script>
 </body>
