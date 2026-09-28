@@ -1466,6 +1466,48 @@ build reads the record).
 
 - Checks: 22 new (618 app in all); mutation-tested (17 of 17 caught).
 
+### v0.0015.1 — roles, the international controlled list, and the drug lists (28 Sep 2026)
+
+**Decided 28 Sep 2026.**
+- **The clinical curator:** a placeholder ("Clinical curator — to be named")
+  until the person is chosen; the real one is needed before the Stop tier
+  holds anything (v0.0016).
+- **Patient history (P8, v0.0016):** grantable, off by default.
+- **Roles (now):** ready-made — *Cashier* (sell), *Pharmacist* (sell, voids
+  and refunds, discounts, own items; patient history from v0.0016), *Stock
+  keeper* (sell, stock, write-offs), *Manager* (everything grantable); the
+  owner's **custom roles** (a name and a set of switches, saved); a person
+  gets a role **plus any extra grants** ("Pharmacist + Prices"). (a) the set
+  as above; (b) editing a role changes everyone holding it, on the record;
+  (c) a role works at all the owner's pharmacies.
+- **Controlled substances — the UN conventions for now** (1961 narcotics,
+  1971 psychotropics, 1988 precursors), each labelled with its convention
+  and schedule. Diazepam, alprazolam and phenobarbital: 1971 Schedule IV.
+  **(d)** tramadol and pregabalin stay in the controlled register, marked
+  *not on the UN lists — nationally controlled in much of the region*,
+  until Iraq's schedule. **(e)** pseudoephedrine marked a **precursor** (1988
+  Table I): its sales in a precursor list, not the controlled register.
+
+**Asked 28 Sep 2026: add every drug in the lists sent earlier to the app.**
+The two lists are the Ministry's register (5,214 registered products — trade
+names, no barcodes) and the Essential Drugs List (597 items, ~500 generics).
+Proposed:
+- **The register's products into the app's catalogue**, as products *with
+  no barcode yet* (an internal code, e.g. `REG-R0001`): found by trade or
+  scientific name at Point of sale, the count and orders, priced by the
+  owner like any product. Where the scientific name is one of the reference
+  drugs (~2,170 rows) it is linked, so the Helper checks it; the rest say
+  *not checked yet*. When a pharmacy scans an unknown barcode, the CRM's
+  mapping links that barcode to its register product. The 29 registrations
+  the register notes as **cancelled** are left out; the 32 **suspended** are
+  kept but marked and not offered for sale.
+- **The Essential Drugs List's generics into the drug reference** — ~400 not
+  there yet — as entries with the national code and class and *no clinical
+  information yet*: shown in Drugs, not checked by the Helper until the
+  curator adds their interactions.
+- Cost: the app file grows from ~0.8 MB to ~2 MB (a prototype limit; in
+  production this is the database). Waiting for "go".
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
