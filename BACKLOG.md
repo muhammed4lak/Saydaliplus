@@ -1636,6 +1636,24 @@ showed up.
   checks the wrong ingredients, and one counter's mistake should not reach
   every pharmacy's Helper. Waiting for an ok.
 
+**Answered 28 Sep 2026 (second round).**
+- **Staff home: A** — the *Where you work* card. To build (waiting for "go").
+- **Seed file: c** — no piecemeal seeding. The codebase catches up with the
+  prototype's owner-first model in one planned step (pharmacies owned by
+  pharmacists, staff, roles, grants, till, stock, drawer — with RLS and
+  policy tests), before the React Native switch.
+- **Barcode linking: ok** as proposed above. To build (waiting for "go").
+- Asked how each kind of user is treated. In the prototype an owner and a
+  team member are both the one account type, *pharmacist*; owning is a link
+  to pharmacies and working somewhere is a staff record at one, neither
+  stored as a type. In the codebase, a pharmacy is still its own account
+  type — which is what (c) fixes. Two gaps found and put to the owner:
+  (i) an owner who also works on someone else's team never sees that
+  workplace (the view goes to the pharmacies they own, and at a pharmacy
+  they do not own they may do nothing); (ii) pharmacy assistants are stored
+  as *pharmacist* accounts with a flag, though they hold no licence and
+  cannot be Syndicate-verified.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
