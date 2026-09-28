@@ -3433,8 +3433,10 @@ console.log('\nclinical governance, patients, teams and barcode links (v0.0016)'
      await gp.evaluate(() => { tillAdd('4000000001065'); tillAdd('5000000001033'); openHelper(); const offered = !!document.querySelector('.pt-quiet');
        quietForPatient('IX:Aspirin|Ibuprofen'); const f = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen');
        const pat = S.till.patient; detachPatient(); const other = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen');
-       S.till.patient = pat; closeModal();
-       return offered && f.tier === 'note' && f.quieted && other.tier === 'warn' && !other.quieted; }));
+       S.patients.push({ id:'PT9001', pharmacy:'P1', name:'Abu Hassan', phone:null, since:TODAY_ISO, by:S.email }); S.till.patient = 'PT9001';
+       const second = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen');
+       S.patients = S.patients.filter(p => p.id !== 'PT9001'); S.till.patient = pat; closeModal();
+       return offered && f.tier === 'note' && f.quieted && other.tier === 'warn' && !other.quieted && second.tier === 'warn' && !second.quieted; }));
   ok('…a Stop cannot be quieted',
      await gp.evaluate(() => { S.ruleEvents = [{ rule:'IX:Aspirin|Ibuprofen', state:'approved', tier:'stop', at:'2026-09-27', by:'curator' }];
        const f = tillFindings(S.till.lines).findings.find(x => x.rule === 'IX:Aspirin|Ibuprofen'); S.ruleEvents = []; return f.tier === 'stop' && !f.quieted; }));

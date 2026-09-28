@@ -1749,7 +1749,12 @@ a team (the server actions exist); they come with the catch-up.
 
 - Checks: app 704 (33 new), CRM 292 (21 new); database 190 (60 new, all four
   suites run on a local Postgres); unit tests 137 (13 new); typecheck and
-  `next build` clean. Mutation-tested: see below.
+  `next build` clean. Mutation-tested: app and CRM 19 of 19 caught (one
+  check tightened after the first run: a Warn quieted for one patient must
+  still warn for a second patient); database 11 planted faults — 8 caught
+  by the tests, 3 survived only because a second layer (a trigger behind a
+  policy, or a status check behind a date check) still refused, so the rule
+  held; one visibility check tightened after the first run.
 
 ## Unused concepts
 
