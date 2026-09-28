@@ -11547,7 +11547,7 @@ function completeSale() {
   const ph = tillPharmacy();
   if (ph && !need('sell', ph.id)) return;
   if (tillBlock(ph) || !T.lines.length || tillMode() !== 'sell' || T.lines.some(l => l.unit == null)) return;
-  if (stopsOpen()) { S.till.note = { kind:'stopReason' }; openHelper(); return; }
+  if (stopsOpen()) { openHelper(); return; }
   const { subtotal, discount, total } = tillTotals();
   let given = null, change = null;
   if (T.tender === 'cash') {
@@ -12036,7 +12036,7 @@ function openHelper() { openTillSheet('tillHelper'); }
 function openPay() {
   if (tillMode() !== 'sell' || !S.till.lines.length) return;
   /* A Stop without its reason: the Helper, to give one. Never a refusal. */
-  if (stopsOpen()) { S.till.note = { kind:'stopReason' }; openHelper(); return; }
+  if (stopsOpen()) { openHelper(); return; }
   if (S.till.lines.some(l => l.unit == null)) { tillPromptPrice(); render(); return; }
   const ph = tillPharmacy();
   if (ph && !openDrawer(ph.id)) { openDrawerSheet('pay'); return; }

@@ -1654,6 +1654,103 @@ showed up.
   as *pharmacist* accounts with a flag, though they hold no licence and
   cannot be Syndicate-verified.
 
+**Answered 28 Sep 2026 (third round).**
+- **An owner who also works on someone else's team: yes** — that pharmacy
+  becomes one of their tabs, and there they are staff like anyone else.
+- **Pharmacy assistants: no.** *Anyone without a Syndicate badge cannot use
+  the app.* Every team member is a Syndicate-verified pharmacist.
+- **Build v0.0016 with all of it**, and **settle the users issue in the
+  codebase too** (the rest of the codebase catch-up stays (c): one planned
+  step before the React Native switch).
+
+### v0.0016 as built — clinical governance, patient history, teams by badge only
+
+**Clinical governance (W19, P9).** Every rule has an id — an interaction pair
+(`IX:Aspirin|Ibuprofen`), a duplication rule (`DUP:nsaid`) — and a history,
+kept in a ledger (`data/rules.json`) that both builds embed: proposed, under
+review, approved at a tier by a named person on a date, retired. **A rule
+never approved never fires.** The 218 rules built so far are the baseline rule
+set (20 Sep 2026), approved at the tier their severity gives, *provisionally,
+until the clinical curator — still to be named — reviews them*. Every approval
+or retirement is a new version; the rule set of any past day is rebuilt from
+the ledger (today: version 3). The fixture shows the life cycle: ibuprofen +
+diclofenac as a pair was proposed, approved as a Note on 22 Sep and retired on
+26 Sep (the class rule "Two NSAIDs" covers it); fluconazole + atorvastatin is
+under review and clopidogrel + fluoxetine proposed — neither fires.
+- **Tiers:** Note, Warn, **Stop**. The Stop list ships empty. A Stop is not
+  acknowledged by a tap: the Helper asks *why go ahead?*, and with a typed
+  reason the sale goes on — the till never refuses (P9). Paying with a Stop
+  open opens the Helper for the reason.
+- **Every sale records** each rule that fired, its tier, whether it was
+  acknowledged, the reason for a Stop, and the rule-set version — the raw
+  material of the override report. The Helper names the rule set and who
+  approved it.
+- **CRM — Rules** (new module): all 221 rules with state, tier, since, by and
+  the 30-day override rate; *Rule set as of* a date (version, counts, "the
+  Stop list is empty"); views for live, under review, retired, Stop, and
+  **flagged for demotion** — over one in five of at least twenty showings,
+  Warn or Stop only (aspirin + ibuprofen, 34%). Each rule's history with
+  names, dates and reasons. **Only the clinical curator approves, re-tiers or
+  retires** — not the owner admin, not operations, who propose and send for
+  review. The curator is a placeholder CRM account ("Clinical curator — to be
+  named", its own role with that one capability). The CRM and the app rebuild
+  the same rule set for any day (checked).
+
+**Patient history (P8).** A pharmacy keeps its own patients: at the Point of
+sale, *+ Patient* finds or adds one (name, phone optional) and attaches the
+sale. A **Warn can be quieted for that patient**, at that pharmacy — it reads
+as a quieted note for them and still warns for anyone else; **a Stop cannot be
+quieted**. The patient's page: what they bought here, and what was quieted,
+with *Warn again*. The sheet says it plainly — the pharmacy's own record;
+Saydali+ cannot read it; no other pharmacy shares it; not the legal register.
+Patients are per pharmacy (another pharmacy has none of them). **Patient
+history is its own grant**: off by default, in the Pharmacist and Manager
+roles. The CRM holds, derives and reads no patient row, and its report tables
+have none (checked).
+
+**Teams: a Syndicate badge or nothing.** No position to choose on an
+invitation, no assistants (the seeded assistants are pharmacists now). Someone
+still waiting for verification sees an invitation but cannot accept until
+verified (by button, link or code).
+
+**An owner who also works elsewhere.** Rahma owns Al-Rahma and works shifts at
+Layla's Al-Hayat: her tabs are *Al-Rahma* and *Al-Hayat · works here* (no
+All). At Al-Hayat she is staff: a staff home, no Team, only what her role
+gives, no drawer settings, no inviting. My activity opens for her there.
+
+**The staff home (mock-up A, chosen).** *Where you work* first on the home of
+anyone on a team: the pharmacy, since when, the role and what it gives (opens
+My activity), the drawer and the Point of sale. Working at two, the switch is
+in the card.
+
+**Barcode linking (ok'd).** An unknown barcode can be linked, at the Point of
+sale, to a product on the Ministry's register, found by name: it works **at
+that pharmacy at once**, marked *Linked here — not confirmed yet*, and the
+Helper checks it as that product. Another pharmacy still sees it as unknown.
+**CRM — Barcode links** (new module): conflicts first, then links pharmacies
+agree on, then single ones, then confirmed; confirming makes it the link for
+every pharmacy.
+
+**The codebase — one kind of account (migration 0015).** A pharmacy is a place
+a Syndicate-verified pharmacist owns (`pharmacies.owner_id`), not an account;
+nobody signed in can create or become a pharmacy account. Teams are
+`pharmacy_staff` (invited → active → ended) with ready-made and owners' own
+`staff_roles` and extra grants; `has_permission()` decides, and no badge
+means no permissions, owner or not. Accepting is `accept_invitation()` —
+verified pharmacists only, an emailed invitation only by that address. The old
+pharmacy accounts' pharmacies are carried over, unclaimed; the marketplace-era
+tables keep pointing at the old accounts until the marketplace returns.
+Sign-up has no "I own a pharmacy" option: owners sign up as pharmacists. The
+session derives the view (owner / pharmacist) from the links. Seeded: Rahma
+owning Al-Rahma and working at Al-Hayat, Layla with three pharmacies and a
+"Branch lead" role, Hassan, Maryam and the teams; Noor invited but pending.
+**Not yet in the Next.js app:** the screens for adding a pharmacy and running
+a team (the server actions exist); they come with the catch-up.
+
+- Checks: app 704 (33 new), CRM 292 (21 new); database 190 (60 new, all four
+  suites run on a local Postgres); unit tests 137 (13 new); typecheck and
+  `next build` clean. Mutation-tested: see below.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
