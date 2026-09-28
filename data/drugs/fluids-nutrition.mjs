@@ -30,13 +30,13 @@ export default [
   ask:['diabetes'] },
 
 { sci:'Compound sodium lactate', ar:'لاكتات الصوديوم المركّبة', atc:'B05BB01', cat:'nut.fluid', form:'injection',
-  doses:['500 mL', '1000 mL'], aka:['Ringer’s lactate', 'Hartmann’s solution', 'Lactated Ringer’s'],
+  doses:['500 mL', '1000 mL'], aka:['Ringer’s lactate', 'Ringer lactate', 'Ringers lactate', 'Hartmann’s solution', 'Hartmann solution', 'Lactated Ringer’s', 'Lactated Ringer', 'Sodium lactate compound'],
   notes:{en:'A balanced drip for fluid replacement in surgery, burns and dehydration.',
          ar:'تسريب متوازن لتعويض السوائل في الجراحة والحروق والجفاف.'},
   ask:['kidney', 'heartFailure'] },
 
 { sci:'Ringer’s solution', ar:'محلول رينغر', atc:'B05BB01', cat:'nut.fluid', form:'injection',
-  doses:['500 mL'], aka:['Ringer', 'Ringers'],
+  doses:['500 mL'], aka:['Ringers solution', 'Ringer solution', 'Ringer injection'],
   notes:{en:'A balanced electrolyte drip for fluid replacement.',
          ar:'تسريب أملاح متوازن لتعويض السوائل.'},
   ask:['kidney', 'heartFailure'] },
@@ -53,6 +53,30 @@ export default [
          ar:'وريدياً للارتعاج ونقص المغنيسيوم والربو الشديد، مع مراقبة المنعكسات والتنفس. بالفم يعمل مليّناً.'},
   ci:['renalSevere', 'heartBlock', 'myasthenia'],
   ask:['kidney', 'myasthenia'] },
+
+{ sci:'Calcium chloride', ar:'كلوريد الكالسيوم', atc:'B05XA07', cat:'nut.fluid', form:'injection',
+  doses:['10% injection (100 mg/mL)'], aka:['Calcium chloride dihydrate'],
+  tags:['polyvalent'],
+  notes:{en:'Given slowly into a large vein for dangerously high potassium, low calcium or calcium-channel-blocker overdose; it burns badly if it leaks under the skin.',
+         ar:'يُعطى ببطء في وريد كبير لارتفاع البوتاسيوم الخطير أو نقص الكالسيوم أو الجرعة الزائدة من حاصرات الكالسيوم؛ ويحرق بشدة إذا تسرّب تحت الجلد.'},
+  ix:[
+    ['Digoxin', S, 'Heart rhythm problems — given with great care.', 'اضطرابات نظم القلب — يُعطى بحذر شديد.'],
+    ['Ceftriaxone', C, 'Not in the same line or mixed — crystals can form.', 'لا يُعطيان في الخط نفسه ولا يُمزجان — قد تتكوّن بلورات.']
+  ],
+  ci:['hyperCa'],
+  ask:['digoxin', 'kidney'] },
+
+{ sci:'Glucose/Sodium chloride', ar:'غلوكوز/كلوريد الصوديوم', atc:'B05BB02', cat:'nut.fluid', form:'injection',
+  doses:['glucose 5% + sodium chloride 0.9%', 'glucose 5% + sodium chloride 0.45%', 'glucose 4% + sodium chloride 0.18%'], aka:['Dextrose saline', 'Glucose saline', 'Dextrose-saline'],
+  notes:{en:'A maintenance drip giving water, salt and a little sugar; sodium and blood sugar are watched, especially in children.',
+         ar:'تسريب صيانة يعطي الماء والملح وقليلاً من السكر؛ ويُراقب الصوديوم وسكر الدم، خصوصاً عند الأطفال.'},
+  ask:['diabetes', 'heartFailure', 'kidney'] },
+
+{ sci:'Glycine', ar:'غلايسين', atc:'B05CX03', cat:'nut.fluid', form:'solution',
+  doses:['1.5% irrigation'], aka:['Glycine irrigation'],
+  notes:{en:'A bladder irrigation for urological surgery only — not for injection. Too much absorbed can lower blood sodium.',
+         ar:'غسول للمثانة في جراحة المسالك البولية فقط — ليس للحقن. امتصاص كمية كبيرة منه قد يخفض صوديوم الدم.'},
+  ask:['heartFailure', 'kidney'] },
 
 { sci:'Mannitol', ar:'مانيتول', atc:'B05BC01', cat:'nut.fluid', form:'injection',
   doses:['10%', '20% infusion'],
@@ -112,6 +136,12 @@ export default [
   doses:['50 mg vial'], brand:['Myozyme'],
   notes:{en:'Enzyme replacement for Pompe disease, infused every two weeks.',
          ar:'تعويض إنزيمي لداء بومبي، يُسرّب كل أسبوعين.'},
+  ask:['allergy'] },
+
+{ sci:'Velaglucerase alfa', ar:'فيلاغلوسيراز ألفا', atc:'A16AB10', cat:'nut.metabolic', form:'injection',
+  doses:['400 units vial'], brand:['Vpriv'],
+  notes:{en:'Enzyme replacement for Gaucher disease, infused every two weeks; infusion reactions are watched for.',
+         ar:'تعويض إنزيمي لداء غوشيه، يُسرّب كل أسبوعين؛ وتُراقب تفاعلات التسريب.'},
   ask:['allergy'] },
 
 { sci:'Laronidase', ar:'لارونيداز', atc:'A16AB05', cat:'nut.metabolic', form:'injection',

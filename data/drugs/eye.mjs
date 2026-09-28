@@ -52,6 +52,13 @@ export default [
          ar:'يُستعمل لحديثي الولادة للوقاية من التهاب العين وللتراخوما. اسحب الجفن السفلي وضع خطاً رفيعاً؛ وتتشوّش الرؤية قليلاً.'},
   ask:['whoFor', 'eyeRedFlags'] },
 
+{ sci:'Sulfacetamide', ar:'سلفاسيتاميد', atc:'S01AB04', cat:'eye.antiinfective', form:'drops',
+  doses:['10% eye drops', '20% eye drops', '30% eye drops', 'with prednisolone'], brand:['Albucid', 'Bleph-10'], aka:['Sulphacetamide', 'Sulfacetamide sodium'],
+  notes:{en:'An older antibiotic eye drop; it stings. Not for anyone allergic to sulfa drugs; stop if a rash appears.',
+         ar:'قطرة عين قديمة مضادة للجراثيم؛ تلسع. لا تُستعمل لمن لديه حساسية من السلفا؛ وتُوقف إذا ظهر طفح.'},
+  ci:['sulfaAllergy'],
+  ask:['allergySulfa', 'contactLens', 'eyeRedFlags'] },
+
 { sci:'Ganciclovir (eye)', ar:'غانسيكلوفير (للعين)', atc:'S01AD09', cat:'eye.antiinfective', form:'gel',
   doses:['0.15% eye gel'], brand:['Virgan', 'Zirgan'], aka:['Ganciclovir eye gel'],
   notes:{en:'For herpes infection of the cornea: five times a day until it heals, then three times a day for a week. Needs an eye doctor’s follow-up.',
@@ -138,6 +145,16 @@ export default [
   ix:[
     ['#nondhp', S, 'Slow pulse and heart block — even from eye drops.', 'بطء النبض وإحصار القلب — حتى من قطرة العين.'],
     ['#betaBlocker', W, 'Adds to the slowing of the pulse and to the pressure-lowering; two beta-blockers are rarely needed.', 'يزيد بطء النبض وانخفاض الضغط؛ ونادراً ما يُحتاج إلى حاصرَي بيتا.']
+  ],
+  ci:['asthma', 'bradycardia', 'heartBlock'],
+  ask:['asthma', 'slowPulse', 'bpMeds'] },
+
+{ sci:'Carteolol', ar:'كارتيولول', atc:'S01ED05', cat:'eye.glaucoma', form:'drops',
+  doses:['1% eye drops', '2% eye drops', '2% long-acting (LP)', 'with latanoprost'], brand:['Teoptic', 'Carteol LP', 'Ocupress'],
+  notes:{en:'A beta-blocker glaucoma drop, once or twice a day. Enough reaches the body to slow the pulse and tighten the airways — press on the inner corner of the eye for a minute after each drop.',
+         ar:'قطرة زرق من حاصرات بيتا، مرة أو مرتين يومياً. يصل منها إلى الجسم ما يكفي لإبطاء النبض وتضييق المجاري التنفسية — اضغط على الزاوية الداخلية للعين دقيقة بعد كل قطرة.'},
+  ix:[
+    ['#nondhp', S, 'Slow pulse and heart block — even from eye drops.', 'بطء النبض وإحصار القلب — حتى من قطرة العين.']
   ],
   ci:['asthma', 'bradycardia', 'heartBlock'],
   ask:['asthma', 'slowPulse', 'bpMeds'] },
@@ -313,6 +330,12 @@ export default [
   doses:['0.1% eye drops', '0.15% eye drops', '0.2% and 0.3% eye drops'], brand:['Hylo', 'Vismed', 'Artelac'], aka:['Sodium hyaluronate eye drops', 'Hyaluronic acid eye drops'],
   notes:{en:'Long-lasting lubricating drops for dry eyes, safe with contact lenses when preservative-free.',
          ar:'قطرات مرطّبة طويلة الأثر لجفاف العين، آمنة مع العدسات اللاصقة إذا كانت خالية من المواد الحافظة.'},
+  ask:['contactLens', 'eyeRedFlags'] },
+
+{ sci:'Polyvinyl alcohol', ar:'كحول البولي فينيل', atc:'S01XA20', cat:'eye.lubricant', form:'drops',
+  doses:['1.4% eye drops', 'with povidone'], brand:['Liquifilm Tears', 'Sno Tears', 'Optifresh'], aka:['PVA'],
+  notes:{en:'Artificial tears for dry, tired eyes, as often as needed.',
+         ar:'دموع اصطناعية للعين الجافة المتعبة، كلما احتجت.'},
   ask:['contactLens', 'eyeRedFlags'] },
 
 { sci:'Carbomer', ar:'كاربومير', atc:'S01XA20', cat:'eye.lubricant', form:'gel',

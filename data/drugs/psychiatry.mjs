@@ -145,6 +145,17 @@ export default [
   ask:['otherMeds', 'diabetes'] },
 
 /* ---------- Antidepressants ---------- */
+{ sci:'Maprotiline', ar:'مابروتيلين', atc:'N06AA21', cat:'cns.antidepressant', form:'tablet',
+  doses:['25 mg', '50 mg', '75 mg'], brand:['Ludiomil'],
+  tags:['anticholinergic', 'seizure', 'qtPossible'],
+  notes:{en:'An older antidepressant, often at night; it takes weeks to work. It lowers the seizure threshold more than most. Dry mouth and drowsiness are common.',
+         ar:'مضاد اكتئاب قديم، يؤخذ غالباً ليلاً؛ ويحتاج أسابيع ليعمل. يخفض عتبة النوبات أكثر من معظم نظرائه. جفاف الفم والنعاس شائعان.'},
+  ix:[
+    ['#maoi', C, 'Serotonin toxicity and dangerous blood pressure — two weeks apart.', 'تسمّم سيروتونيني وضغط خطير — بفاصل أسبوعين.']
+  ],
+  ci:['epilepsy', 'recentMI', 'angleGlaucoma'],
+  ask:['epilepsy', 'heart', 'mood'] },
+
 { sci:'Amitriptyline', ar:'أميتريبتيلين', atc:'N06AA09', cat:'cns.antidepressant', form:'tablet',
   doses:['10 mg', '25 mg', '50 mg'], brand:['Tryptizol', 'Elavil'],
   tags:['anticholinergic', 'sedative', 'qtPossible', 'seroWeak'], take:['bedtime'],
@@ -365,6 +376,17 @@ export default [
   ask:['labs', 'dehydration', 'otherMeds'] },
 
 /* ---------- Anxiety and sleep ---------- */
+{ sci:'Meprobamate', ar:'ميبروبامات', atc:'N05BC01', cat:'cns.anxiolytic', form:'tablet',
+  doses:['200 mg', '400 mg'], brand:['Equanil', 'Miltown'],
+  tags:['sedative'], controlled:true,
+  notes:{en:'An old anxiety medicine, largely replaced: habit-forming and dangerous in overdose. Not with alcohol; no driving if drowsy; never stop suddenly after regular use.',
+         ar:'دواء قديم للقلق حلّت محله أدوية أخرى: يسبّب التعوّد وخطير في الجرعة الزائدة. لا يُجمع مع الكحول؛ لا قيادة عند النعاس؛ ولا يُوقف فجأة بعد الاستعمال المنتظم.'},
+  ix:[
+    ['Alcohol', S, 'Deep sedation and slowed breathing.', 'تهدئة عميقة وتباطؤ التنفس.']
+  ],
+  ci:['porphyria', 'respInsufficiency'],
+  ask:['sedatives', 'alcohol', 'drive'] },
+
 { sci:'Diazepam', ar:'ديازيبام', atc:'N05BA01', cat:'cns.anxiolytic', form:'tablet',
   doses:['2 mg', '5 mg', '10 mg', '10 mg/2 mL'], brand:['Valium'],
   tags:['benzo', 'sedative'], controlled:true,

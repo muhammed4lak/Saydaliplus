@@ -439,6 +439,14 @@ export default [
   ci:['obstruction', 'retention'],
   ask:['asthma', 'slowPulse', 'otherMeds'] },
 
+{ sci:'Fampridine', ar:'فامبريدين', atc:'N07XX07', cat:'cns.neuro', form:'tablet',
+  doses:['10 mg prolonged-release'], brand:['Fampyra', 'Ampyra'], aka:['Dalfampridine', '4-Aminopyridine'],
+  tags:['seizure'],
+  notes:{en:'Improves walking in multiple sclerosis: one tablet every 12 hours, swallowed whole, never two together — too much can cause fits. It is stopped if walking has not improved after two weeks.',
+         ar:'يحسّن المشي في التصلب المتعدد: قرص كل 12 ساعة يُبلع كاملاً، ولا يؤخذ قرصان معاً أبداً — الزيادة قد تسبّب نوبات. يُوقف إذا لم يتحسّن المشي بعد أسبوعين.'},
+  ci:['epilepsy', 'renal'],
+  ask:['epilepsy', 'kidney', 'otherMeds'] },
+
 { sci:'Riluzole', ar:'ريلوزول', atc:'N07XX02', cat:'cns.neuro', form:'tablet',
   doses:['50 mg'], brand:['Rilutek'],
   take:['emptyStomach'],

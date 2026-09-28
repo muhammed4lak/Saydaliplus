@@ -51,6 +51,21 @@ export default [
   ci:[{en:'Anaemia not due to iron deficiency', ar:'فقر دم غير ناجم عن عوز الحديد'}, {en:'Iron overload (e.g. thalassaemia major)', ar:'فرط الحديد (كالثلاسيميا الكبرى)'}],
   ask:['childAge', {en:'Has the anaemia been confirmed as iron deficiency (not thalassaemia)?', ar:'هل تأكّد أن فقر الدم بسبب نقص الحديد (وليس ثلاسيميا)؟'}] },
 
+{ sci:'Iron dextran', ar:'دكستران الحديد', atc:'B03AC', cat:'bld.anaemia', form:'injection',
+  doses:['50 mg/mL (2 mL ampoule)'], brand:['CosmoFer', 'INFeD'],
+  notes:{en:'Intravenous iron given in hospital, with a small test dose and observation for 30 minutes, as serious allergic reactions can occur.',
+         ar:'حديد وريدي يُعطى في المستشفى، مع جرعة اختبار صغيرة ومراقبة 30 دقيقة، لأن تفاعلات تحسسية خطيرة قد تحدث.'},
+  ci:[{en:'Previous serious reaction to injected iron', ar:'تفاعل خطير سابق مع الحديد المحقون'}, 'asthmaUncontrolled'],
+  ask:['allergy', 'asthma', 'infection'] },
+
+{ sci:'Iron protein succinylate', ar:'سكسينيلات بروتين الحديد', atc:'B03AB09', cat:'bld.anaemia', form:'solution',
+  doses:['800 mg/15 mL (40 mg iron) oral solution'], brand:['Ferplex', 'Legofer'],
+  tags:['polyvalent'],
+  notes:{en:'Liquid iron that is gentle on the stomach, before meals. Stools turn dark. Keep two hours from thyroid tablets and some antibiotics; contains milk protein.',
+         ar:'حديد سائل لطيف على المعدة، قبل الوجبات. يصبح البراز داكناً. افصل بينه وبين حبوب الدرقية وبعض المضادات الحيوية ساعتين؛ يحتوي بروتين الحليب.'},
+  ci:[{en:'Milk protein allergy', ar:'الحساسية من بروتين الحليب'}, {en:'Iron overload', ar:'فرط الحديد'}],
+  ask:['otherMeds', 'childAge', 'allergy'] },
+
 { sci:'Iron sucrose', ar:'سكروز الحديد', atc:'B03AC02', cat:'bld.anaemia', form:'injection',
   doses:['100 mg/5 mL ampoule'], brand:['Venofer'],
   notes:{en:'A slow intravenous injection or infusion in hospital or clinic, with 30 minutes of observation afterwards for allergic reactions. Oral iron is stopped while it is given.',
@@ -84,7 +99,7 @@ export default [
   ask:['diabetes', 'otherMeds'] },
 
 { sci:'Erythropoietin', ar:'إريثروبويتين', atc:'B03XA01', cat:'bld.anaemia', form:'injection',
-  doses:['2,000 IU', '4,000 IU', '10,000 IU prefilled syringe'], brand:['Eprex', 'Recormon', 'Binocrit'], aka:['Epoetin alfa', 'Epoetin beta', 'Recombinant human erythropoietin', 'EPO'],
+  doses:['2,000 IU', '4,000 IU', '10,000 IU prefilled syringe'], brand:['Eprex', 'Recormon', 'Binocrit'], aka:['Epoetin alfa', 'Epoetin beta', 'Epoetin zeta', 'Recombinant human erythropoietin', 'EPO'],
   notes:{en:'Injected under the skin (or into the vein at dialysis). Keep it in the fridge. Blood pressure and haemoglobin are checked — too high a haemoglobin raises the risk of clots and stroke.',
          ar:'يُحقن تحت الجلد (أو في الوريد أثناء الغسيل). يُحفظ في الثلاجة. يُفحص الضغط والهيموغلوبين — الهيموغلوبين المرتفع أكثر من اللازم يزيد خطر الجلطات والسكتة.'},
   ci:['uncontrolledHtn', {en:'Pure red cell aplasia after erythropoietin', ar:'عدم تنسّج الكريات الحمر الصافي بعد الإريثروبويتين'}],

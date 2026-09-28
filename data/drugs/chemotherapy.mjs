@@ -49,6 +49,13 @@ export default [
   ci:['pregTeratogen', 'marrow', 'hepSevere'],
   ask:['feverChemo', 'hepatitis', 'chemoCycle'] },
 
+{ sci:'Lomustine', ar:'لوموستين', atc:'L01AD02', cat:'onc.cytotoxic', form:'capsule',
+  doses:['10 mg', '40 mg', '100 mg capsule'], brand:['CeeNU', 'Gleostine'], aka:['CCNU'],
+  notes:{en:'A single dose every six weeks for brain tumours — take exactly the prescribed number of capsules once, on an empty stomach at bedtime. Blood counts drop weeks later; report fever or bleeding.',
+         ar:'جرعة واحدة كل ستة أسابيع لأورام الدماغ — خذ عدد الكبسولات الموصوف بالضبط مرة واحدة، على معدة فارغة قبل النوم. تنخفض تعداد الدم بعد أسابيع؛ أبلغ عن الحرارة أو النزف.'},
+  ci:['pregTeratogen', 'marrow'],
+  ask:['chemoCycle', 'feverChemo', 'handling'] },
+
 { sci:'Carmustine', ar:'كارموستين', atc:'L01AD01', cat:'onc.cytotoxic', form:'injection',
   doses:['100 mg vial', '7.7 mg implant'], brand:['BiCNU', 'Gliadel'],
   tags:['immunosuppressant'],

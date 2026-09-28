@@ -56,6 +56,41 @@ export default [
   ci:[{en:'Allergy to fish, or previous protamine insulin reaction', ar:'الحساسية من السمك، أو تفاعل سابق مع أنسولين البروتامين'}],
   ask:['allergy', 'diabetesMeds'] },
 
+{ sci:'Physostigmine', ar:'فيزوستيغمين', atc:'V03AB19', cat:'tox.antidote', form:'injection',
+  doses:['1 mg/mL injection', '2 mg/2 mL'], brand:['Anticholium'], aka:['Physostigmine salicylate', 'Eserine'],
+  tags:['cholinesterase'],
+  notes:{en:'Reverses severe poisoning by atropine-like drugs and plants (datura), given slowly with heart monitoring; it can cause fits or a very slow pulse.',
+         ar:'يعكس التسمّم الشديد بالأدوية والنباتات الشبيهة بالأتروبين (الداتورة)، يُعطى ببطء مع مراقبة القلب؛ وقد يسبّب نوبات أو بطئاً شديداً في النبض.'},
+  ci:['asthma', 'obstruction', {en:'Tricyclic antidepressant poisoning', ar:'التسمّم بمضادات الاكتئاب ثلاثية الحلقات'}],
+  ask:['whatTaken', 'asthma', 'slowPulse'] },
+
+{ sci:'Amyl nitrite', ar:'نتريت الأميل', atc:'V03AB22', cat:'tox.antidote', form:'solution',
+  doses:['0.2–0.3 mL crushable ampoule for inhalation'],
+  notes:{en:'A first-aid cyanide antidote: the ampoule is crushed and breathed in until injected treatment arrives. It drops blood pressure and causes a pounding headache.',
+         ar:'ترياق إسعافي للسيانيد: تُكسر الأمبولة وتُستنشق حتى يصل العلاج بالحقن. يخفض الضغط ويسبّب صداعاً نابضاً.'},
+  ix:[
+    ['#pde5', C, 'Dangerous fall in blood pressure.', 'هبوط خطير في ضغط الدم.']
+  ],
+  ask:['whatTaken', 'pde5'] },
+
+{ sci:'Dicobalt edetate', ar:'إيديتات ثنائي الكوبالت', atc:'V03AB03', cat:'tox.antidote', form:'injection',
+  doses:['300 mg/20 mL ampoule'], brand:['Kelocyanor'], aka:['Cobalt edetate'],
+  notes:{en:'An injection for confirmed severe cyanide poisoning only — in anyone else it is itself toxic (swelling, collapse). Given with glucose.',
+         ar:'حقنة لتسمّم السيانيد الشديد المؤكّد فقط — عند غيره هو نفسه سام (تورّم وانهيار). يُعطى مع الغلوكوز.'},
+  ask:['whatTaken', 'allergy'] },
+
+{ sci:'Succimer', ar:'سكسيمر', atc:'V03AB26', cat:'tox.antidote', form:'capsule',
+  doses:['100 mg capsule'], brand:['Chemet'], aka:['DMSA', 'Dimercaptosuccinic acid'],
+  notes:{en:'Oral treatment for lead poisoning, especially in children; the capsules can be opened onto soft food. The house must be cleared of the lead source.',
+         ar:'علاج فموي لتسمّم الرصاص، خصوصاً عند الأطفال؛ ويمكن فتح الكبسولات على طعام طري. يجب إزالة مصدر الرصاص من البيت.'},
+  ask:['childAge', 'kidney', 'whatTaken'] },
+
+{ sci:'Prussian blue', ar:'أزرق بروسيا', atc:'V03AB31', cat:'tox.antidote', form:'capsule',
+  doses:['500 mg capsule'], brand:['Radiogardase'], aka:['Ferric hexacyanoferrate', 'Potassium ferric hexacyanoferrate'],
+  notes:{en:'Binds thallium and radioactive caesium in the gut; stools turn blue and constipation is common.',
+         ar:'يربط الثاليوم والسيزيوم المشع في الأمعاء؛ يصبح البراز أزرق والإمساك شائع.'},
+  ask:['whatTaken'] },
+
 { sci:'Idarucizumab', ar:'إيداروسيزوماب', atc:'V03AB37', cat:'tox.antidote', form:'injection',
   doses:['2.5 g/50 mL vial (two given)'], brand:['Praxbind'],
   notes:{en:'Reverses dabigatran within minutes for emergency surgery or life-threatening bleeding.',
@@ -156,6 +191,30 @@ export default [
   ci:[{en:'Previous severe reaction to iodine contrast', ar:'تفاعل شديد سابق مع الصبغة اليودية'}, 'thyrotoxicosis'],
   ask:['contrastBefore', 'kidney', 'diabetesMeds'] },
 
+{ sci:'Ioversol', ar:'يوفرسول', atc:'V08AB07', cat:'dia.contrast', form:'injection',
+  doses:['300 mg iodine/mL', '350 mg iodine/mL'], brand:['Optiray'],
+  tags:['contrast'],
+  notes:{en:'An iodine dye for CT scans and angiography; drink plenty afterwards.',
+         ar:'صبغة يودية للمفراس وتصوير الأوعية؛ اشرب كثيراً بعده.'},
+  ci:[{en:'Previous severe reaction to iodine contrast', ar:'تفاعل شديد سابق مع الصبغة اليودية'}, 'thyrotoxicosis'],
+  ask:['contrastBefore', 'kidney', 'diabetesMeds'] },
+
+{ sci:'Iobitridol', ar:'يوبيتريدول', atc:'V08AB11', cat:'dia.contrast', form:'injection',
+  doses:['300 mg iodine/mL', '350 mg iodine/mL'], brand:['Xenetix'],
+  tags:['contrast'],
+  notes:{en:'An iodine dye for CT scans and angiography; drink plenty afterwards.',
+         ar:'صبغة يودية للمفراس وتصوير الأوعية؛ اشرب كثيراً بعده.'},
+  ci:[{en:'Previous severe reaction to iodine contrast', ar:'تفاعل شديد سابق مع الصبغة اليودية'}, 'thyrotoxicosis'],
+  ask:['contrastBefore', 'kidney', 'diabetesMeds'] },
+
+{ sci:'Ioxaglate', ar:'يوكساغلات', atc:'V08AB03', cat:'dia.contrast', form:'injection',
+  doses:['320 mg iodine/mL'], brand:['Hexabrix'], aka:['Ioxaglic acid', 'Meglumine ioxaglate'],
+  tags:['contrast'],
+  notes:{en:'An older low-osmolar iodine dye for angiography; drink plenty afterwards.',
+         ar:'صبغة يودية أقدم منخفضة الأسمولية لتصوير الأوعية؛ اشرب كثيراً بعده.'},
+  ci:[{en:'Previous severe reaction to iodine contrast', ar:'تفاعل شديد سابق مع الصبغة اليودية'}, 'thyrotoxicosis'],
+  ask:['contrastBefore', 'kidney', 'diabetesMeds'] },
+
 { sci:'Amidotrizoate', ar:'أميدوتريزوات', atc:'V08AA01', cat:'dia.contrast', form:'solution',
   doses:['oral solution (meglumine and sodium)', 'injection'], brand:['Gastrografin', 'Urografin'], aka:['Diatrizoate', 'Meglumine diatrizoate'],
   tags:['contrast'],
@@ -182,6 +241,13 @@ export default [
   doses:['0.5 mmol/mL injection'], brand:['Magnevist'], aka:['Gadopentetic acid'],
   notes:{en:'An older gadolinium MRI dye, avoided in severe kidney disease.',
          ar:'صبغة غادولينيوم أقدم للرنين المغناطيسي، تُتجنّب في أمراض الكلى الشديدة.'},
+  ci:['renalSevere'],
+  ask:['contrastBefore', 'kidney', 'preg'] },
+
+{ sci:'Gadodiamide', ar:'غادودياميد', atc:'V08CA03', cat:'dia.contrast', form:'injection',
+  doses:['0.5 mmol/mL injection'], brand:['Omniscan'],
+  notes:{en:'An older gadolinium MRI dye, avoided in severe kidney disease because of a rare skin-and-organ scarring condition.',
+         ar:'صبغة غادولينيوم أقدم للرنين المغناطيسي، تُتجنّب في أمراض الكلى الشديدة بسبب حالة نادرة تسبّب تليّف الجلد والأعضاء.'},
   ci:['renalSevere'],
   ask:['contrastBefore', 'kidney', 'preg'] },
 

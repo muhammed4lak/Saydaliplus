@@ -56,6 +56,13 @@ export default [
   ask:['labs', 'mood', 'pregnantHandler'] },
 
 /* ---------- Sexual health ---------- */
+{ sci:'Alprostadil', ar:'ألبروستاديل', atc:'C01EA01', cat:'uro.sexual', form:'injection',
+  doses:['500 microgram/mL infusion (newborns)', '10 and 20 microgram penile injection', 'urethral stick'], brand:['Prostin VR', 'Caverject', 'MUSE'], aka:['Prostaglandin E1', 'PGE1'],
+  notes:{en:'In newborn units it keeps a heart duct open until surgery (breathing pauses are watched for). As a penile injection for erections: an erection lasting over four hours needs emergency care.',
+         ar:'في وحدات حديثي الولادة يُبقي قناة قلبية مفتوحة حتى الجراحة (تُراقب توقفات التنفس). كحقنة في القضيب للانتصاب: الانتصاب الذي يتجاوز أربع ساعات يحتاج رعاية طارئة.'},
+  ci:[{en:'Conditions that predispose to priapism (sickle cell, leukaemia)', ar:'حالات تهيّئ للقساح (فقر الدم المنجلي، ابيضاض الدم)'}],
+  ask:['whoFor', 'thinner', 'pde5'] },
+
 { sci:'Sildenafil', ar:'سيلدينافيل', atc:'G04BE03', cat:'uro.sexual', form:'tablet',
   doses:['25 mg', '50 mg', '100 mg'], brand:['Viagra'],
   tags:['pde5', 'sub3a4'],

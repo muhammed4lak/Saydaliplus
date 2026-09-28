@@ -184,6 +184,13 @@ export default [
   ci:['hepActive'],
   ask:['liver', 'alcohol', 'otherMeds'] },
 
+{ sci:'Rifamycin', ar:'ريفامايسين', atc:'J04AB03', cat:'inf.tb', form:'injection',
+  doses:['250 mg vial', '1% ear drops', '200 mg modified-release tablet (travellers’ diarrhoea)'], brand:['Rifocin', 'Aemcolo'], aka:['Rifamycin SV'],
+  notes:{en:'An older relative of rifampicin, used as an injection or locally; it turns urine, tears and sweat orange-red.',
+         ar:'قريب أقدم للريفامبيسين، يُستعمل حقناً أو موضعياً؛ ويلوّن البول والدموع والعرق بالبرتقالي المحمر.'},
+  ci:['hepSevere'],
+  ask:['liver', 'contactLens'] },
+
 { sci:'Rifampicin', ar:'ريفامبيسين', atc:'J04AB02', cat:'inf.tb', form:'capsule',
   doses:['150 mg', '300 mg', '100 mg/5 mL', 'in combination tablets'], brand:['Rifadin', 'Rimactane'], aka:['Rifampin'],
   tags:['inducer'], take:['emptyStomach'],
@@ -283,6 +290,18 @@ export default [
   notes:{en:'For leprosy, some skin diseases and pneumocystis prevention. It can break down red cells (worse with G6PD deficiency) — report breathlessness, blue lips, fever or sore throat.',
          ar:'للجذام وبعض أمراض الجلد والوقاية من المتكيسة الرئوية. قد يحلّ الكريات الحمر (أسوأ مع عوز G6PD) — أبلغ عن ضيق النفس أو زرقة الشفتين أو الحرارة أو التهاب الحلق.'},
   ci:['g6pd', 'porphyria', 'sulfaAllergy'],
-  ask:['g6pd', 'allergySulfa', 'labs'] }
+  ask:['g6pd', 'allergySulfa', 'labs'] },
+
+{ sci:'Isoniazid/Rifampicin', ar:'أيزونيازيد/ريفامبيسين', atc:'J04AM02', cat:'inf.tb', form:'tablet',
+  doses:['75/150 mg', '150/300 mg', 'with pyrazinamide and ethambutol (4-drug tablets)'], brand:['Rifinah', 'Isofampicin'], aka:['Rifampicin and isoniazid'],
+  tags:['inducer'], take:['emptyStomach'],
+  notes:{en:'TB tablets on an empty stomach, every day for the whole course — missed doses breed resistance. Urine, tears and sweat turn orange-red. It stops the pill working. Report yellow eyes, dark urine or tingling feet.',
+         ar:'أقراص السل على معدة فارغة، كل يوم طوال الدورة — الجرعات المنسية تولّد مقاومة. يتلوّن البول والدموع والعرق بالبرتقالي المحمر. يُبطل حبوب منع الحمل. أبلغ عن اصفرار العينين أو البول الداكن أو تنميل القدمين.'},
+  ix:[
+    ['#hormonalContraceptive', S, 'The pill fails — use another method.', 'تفشل حبوب منع الحمل — استعملي وسيلة أخرى.'],
+    ['Warfarin', S, 'Much weaker warfarin — INR checks.', 'وارفارين أضعف بكثير — فحوص INR.']
+  ],
+  ci:['hepActive'],
+  ask:['liver', 'ocp', 'alcohol'] }
 
 ];

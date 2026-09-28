@@ -14,6 +14,20 @@ export default [
   ci:['preg'],
   ask:['preg', 'childAge'] },
 
+{ sci:'Levamisole', ar:'ليفاميزول', atc:'P02CE01', cat:'inf.antiparasitic', form:'syrup',
+  doses:['40 mg/5 mL syrup', '40 mg', '50 mg tablet'], brand:['Ketrax', 'Ergamisol'],
+  notes:{en:'A single dose for roundworm. Longer courses can lower white cells — report fever or a sore throat.',
+         ar:'جرعة واحدة لديدان الأسكاريس. الدورات الأطول قد تخفض الكريات البيض — أبلغ عن الحرارة أو التهاب الحلق.'},
+  ci:[{en:'Previous agranulocytosis', ar:'ندرة المحببات السابقة'}],
+  ask:['childAge', 'feverBlood'] },
+
+{ sci:'Piperazine', ar:'بيبرازين', atc:'P02CB01', cat:'inf.antiparasitic', form:'syrup',
+  doses:['piperazine citrate syrup', 'piperazine adipate tablet', 'with senna (sachet)'], aka:['Piperazine citrate', 'Piperazine adipate'],
+  notes:{en:'An older treatment for threadworm and roundworm. Treat the whole family and keep nails short. Not in epilepsy or kidney failure.',
+         ar:'علاج أقدم للديدان الدبوسية والأسكاريس. عالج العائلة كلها وقصّ الأظافر. لا يُستعمل في الصرع أو الفشل الكلوي.'},
+  ci:['epilepsy', 'renalSevere'],
+  ask:['childAge', 'epilepsy', 'kidney'] },
+
 { sci:'Mebendazole', ar:'ميبيندازول', atc:'P02CA01', cat:'inf.antiparasitic', form:'tablet',
   doses:['100 mg', '500 mg', '100 mg/5 mL suspension'], brand:['Vermox'],
   notes:{en:'Pinworm: one 100 mg dose repeated after two weeks, for the whole household, with hand-washing and short nails. Other worms: twice a day for three days.',

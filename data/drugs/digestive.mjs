@@ -258,6 +258,14 @@ export default [
   ask:['parkinson', 'preg', 'rhythm'] },
 
 /* ---------- Antispasmodics and irritable bowel ---------- */
+{ sci:'Prifinium bromide', ar:'بروميد البريفينيوم', atc:'A03AB18', cat:'gis.spasm', form:'tablet',
+  doses:['30 mg tablet', '15 mg/2 mL injection', 'syrup'], brand:['Riabal'], aka:['Prifinium'],
+  tags:['anticholinergic'],
+  notes:{en:'Eases stomach and bowel cramps. Dry mouth and blurred vision are common, and urine may turn reddish — harmless. See a doctor for severe or persistent pain.',
+         ar:'يخفّف تقلّصات المعدة والأمعاء. جفاف الفم وتشوّش الرؤية شائعان، وقد يتلوّن البول بالمحمر — وهذا غير ضار. راجع الطبيب عند الألم الشديد أو المستمر.'},
+  ci:['angleGlaucoma', 'retention', 'ileus'],
+  ask:['glaucoma', 'prostate', 'redFlagsGI'] },
+
 { sci:'Mebeverine', ar:'ميبيفيرين', atc:'A03AA04', cat:'gis.spasm', form:'tablet',
   doses:['135 mg', '200 mg MR'], brand:['Duspatalin', 'Colofac'],
   take:['beforeFood'],

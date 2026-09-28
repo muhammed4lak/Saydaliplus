@@ -88,7 +88,7 @@ export default [
   ask:['stones', 'whoFor'] },
 
 { sci:'Multivitamins', ar:'الفيتامينات المتعددة', atc:'A11BA', cat:'nut.vitamin', form:'tablet',
-  doses:['tablet', 'syrup', 'drops', 'with minerals', 'pregnancy formulas'], brand:['Centrum', 'Pregnacare', 'Samavit'], aka:['Multivitamin', 'Multivitamins with minerals'],
+  doses:['tablet', 'syrup', 'drops', 'with minerals', 'pregnancy formulas'], brand:['Centrum', 'Pregnacare', 'Supradyn'], aka:['Multivitamin', 'Multivitamins with minerals'],
   notes:{en:'One a day with food; not a replacement for a varied diet. Products with iron are dangerous to small children — keep them out of reach. In pregnancy, use a pregnancy formula (limited vitamin A).',
          ar:'واحدة يومياً مع الطعام؛ لا تغني عن غذاء متنوّع. المستحضرات الحاوية على الحديد خطيرة على الأطفال الصغار — أبعدها عن متناولهم. في الحمل استعملي تركيبة مخصّصة للحمل (فيتامين أ محدود).'},
   ask:['preg', 'childAge', 'otherMeds'] },
@@ -130,7 +130,7 @@ export default [
   ask:['kidney', 'otherMeds'] },
 
 { sci:'Zinc sulfate', ar:'كبريتات الزنك', atc:'A12CB01', cat:'nut.mineral', form:'tablet',
-  doses:['20 mg dispersible', '220 mg capsule', '10 mg/5 mL syrup', '0.25% eye drops'], aka:['Zinc', 'Zinc gluconate', 'Zinc acetate'],
+  doses:['20 mg dispersible', '220 mg capsule', '10 mg/5 mL syrup', '0.25% eye drops'], aka:['Zinc sulphate', 'Zinc gluconate', 'Zinc acetate'],
   tags:['polyvalent'],
   notes:{en:'For children with diarrhoea: once a day for 10–14 days alongside rehydration. With food if it upsets the stomach; keep apart from quinolone and tetracycline antibiotics.',
          ar:'للأطفال المصابين بالإسهال: مرة يومياً لمدة 10–14 يوماً مع الإرواء. مع الطعام إن أزعج المعدة؛ وبعيداً عن مضادات الكينولون والتتراسيكلين.'},
@@ -178,6 +178,13 @@ export default [
   notes:{en:'For carnitine deficiency and in dialysis. As a slimming or sports supplement the evidence is weak. A fishy body odour can occur.',
          ar:'لنقص الكارنيتين وفي الغسيل الكلوي. كمكمّل للتنحيف أو الرياضة الأدلة ضعيفة. قد تظهر رائحة جسم تشبه السمك.'},
   ask:['kidney', 'whatFor'] },
+
+{ sci:'Aspartame', ar:'أسبارتام', atc:'V06', cat:'nut.supplement', form:'tablet',
+  doses:['18 mg', '20 mg sweetener tablet'], brand:['Canderel', 'Kandrine', 'Furasweet'],
+  notes:{en:'A sugar-free sweetener for tea and coffee, suitable in diabetes. It contains phenylalanine, so it is not for people with phenylketonuria.',
+         ar:'مُحلٍّ خالٍ من السكر للشاي والقهوة، مناسب لمرضى السكري. يحتوي على الفينيل ألانين، لذا لا يُستعمل لمن لديهم بيلة الفينيل كيتون.'},
+  ci:[{en:'Phenylketonuria', ar:'بيلة الفينيل كيتون'}],
+  ask:['diabetes', 'whoFor'] },
 
 { sci:'Inositol', ar:'إينوزيتول', atc:'A11HA07', cat:'nut.supplement', form:'sachet',
   doses:['2 g myo-inositol with folic acid', '600 mg capsule'], brand:['Ovasitol', 'Inofolic'], aka:['Myo-inositol'],

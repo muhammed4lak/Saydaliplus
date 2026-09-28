@@ -43,6 +43,17 @@ export default [
   ci:['hepActive', 'pregBf', {en:'Concurrent clarithromycin', ar:'الاستعمال المتزامن مع الكلاريثرومايسين'}],
   ask:['otherMeds', 'preg', 'muscle'] },
 
+{ sci:'Fluvastatin', ar:'فلوفاستاتين', atc:'C10AA04', cat:'cvs.lipid', form:'capsule',
+  doses:['20 mg', '40 mg capsule', '80 mg XL tablet'], brand:['Lescol'],
+  tags:['statin'], take:['evening'],
+  notes:{en:'In the evening (the XL tablet at any time). Report unexplained muscle pain or weakness.',
+         ar:'مساءً (قرص XL في أي وقت). أبلغ عن ألم أو ضعف عضلي غير مبرّر.'},
+  ix:[
+    ['Fluconazole', W, 'Raises fluvastatin levels.', 'يرفع مستوى الفلوفاستاتين.']
+  ],
+  ci:['hepActive', 'pregBf'],
+  ask:['muscle', 'liver', 'preg'] },
+
 { sci:'Pravastatin', ar:'برافاستاتين', atc:'C10AA03', cat:'cvs.lipid', form:'tablet',
   doses:['10 mg', '20 mg', '40 mg'], brand:['Pravachol'],
   tags:['statin'], take:['bedtime'],
@@ -244,6 +255,14 @@ export default [
   ],
   ci:['preg', 'bleeding', 'hepSevere'],
   ask:['inr', 'bleedNow', 'otherMeds'] },
+
+{ sci:'Tinzaparin', ar:'تينزابارين', atc:'B01AB10', cat:'cvs.anticoag', form:'injection',
+  doses:['3,500 IU', '4,500 IU', '10,000 IU/mL', '20,000 IU/mL syringe'], brand:['Innohep'],
+  tags:['anticoag'],
+  notes:{en:'Injected under the skin of the belly once a day, same time each day. Report unusual bruising, bleeding or black stools; platelets are checked on longer courses.',
+         ar:'يُحقن تحت جلد البطن مرة يومياً في الوقت نفسه. أبلغ عن الكدمات أو النزف غير المعتاد أو البراز الأسود؛ وتُفحص الصفائح في الدورات الأطول.'},
+  ci:['bleeding', 'lowPlatelets', {en:'Past heparin-induced thrombocytopenia', ar:'نقص صفائح سابق بسبب الهيبارين'}],
+  ask:['bleeding', 'kidney', 'injectTech'] },
 
 { sci:'Enoxaparin', ar:'إينوكسابارين', atc:'B01AB05', cat:'cvs.anticoag', form:'injection',
   doses:['20 mg', '40 mg', '60 mg', '80 mg', '100 mg prefilled syringe'], brand:['Clexane', 'Lovenox'],

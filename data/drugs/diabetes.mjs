@@ -70,7 +70,7 @@ export default [
   ask:['hypo', 'injectTech', 'meals'] },
 
 { sci:'Insulin isophane', ar:'إنسولين إيزوفان', atc:'A10AC01', cat:'end.insulin', form:'injection',
-  doses:['100 units/mL', '30/70 biphasic with soluble insulin'], brand:['Humulin N', 'Insulatard', 'Humulin 70/30', 'Mixtard 30'], aka:['NPH insulin', 'Isophane insulin', 'Biphasic isophane insulin', 'Human insulin'],
+  doses:['100 units/mL', '30/70 biphasic with soluble insulin'], brand:['Humulin N', 'Insulatard', 'Humulin 70/30', 'Mixtard 30'], aka:['NPH insulin', 'Isophane insulin', 'Biphasic isophane insulin'],
   tags:['antidiabetic', 'hypoglycaemic'],
   notes:{en:'Cloudy insulin: roll and tip it about ten times until evenly milky before every injection. The 30/70 mixes go 30 minutes before breakfast and dinner.',
          ar:'أنسولين عكر: يُقلّب ويُدحرج نحو عشر مرات حتى يصبح حليبياً متجانساً قبل كل حقنة. مخاليط 30/70 تُحقن قبل الفطور والعشاء بنصف ساعة.'},
@@ -89,6 +89,17 @@ export default [
   ],
   ci:['renal30', 'dka', 'hepSevere'],
   ask:['kidney', 'dehydration', 'alcohol'] },
+
+{ sci:'Chlorpropamide', ar:'كلوربروباميد', atc:'A10BB02', cat:'end.diabetes', form:'tablet',
+  doses:['100 mg', '250 mg'], brand:['Diabinese'],
+  tags:['antidiabetic', 'hypoglycaemic'], take:['withBreakfast'],
+  notes:{en:'An old, very long-acting sulfonylurea: low sugar can last for days, especially in the elderly — rarely used now. Alcohol can cause flushing. Carry sugar.',
+         ar:'سلفونيل يوريا قديم وطويل المفعول جداً: قد يستمر هبوط السكر أياماً، خصوصاً عند كبار السن — نادر الاستعمال الآن. قد يسبّب الكحول احمرار الوجه. احمل معك سكراً.'},
+  ix:[
+    ['Alcohol', W, 'Flushing (disulfiram-like) and low sugar.', 'احمرار (شبيه بالديسلفيرام) وهبوط السكر.']
+  ],
+  ci:['type1', 'dka', 'renal', 'hepSevere'],
+  ask:['hypo', 'kidney', 'meals'] },
 
 { sci:'Gliclazide', ar:'غليكلازيد', atc:'A10BB09', cat:'end.diabetes', form:'tablet',
   doses:['30 mg MR', '60 mg MR', '80 mg'], brand:['Diamicron'],
@@ -304,6 +315,14 @@ export default [
   notes:{en:'A short-term appetite suppressant, in the morning. Raised pulse and blood pressure, insomnia and a dry mouth are common. Habit-forming.',
          ar:'كابح شهية لفترة قصيرة، صباحاً. تسارع النبض وارتفاع الضغط والأرق وجفاف الفم شائعة. يسبّب الاعتياد.'},
   ci:['ihd', 'uncontrolledHtn', 'maoi', 'thyrotoxicosis', 'angleGlaucoma'],
-  ask:['heart', 'bp', 'prescription'] }
+  ask:['heart', 'bp', 'prescription'] },
+
+{ sci:'Ertugliflozin', ar:'إرتوغليفلوزين', atc:'A10BK04', cat:'end.diabetes', form:'tablet',
+  doses:['5 mg', '15 mg', 'with metformin or sitagliptin'], brand:['Steglatro', 'Segluromet', 'Steglujan'],
+  tags:['antidiabetic'], take:['morning'],
+  notes:{en:'Once in the morning. Drink enough and keep the genital area clean. Stop it during a serious illness, dehydration or before surgery (ketoacidosis risk).',
+         ar:'مرة صباحاً. اشرب كفايتك وحافظ على نظافة المنطقة التناسلية. أوقفه أثناء المرض الشديد أو الجفاف أو قبل الجراحة (خطر الحماض الكيتوني).'},
+  ci:['type1', 'dka', 'renal30'],
+  ask:['uti', 'kidney', 'dehydration'] }
 
 ];

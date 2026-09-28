@@ -82,6 +82,13 @@ export default [
          ar:'مرة واحدة يومياً. التعب والهبّات الساخنة شائعة؛ ونادراً ما يسبّب الاختلاج. يخفض مستوى أدوية أخرى كثيرة.'},
   ask:['epilepsy', 'otherMeds', 'falls'] },
 
+{ sci:'Degarelix', ar:'ديغاريليكس', atc:'L02BX02', cat:'onc.hormonal', form:'injection',
+  doses:['120 mg vial (starting dose)', '80 mg vial (monthly)'], brand:['Firmagon'],
+  tags:['qtPossible'],
+  notes:{en:'A monthly injection under the belly skin for prostate cancer; it lowers testosterone within days without the early flare. Hot flushes and a sore injection site are common.',
+         ar:'حقنة شهرية تحت جلد البطن لسرطان البروستاتا؛ تخفض التستوستيرون خلال أيام دون الارتفاع الأولي. هبّات الحرارة وألم مكان الحقن شائعة.'},
+  ask:['heart', 'otherMeds'] },
+
 { sci:'Leuprorelin', ar:'ليوبروريلين', atc:'L02AE02', cat:'onc.hormonal', form:'injection',
   doses:['3.75 mg monthly', '11.25 mg three-monthly', '22.5 mg', '45 mg'], brand:['Lucrin', 'Eligard', 'Lupron'], aka:['Leuprolide'],
   tags:['qtPossible'],
@@ -347,6 +354,13 @@ export default [
          ar:'يُعطى مع التراستوزوماب كل ثلاثة أسابيع. الإسهال شائع؛ تُفحص وظيفة القلب.'},
   ci:['preg'],
   ask:['heart', 'pregTest'] },
+
+{ sci:'Ramucirumab', ar:'راموسيروماب', atc:'L01FG02', cat:'onc.antibody', form:'injection',
+  doses:['100 mg/10 mL', '500 mg/50 mL vial'], brand:['Cyramza'],
+  notes:{en:'An infusion every two or three weeks for stomach, lung, bowel and liver cancers. Blood pressure and urine protein are checked; wounds heal slowly — tell the team before any surgery.',
+         ar:'تسريب كل أسبوعين أو ثلاثة لسرطانات المعدة والرئة والأمعاء والكبد. يُفحص الضغط والبروتين في البول؛ وتلتئم الجروح ببطء — أخبر الفريق قبل أي جراحة.'},
+  ci:['pregTeratogen', 'uncontrolledHtn'],
+  ask:['bp', 'dental', 'bleeding'] },
 
 { sci:'Bevacizumab', ar:'بيفاسيزوماب', atc:'L01FG01', cat:'onc.antibody', form:'injection',
   doses:['100 mg/4 mL', '400 mg/16 mL'], brand:['Avastin'],

@@ -30,6 +30,20 @@ export default [
   ci:['penAllergy', {en:'Previous jaundice or hepatic dysfunction with this drug', ar:'يرقان أو خلل كبدي سابق مع هذا الدواء'}],
   ask:['allergyPen', 'liver', 'childAge'] },
 
+{ sci:'Piperacillin', ar:'بيبيراسيلين', atc:'J01CA12', cat:'inf.penicillin', form:'injection',
+  doses:['1 g', '2 g', '4 g vial'], aka:['Piperacillin sodium'],
+  notes:{en:'A hospital penicillin for serious infections, usually given with tazobactam. Any penicillin allergy must be known first.',
+         ar:'بنسلين للمستشفى للالتهابات الخطيرة، يُعطى مع التازوباكتام عادة. يجب معرفة أي حساسية من البنسلين أولاً.'},
+  ci:['penAllergy'],
+  ask:['allergyPen', 'kidney'] },
+
+{ sci:'Procaine benzylpenicillin', ar:'بروكايين بنزيل بنسلين', atc:'J01CE09', cat:'inf.penicillin', form:'injection',
+  doses:['1 MU vial', '300,000 U + benzylpenicillin 100,000 U (fortified)'], aka:['Procaine penicillin', 'Penicillin G procaine', 'Fortified procaine penicillin'],
+  notes:{en:'A deep muscle injection only — never into a vein. Rarely, the procaine causes brief fear, confusion or hallucinations just after the injection.',
+         ar:'حقنة عضلية عميقة فقط — لا تُعطى في الوريد أبداً. نادراً ما يسبّب البروكايين خوفاً أو تشوّشاً أو هلوسة عابرة بعد الحقن مباشرة.'},
+  ci:['penAllergy', {en:'Allergy to procaine', ar:'الحساسية من البروكايين'}],
+  ask:['allergyPen', 'allergy'] },
+
 { sci:'Ampicillin', ar:'أمبيسيلين', atc:'J01CA01', cat:'inf.penicillin', form:'capsule',
   doses:['250 mg', '500 mg capsule', '125 mg/5 mL', '250 mg/5 mL suspension', '500 mg', '1 g vial'], brand:['Penbritin'],
   take:['emptyStomach'],
@@ -114,6 +128,22 @@ export default [
   ],
   ci:['cephAllergy'],
   ask:['allergyPen', 'childAge'] },
+
+{ sci:'Cefditoren', ar:'سيفديتورين', atc:'J01DD16', cat:'inf.cephalosporin', form:'tablet',
+  doses:['200 mg', '400 mg'], brand:['Spectracef', 'Meiact'], aka:['Cefditoren pivoxil'],
+  notes:{en:'Twice a day with food for 5–10 days. Not with antacids or acid reducers, which stop it being absorbed. Long courses can lower carnitine.',
+         ar:'مرتين يومياً مع الطعام لمدة 5–10 أيام. لا يؤخذ مع مضادات الحموضة أو خافضات الحمض لأنها تمنع امتصاصه. الدورات الطويلة قد تخفض الكارنيتين.'},
+  ix:[
+    ['#acidReducer', W, 'Much less is absorbed.', 'يقلّ امتصاصه كثيراً.']
+  ],
+  ci:['cephAllergy', 'betaLactamAnaphylaxis', {en:'Carnitine deficiency', ar:'نقص الكارنيتين'}],
+  ask:['allergyPen', 'antacids', 'kidney'] },
+
+{ sci:'Spectinomycin', ar:'سبكتينومايسين', atc:'J01XX04', cat:'inf.antibacterial', form:'injection',
+  doses:['2 g vial'], brand:['Trobicin'],
+  notes:{en:'A single deep muscle injection for gonorrhoea when other antibiotics cannot be used; partners need treatment too.',
+         ar:'حقنة عضلية عميقة واحدة للسيلان حين لا يمكن استعمال مضادات أخرى؛ ويحتاج الشريك إلى العلاج أيضاً.'},
+  ask:['allergy', 'preg'] },
 
 { sci:'Ceftriaxone', ar:'سيفترياكسون', atc:'J01DD04', cat:'inf.cephalosporin', form:'injection',
   doses:['250 mg', '500 mg', '1 g', '2 g'], brand:['Rocephin'],
@@ -335,6 +365,14 @@ export default [
   ask:['abxDiarrhoea', 'allergy'] },
 
 /* ---------- Quinolones ---------- */
+{ sci:'Gemifloxacin', ar:'جيميفلوكساسين', atc:'J01MA15', cat:'inf.quinolone', form:'tablet',
+  doses:['320 mg'], brand:['Factive'], aka:['Gemifloxacin mesylate'],
+  tags:['quinolone', 'qtPossible', 'chelatable'],
+  notes:{en:'Once a day for five to seven days, two hours away from antacids, iron, zinc and calcium. A rash is more common than with other quinolones — stop and report it. Tendon pain means stop at once.',
+         ar:'مرة يومياً لخمسة إلى سبعة أيام، بفاصل ساعتين عن مضادات الحموضة والحديد والزنك والكالسيوم. الطفح أكثر شيوعاً منه مع الكينولونات الأخرى — أوقفه وأبلغ عنه. ألم الأوتار يعني التوقف فوراً.'},
+  ci:['tendon', 'qt', 'under18'],
+  ask:['tendon', 'antacids', 'rash'] },
+
 { sci:'Ciprofloxacin', ar:'سيبروفلوكساسين', atc:'J01MA02', cat:'inf.quinolone', form:'tablet',
   doses:['250 mg', '500 mg', '750 mg', '0.3% drops'], brand:['Ciprobay', 'Cipro'],
   tags:['quinolone', 'qt', 'chelatable', 'seizure'], take:['noMilk'],

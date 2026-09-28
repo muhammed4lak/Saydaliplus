@@ -39,6 +39,13 @@ export default [
   ci:['skinInfection', 'rosacea'],
   ask:['skinSite', 'useLength', 'whoFor'] },
 
+{ sci:'Clobetasone', ar:'كلوبيتازون', atc:'D07AB01', cat:'skn.steroid', form:'cream',
+  doses:['0.05% cream', '0.05% ointment', '0.1% eye drops'], brand:['Eumovate'], aka:['Clobetasone butyrate'],
+  notes:{en:'A moderately potent steroid — much milder than clobetasol, despite the similar name. Twice a day for short courses.',
+         ar:'كورتيزون متوسط القوة — أخف بكثير من الكلوبيتازول رغم تشابه الاسم. مرتين يومياً لدورات قصيرة.'},
+  ci:['skinInfection', 'rosacea'],
+  ask:['skinSite', 'useLength', 'whoFor'] },
+
 { sci:'Fluocinolone', ar:'فلوسينولون', atc:'D07AC04', cat:'skn.steroid', form:'cream',
   doses:['0.025% cream', '0.025% ointment', '0.01% scalp solution', 'ear drops with antibiotics', 'with tretinoin and hydroquinone'], brand:['Synalar', 'Tri-Luma'], aka:['Fluocinolone acetonide'],
   notes:{en:'A potent steroid for eczema and psoriasis, twice a day for short courses. In the triple cream for melasma it is used at night for no more than eight weeks.',
@@ -102,6 +109,12 @@ export default [
   ci:['eardrum'],
   ask:['earDrum', 'contactLens', 'useLength'] },
 
+{ sci:'Tetracycline (topical)', ar:'تتراسيكلين (موضعي)', atc:'D06AA04', cat:'skn.antiinfective', form:'ointment',
+  doses:['3% skin ointment'], aka:['Tetracycline skin ointment'],
+  notes:{en:'An older antibiotic ointment for minor skin infections, two or three times a day for up to a week. It can stain skin and clothes yellow.',
+         ar:'مرهم مضاد حيوي قديم لالتهابات الجلد البسيطة، مرتين أو ثلاثاً يومياً لمدة أقصاها أسبوع. قد يصبغ الجلد والملابس بالأصفر.'},
+  ask:['skinSite', 'useLength'] },
+
 { sci:'Silver sulfadiazine', ar:'سلفاديازين الفضة', atc:'D06BA01', cat:'skn.antiinfective', form:'cream',
   doses:['1% cream'], brand:['Flamazine', 'Silvadene'], aka:['Silver sulphadiazine', 'Sulfadiazine silver'],
   notes:{en:'For burns: a thick layer once or twice a day under a clean dressing. Not for late pregnancy, newborns, or anyone allergic to sulfa drugs.',
@@ -110,7 +123,7 @@ export default [
   ask:['allergySulfa', 'preg', 'whoFor'] },
 
 { sci:'Povidone-iodine', ar:'بوفيدون اليود', atc:'D08AG02', cat:'skn.antiinfective', form:'solution',
-  doses:['10% solution', '10% ointment', '7.5% surgical scrub', '1% mouthwash', 'vaginal douche'], brand:['Betadine'], aka:['Povidone iodine', 'PVP-iodine', 'Iodine'],
+  doses:['10% solution', '10% ointment', '7.5% surgical scrub', '1% mouthwash', 'vaginal douche'], brand:['Betadine'], aka:['Povidone iodine', 'PVP-iodine', 'Polyvidone iodine'],
   notes:{en:'An antiseptic for cuts, wounds and skin before procedures. Not for regular use in pregnancy, breastfeeding, newborns or thyroid disease; it stains skin and clothes.',
          ar:'مطهّر للجروح والخدوش وتحضير الجلد قبل الإجراءات. لا يُستعمل بانتظام في الحمل والرضاعة ولحديثي الولادة ومرضى الدرقية؛ ويصبغ الجلد والملابس.'},
   ci:[{en:'Thyroid disease or radio-iodine treatment', ar:'مرض الدرقية أو العلاج باليود المشع'}, {en:'Iodine allergy', ar:'الحساسية من اليود'}],
@@ -121,6 +134,12 @@ export default [
   notes:{en:'The mouthwash can stain teeth brown — keep it 30 minutes apart from toothpaste and do not swallow it. Never let the skin solutions reach the eyes or ears.',
          ar:'غسول الفم قد يصبغ الأسنان بالبني — افصله عن معجون الأسنان 30 دقيقة ولا تبلعه. لا تدع محاليل الجلد تصل إلى العين أو الأذن أبداً.'},
   ask:['whatFor', 'allergy'] },
+
+{ sci:'Ethanol', ar:'الإيثانول', atc:'D08AX08', cat:'skn.antiinfective', form:'solution',
+  doses:['70% solution', '70% hand rub', '96% (not for skin)'], aka:['Ethyl alcohol', 'Medical alcohol', 'Rubbing alcohol'],
+  notes:{en:'An antiseptic for the skin and hands. It is flammable — let it dry fully before any heat or flame. Poisonous if swallowed; keep away from children.',
+         ar:'مطهّر للجلد واليدين. قابل للاشتعال — دعه يجف تماماً قبل أي حرارة أو لهب. سام إذا ابتُلع؛ أبعده عن الأطفال.'},
+  ask:['whatFor', 'childAge'] },
 
 { sci:'Cetrimide', ar:'سيتريميد', atc:'D08AJ04', cat:'skn.antiinfective', form:'solution',
   doses:['with chlorhexidine (antiseptic liquid and cream)', '40% concentrate'], brand:['Savlon', 'Cetavlon'],
@@ -283,7 +302,7 @@ export default [
   ask:['skinSite', 'kidney', 'useLength'] },
 
 { sci:'Coal tar', ar:'قطران الفحم', atc:'D05AA', cat:'skn.psoriasis', form:'solution',
-  doses:['shampoo', 'ointment', 'bath emulsion', 'with salicylic acid'], brand:['Polytar', 'Neutrogena T/Gel', 'Sebco'], aka:['Tar'],
+  doses:['shampoo', 'ointment', 'bath emulsion', 'with salicylic acid'], brand:['Polytar', 'Neutrogena T/Gel', 'Sebco'], aka:['Coal tar solution', 'Pix lithanthracis'],
   notes:{en:'For scalp psoriasis and dandruff; it smells and stains. It makes the skin sensitive to sun.',
          ar:'لصدفية فروة الرأس والقشرة؛ له رائحة ويصبغ. يجعل الجلد حساساً للشمس.'},
   ask:['skinSite', 'sun'] },
@@ -400,6 +419,12 @@ export default [
   notes:{en:'Moisturises very dry, cracked skin; the strong cream softens calluses and thick nails. It can sting on cracked skin at first.',
          ar:'يرطّب الجلد الجاف جداً والمتشقق؛ والكريم القوي يليّن الكالو والأظافر السميكة. قد يلسع على الجلد المتشقق في البداية.'},
   ask:['skinSite', 'diabetes'] },
+
+{ sci:'Beta-sitosterol', ar:'بيتا سيتوستيرول', atc:'D03AX', cat:'skn.emollient', form:'ointment',
+  doses:['0.25% ointment'], brand:['MEBO', 'Burnasores'], aka:['β-sitosterol', 'Moist exposed burn ointment'],
+  notes:{en:'A herbal burn and wound ointment in a sesame-oil base, applied thickly two to four times a day after gently removing the old layer. Deep, large or infected burns need a doctor.',
+         ar:'مرهم عشبي للحروق والجروح بقاعدة زيت السمسم، يُدهن بطبقة سميكة مرتين إلى أربع مرات يومياً بعد إزالة الطبقة القديمة بلطف. الحروق العميقة أو الكبيرة أو الملتهبة تحتاج طبيباً.'},
+  ask:['whoFor', 'duration', 'diabetes'] },
 
 { sci:'White soft paraffin', ar:'البارافين الأبيض الطري', atc:'D02AC', cat:'skn.emollient', form:'ointment',
   doses:['ointment', 'with liquid paraffin (50/50)', 'emollient creams'], brand:['Vaseline', 'Diprobase'], aka:['Petrolatum', 'Petroleum jelly', 'Paraffin emollient'],

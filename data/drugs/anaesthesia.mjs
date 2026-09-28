@@ -199,6 +199,13 @@ export default [
          ar:'مرخٍ عضلي للجراحة قليل التأثير على القلب؛ ويمكن عكس أثره بالسوغاماديكس.'},
   ask:['anaesthetic', 'myasthenia'] },
 
+{ sci:'Pancuronium', ar:'بانكورونيوم', atc:'M03AC01', cat:'ana.nmb', form:'injection',
+  doses:['2 mg/mL injection'], brand:['Pavulon'], aka:['Pancuronium bromide'],
+  notes:{en:'A long-acting muscle relaxant for surgery and ventilated patients; it can speed up the heart.',
+         ar:'مرخٍ عضلي طويل المفعول للجراحة والمرضى على جهاز التنفس؛ وقد يسرّع القلب.'},
+  ci:['myasthenia'],
+  ask:['anaesthetic', 'kidney', 'myasthenia'] },
+
 { sci:'Neostigmine', ar:'نيوستيغمين', atc:'N07AA01', cat:'ana.nmb', form:'injection',
   doses:['2.5 mg/mL injection', 'with glycopyrronium', '15 mg tablet'], brand:['Prostigmin'],
   tags:['cholinesterase'],

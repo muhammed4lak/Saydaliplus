@@ -97,6 +97,14 @@ export default [
   ci:['asthma', 'qt', 'bradycardia', 'hypoK', 'renal30'],
   ask:['rhythm', 'asthma', 'dehydration'] },
 
+{ sci:'Mexiletine', ar:'ميكسيليتين', atc:'C01BB02', cat:'cvs.arrhythmia', form:'injection',
+  doses:['25 mg/mL injection', '167 mg capsule'], brand:['Namuscla', 'Mexitil'],
+  take:['withFood'],
+  notes:{en:'For dangerous heart rhythms (and, as capsules, muscle stiffness in myotonia). With food; nausea, tremor and dizziness are common. Heart tracings are checked.',
+         ar:'لاضطرابات نظم القلب الخطيرة (وككبسولات لتيبّس العضلات في الوهن التأتري). مع الطعام؛ الغثيان والرعاش والدوخة شائعة. يُفحص تخطيط القلب.'},
+  ci:['heartBlock', 'hfSevere', 'recentMI'],
+  ask:['heart', 'liver', 'otherMeds'] },
+
 { sci:'Flecainide', ar:'فليكاينيد', atc:'C01BC04', cat:'cvs.arrhythmia', form:'tablet',
   doses:['50 mg', '100 mg'], brand:['Tambocor'],
   tags:['qtPossible'],

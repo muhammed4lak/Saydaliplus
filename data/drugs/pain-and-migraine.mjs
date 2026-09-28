@@ -164,6 +164,13 @@ export default [
 
 /* ---------- Migraine ---------- */
 
+{ sci:'Pizotifen', ar:'بيزوتيفين', atc:'N02CX01', cat:'cns.migraine', form:'tablet',
+  doses:['0.5 mg tablet', '1.5 mg tablet', '0.25 mg/5 mL syrup'], brand:['Sandomigran'], aka:['Pizotyline'],
+  notes:{en:'Taken every day to prevent migraine, usually at night — not for an attack. It increases appetite and weight and causes drowsiness.',
+         ar:'يؤخذ كل يوم للوقاية من الشقيقة، ليلاً عادة — لا لعلاج النوبة. يزيد الشهية والوزن ويسبّب النعاس.'},
+  ci:['angleGlaucoma', 'retention'],
+  ask:['drive', 'glaucoma', 'prostate'] },
+
 { sci:'Sumatriptan', ar:'سوماتريبتان', atc:'N02CC01', cat:'cns.migraine', form:'tablet',
   doses:['50 mg', '100 mg', '6 mg injection', '20 mg nasal spray'], brand:['Imigran', 'Imitrex'],
   tags:['triptan', 'seroWeak'],

@@ -167,6 +167,13 @@ export default [
          ar:'حقن يومية أثناء علاج الخصوبة تُعدّل حسب السونار. أبلغي عن انتفاخ البطن أو ألمه أو ضيق النفس.'},
   ask:['injectTech'] },
 
+{ sci:'Lutropin alfa', ar:'لوتروبين ألفا', atc:'G03GA07', cat:'wom.fertility', form:'injection',
+  doses:['75 IU vial'], brand:['Luveris'], aka:['Recombinant LH', 'r-hLH'],
+  notes:{en:'Given with FSH injections in fertility treatment, under ultrasound monitoring. Report tummy swelling, pain or breathlessness (ovarian hyperstimulation).',
+         ar:'يُعطى مع حقن FSH في علاج الخصوبة، مع مراقبة بالأمواج فوق الصوتية. أبلغي عن انتفاخ البطن أو ألمه أو ضيق التنفس (فرط تنبيه المبيض).'},
+  ci:['estrogenCancer', 'vaginalBleeding'],
+  ask:['injectTech', 'cold'] },
+
 { sci:'Menotropins', ar:'مينوتروبين', atc:'G03GA02', cat:'wom.fertility', form:'injection',
   doses:['75 IU', '600 IU'], brand:['Menopur'], aka:['Menotrophin', 'hMG'],
   notes:{en:'Daily injections during IVF, adjusted by scans. Report tummy swelling, pain or breathlessness.',
@@ -223,6 +230,13 @@ export default [
   ci:['uncontrolledHtn', {en:'Pre-eclampsia', ar:'مقدمات الارتعاج'}],
   ask:['bp'] },
 
+{ sci:'Carboprost', ar:'كاربوبروست', atc:'G02AD04', cat:'wom.obstetric', form:'injection',
+  doses:['250 microgram/mL injection'], brand:['Hemabate'], aka:['Carboprost trometamol'],
+  notes:{en:'A deep muscle injection for heavy bleeding after childbirth when oxytocin has not worked. Diarrhoea, vomiting and fever are common.',
+         ar:'حقنة عضلية عميقة للنزف الشديد بعد الولادة حين لا ينفع الأوكسيتوسين. الإسهال والتقيؤ والحرارة شائعة.'},
+  ci:['asthma', {en:'Heart, lung, kidney or liver disease', ar:'أمراض القلب أو الرئة أو الكلى أو الكبد'}],
+  ask:['asthma', 'heart'] },
+
 { sci:'Dinoprostone', ar:'دينوبروستون', atc:'G02AD02', cat:'wom.obstetric', form:'pessary',
   doses:['10 mg vaginal insert', '3 mg pessary', '1 mg and 2 mg gel'], brand:['Propess', 'Prostin E2'],
   notes:{en:'Placed in hospital to ripen the cervix before induction of labour.',
@@ -237,7 +251,7 @@ export default [
   ask:['allergy'] },
 
 { sci:'Hydroxyprogesterone caproate', ar:'كابروات هيدروكسي بروجستيرون', atc:'G03DA03', cat:'wom.obstetric', form:'injection',
-  doses:['250 mg/mL'], brand:['Proluton Depot'],
+  doses:['250 mg/mL'], brand:['Proluton Depot', 'Primolut Depot'], aka:['Hydroxyprogesterone', 'Hydroxyprogesterone hexanoate'],
   notes:{en:'A weekly injection in some pregnancies at risk of preterm birth; the benefit is now doubted and practice varies.',
          ar:'حقنة أسبوعية في بعض حالات الحمل المعرّضة للولادة المبكرة؛ فائدتها صارت موضع شك وتختلف الممارسات.'},
   ci:['vte', 'hepActive'],
@@ -261,6 +275,12 @@ export default [
   doses:['90 mg ovule', '36% concentrate', 'gel', 'with cinchocaine, rectal'], brand:['Albothyl', 'Faktu'],
   notes:{en:'For cervical and vaginal inflammation (and piles, with cinchocaine). Local burning is common; no intercourse during treatment.',
          ar:'لالتهاب عنق الرحم والمهبل (وللبواسير مع السينشوكائين). الحرقة الموضعية شائعة؛ ولا علاقة زوجية أثناء العلاج.'},
-  ask:['preg', 'firstEpisode'] }
+  ask:['preg', 'firstEpisode'] },
+
+{ sci:'Nonoxinol-9', ar:'نونوكسينول-9', atc:'G02BB02', cat:'wom.contraceptive', form:'pessary',
+  doses:['100 mg vaginal pessary', 'gel'], aka:['Nonoxynol-9', 'Nonoxinol 9', 'Nonoxinol'],
+  notes:{en:'A spermicide put high in the vagina 10 minutes to an hour before sex. On its own it is not very reliable, and frequent use irritates the vagina and can raise the risk of HIV.',
+         ar:'مبيد للنطاف يُوضع عميقاً في المهبل قبل الجماع بعشر دقائق إلى ساعة. وحده ليس موثوقاً جداً، والاستعمال المتكرر يهيّج المهبل وقد يزيد خطر فيروس الإيدز.'},
+  ask:['allergy', 'uti'] }
 
 ];

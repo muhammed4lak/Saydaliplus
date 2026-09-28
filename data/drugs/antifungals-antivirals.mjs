@@ -264,6 +264,24 @@ export default [
   ci:['hepModSevere'],
   ask:['rash', 'liver', 'ocp'] },
 
+{ sci:'Tenofovir disoproxil/Lamivudine/Dolutegravir', ar:'تينوفوفير ديزوبروكسيل/لاميفودين/دولوتيغرافير', atc:'J05AR27', cat:'inf.antiviral', form:'tablet',
+  doses:['300/300/50 mg'], brand:['TLD'], aka:['Dolutegravir/lamivudine/tenofovir'],
+  notes:{en:'One tablet a day for HIV, the WHO first choice. Take it two hours before or six hours after antacids, iron or calcium. Never stop without the clinic; kidneys are checked.',
+         ar:'قرص واحد يومياً لفيروس الإيدز، الخيار الأول لمنظمة الصحة العالمية. خذه قبل مضادات الحموضة أو الحديد أو الكالسيوم بساعتين أو بعدها بست ساعات. لا توقفه دون العيادة؛ وتُفحص الكلى.'},
+  ix:[
+    ['#polyvalent', S, 'Binds dolutegravir — separate the doses.', 'يربط الدولوتيغرافير — افصل بين الجرعات.'],
+    ['Metformin', W, 'Raises metformin levels.', 'يرفع مستوى الميتفورمين.']
+  ],
+  ci:['renal30'],
+  ask:['antacids', 'kidney', 'hepatitis'] },
+
+{ sci:'Zidovudine/Lamivudine', ar:'زيدوفودين/لاميفودين', atc:'J05AR01', cat:'inf.antiviral', form:'tablet',
+  doses:['300/150 mg', '60/30 mg dispersible (children)'], brand:['Combivir'], aka:['Lamivudine/zidovudine'],
+  notes:{en:'Twice a day for HIV, including in babies to prevent infection from the mother. Anaemia and low white cells are checked; tiredness or breathlessness should be reported.',
+         ar:'مرتين يومياً لفيروس الإيدز، ومنه للرضّع للوقاية من العدوى من الأم. يُفحص فقر الدم ونقص الكريات البيض؛ ويُبلغ عن التعب أو ضيق التنفس.'},
+  ci:['marrow'],
+  ask:['childAge', 'labs', 'hepatitis'] },
+
 { sci:'Zidovudine', ar:'زيدوفودين', atc:'J05AF01', cat:'inf.hiv', form:'capsule',
   doses:['100 mg', '250 mg', '300 mg', 'with lamivudine', '50 mg/5 mL', '10 mg/mL infusion'], brand:['Retrovir', 'Combivir'], aka:['AZT'],
   notes:{en:'It can cause anaemia and low white cells — blood counts are checked. Headache and nausea at first.',
