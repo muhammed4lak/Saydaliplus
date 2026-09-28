@@ -871,6 +871,23 @@ activity. Under P7 nobody is ranked: a person is shown against the pharmacy's
 average on their own page, never in a league table. *The check asserts:* no
 screen lists people ordered by sales; a staff member sees only their own
 figures.
+**Decided 28 Sep 2026, before building:**
+1. **The owner has shifts too.** An owner who sells at their own pharmacy
+   checks in and out like anyone on the team, and appears in the performance
+   figures on their own page like anyone else.
+2. **A minimal rota: the owner sets each person's shift times** (days and
+   hours) — the scheduled end is what a missed check-out closes at. **Every
+   change to someone's schedule is written to the timeline** — who changed
+   it, from what, to what, when — **and shown to both** the owner and that
+   person.
+3. **Reports in the CRM are the owner's choice**: a setting, **off by
+   default**, that the owner turns on or off per pharmacy. Off, the CRM sees
+   none of that pharmacy's Reports figures; on, the Saydali+ team sees the
+   pharmacy-level figures (never a person's). Turning it on or off is itself
+   on the record, and the CRM shows only pharmacies that have it on.
+*The check asserts, as well:* a schedule change appears in both people's
+timelines; with the setting off the CRM holds no Reports figure for that
+pharmacy.
 
 **v0.0018 — the near-expiry exchange.** (W22)
 Built on v0.0013's batches: the owner's batches inside the near-expiry window,
