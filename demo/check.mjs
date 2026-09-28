@@ -3122,7 +3122,8 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
        signOut(); signInAs('rahma@example.com'); setLang('en'); S.openStaff = null; goto('team');
        return g === 'sell,voids,discounts,ownItems' && may && [...document.querySelectorAll('.tl-ev')].some(e => /Gave Ahmed Al-Kubaisi the Pharmacist role/.test(e.innerText)); }));
   ok('a role’s own permission cannot be taken away one person at a time — change the role instead',
-     await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'voids', false); return effectiveGrants(x).includes('voids'); }));
+     await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'voids', false); setGrant(x.id, 'voids', true);
+       return effectiveGrants(x).includes('voids') && !x.grants.includes('voids'); }));
   ok('role plus extras: Pharmacist + Prices, shown that way, and the extra works',
      await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'prices', true); render();
        return roleLabel(x) === 'Pharmacist + Prices' && effectiveGrants(x).includes('prices') && /Pharmacist \+ Prices/.test(document.querySelector('.tm-row .tm-grants').innerText); }));
@@ -3196,7 +3197,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
        return /Internal code/.test(txt) && /REG-R0102/.test(txt) && /Linked the first time it is scanned/.test(txt) && /Amlodipine \(as besylate\)/.test(txt) &&
          /4214\/31-1-2017 · Awamedica · Iraq/.test(txt); }));
   ok('a controlled product says so on its page',
-     await dk.evaluate(() => { openProduct('REG-R2898'); return /Tramadol — Controlled in Iraq/.test(document.querySelector('.cl-banner').innerText); }));
+     await dk.evaluate(() => { openProduct('REG-R2898'); return /Tramadol — Controlled in Iraq/.test((document.querySelector('.cl-banner') || {}).innerText || ''); }));
   ok('a suspended registration is shown, and says it is not for sale',
      await dk.evaluate(() => { openProduct('REG-R1879'); return !!document.querySelector('.rp-suspended') && /not offered for sale/.test(document.querySelector('.rp-suspended').innerText); }));
   ok('…and the Point of sale will not sell it',

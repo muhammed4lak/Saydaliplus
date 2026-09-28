@@ -1568,7 +1568,7 @@ curator adds them. In Arabic their name is the scientific name.
 production the catalogue is the database. Search over ~5,250 products stays
 under 40 ms a keystroke (checked).
 
-- Checks: 40 new (658 app in all); CRM unchanged (271). Mutation testing: see below.
+- Checks: 40 new (658 app in all); CRM unchanged (271). Mutation-tested: 23 of 23 caught (two checks tightened after the first run: a role's own permission added as an extra, and a crash-proof control banner check).
 
 ## Unused concepts
 
