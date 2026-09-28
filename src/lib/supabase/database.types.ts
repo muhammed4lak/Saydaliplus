@@ -7,6 +7,7 @@
  * matching type here or the compiler will not catch the mismatch.
  */
 
+/** 'pharmacy' is only the old pharmacy accounts (before 0015): nobody can create one now. */
 export type UserRole = 'pharmacist' | 'pharmacy' | 'student';
 export type VerificationStatus = 'pending' | 'verified' | 'rejected';
 export type ListingType = 'shift' | 'internship';
@@ -56,6 +57,55 @@ export type PharmacyDetails = {
   licence_no: string;
   address: string | null;
   licence_document_url: string | null;
+}
+
+/** A pharmacy: a place a Syndicate-verified pharmacist owns (0015). */
+export type Pharmacy = {
+  id: string;
+  /** Null only for an old pharmacy account's pharmacy not yet claimed. */
+  owner_id: string | null;
+  name_en: string | null;
+  /** Required, and must contain Arabic script. */
+  name_ar: string;
+  licence_no: string;
+  district: string | null;
+  address: string | null;
+  licence_document_url: string | null;
+  verification_status: VerificationStatus;
+  verified_at: string | null;
+  rejection_reason: string | null;
+  responsible_pharmacist_id: string | null;
+  legacy_account_id: string | null;
+  created_at: string;
+}
+
+/** A role: ready-made (preset, no owner) or an owner's own. */
+export type StaffRole = {
+  id: string;
+  owner_id: string | null;
+  preset: 'cashier' | 'pharmacist' | 'stockKeeper' | 'manager' | null;
+  name: string | null;
+  grants: string[];
+  created_at: string;
+}
+
+export type StaffState = 'invited' | 'active' | 'ended';
+
+/** A place on a pharmacy's team. */
+export type PharmacyStaff = {
+  id: string;
+  pharmacy_id: string;
+  pharmacist_id: string | null;
+  invited_contact: string;
+  name: string;
+  role_id: string;
+  extra_grants: string[];
+  state: StaffState;
+  invite_code: string | null;
+  invited_by: string | null;
+  invited_at: string;
+  started_on: string | null;
+  ended_on: string | null;
 }
 
 export type StudentDetails = {
@@ -357,6 +407,9 @@ export type Database = {
       profiles: Table<Profile>;
       pharmacist_details: Table<PharmacistDetails, DetailRelationships<'pharmacist_details'>>;
       pharmacy_details: Table<PharmacyDetails, DetailRelationships<'pharmacy_details'>>;
+      pharmacies: Table<Pharmacy>;
+      staff_roles: Table<StaffRole>;
+      pharmacy_staff: Table<PharmacyStaff>;
       student_details: Table<StudentDetails, DetailRelationships<'student_details'>>;
       platform_admins: Table<{ profile_id: string; granted_at: string }>;
       listings: Table<Listing, ListingRelationships>;
@@ -389,10 +442,16 @@ export type Database = {
         Returns: undefined;
       };
       request_payout: { Args: { method: PayoutMethod }; Returns: Payout };
+      accept_invitation: { Args: { code: string }; Returns: PharmacyStaff };
+      has_permission: { Args: { pharmacy: string; perm: string }; Returns: boolean };
+      owns_pharmacy: { Args: { pharmacy: string }; Returns: boolean };
+      works_at: { Args: { pharmacy: string }; Returns: boolean };
+      has_syndicate_badge: { Args: { person: string }; Returns: boolean };
     };
     Enums: {
       user_role: UserRole;
       verification_status: VerificationStatus;
+      staff_state: StaffState;
       listing_type: ListingType;
       listing_status: ListingStatus;
       rate_type: RateType;

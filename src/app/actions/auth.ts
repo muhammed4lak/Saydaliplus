@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import {
   pharmacistSignUpSchema,
-  pharmacySignUpSchema,
   signInSchema,
   studentSignUpSchema,
 } from '@/lib/validation';
@@ -76,43 +75,9 @@ export async function signUpPharmacist(
   redirect('/verification-pending');
 }
 
-export async function signUpPharmacy(
-  _prev: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const parsed = pharmacySignUpSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? 'common.somethingWentWrong' };
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  });
-  if (error || !data.user) return { error: 'common.somethingWentWrong' };
-
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: data.user.id,
-    role: 'pharmacy',
-    full_name_en: parsed.data.responsiblePharmacist,
-    phone: parsed.data.phone,
-    district: parsed.data.district,
-  });
-  if (profileError) return { error: 'common.somethingWentWrong' };
-
-  const { error: detailsError } = await supabase.from('pharmacy_details').insert({
-    profile_id: data.user.id,
-    pharmacy_name_en: parsed.data.pharmacyNameEn,
-    pharmacy_name_ar: parsed.data.pharmacyNameAr,
-    licence_no: parsed.data.licenceNo,
-    address: parsed.data.address,
-    licence_document_url: parsed.data.licenceDocumentUrl ?? null,
-  });
-  if (detailsError) return { error: 'common.somethingWentWrong' };
-
-  redirect('/verification-pending');
-}
+/* v0.0016 (0015): there is no pharmacy account to sign up for. An owner signs
+   up as a pharmacist and, once the Syndicate verifies them, adds the pharmacy
+   they own — see addPharmacy in ./team. */
 
 export async function signUpStudent(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = studentSignUpSchema.safeParse(Object.fromEntries(formData));

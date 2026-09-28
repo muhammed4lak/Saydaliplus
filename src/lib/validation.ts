@@ -51,25 +51,40 @@ export const pharmacistSignUpSchema = withPasswordConfirmation({
   cardDocumentUrl: z.string().url().optional(),
 });
 
-export const pharmacySignUpSchema = withPasswordConfirmation({
-  // Both scripts, because Arabic is the default language and a Latin-only name
-  // is unreadable to most of the pharmacists this pharmacy will be shown to.
-  // The Arabic field has to contain Arabic or the requirement is cosmetic —
-  // see containsArabic. Mirrored by a check constraint, so a request that
-  // bypasses this schema is still refused.
+/**
+ * Adding a pharmacy (0015). There is no pharmacy account to sign up for: a
+ * Syndicate-verified pharmacist adds the pharmacy they own, and becomes its
+ * owner. Both scripts, because Arabic is the default language and a Latin-only
+ * name is unreadable to most of the pharmacists it will be shown to; the
+ * Arabic field has to contain Arabic or the requirement is cosmetic — see
+ * containsArabic. Mirrored by a check constraint, so a request that bypasses
+ * this schema is still refused.
+ */
+export const addPharmacySchema = z.object({
   pharmacyNameAr: z
     .string()
     .trim()
     .min(2, 'auth.errors.required')
     .refine(containsArabic, 'auth.errors.arabicRequired'),
   pharmacyNameEn: z.string().trim().min(2, 'auth.errors.required'),
-  responsiblePharmacist: z.string().trim().min(2, 'auth.errors.required'),
-  email: z.string().trim().email('auth.errors.email'),
-  phone,
   licenceNo: z.string().trim().min(3, 'auth.errors.required'),
   district,
   address: z.string().trim().min(4, 'auth.errors.required'),
   licenceDocumentUrl: z.string().url().optional(),
+});
+
+/** An invitation: a name, and a phone number or an email address. */
+export const inviteStaffSchema = z.object({
+  pharmacyId: z.string().uuid(),
+  name: z.string().trim().min(2, 'auth.errors.required'),
+  contact: z
+    .string()
+    .trim()
+    .refine((v) => z.string().email().safeParse(v).success || /^\+?[0-9 ]{7,16}$/.test(v), 'team.errors.contact'),
+});
+
+export const inviteCodeSchema = z.object({
+  code: z.string().trim().regex(/^[0-9]{6}$/, 'team.errors.code'),
 });
 
 export const studentSignUpSchema = withPasswordConfirmation({
@@ -163,6 +178,6 @@ export const payoutSchema = z.object({
 });
 
 export type PharmacistSignUp = z.infer<typeof pharmacistSignUpSchema>;
-export type PharmacySignUp = z.infer<typeof pharmacySignUpSchema>;
+export type AddPharmacy = z.infer<typeof addPharmacySchema>;
 export type StudentSignUp = z.infer<typeof studentSignUpSchema>;
 export type PostListing = z.infer<typeof postListingSchema>;

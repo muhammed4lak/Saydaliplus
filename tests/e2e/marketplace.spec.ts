@@ -14,7 +14,8 @@ import { expect, test } from '@playwright/test';
 const ACCOUNTS = {
   pharmacist: { email: 'ahmed@example.com', password: 'password123' },
   pendingPharmacist: { email: 'noor@example.com', password: 'password123' },
-  pharmacy: { email: 'rahma@example.com', password: 'password123' },
+  // The old pharmacy account the marketplace-era seed rows belong to (0015).
+  pharmacy: { email: 'alrahma.pharmacy@example.com', password: 'password123' },
   reviewer: { email: 'admin@saydali.example', password: 'password123' },
 };
 

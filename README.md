@@ -536,15 +536,23 @@ supabase db reset      # applies migrations, then supabase/seed.sql
 npm run dev
 ```
 
-The seed gives you five accounts, all with password `password123`:
+The seed's accounts all use the password `password123`. Since migration 0015
+there is one kind of account for a pharmacist: owning a pharmacy and working on
+a team are links, not account types, and both need the Syndicate badge.
 
 | Account | Why it is there |
 |---|---|
 | `ahmed@example.com` | Verified pharmacist with a completed shift, so stats and the CV have something behind them |
-| `noor@example.com` | **Pending** pharmacist who applied while unverified — the queued-application rule, visible |
-| `rahma@example.com` | Verified pharmacy with open shifts, an overnight one, and one that hits the fee floor |
+| `noor@example.com` | **Pending** pharmacist who applied while unverified — the queued-application rule, visible; also invited to Al-Rahma's team, which she cannot accept until verified |
+| `rahma@example.com` | Pharmacist who **owns** Al-Rahma, and works shifts on Layla's team at Al-Hayat |
+| `layla@example.com` | Pharmacist who owns three pharmacies, with her own role "Branch lead" |
+| `hassan@example.com` | On Al-Rahma's team: Pharmacist + Prices |
+| `maryam@example.com` | On two of Layla's teams: Pharmacist at Al-Hayat, Manager at Al-Shifa |
+| `alrahma.pharmacy@example.com` | The old Al-Rahma pharmacy *account* from before 0015, kept for the marketplace-era rows (open shifts, an overnight one, the fee floor) |
 | `zainab@uobaghdad.edu.iq` | Student |
 | `admin@saydali.example` | Platform reviewer, for the verification queue |
+
+Karim, Zahraa, Omar, Duaa (left), Rusul and Ali fill the teams (`<name>@example.com`).
 
 ```bash
 npm run test:e2e       # Playwright, against the seeded database

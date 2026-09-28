@@ -1,7 +1,8 @@
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import type { Profile, UserRole } from '@/lib/supabase/database.types';
+import type { Pharmacy, PharmacyStaff, Profile, UserRole } from '@/lib/supabase/database.types';
+import { viewRole, type ViewRole } from '@/lib/permissions';
 
 export interface Session {
   userId: string;
@@ -9,6 +10,14 @@ export interface Session {
   profile: Profile;
   isVerified: boolean;
   isAdmin: boolean;
+  /** A Syndicate-verified pharmacist: the only kind of account that can own or work (0015). */
+  hasBadge: boolean;
+  /** The pharmacies this pharmacist owns. Owning is a link, not a type. */
+  owned: Pharmacy[];
+  /** Their places on teams they are active on, at pharmacies they do not own. */
+  workplaces: PharmacyStaff[];
+  /** What the interface shows — derived from the links, never stored. */
+  view: ViewRole;
 }
 
 /**
@@ -38,12 +47,25 @@ export const getSession = cache(async (): Promise<Session | null> => {
     .select('profile_id', { count: 'exact', head: true })
     .eq('profile_id', user.id);
 
+  /* RLS returns only what this person may see: pharmacies they own or work
+     at, and their own places on teams. */
+  const [{ data: pharmacies }, { data: places }] = await Promise.all([
+    supabase.from('pharmacies').select('*').eq('owner_id', user.id),
+    supabase.from('pharmacy_staff').select('*').eq('pharmacist_id', user.id).eq('state', 'active'),
+  ]);
+  const owned = pharmacies ?? [];
+  const isVerified = profile.verification_status === 'verified';
+
   return {
     userId: user.id,
     email: user.email ?? '',
     profile,
-    isVerified: profile.verification_status === 'verified',
+    isVerified,
     isAdmin: (count ?? 0) > 0,
+    hasBadge: isVerified && profile.role === 'pharmacist',
+    owned,
+    workplaces: (places ?? []).filter((p) => !owned.some((o) => o.id === p.pharmacy_id)),
+    view: viewRole(profile.role, owned.length),
   };
 });
 

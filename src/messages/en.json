@@ -33,9 +33,7 @@
     "chooseRole": "What brings you to Saydali+?",
     "roles": {
       "pharmacist": "I'm a pharmacist",
-      "pharmacistSub": "Find relief shifts near you and get paid per shift.",
-      "pharmacy": "I own a pharmacy",
-      "pharmacySub": "Post shifts and internships, and find cover fast.",
+      "pharmacistSub": "Own a pharmacy or work in one: sign up as a pharmacist. Once the Syndicate verifies you, add your pharmacy or accept an invitation.",
       "student": "I'm a pharmacy student",
       "studentSub": "Find a pharmacy for your summer training."
     },
@@ -460,5 +458,14 @@
   "offline": {
     "title": "No connection",
     "body": "You are offline. We don't show you saved shifts, because they may already have been filled — try again when you are back on the network."
+  },
+  "team": {
+    "errors": {
+      "contact": "Type a phone number or an email address.",
+      "code": "The code is six digits.",
+      "needBadge": "Your Syndicate verification has to be complete first.",
+      "notYours": "Only the pharmacy’s owner can do that.",
+      "badCode": "That code is not right."
+    }
   }
 }

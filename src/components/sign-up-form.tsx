@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
-import { signUpPharmacist, signUpPharmacy, signUpStudent } from '@/app/actions/auth';
+import { signUpPharmacist, signUpStudent } from '@/app/actions/auth';
 import { DISTRICTS } from '@/lib/validation';
 
 const UNIVERSITIES = [
@@ -15,11 +15,10 @@ const UNIVERSITIES = [
   'Other',
 ] as const;
 
-export function SignUpForm({ role }: { role: 'pharmacist' | 'pharmacy' | 'student' }) {
+export function SignUpForm({ role }: { role: 'pharmacist' | 'student' }) {
   const t = useTranslations();
 
-  const action =
-    role === 'pharmacist' ? signUpPharmacist : role === 'pharmacy' ? signUpPharmacy : signUpStudent;
+  const action = role === 'pharmacist' ? signUpPharmacist : signUpStudent;
 
   const [state, formAction, pending] = useActionState(action, { error: null });
 
@@ -30,23 +29,7 @@ export function SignUpForm({ role }: { role: 'pharmacist' | 'pharmacy' | 'studen
         {role === 'student' ? t('verification.pendingBody') : t('verification.manualNote')}
       </p>
 
-      {role === 'pharmacy' ? (
-        <>
-          <Field
-            name="pharmacyNameAr"
-            label={t('auth.fields.pharmacyNameAr')}
-            hint={t('auth.fields.pharmacyNameArHint')}
-            dir="rtl"
-          />
-          <Field name="pharmacyNameEn" label={t('auth.fields.pharmacyNameEn')} dir="ltr" />
-          <Field name="responsiblePharmacist" label={t('auth.fields.responsiblePharmacist')} />
-          <Field name="email" label={t('auth.email')} type="email" dir="ltr" />
-          <Field name="phone" label={t('auth.fields.phone')} type="tel" dir="ltr" />
-          <Field name="licenceNo" label={t('auth.fields.licenceNo')} mono dir="ltr" />
-          <Select name="district" label={t('auth.fields.district')} options={DISTRICTS} />
-          <Field name="address" label={t('auth.fields.address')} />
-        </>
-      ) : role === 'pharmacist' ? (
+      {role === 'pharmacist' ? (
         <>
           <Field
             name="fullName"

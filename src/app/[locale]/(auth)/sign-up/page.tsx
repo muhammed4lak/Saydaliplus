@@ -3,9 +3,10 @@ import { Link } from '@/i18n/routing';
 import { NavIcon, type IconName } from '@/components/icons';
 import { SignUpForm } from '@/components/sign-up-form';
 
+/* v0.0016 (0015): an owner is a pharmacist who owns a pharmacy, so there is
+   no separate "I own a pharmacy" account; the pharmacist option says so. */
 const ROLES = [
   { key: 'pharmacist', icon: 'user' },
-  { key: 'pharmacy', icon: 'home' },
   { key: 'student', icon: 'cap' },
 ] as const satisfies readonly { key: string; icon: IconName }[];
 
