@@ -824,6 +824,20 @@ the employee reads their own, and a grant or a revocation is itself on it.
 *The check asserts:* an action without the permission is refused and recorded;
 the CRM can read no timeline.
 
+**Before v0.0015 — answered 28 Sep 2026.**
+1. **The drawer comes with selling:** whoever may sell may open, hand over and
+   close a drawer; a close over the sign-off amount still waits for the owner.
+2. **Invitations:** a link the owner sends (WhatsApp or SMS), with a code to
+   type as the fallback.
+3. **Roles — later ("after a while"):** ready-made roles with their
+   permissions (e.g. *Cashier*, *Pharmacist*, *Stock keeper*) so an owner
+   assigns a role rather than ticking boxes, plus **custom roles** the owner
+   builds, names, saves and assigns. v0.0015 builds per-person grants in a
+   shape roles can sit on top of (a role is a saved set of grants), so adding
+   them later changes nothing already granted. Not scheduled yet.
+4. **The phone app and the stores — delayed to after v0.0017**, with every
+   reminder (see *Reminders*).
+
 **v0.0016 — clinical governance.**
 A **Rules** module in the CRM — `proposed → under review → approved (tier) →
 retired` — with a named approver and date on every transition, and a rule that
@@ -1432,8 +1446,11 @@ rediscovered as new or lost when circumstances change.
 
 ## Reminders
 
-- **After v0.0014 — the phone app and the stores.** *(Still pending at
-  v0.0013.)* Raised 26 Sep 2026: when
+- **After v0.0017 — the phone app and the stores.** *(Brought back with
+  v0.0014's notes; **delayed to after v0.0017** on 28 Sep 2026 — every
+  reminder waits until then.)* Meanwhile: keep the hardware test on its own
+  track (the printer and a wedge scanner can be tested from the web build);
+  no pharmacy runs its till on a prototype. Raised 26 Sep 2026: when
   to move to React for Google Play and the App Store. The recommendation given,
   not yet decided: the project already has React (the Next.js codebase); the
   phone app should be **React Native with Expo**, sharing the business rules
@@ -1444,7 +1461,7 @@ rediscovered as new or lost when circumstances change.
   five owner conversations done; the prototypes' checks become the real app's
   acceptance tests. Needed for the stores: a Google Play developer account, an
   Apple developer account, a privacy policy covering patient data, and the
-  name (W9). **Bring this back to the user with v0.0014's notes.**
+  name (W9). **Bring this back to the user with v0.0017's notes.**
 
 ## The non-code track
 
