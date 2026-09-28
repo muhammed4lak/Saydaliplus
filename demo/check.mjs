@@ -3502,6 +3502,36 @@ await dk.setViewportSize({ width: 320, height: 700 });
      wide.length === 0);
 }
 
+console.log('\nan owner of several stays in the module they chose a pharmacy from (v0.0016.1)');
+{
+  const np = await dk.context().newPage();
+  np.on('pageerror', e => errs.push('pageerror (v0.0016.1): ' + e.message));
+  await np.goto(darkUrl); await np.waitForTimeout(400);
+  ok('Team with All asks which pharmacy, and choosing one from that list opens its Team — not its Home',
+     await np.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy(null); goto('team');
+       const asked = /Which pharmacy’s team\?/.test(document.querySelector('.screen-body').textContent);
+       document.querySelector('.screen-body .card .row').click();
+       return asked && S.screen === 'team' && !!currentPharmacy() && !!document.querySelector('.tm-row, .tm-invite'); }));
+  ok('switching by the tab strip keeps Team too, and a person open at one pharmacy is closed at the other',
+     await np.evaluate(() => { setPharmacy('P8'); goto('team');
+       [...document.querySelectorAll('.ptab')].find(b => /Dar Al-Dawa/.test(b.textContent)).click();
+       const byTab = S.screen === 'team' && currentPharmacy().id === 'P9' && !!document.querySelector('.tm-row, .tm-invite');
+       setPharmacy('P8'); const x = staffOf('P8').find(s => s.state === 'active'); S.openStaff = x.id; render();
+       const onPerson = !!document.querySelector('.tm-person');
+       setPharmacy('P9');
+       return byTab && onPerson && S.screen === 'team' && S.openStaff === null && !document.querySelector('.tm-person'); }));
+  ok('the same for the drawer, labels and suppliers; an order goes back to the orders list',
+     await np.evaluate(() => ['drawer', 'labels', 'suppliers'].every(s => { setPharmacy('P8'); goto(s); setPharmacy('P9'); return S.screen === s; }) &&
+       (() => { setPharmacy('P8'); S.screen = 'order'; setPharmacy('P9'); return S.screen === 'orders'; })()));
+  ok('Home stays Home, and the All board opens a pharmacy\'s Home',
+     await np.evaluate(() => { setPharmacy('P8'); goto('dashboard'); setPharmacy('P9'); const a = S.screen === 'dashboard';
+       setPharmacy(null); goto('dashboard'); setPharmacy('P8'); return a && S.screen === 'dashboard'; }));
+  ok('an owner on Team who switches to where she only works lands on her staff home there, not a Team she cannot open',
+     await np.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); const ownT = S.screen === 'team';
+       setPharmacy('P8'); return ownT && S.screen !== 'team' && !!document.querySelector('.wk-card'); }));
+  await np.close();
+}
+
 console.log('\nlayout');
 ok('the sidebar carries navigation at 1440px', await d.locator('.sidebar').isVisible());
 ok('the bottom bar does not', await d.locator('.bottom-nav').isHidden());

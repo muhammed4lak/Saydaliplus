@@ -1878,7 +1878,7 @@ Object.assign(STRINGS.ar, {
   'tm.youMay':'مسموح لك','tm.notEmployed':'لست موظفاً في صيدلية بعد.','tm.myDay':'يومي','tm.ownOnly':'ترى سجلّك أنت فقط؛ المالك يرى سجلّ الجميع.',
   'tm.invitesYou':'{ph} تدعوك للعمل فيها','tm.invitesYouS':'بصفة {pos}. تبدأ بالبيع؛ يمنحك المالك ما سواه.','tm.accept':'اقبل','tm.haveCode':'لديك رمز دعوة؟','tm.join':'انضم',
   'wk.tab':'{ph} · تعمل فيها','wk.eyebrow':'مكان عملك','wk.since':'منذ {d}','wk.role':'دورك','wk.more':'و{n} غيرها',
-  'wk.drawerOpen':'الصندوق مفتوح','wk.drawerClosed':'الصندوق مغلق','tm.badCode':'الرمز غير صحيح.','tm.needBadge':'يجب أن يكتمل توثيقك من النقابة قبل أن تنضم إلى فريق صيدلية.',
+  'wk.drawerOpen':'الصندوق مفتوح','wk.drawerClosed':'الصندوق مغلق','tm.badCode':'الرمز غير صحيح.','ch.team':'فريق أيّ صيدلية؟','ch.drawer':'صندوق أيّ صيدلية؟','tm.needBadge':'يجب أن يكتمل توثيقك من النقابة قبل أن تنضم إلى فريق صيدلية.',
   'tm.badgeRule':'ينضم إلى الفريق الصيدلاني الموثّق من النقابة فقط. من ينتظر التوثيق يقبل الدعوة بعد اكتماله.','tm.note.needInvite':'اكتب الاسم ورقم الهاتف أو البريد.','tm.note.already':'هذا الشخص في الفريق أو مدعوّ بالفعل.',
   'tk.drawerClose':'إغلاق الصندوق · فرق {v}','tk.price':'سعر {name}: {to}','tk.adjust':'تصحيح {name} {n} — {why}','tk.grant':'منح {who}: {what}','tk.revoke':'سحب من {who}: {what}',
   'tk.denied':'رُفض: {what} (غير ممنوح)','tk.invited':'دعوة {who}','tk.ended':'انتهى عمل {who}','tk.staffJoined':'قبول دعوة والانضمام','tk.inviteWithdrawn':'سحب دعوة',
@@ -1963,7 +1963,7 @@ Object.assign(STRINGS.en, {
   'tm.youMay':'You may','tm.notEmployed':'You do not work at a pharmacy on Saydali+ yet.','tm.myDay':'My day','tm.ownOnly':'You see your own record; the owner sees everyone’s.',
   'tm.invitesYou':'{ph} invites you to work there','tm.invitesYouS':'As {pos}. You start with selling; the owner grants anything else.','tm.accept':'Accept','tm.haveCode':'Have an invitation code?','tm.join':'Join',
   'wk.tab':'{ph} · works here','wk.eyebrow':'Where you work','wk.since':'since {d}','wk.role':'Your role','wk.more':'+ {n} more',
-  'wk.drawerOpen':'The drawer is open','wk.drawerClosed':'The drawer is closed','tm.badCode':'That code is not right.','tm.needBadge':'Your Syndicate verification has to be complete before you can join a pharmacy’s team.',
+  'wk.drawerOpen':'The drawer is open','wk.drawerClosed':'The drawer is closed','tm.badCode':'That code is not right.','ch.team':'Which pharmacy’s team?','ch.drawer':'Which pharmacy’s drawer?','tm.needBadge':'Your Syndicate verification has to be complete before you can join a pharmacy’s team.',
   'tm.badgeRule':'Only a Syndicate-verified pharmacist can join a team. Someone still waiting for verification can accept once it is done.','tm.note.needInvite':'Type a name, and a phone number or email.','tm.note.already':'This person is already on the team or invited.',
   'tk.drawerClose':'Closed the drawer · difference {v}','tk.price':'Price of {name}: {to}','tk.adjust':'Corrected {name} {n} — {why}','tk.grant':'Granted {who}: {what}','tk.revoke':'Took from {who}: {what}',
   'tk.denied':'Refused: {what} (not granted)','tk.invited':'Invited {who}','tk.ended':'Ended {who}’s employment','tk.staffJoined':'Accepted the invitation and joined','tk.inviteWithdrawn':'Withdrew an invitation',
@@ -9071,7 +9071,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0016';
+const VERSION = 'App_v0.0016.1';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -10554,6 +10554,8 @@ function pharmacyBoard() {
       : (a.responsible ? 1 : -1)));
 }
 
+/* The screens that show one pharmacy at a time, with the tab strip. */
+const PHARMACY_SCOPED = ['till', 'drawer', 'team', 'activity', 'stock', 'count', 'import', 'orders', 'suppliers', 'register', 'labels'];
 function setPharmacy(id) {
   /* A cart belongs to the pharmacy it was rung up in. Switching tabs does not
      carry it to another pharmacy's till; it is set aside, and that is recorded. */
@@ -10569,8 +10571,14 @@ function setPharmacy(id) {
   S.receiptFor = null;
   /* Staff stay on the screen they were on; only an owner has the pharmacy's dashboard. */
   if (!myPharmacies().length) { S.modal = null; render(); scrollTop(); return; }
-  S.screen = S.screen === 'till' ? 'till' : ['stock', 'count', 'import', 'orders', 'suppliers', 'register'].includes(S.screen) ? S.screen
-           : S.screen === 'order' ? 'orders' : 'dashboard';
+  /* v0.0016.1 (A1): choosing a pharmacy keeps you in the module you chose it
+     from — Team stays Team. A page that belongs to the other pharmacy (a
+     person, an order, a product) goes back to its list. A screen the new
+     pharmacy does not allow (Team where you only work) falls to its home in
+     render(). */
+  S.openStaff = null;
+  S.screen = S.screen === 'order' ? 'orders' : S.screen === 'product' ? 'stock'
+           : PHARMACY_SCOPED.includes(S.screen) ? S.screen : 'dashboard';
   S.modal = null; render(); scrollTop();
 }
 
@@ -13528,7 +13536,8 @@ function closeOrder() {
 /* Every stock screen belongs to one pharmacy, as the till does. */
 function stockChooser(tabs, next) {
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
-    '<p class="section-eyebrow">' + esc(t('st.choose')) + '</p><div class="card">' +
+    /* v0.0016.1: the question names the module it was asked from. */
+    '<p class="section-eyebrow">' + esc(t(next === 'team' ? 'ch.team' : next === 'drawer' ? 'ch.drawer' : 'st.choose')) + '</p><div class="card">' +
     myPharmacies().map(p => '<button class="row" style="width:100%;text-align:start;" onclick="setPharmacy(' + attr(p.id) + ')">' +
       '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(L(p.district)) + '</span></span>' +
@@ -16925,7 +16934,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0016.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0016.1.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

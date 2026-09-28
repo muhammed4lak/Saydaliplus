@@ -148,9 +148,9 @@ backlog records is also scheduled):
 | **v0.0014** | Cash, and the offline model | W17 cash, offline |
 | **v0.0015** | Permissions, and what was done on each shift | W23 |
 | **v0.0016** | Clinical governance | W19; P8; W17 helper tiers |
-| **v0.0017** | Attendance | W18 roster, check-in/out |
+| **v0.0017** | Attendance, and the owner's Reports | W18 roster, check-in/out; performance (moved from v0.0019, 28 Sep 2026) |
 | **v0.0018** | The near-expiry exchange | W22 |
-| **v0.0019** | Tasks, performance, and the absent owner's day | W18; P7 |
+| **v0.0019** | Tasks, incidents in a pharmacy, and the absent owner's day | W18; P7 |
 | **v0.0020** | Paying for it | pricing — *blocked on a decision* |
 | later | Assessment, then shift credits, then the ecosystem | W20, W21, P6 |
 
@@ -860,6 +860,17 @@ the owner's approval are stored as two facts, editable for seven days, and the
 last till transaction is shown beside the claim as evidence.
 *The check asserts:* an auto-closed shift never counts as clean; approval never
 overwrites the claim.
+**Also, since 28 Sep 2026 (v0.0016.1, A3–A4):** the owner's **Reports**
+module (التقارير) — the pharmacy's sales and number of sales per day, week and
+month, and the same per person — and a team member's page in three parts:
+their timeline shift by shift; their performance for a day, a week or a month
+(shifts worked, and per shift the sales in IQD and the number of sales, each
+as average and median, with the period's totals); their permissions. Owner
+only — not the Manager role. Each person sees their own figures in My
+activity. Under P7 nobody is ranked: a person is shown against the pharmacy's
+average on their own page, never in a league table. *The check asserts:* no
+screen lists people ordered by sales; a staff member sees only their own
+figures.
 
 **v0.0018 — the near-expiry exchange.** (W22)
 Built on v0.0013's batches: the owner's batches inside the near-expiry window,
@@ -869,10 +880,13 @@ as a stock movement at both ends and never passing through the platform.
 Owners by default; grantable (v0.0015). *The check asserts:* a controlled item
 cannot be listed; nothing is listed that the owner did not choose.
 
-**v0.0019 — tasks, performance, and the absent owner's day.**
+**v0.0019 — tasks, incidents, and the absent owner's day.**
 Tasks with due dates and recurrence — the daily fridge-temperature check is the
-case to design for — and completion. Performance derived from what people must
-do anyway (attendance, till activity) rather than from self-reported ticks.
+case to design for — and completion; the owner assigns them from Team, to a
+person or to whoever is on shift. Performance itself moved to v0.0017 (28 Sep
+2026). **Incidents inside a pharmacy** (A3): anyone on the team reports a
+colleague or an event to the owner — never the owner, never anonymously, and
+the person reported does not see it.
 Sales per pharmacist, segmented by ATC class, with antibiotics and controlled
 substances flagged **relative** to the pharmacy's own average and the
 district's, shown to the owner as a question — never as a leaderboard (P7). The
@@ -1812,6 +1826,42 @@ opening the drawer). Until then the nearest thing is a drawer session.
 *Needs deciding:* whether performance comes with attendance (v0.0017, where
 shifts first exist) rather than waiting for v0.0019; whether a person sees
 their own figures in My activity.
+
+### After v0.0016.1 was reported — answered 28 Sep 2026
+
+1. **A1 — build it now**, as v0.0016.1.
+2. **Tasks stay at v0.0019.**
+3. **Incidents:** staff **cannot** report the owner; the person reported
+   **does not** see the report; a report is **never anonymous** to the owner.
+4. **"Orders" means sales** rung up at the Point of sale (receipts).
+5. **Performance moves to v0.0017**, with attendance, since that is where
+   shifts first exist — on condition that it does not disturb the other plans.
+   It does not: performance is read from attendance and the till, both of
+   which exist by then, and nothing later depends on it waiting. v0.0019 keeps
+   tasks, the ATC-segmented flags of W18/P7 and the absent owner's day.
+6. **A person sees their own figures** in My activity.
+
+So v0.0017 is now **attendance, the owner's Reports module, and a team
+member's page** (timeline by shift, performance by day/week/month with average
+and median per shift, permissions). Incidents inside a pharmacy (A3) are not
+yet placed on the version table; v0.0019, beside tasks, unless moved.
+
+### v0.0016.1 as built — choosing a pharmacy keeps the module
+
+- Choosing a pharmacy — by the tab strip or from the "which pharmacy?" list —
+  keeps the owner on the screen they were on for every per-pharmacy screen:
+  Point of sale, drawer, **Team**, My activity, Stock and its screens,
+  labels. Home stays Home, and the *All* board opens a pharmacy's Home. An
+  open person, order or product belongs to the pharmacy it was opened at: the
+  person closes and an order or product goes back to its list. Switching to a
+  pharmacy where the owner only works and Team is not theirs lands on their
+  staff home there.
+- The "which pharmacy?" list names what it is for: *Which pharmacy's team?*,
+  *…drawer?* — it said *stock* on all of them.
+- Checks: app 709 (5 new), CRM 292. Mutation-tested on a copy: 4 planted
+  faults, 3 caught; the fourth (not closing the open person on a switch)
+  survived only because the person's page already closes itself when that
+  person is not at the pharmacy on screen, so the behaviour held.
 
 ## Unused concepts
 
