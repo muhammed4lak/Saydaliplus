@@ -1506,7 +1506,69 @@ Proposed:
   information yet*: shown in Drugs, not checked by the Helper until the
   curator adds their interactions.
 - Cost: the app file grows from ~0.8 MB to ~2 MB (a prototype limit; in
-  production this is the database). Waiting for "go".
+  production this is the database). **Go given 28 Sep 2026.**
+
+### v0.0015.1 as built — roles, the international controlled list, and the drug lists
+
+**Roles.** On *Team*, a **Roles** card: four ready-made — *Cashier* (selling
+and the drawer), *Pharmacist* (+ voids and refunds, discounts, own items),
+*Stock keeper* (+ stock, write-offs), *Manager* (everything that exists
+today; not the near-expiry exchange before v0.0018) — and the owner's own. A
+ready-made role is **copied, not edited**; a custom role is a name and
+switches, needs at least one, and is **edited in place: the change reaches
+everyone who holds it**, and the record says how many ("Edited the Night
+pharmacist role (held by 1)"). A role someone holds cannot be deleted. Roles
+belong to the owner and work **at all of their pharmacies**, nobody else's.
+- Someone invited holds **Cashier** (the default deny of v0.0015, now as a
+  role). On their page: a **role picker**; what the role gives is ticked and
+  locked, marked *From the role: Pharmacist*; the rest are **extra grants for
+  this person alone**, shown as "Pharmacist + Prices". A role's own
+  permission is changed by changing the role, not taken off one person.
+  Changing role drops extras the new role already covers.
+- Setting a role, and creating, editing or deleting one, is on the day's
+  record. Only the owner can. *My activity* shows the role and what it gives.
+
+**The controlled list — the UN conventions** (`data/controlled.json`, 36
+substances): 1961 narcotics (morphine, pethidine, fentanyl, codeine…), 1971
+psychotropics (diazepam, alprazolam, phenobarbital — Schedule IV), and 1988
+precursors (pseudoephedrine, ephedrine, ergometrine, ergotamine — Table I).
+**Tramadol and pregabalin** are kept, labelled *Controlled in Iraq (not on the
+UN schedules)*. The controlled register shows each entry's convention and
+schedule; **precursors are listed apart** under their own heading, not in the
+controlled register; the source is named under it. Drug and product pages
+carry the label. Until the clinical curator confirms the list — the curator
+is a placeholder, *to be named*.
+
+**The Ministry's register, in the catalogue.** **5,186 products** (the
+register's 5,214 rows, the **28 cancelled** left out), each with an
+**internal code** (`REG-R0001`) and *no barcode yet — linked the first time
+it is scanned*. Found by trade or scientific name at Point of sale and in
+Products; **what can be scanned comes first**, registered
+products after. Products lists them only when searched (80 at a time). The
+product page shows the composition as registered, the registration number,
+maker and country, and a **control banner** when it carries one.
+- **2,245 are linked** to the reference by their scientific name, so the
+  Helper checks them; a combination with an ingredient the reference lacks
+  says *Other ingredients — not in the reference*, and is only partly
+  checked. The rest are *unmapped*, as any unmapped product.
+- The **7 suspended** registrations (the register lists 7, not the 32
+  estimated earlier) are shown with a banner and **not offered for sale**.
+- Like any product with no price, the till asks for one before selling.
+- 163 products carry a controlled or precursor substance.
+
+**The Essential Drugs List, in Drugs.** The **355 generics** the reference
+lacks (the earlier estimate was ~400: salts and duplicates merged) follow
+the reference's own 119, under *On the Essential Drugs List — no clinical
+information yet* (40 shown until searched). Each has its EDL entries (code,
+item, class) and the registered products that name it; the page says
+plainly *no doses, no interactions; the Helper does not check it*, until the
+curator adds them. In Arabic their name is the scientific name.
+
+**Sizes.** The app file is 2.3 MB (was 0.8 MB) — a prototype limit; in
+production the catalogue is the database. Search over ~5,250 products stays
+under 40 ms a keystroke (checked).
+
+- Checks: 40 new (658 app in all); CRM unchanged (271). Mutation testing: see below.
 
 ## Unused concepts
 

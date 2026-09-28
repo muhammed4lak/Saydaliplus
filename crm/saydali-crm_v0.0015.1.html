@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0015">
+<meta name="version" content="CRM_v0.0015.1">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -768,7 +768,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0015';
+const VERSION = 'CRM_v0.0015.1';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1463,6 +1463,7 @@ const EDL_BY_DRUG = {
   "Mebeverine":[{"code":"02-K00-002","item":"Mebeverine hydrochloride 135 mg Tablet","cls":"Direct Acting Spasmolytic"}],
   "Hyoscine butylbromide":[{"code":"02-B00-008","item":"Hyoscine butylbromide 1 mg/ml Syrup bottle","cls":"Antispasmodics"},{"code":"02-B00-009","item":"Hyoscine butylbromide 20 mg/ml, (1 ml) Ampoule I.M , slow I.V , S.C OR I.M ,","cls":"Antispasmodics"},{"code":"02-B00-007","item":"Hyoscine butylbromide 10 mg Tablet","cls":"Antispasmodics"}],
   "Salbutamol":[{"code":"03-A00-024","item":"Salbutamol Nebules (Respirator solution)0.5% w/v 20 ml or 30 ml Note:Home","cls":"Bronchodilators"},{"code":"03-A00-025","item":"Salbutamol (as sulphate ) 2 mg/5 ml Syrup","cls":"Bronchodilators"},{"code":"03-A00-044","item":"Salbutamol aerosol (as a base) 100 mcg / metered","cls":"Bronchodilators"}],
+  "Beclometasone":[{"code":"03-B00-015","item":"Beclomethasone dipropionate 250 mcg/ each actuation (For adults only) oral","cls":"Corticosteroids"},{"code":"12-B00-002","item":"Beclomethasone dipropionate 50 mcg/ metered inhalation (Aerosol","cls":"Drugs Acting On The Nose"}],
   "Montelukast":[{"code":"03-J00-002","item":"Montelukast (as sodium ) 4 mg cheweble Tablet","cls":"Leukotriene Receptor Antagonists"},{"code":"03-J00-003","item":"Montelukast (as sodium ) 10 mg Tablet","cls":"Leukotriene Receptor Antagonists"}],
   "Xylometazoline":[{"code":"12-B00-024","item":"Xylometazoline Hydrochloride 0.1% Nasal spray spray","cls":"Drugs Acting On The Nose"}],
   "Amitriptyline":[{"code":"04-CA0-002","item":"Amitriptyline hydrochloride 25 mg Tablet","cls":"Tricyclic And Related Antidepressant Drugs"}],
@@ -10529,7 +10530,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0015.html';
+const PEER_APP = '../demo/saydali-plus_v0.0015.1.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');

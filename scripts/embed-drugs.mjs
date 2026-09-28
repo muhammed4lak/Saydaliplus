@@ -30,6 +30,14 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const EDL = JSON.parse(readFileSync(join(root, 'data', 'edl.json'), 'utf8'));
 const PRODUCT_REG = JSON.parse(readFileSync(join(root, 'data', 'product-registrations.json'), 'utf8'));
 const REGISTER = JSON.parse(readFileSync(join(root, 'data', 'register.json'), 'utf8'));
+/* v0.0015.1 — the whole register as the app's catalogue of products with no
+   barcode yet, the Essential Drugs List's generics the reference does not
+   have, and the controlled list (the UN conventions until Iraq's own). Only a
+   build with the markers gets them: the app. */
+const REG_PRODUCTS = JSON.parse(readFileSync(join(root, 'data', 'register-products.json'), 'utf8'));
+const EDL_GENERICS = JSON.parse(readFileSync(join(root, 'data', 'edl-generics.json'), 'utf8'));
+const CONTROLLED = JSON.parse(readFileSync(join(root, 'data', 'controlled.json'), 'utf8'));
+const C_BEGIN = '/* CATALOGUE:BEGIN */', C_END = '/* CATALOGUE:END */';
 const S_BEGIN = '/* SOURCES:BEGIN */', S_END = '/* SOURCES:END */';
 const R_BEGIN = '/* REGISTER:BEGIN */', R_END = '/* REGISTER:END */';
 const BEGIN = '/* DRUGS:BEGIN */';
@@ -127,6 +135,21 @@ const registerBlock = R_BEGIN + '\n' +
   'const REGISTER_ROWS = [\n' + REGISTER.map(r => '  ' + JSON.stringify(REG_FIELDS.map(k =>
     k === 'reg' ? (r.reg || r.regOld || null) : k === 'notes' && r.notes ? r.notes.slice(0, 240) : k === 'pack' && r.pack ? r.pack.slice(0, 120) : r[k]))).join(',\n') +
   '\n];\n' + R_END;
+{
+  const mi = REG_PRODUCTS.fields.indexOf('molecules'), ci = REG_PRODUCTS.fields.indexOf('control');
+  const ctl = new Set(CONTROLLED.substances.map(c => c.name));
+  for (const r of REG_PRODUCTS.rows) {
+    for (const m of r[mi]) if (!DRUGS.some(d => d.sci === m)) problems.push(`register product ${r[0]} names a drug not in the reference: ${m}`);
+    for (const c of r[ci]) if (!ctl.has(c)) problems.push(`register product ${r[0]} names an unknown controlled substance: ${c}`);
+  }
+  for (const g of EDL_GENERICS) if (DRUGS.some(d => d.sci.toLowerCase() === g.sci.toLowerCase())) problems.push(`EDL generic already in the reference: ${g.sci}`);
+}
+const catalogueBlock = C_BEGIN + '\n' +
+  'const CONTROL_SOURCE = ' + JSON.stringify(CONTROLLED.source) + ';\n' +
+  'const CONTROL_LIST = [\n' + CONTROLLED.substances.map(c => '  ' + JSON.stringify(c)).join(',\n') + '\n];\n' +
+  'const REG_PRODUCT_FIELDS = ' + JSON.stringify(REG_PRODUCTS.fields) + ';\n' +
+  'const REG_PRODUCT_ROWS = [\n' + REG_PRODUCTS.rows.map(r => '  ' + JSON.stringify(r)).join(',\n') + '\n];\n' +
+  'const EDL_GENERICS = [\n' + EDL_GENERICS.map(g => '  ' + JSON.stringify(g)).join(',\n') + '\n];\n' + C_END;
 if (problems.length) {
   console.error('the Ministry sources did not validate:\n  ' + problems.join('\n  '));
   process.exit(1);
@@ -177,6 +200,9 @@ for (const rel of targets) {
   /* Only a build that asks for the register gets it. */
   const ra = out.indexOf(R_BEGIN), rb = out.indexOf(R_END);
   if (ra >= 0 && rb >= 0) out = out.slice(0, ra) + registerBlock + out.slice(rb + R_END.length);
+  const ca = out.indexOf(C_BEGIN), cb = out.indexOf(C_END);
+  if (ca >= 0 && cb >= 0) out = out.slice(0, ca) + catalogueBlock + out.slice(cb + C_END.length);
   writeFileSync(path, out);
-  console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : ''));
+  console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : '') +
+    (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : ''));
 }

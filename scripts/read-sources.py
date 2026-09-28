@@ -79,7 +79,7 @@ ALIAS = { 'Furosemide': [['frusemide']], 'Phenobarbital': [['phenobarbitone']], 
           'Cholecalciferol': [['vitamin d3']], 'Ferrous sulfate': [['ferrous sulphate']], 'Aspirin': [['acetylsalicylic acid']],
           'Amoxicillin': [['amoxycillin']], 'Amoxicillin/Clavulanic acid': [['amoxycillin', 'clavulanic acid'], ['co-amoxiclav']],
           'Trimethoprim/Sulfamethoxazole': [['co-trimoxazole'], ['cotrimoxazole'], ['sulphamethoxazole', 'trimethoprim']],
-          'Insulin glargine': [['glargine']], 'Hyoscine butylbromide': [['hyoscine butyl']] }
+          'Insulin glargine': [['glargine']], 'Beclometasone': [['beclomethasone']], 'Hyoscine butylbromide': [['hyoscine butyl']] }
 def names(sci):
     return [[p.strip().lower() for p in sci.split('/')]] + ALIAS.get(sci, [])
 by_drug = {}
@@ -132,3 +132,82 @@ for p in products:
                           'regNote': full[m.end():].strip() or None if m else None, 'holder': r['mah'] or r['maker'], 'country': r['country'] }
 json.dump(links, open(os.path.join(ROOT, 'data', 'product-registrations.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
 print('catalogue products linked to a registration:', len(links), 'of', len(products))
+
+# ---------- v0.0015.1: every registered product, for the app's catalogue ----------
+# Each register row becomes a product with no barcode yet. Its ingredients are
+# the reference drugs its scientific name names (so the Helper can check it);
+# its control, from data/controlled.json (the UN lists until Iraq's own). A
+# registration the register notes as cancelled is left out; a suspended one is
+# kept, marked, and not offered for sale.
+CONTROL = json.load(open(os.path.join(ROOT, 'data', 'controlled.json'), encoding='utf-8'))['substances']
+FORMS = [('injection', r'\b(amp|ampoules?|inj|injection|vials?|infusion|i\.?v\.?)\b'), ('inhaler', r'\b(inhaler|inhalation|evohaler|diskus|turbuhaler)\b'),
+         ('spray', r'\bspray\b'), ('drops', r'\bdrops?\b'), ('suppository', r'\bsupp(ository|ositories)?\b'), ('pessary', r'\bpessar'),
+         ('patch', r'\bpatch'), ('sachet', r'\bsachets?\b'), ('syrup', r'\b(syrup|susp|suspension|elixir)\b'),
+         ('ointment', r'\boint(ment)?\b'), ('cream', r'\bcream\b'), ('gel', r'\bgel\b'), ('capsule', r'\bcap(s|sule|sules)?\b'),
+         ('tablet', r'\b(tab|tabs|tablets?|caplets?)\b'), ('solution', r'\b(solution|sol\.?|lotion)\b')]
+def form_of(r):
+    t = (r['trade'] + ' ' + (r['pack'] or '') + ' ' + (r['sci'] or '')).lower()
+    for f, rx in FORMS:
+        if re.search(rx, t): return f
+    return None
+def strength_of(r):
+    m = re.search(r'(\d+(?:\.\d+)?\s*(?:mg|mcg|µg|g|iu|%)(?:\s*/\s*\d*(?:\.\d+)?\s*(?:ml|g))?)', (r['sci'] or '') + ' ' + r['trade'], re.I)
+    return re.sub(r'\s+', ' ', m.group(1)).replace(' /', '/').replace('/ ', '/') if m else ''
+def status_of(r):
+    n = r['notes'] or ''
+    if re.search(r'الغاء|إلغاء', n) and not re.search(r'رفع', n): return 'cancelled'
+    if re.search(r'تعليق|ايقاف|إيقاف', n) and not re.search(r'رفع تعليق', n): return 'suspended'
+    return None
+def trade_name(s):
+    s = clean(s)
+    return ' '.join(w.capitalize() if w.isupper() and len(w) > 2 and not re.search(r'\d', w) else w for w in s.split(' '))
+def molecules_of(sci):
+    t = (sci or '').lower()
+    hits = [d for d in drugs if any(all(re.search(r'\b' + re.escape(p) + r'\b', t) for p in alt) for alt in names(d))]
+    # a combination entry of the reference replaces the single molecules it contains
+    for d in [h for h in hits if '/' in h]:
+        for part in d.split('/'): hits = [h for h in hits if h.lower() != part.strip().lower()]
+    return hits
+def control_of(sci):
+    t = (sci or '').lower()
+    out = []
+    for c in CONTROL:
+        if any(re.search(r'\b' + re.escape(n.lower()) + r'\b', t) for n in [c['name']] + c.get('aliases', [])): out.append(c['name'])
+    return out
+regp, skipped = [], 0
+for r in register:
+    st = status_of(r)
+    if st == 'cancelled': skipped += 1; continue
+    regp.append([r['id'], trade_name(r['trade']), clean(r['sci'])[:160], clean(r['pack'] or '')[:90], form_of(r), strength_of(r),
+                 molecules_of(r['sci']), control_of(r['sci']), st, (r['reg'] or r['regOld'] or '')[:30], r['maker'] or '', r['country'] or ''])
+json.dump({ 'fields': ['id', 'trade', 'sci', 'pack', 'form', 'strength', 'molecules', 'control', 'status', 'reg', 'maker', 'country'], 'rows': regp },
+          open(os.path.join(ROOT, 'data', 'register-products.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+print('register products for the app:', len(regp), '· cancelled left out:', skipped,
+      '· suspended:', sum(1 for x in regp if x[8] == 'suspended'), '· linked to the reference:', sum(1 for x in regp if x[6]),
+      '· controlled or precursor:', sum(1 for x in regp if x[7]))
+
+# ---------- v0.0015.1: the EDL's generics that the reference does not have ----------
+def generic_of(item):
+    s = re.sub(r'\([^)]*\)', ' ', item)
+    # the name ends where a strength, an "or", a "with", a salt's "as", or a pharmacopoeia begins
+    s = re.split(r'\d|\bor\b|\bwith\b|\bas\b|:|;|,|\bPh\.?\s?Eur|\bB\.?P\.?\b|\bUSP\b', s, flags=re.I)[0]
+    s = re.split(r'\s\d|\s(?:tablet|tab|capsule|cap|syrup|suspension|injection|ampoule|vial|cream|ointment|drops?|inhaler|each|sachet|powder|solution|gel|suppository|oral|eye|ear|nasal|topical|for)\b', s, flags=re.I)[0]
+    s = re.split(r'\s(?:conc|suspention|liquid|IV|infusion|preparation|eq)\b', s, flags=re.I)[0]
+    s = re.sub(r'\s{2,}', ' ', s).strip(' ,.-+/')
+    return '' if re.match(r'^(one|each|every)\b', s, re.I) else s
+SALTS = r'\b(hydrochloride|hcl|sulphate|sulfate|sodium|potassium|calcium|maleate|mesylate|mesilate|acetate|tromethamine|dihydrate|trihydrate|anhydrous|citrate|phosphate|bromide|tartrate)\b'
+norm = lambda x: re.sub(r'\s+', ' ', re.sub(SALTS, '', x.lower())).strip().replace('y', 'i').replace('ph', 'f')
+known = set(n.lower() for d in drugs for alt in names(d) for n in alt)
+known_n = set(norm(n) for n in known) | set(norm(d) for d in drugs)
+gens = {}
+for it in items:
+    g = generic_of(it['item'])
+    if len(g) < 4 or not re.match(r'^[A-Za-z]', g): continue
+    key = g.lower()
+    if key in known or any(key == d.lower() for d in drugs) or norm(key) in known_n: continue
+    if any(it['code'] in v for v in by_drug.values()): continue
+    e = gens.setdefault(key, { 'sci': g[0].upper() + g[1:], 'items': [] })
+    e['items'].append({ 'code': it['code'], 'item': it['item'], 'cls': it['class'] })
+json.dump(sorted(gens.values(), key=lambda e: e['sci'].lower()),
+          open(os.path.join(ROOT, 'data', 'edl-generics.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+print('EDL generics not in the reference:', len(gens))

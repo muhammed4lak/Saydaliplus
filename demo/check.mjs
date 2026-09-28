@@ -2511,7 +2511,8 @@ console.log('\nsearch by any name, and stock without barcodes (v0.0013.3)');
      await dk.evaluate(() => findProducts('caffeine', 'P1', 20).some(x => x.p.barcode === '5000000001019')));
   ok('…a brand that starts with the words comes before one that only contains them, and those before ingredient matches',
      await dk.evaluate(() => { const r = findProducts('panadol', 'P1', 20).concat(findProducts('paracetamol', 'P1', 20));
-       const x = findProducts('paracetamol', 'P1', 20); return x.every((v, i) => !i || x[i - 1].rank <= v.rank); }));
+       /* v0.0015.1: within what can be scanned, and within what is only registered. */
+       const x = findProducts('paracetamol', 'P1', 400); return x.every((v, i) => !i || !!x[i - 1].p.reg !== !!v.p.reg || x[i - 1].rank <= v.rank); }));
   ok('…digits are left to the scanner: a number finds nothing by name',
      await dk.evaluate(() => findProducts('500', 'P1', 5).length === 0));
   ok('the till: typing a scientific name lists the brands with what they are made of',
@@ -2986,7 +2987,7 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        const x = S.staff[0], wa = document.querySelector('.tm-wa');
        return !!x && x.state === 'invited' && x.email === 'ahmed@example.com' && /^\d{6}$/.test(x.code) && x.link.endsWith(x.code) &&
          !!wa && decodeURIComponent(wa.getAttribute('href')).includes(x.code) && !!document.querySelector('.tm-sms') &&
-         x.grants.join() === 'sell'; }));
+         x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
   ok('…and the invitation is on the day’s record',
      await dk.evaluate(() => { S.teamNote = null; render(); return [...document.querySelectorAll('.tl-ev')].some(e => /Invited Ahmed/.test(e.innerText)); }));
   ok('the pharmacist sees it on their home and accepts; they now work there, since today',
@@ -3060,7 +3061,7 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        const x = S.staff.find(s => s.name === 'Sara Hadi'); signOut(); signInAs('noor@example.com'); setLang('en'); goto('checkin');
        const box = !!document.querySelector('.tm-join'); setv('join-code', '000000'); joinByCode(); const bad = x.state === 'invited';
        setv('join-code', x.code); joinByCode();
-       return box && bad && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'assistant' && x.grants.join() === 'sell'; }));
+       return box && bad && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'assistant' && x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
   ok('the near-expiry exchange cannot be granted before it exists (v0.0018)',
      await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render();
        const box = document.querySelector('.tm-grant[data-perm="exchange"] input'); setGrant(S.staff[0].id, 'exchange', true);
@@ -3089,6 +3090,153 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
     ok(`the Team, a person’s page and My activity fit at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
+}
+
+/* ---------------------------------------------------------------------------
+   v0.0015.1 — roles; the international controlled list; the Ministry's
+   register and the Essential Drugs List in the database.
+   --------------------------------------------------------------------------- */
+console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
+{
+  await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.staff = []; S.customRoles = []; S.roleDraft = null;
+    S.openStaff = null; S.teamNote = null; S.teamDay = null; S.teamPerson = null; S.till = tillReset(); goto('team'); });
+  ok('four ready-made roles on the Team screen — Cashier, Pharmacist, Stock keeper, Manager — with a way to make one',
+     await dk.evaluate(() => { const c = document.querySelector('.tm-roles'); if (!c) return false; c.open = true;
+       const txt = c.innerText; return ['Cashier', 'Pharmacist', 'Stock keeper', 'Manager'].every(n => txt.includes(n)) && !!c.querySelector('.tm-role-new'); }));
+  ok('the Manager role holds everything that exists today, and not what arrives later',
+     await dk.evaluate(() => { const m = roleById('manager'); return PERMS.filter(p => !PERM_LATER[p]).every(p => m.grants.includes(p)) && !m.grants.includes('exchange'); }));
+  ok('someone invited holds the Cashier role, shown on the Team list as “Cashier”',
+     await dk.evaluate(() => { setv('inv-name', 'Ahmed Al-Kubaisi'); setv('inv-contact', 'ahmed@example.com'); inviteStaff();
+       const x = S.staff[0]; S.teamNote = null; render(); return x.role === 'cashier' && !x.grants.length &&
+         /Cashier/.test(document.querySelector('.tm-row .tm-grants').innerText); }));
+  await dk.evaluate(() => { const code = S.staff[0].code; signOut(); signInAs('ahmed@example.com'); setLang('en'); acceptInvite(code);
+    signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render(); });
+  ok('on the person’s page: a role picker, and what the role gives is ticked, locked, and says it comes from the role',
+     await dk.evaluate(() => { const sel = document.getElementById('tm-role'), sell = document.querySelector('.tm-grant[data-perm="sell"]');
+       const box = sell && sell.querySelector('input'); return !!sel && sel.value === 'cashier' && !!box && box.checked && box.disabled &&
+         /From the role: Cashier/.test(sell.innerText) && !document.querySelector('.tm-grant[data-perm="voids"] input').disabled; }));
+  ok('giving them the Pharmacist role gives voids, discounts and own items — they can void now — and it is on the record',
+     await dk.evaluate(() => { const x = S.staff[0]; setRole(x.id, 'pharmacist');
+       const g = effectiveGrants(x).join();
+       signOut(); signInAs('ahmed@example.com'); const may = can('voids', 'P1') && can('discounts', 'P1') && !can('prices', 'P1');
+       signOut(); signInAs('rahma@example.com'); setLang('en'); S.openStaff = null; goto('team');
+       return g === 'sell,voids,discounts,ownItems' && may && [...document.querySelectorAll('.tl-ev')].some(e => /Gave Ahmed Al-Kubaisi the Pharmacist role/.test(e.innerText)); }));
+  ok('a role’s own permission cannot be taken away one person at a time — change the role instead',
+     await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'voids', false); return effectiveGrants(x).includes('voids'); }));
+  ok('role plus extras: Pharmacist + Prices, shown that way, and the extra works',
+     await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'prices', true); render();
+       return roleLabel(x) === 'Pharmacist + Prices' && effectiveGrants(x).includes('prices') && /Pharmacist \+ Prices/.test(document.querySelector('.tm-row .tm-grants').innerText); }));
+  ok('changing role drops extras the new role already covers',
+     await dk.evaluate(() => { const x = S.staff[0]; setRole(x.id, 'manager'); const a = !x.grants.length && roleLabel(x) === 'Manager';
+       setRole(x.id, 'pharmacist'); return a && effectiveGrants(x).join() === 'sell,voids,discounts,ownItems'; }));
+  ok('a custom role needs a name and at least one permission',
+     await dk.evaluate(() => { editRole('new'); setv('role-name', ''); saveRole();
+       return !S.customRoles.length && /Give the role a name/.test(document.getElementById('app-body').innerText); }));
+  ok('a custom role is saved with its switches and can be handed out',
+     await dk.evaluate(() => { editRole('new'); setv('role-name', 'Night pharmacist'); setc('role-p-voids', true); saveRole();
+       const r = S.customRoles[0]; return !!r && r.name === 'Night pharmacist' && r.grants.join() === 'sell,voids' && r.owner === 'rahma@example.com' &&
+         rolesFor('rahma@example.com').some(x => x.id === r.id); }));
+  ok('editing a role changes it for everyone who holds it, and says how many',
+     await dk.evaluate(() => { const r = S.customRoles[0], x = S.staff[0]; setRole(x.id, r.id); const before = effectiveGrants(x).includes('stock');
+       editRole(r.id); setc('role-p-stock', true); saveRole();
+       return !before && effectiveGrants(x).includes('stock') && [...document.querySelectorAll('.tl-ev')].some(e => /Edited the Night pharmacist role \(held by 1\)/.test(e.innerText)); }));
+  ok('a ready-made role cannot be edited, only copied',
+     await dk.evaluate(() => { editRole('manager'); const d = S.roleDraft; const ok1 = d.id === null && d.name === 'Copy of Manager';
+       S.roleDraft = null; render(); return ok1 && roleById('manager').grants.length === PERMS.filter(p => !PERM_LATER[p]).length; }));
+  ok('a role someone holds cannot be deleted',
+     await dk.evaluate(() => { const r = S.customRoles[0]; deleteRole(r.id); return S.customRoles.includes(r) && /Staff hold this role/.test(document.getElementById('app-body').innerText); }));
+  ok('…once nobody holds it, it can, and that is on the record',
+     await dk.evaluate(() => { const r = S.customRoles[0]; setRole(S.staff[0].id, 'cashier'); deleteRole(r.id);
+       return !S.customRoles.length && [...document.querySelectorAll('.tl-ev')].some(e => /Deleted the Night pharmacist role/.test(e.innerText)); }));
+  ok('an owner’s roles are theirs, at all of their pharmacies, and nobody else’s',
+     await dk.evaluate(() => { S.customRoles.push({ id:'CR9', owner:'layla@example.com', name:'Branch lead', grants:['sell', 'stock'] });
+       const r = !!roleById('CR9', 'P7') && !!roleById('CR9', 'P9') && !roleById('CR9', 'P1') && !rolesFor('rahma@example.com').some(x => x.id === 'CR9');
+       S.customRoles = []; return r; }));
+  ok('a staff member cannot change roles',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); const x = S.staff[0]; setRole(x.id, 'manager'); const r = x.role === 'cashier';
+       signOut(); signInAs('rahma@example.com'); setLang('en'); return r; }));
+  ok('My activity shows the role and what it gives',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('activity');
+       const txt = document.getElementById('app-body').innerText; signOut(); signInAs('rahma@example.com'); setLang('en');
+       return /Cashier/.test(txt) && /Selling/.test(txt); }));
+
+  /* The controlled list. */
+  ok('the controlled list is the UN conventions: morphine 1961, diazepam 1971 IV, pseudoephedrine a 1988 precursor',
+     await dk.evaluate(() => controlEntry('Morphine').convention === '1961' && controlEntry('Diazepam').convention === '1971' && controlEntry('Diazepam').schedule === 'IV' &&
+       controlEntry('Pseudoephedrine').precursor && controlEntry('Pseudoephedrine').convention === '1988' && /UN international drug control conventions/.test(CONTROL_SOURCE)));
+  ok('tramadol and pregabalin stay controlled, marked national — not on the UN lists',
+     await dk.evaluate(() => controlEntry('Tramadol').convention === 'national' && controlEntry('Pregabalin').convention === 'national' &&
+       controlLabel(controlEntry('Tramadol')) === 'Controlled in Iraq (not on the UN schedules)'));
+  ok('a registered tramadol product is controlled; a pseudoephedrine one is a precursor, not controlled',
+     await dk.evaluate(() => isControlled('REG-R2898') && !isPrecursor('REG-R2898') && isPrecursor('REG-R2336') && !isControlled('REG-R2336') && isControlled('REG-R1033')));
+  ok('the controlled register shows each substance’s schedule, keeps precursors apart, and names its source',
+     await dk.evaluate(() => { const at = new Date(nowMs()).toISOString();
+       recordMovement({ pharmacy:'P1', code:'REG-R1033', qty:10, kind:'received', at, by:'rahma@example.com' });
+       recordMovement({ pharmacy:'P1', code:'REG-R2336', qty:5, kind:'received', at, by:'rahma@example.com' });
+       goto('register'); const c = document.querySelector('.rg-controlled'), p = document.querySelector('.rg-precursor');
+       const r = !!c && /Valiapam/.test(c.innerText) && /UN 1971 Convention · Schedule IV/.test(c.innerText) && !/Pancetol/.test(c.innerText) &&
+         !!p && /Pancetol Sinus/.test(p.innerText) && /Precursor · 1988 Convention · Table I/.test(p.innerText) &&
+         /the UN conventions/.test(document.querySelector('.rg-source').innerText);
+       S.movements = S.movements.filter(m => !String(m.code).startsWith('REG-')); return r; }));
+
+  /* The Ministry's register, in the catalogue. */
+  ok('the register’s products are in the catalogue: 5,186, the cancelled left out, each with an internal code',
+     await dk.evaluate(() => REG_PRODUCTS.length === 5186 && REG_PRODUCTS.every(p => /^REG-R\d{4}$/.test(p.barcode) && p.status !== 'cancelled') &&
+       REG_PRODUCTS.filter(p => p.status === 'suspended').length === 7 && new Set(REG_PRODUCTS.map(p => p.barcode)).size === 5186));
+  ok('found by trade name, and by scientific name — after everything that can be scanned',
+     await dk.evaluate(() => { const a = findProducts('awalodipin', 'P1', 5); const b = findProducts('amlodipine', 'P1', 400);
+       const firstReg = b.findIndex(x => x.p.reg), lastScan = b.map(x => !!x.p.reg).lastIndexOf(false);
+       return a.some(x => x.p.barcode === 'REG-R0102' && x.why === 'brand') && b.some(x => x.p.barcode === 'REG-R0089') && firstReg > lastScan; }));
+  ok('…linked to the reference where its scientific name is ours, so the Helper checks it',
+     await dk.evaluate(() => { const p = productByCode('REG-R0102'); return p.mapping === 'auto' && p.molecules[0].sci === 'Amlodipine' && productCoverage(p).kind === 'full'; }));
+  ok('a combination with ingredients the reference lacks is only partly checked, and says so',
+     await dk.evaluate(() => productCoverage(productByCode('REG-R2336')).kind !== 'full'));
+  ok('the product page: internal code, no barcode yet, the composition and the registration',
+     await dk.evaluate(() => { openProduct('REG-R0102'); const txt = document.getElementById('app-body').innerText;
+       return /Internal code/.test(txt) && /REG-R0102/.test(txt) && /Linked the first time it is scanned/.test(txt) && /Amlodipine \(as besylate\)/.test(txt) &&
+         /4214\/31-1-2017 · Awamedica · Iraq/.test(txt); }));
+  ok('a controlled product says so on its page',
+     await dk.evaluate(() => { openProduct('REG-R2898'); return /Tramadol — Controlled in Iraq/.test(document.querySelector('.cl-banner').innerText); }));
+  ok('a suspended registration is shown, and says it is not for sale',
+     await dk.evaluate(() => { openProduct('REG-R1879'); return !!document.querySelector('.rp-suspended') && /not offered for sale/.test(document.querySelector('.rp-suspended').innerText); }));
+  ok('…and the Point of sale will not sell it',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillAdd('REG-R1879'); return S.till.lines.length === 0 && !S.till.needPrice; }));
+  ok('…though a registered product that is not suspended sells, with no barcode: it asks for a price, as anything unpriced does',
+     await dk.evaluate(() => { tillAdd('REG-R0102'); const r = S.till.needPrice === 'REG-R0102'; S.till = tillReset(); render(); return r; }));
+  ok('in the Point of sale search, a registered product says it has no barcode yet',
+     await dk.evaluate(() => { tillQuery('awalodipin'); const row = document.querySelector('.till-hits .find-row');
+       const r = !!row && /awalodipin/i.test(row.innerText) && /no barcode yet/.test(row.innerText); S.till = tillReset(); render(); return r; }));
+  ok('the product list leaves the register out until searched; searched, it lists them, 80 at a time',
+     await dk.evaluate(() => { goto('products'); setProductQuery(''); const none = [...document.querySelectorAll('.prod-row')].every(r => !/REG-/.test(r.getAttribute('onclick')));
+       const note = /5186 products from the Ministry of Health register/.test(document.querySelector('.pd-reg-note').innerText);
+       setProductQuery('tab'); const rows = document.querySelectorAll('.prod-row').length, more = !!document.querySelector('.pd-more');
+       setProductQuery(''); return none && note && rows === 80 && more; }));
+  ok('searching 5,000 products stays quick (under 40 ms a keystroke)',
+     await dk.evaluate(() => { findProducts('warm', 'P1', 8); const t0 = performance.now(); ['p', 'pa', 'par', 'para', 'parac'].forEach(q => findProducts(q, 'P1', 8));
+       return (performance.now() - t0) / 5 < 40; }));
+
+  /* The Essential Drugs List's other generics, in Drugs. */
+  ok('the EDL’s 355 generics the reference lacks are in Drugs, none duplicating the reference',
+     await dk.evaluate(() => EDL_DRUGS.length === 355 && EDL_DRUGS.every(d => !drugBySci(d.sci) && d.edlOnly && !d.doses.length && !d.interactions.length)));
+  ok('the reference lists them after its own, marked as having no clinical information, 40 until searched',
+     await dk.evaluate(() => { goto('drugs'); S.drugForm = 'all'; setDrugTab('reference'); setDrugQuery('');
+       const eb = document.querySelector('.edl-eyebrow'); return !!eb && /no clinical information yet · 355/.test(eb.textContent) &&
+         document.querySelectorAll('.edl-row').length === 40 && document.querySelectorAll('.drug-row').length === clinicalOnly(DRUGS).length; }));
+  ok('…and searching finds them',
+     await dk.evaluate(() => { const d = EDL_DRUGS[0]; setDrugQuery(d.sci); const rows = [...document.querySelectorAll('.edl-row')];
+       const r = rows.some(x => x.innerText.includes(d.sci)); setDrugQuery(''); return r; }));
+  ok('an EDL generic’s page says plainly there is no clinical information and the Helper does not check it; its EDL entries and registered products follow',
+     await dk.evaluate(() => { const d = EDL_DRUGS.find(x => edlRegistered(x).length);
+       openDrug(d.sci); const txt = document.getElementById('app-body').innerText;
+       return /No clinical information for this drug yet/.test(txt) && /does not check it/.test(txt) && document.querySelector('.edl-card .row') &&
+         !!document.querySelector('.eg-reg .row') && document.querySelector('.header-title').innerText.includes(d.sci); }));
+  ok('…matched to the register by its name, not a loose word: Activated Charcoal is not NovoSeven (“activated” factor VII)',
+     await dk.evaluate(() => { const r = edlRegistered(edlDrugBySci('Activated Charcoal')); return !r.some(p => /NovoSeven|Aryoseven/i.test(p.name.en)); }));
+  ok('…in Arabic its name is its scientific name, never blank',
+     await dk.evaluate(() => { setLang('ar'); const d = EDL_DRUGS[0]; const r = drugName(d) === d.sci && drugSub(d) === ''; setLang('en'); return r; }));
+  ok('P1 — no paid or promoted content on an EDL generic’s page',
+     await dk.evaluate(() => { openDrug(EDL_DRUGS[0].sci); return !document.querySelector('#app-body .promo, #app-body .ad-card, #app-body .sponsored, #app-body .ann-banner'); }));
+  await dk.evaluate(() => { S.staff = []; S.openDrug = null; goto('home'); });
 }
 
 await dk.setViewportSize({ width: 320, height: 700 });
