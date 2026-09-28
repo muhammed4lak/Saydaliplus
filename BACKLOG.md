@@ -1428,6 +1428,44 @@ back; scanning it (or typing it) starts that shelf's count.
 
 - Checks: 34 new (596 app in all); mutation-tested (27 of 27 caught).
 
+### v0.0015 as built — permissions, the staff list, and the day's record
+
+**Who may do what.** Per pharmacy, per person, **default deny**: someone new
+can **sell — and, with selling, open, hand over and close the drawer** — and
+nothing else. The owner grants, and takes back: voids and refunds (removing a
+line from a sale, emptying the basket, refunding), discounts, prices, stock
+(counts, imports, orders, suppliers, corrections, shelf labels), write-offs,
+cash differences (signing a drawer difference over the amount), the receipt
+and its logo, the average market price, and the pharmacy's own items. The
+near-expiry exchange is listed but cannot be granted before it exists
+(v0.0018). What someone may not do is not offered to them; **an action tried
+without the grant is refused and recorded** ("Refused: Discounts — not
+granted"), never silently ignored. An owner's powers are at pharmacies they
+own only. Grants are stored per person as a set, so the ready-made and custom
+**roles** (decided 28 Sep 2026, later) can sit on top as saved sets.
+
+**The staff list** — *Team*, a new button on the owner's bar (Dashboard ·
+Pharmacy · Team · Profile) and a line in the sidebar.
+- **Invite** by name, phone number or email, and position (pharmacist or
+  pharmacy assistant): a **link** to send on WhatsApp or by text, and a
+  **six-digit code** as the fallback. Someone with an account sees the
+  invitation on their home and accepts; anyone can type the code on their
+  home (*Have an invitation code?*). The prototype has *accept as them*.
+- Each person: position, contact, since when; **what they may do** as a list
+  of switches; their day; **end employment** — the record stays, they can do
+  nothing there any more — or withdraw an invitation.
+
+**The day's record.** Every action with who did it and when, **per day**
+(per shift once check-in exists, v0.0017): sales, refunds, removed lines,
+discounts, prices, corrections, counts, drawer openings, hand-overs and
+closes, no-sales, going offline, invitations, joining, grants and
+revocations, refusals. The owner reads everyone's (or one person's), day by
+day; an employee reads **their own**, under *My activity* on Profile, with
+what they may do. **The CRM reads none of it** (checked: nothing in the CRM
+build reads the record).
+
+- Checks: 22 new (618 app in all); mutation-tested.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not

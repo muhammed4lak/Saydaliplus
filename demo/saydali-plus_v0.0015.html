@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0014">
+<meta name="version" content="App_v0.0015">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -985,6 +985,31 @@
   .take-chip{ font-size:12px; }
   .till-confirm{ margin-top:4px; }
   .till-other{ display:block; margin:10px auto 0; }
+  /* v0.0015 — the team, and the timeline */
+  .tm-row{ align-items:center; }
+  .tm-av{ width:38px; height:38px; border-radius:12px; font-size:13px; flex:none; }
+  .tm-grants{ color:var(--indigo) !important; }
+  .tm-invite summary{ font-weight:600; cursor:pointer; }
+  .tm-invite select, .tl-person{ width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card); }
+  .tm-invite .btn-primary{ margin-top:12px; }
+  .tm-link{ font-size:13px; background:var(--mist); border-radius:10px; padding:9px 11px; margin:10px 0 6px; overflow-wrap:anywhere; }
+  .tm-code{ font-size:14px; margin-bottom:12px; } .tm-code b{ font-size:18px; letter-spacing:.12em; }
+  .tm-invcard .dr-actions a{ display:flex; align-items:center; justify-content:center; text-decoration:none; }
+  .tm-accept-proto{ margin-top:10px; }
+  .tm-grant{ cursor:pointer; align-items:center; gap:12px; }
+  .tm-grant input:disabled{ opacity:.45; }
+  .tm-end{ width:100%; }
+  .tl-bar{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px; align-items:center; }
+  .tl-days{ display:flex; align-items:center; gap:8px; }
+  .tl-days .btn-secondary{ width:44px; height:44px; padding:0; display:flex; align-items:center; justify-content:center; }
+  .tl-days .btn-secondary svg{ width:18px; height:18px; }
+  .tl-next svg{ transform:rotate(180deg); }
+  html[dir="rtl"] .tl-prev svg{ transform:rotate(180deg); } html[dir="rtl"] .tl-next svg{ transform:none; }
+  .tl-day{ font-weight:600; font-size:14px; min-width:72px; text-align:center; }
+  .tl-ev{ align-items:flex-start; gap:12px; }
+  .tl-time{ flex:none; font-size:13px; color:var(--ink-soft); padding-top:2px; }
+  .tl-ev[data-denied] .row-title{ color:var(--clay); }
+  .tm-join summary{ font-weight:600; cursor:pointer; }
   /* v0.0014 — the drawer, and offline */
   .dr-status{ display:flex; align-items:center; gap:10px; width:100%; text-align:start; padding:10px 14px; border:1px solid var(--border); border-radius:14px; background:var(--card); font-size:13px; flex-wrap:wrap; }
   .dr-status .more-chevron{ margin-inline-start:auto; }
@@ -1776,6 +1801,29 @@ let lang = 'ar';
 Object.assign(STRINGS.ar, {
   /* v0.0013.3 */
   'nav.pharmacy':'الصيدلية',
+  /* v0.0015 */
+  'nav.team':'الفريق','nav.activity':'نشاطي',
+  'pm.sell':'البيع والصندوق','pm.sellS':'البيع، وفتح الصندوق وتسليمه وإغلاقه.','pm.voids':'الحذف والاسترجاع','pm.voidsS':'حذف مادة من بيع، وإفراغ السلّة، واسترجاع بيع.',
+  'pm.discounts':'الخصومات','pm.discountsS':'خصم على بيع، مع سبب.','pm.prices':'الأسعار','pm.pricesS':'تحديد سعر المواد في هذه الصيدلية.',
+  'pm.stock':'المخزون','pm.stockS':'الجرد، والاستيراد، والطلبيات، والموردون، والتصحيح، والملصقات.','pm.writeoffs':'الإتلاف','pm.writeoffsS':'إتلاف دفعات منتهية أو تالفة.',
+  'pm.cashVariance':'فروق الصندوق','pm.cashVarianceS':'التوقيع على فرق أكبر من حدّ التوقيع.','pm.receipt':'الوصل وشعاره','pm.receiptS':'رفع شعار الصيدلية للوصل.',
+  'pm.market':'متوسط سعر السوق','pm.marketS':'رؤية متوسط سعر المادة في الصيدليات الأخرى.','pm.ownItems':'مواد الصيدلية الخاصة','pm.ownItemsS':'إضافة مادة ليست في الكتالوج.',
+  'pm.exchange':'تبادل قريب الانتهاء','pm.exchangeS':'','pm.later':'يصل مع الإصدار {v}.','pm.denied':'غير مسموح: {what}. يمكن للمالك منحه.',
+  'tm.staffT':'الموظفون · {n}','tm.noStaff':'لا موظفين بعد. ادعُ أول موظف.','tm.invitedT':'دعوات بانتظار القبول','tm.endedT':'موظفون سابقون',
+  'tm.pos.pharmacist':'صيدلاني','tm.pos.assistant':'مساعد صيدلي','tm.since':'منذ {d}','tm.invitedOn':'دُعي في {d}','tm.endedOn':'انتهى في {d}','tm.fromTo':'من {a} إلى {b}',
+  'tm.invite':'ادعُ موظفاً','tm.inviteS':'رابط ترسله بواتساب أو رسالة، مع رمز يُكتب إن لم يعمل الرابط.','tm.name':'الاسم','tm.contact':'رقم الهاتف أو البريد',
+  'tm.defaultS':'الموظف الجديد يستطيع البيع فقط. كل ما سواه تمنحه أنت.','tm.inviteGo':'أنشئ الدعوة','tm.invitedT1':'دعوة لـ {who}','tm.invitedS':'أرسل الرابط؛ إن لم يعمل، يكتب الرمز في التطبيق.',
+  'tm.code':'الرمز:','tm.sendWa':'أرسل بواتساب','tm.sendSms':'أرسل برسالة','tm.protoAccept':'في النموذج: اقبل الدعوة كأنك هو',
+  'tm.waText':'دعوة للعمل في {ph} على صيدلي+: {link} — أو اكتب الرمز {code}','tm.grantsT':'ما يُسمح به','tm.theirDay':'يومه','tm.end':'أنهِ العمل','tm.withdraw':'اسحب الدعوة',
+  'tm.endS':'يبقى سجلّه كما هو؛ لا يستطيع بعدها فعل شيء في هذه الصيدلية.','tm.timelineT':'ما حدث في اليوم','tm.everyone':'الجميع','tm.today':'اليوم',
+  'tm.prevDay':'اليوم السابق','tm.nextDay':'اليوم التالي','tm.nothing':'لا شيء مسجّل في هذا اليوم.','tm.privacy':'السجلّ للصيدلية وحدها: لا يقرؤه فريق صيدلي+.',
+  'tm.youMay':'مسموح لك','tm.notEmployed':'لست موظفاً في صيدلية بعد.','tm.myDay':'يومي','tm.ownOnly':'ترى سجلّك أنت فقط؛ المالك يرى سجلّ الجميع.',
+  'tm.invitesYou':'{ph} تدعوك للعمل فيها','tm.invitesYouS':'بصفة {pos}. تبدأ بالبيع؛ يمنحك المالك ما سواه.','tm.accept':'اقبل','tm.haveCode':'لديك رمز دعوة؟','tm.join':'انضم',
+  'tm.badCode':'الرمز غير صحيح.','tm.note.needInvite':'اكتب الاسم ورقم الهاتف أو البريد.','tm.note.already':'هذا الشخص في الفريق أو مدعوّ بالفعل.',
+  'tk.drawerClose':'إغلاق الصندوق · فرق {v}','tk.price':'سعر {name}: {to}','tk.adjust':'تصحيح {name} {n} — {why}','tk.grant':'منح {who}: {what}','tk.revoke':'سحب من {who}: {what}',
+  'tk.denied':'رُفض: {what} (غير ممنوح)','tk.invited':'دعوة {who}','tk.ended':'انتهى عمل {who}','tk.staffJoined':'قبول دعوة والانضمام','tk.inviteWithdrawn':'سحب دعوة',
+  'tk.cleared':'إفراغ السلّة','tk.countStarted':'بدء جرد رف','tk.countCommitted':'تأكيد جرد','tk.drawerSigned':'توقيع على فرق صندوق','tk.priceOnce':'سعر لبيع واحد دون اتصال',
+  'tk.localItem':'إضافة مادة خاصة','tk.barcodeSetting':'تغيير إعداد الباركود','tk.logo':'رفع شعار الوصل','tk.signOffOver':'تغيير حدّ التوقيع','tk.adjust0':'تصحيح مخزون',
   /* v0.0014 */
   'dr.title':'الصندوق','dr.openT':'افتح الصندوق','dr.openS':'عُدّ النقد في الصندوق قبل أول بيع. لا يظهر لك ما يُفترض أن يكون فيه قبل العدّ.',
   'dr.countCash':'النقد في الصندوق (د.ع)','dr.openGo':'افتح الصندوق','dr.later':'لاحقاً','dr.laterNote':'«لاحقاً» يفتح الصندوق دون عدّ، ويُسجَّل ذلك. لا يمنع ذلك البيع.',
@@ -1819,6 +1867,29 @@ Object.assign(STRINGS.ar, {
 });
 Object.assign(STRINGS.en, {
   'nav.pharmacy':'Pharmacy',
+  /* v0.0015 */
+  'nav.team':'Team','nav.activity':'My activity',
+  'pm.sell':'Selling and the drawer','pm.sellS':'Sell, and open, hand over and close the drawer.','pm.voids':'Voids and refunds','pm.voidsS':'Remove a line from a sale, empty the basket, refund a sale.',
+  'pm.discounts':'Discounts','pm.discountsS':'A discount on a sale, with a reason.','pm.prices':'Prices','pm.pricesS':'Set what products cost at this pharmacy.',
+  'pm.stock':'Stock','pm.stockS':'Counts, imports, orders, suppliers, corrections and shelf labels.','pm.writeoffs':'Write-offs','pm.writeoffsS':'Write off expired or damaged batches.',
+  'pm.cashVariance':'Cash differences','pm.cashVarianceS':'Sign off a drawer difference over the sign-off amount.','pm.receipt':'The receipt and its logo','pm.receiptS':'Upload the pharmacy’s logo for the receipt.',
+  'pm.market':'Average market price','pm.marketS':'See what other pharmacies charge on average.','pm.ownItems':'The pharmacy’s own items','pm.ownItemsS':'Add an item that is not in the catalogue.',
+  'pm.exchange':'Near-expiry exchange','pm.exchangeS':'','pm.later':'Arrives with {v}.','pm.denied':'Not allowed: {what}. The owner can grant it.',
+  'tm.staffT':'Staff · {n}','tm.noStaff':'No staff yet. Invite the first.','tm.invitedT':'Invitations waiting','tm.endedT':'Former staff',
+  'tm.pos.pharmacist':'Pharmacist','tm.pos.assistant':'Pharmacy assistant','tm.since':'Since {d}','tm.invitedOn':'Invited {d}','tm.endedOn':'Ended {d}','tm.fromTo':'From {a} to {b}',
+  'tm.invite':'Invite someone','tm.inviteS':'A link you send on WhatsApp or by text, with a code to type if the link does not work.','tm.name':'Name','tm.contact':'Phone number or email',
+  'tm.defaultS':'Someone new can sell, and nothing else. Everything else, you grant.','tm.inviteGo':'Create the invitation','tm.invitedT1':'Invitation for {who}','tm.invitedS':'Send the link; if it does not work, they type the code in the app.',
+  'tm.code':'Code:','tm.sendWa':'Send on WhatsApp','tm.sendSms':'Send by text','tm.protoAccept':'Prototype: accept the invitation as them',
+  'tm.waText':'You are invited to work at {ph} on Saydali+: {link} — or type the code {code}','tm.grantsT':'What they may do','tm.theirDay':'Their day','tm.end':'End employment','tm.withdraw':'Withdraw the invitation',
+  'tm.endS':'Their record stays as it is; they can no longer do anything at this pharmacy.','tm.timelineT':'What happened, day by day','tm.everyone':'Everyone','tm.today':'Today',
+  'tm.prevDay':'Previous day','tm.nextDay':'Next day','tm.nothing':'Nothing recorded on this day.','tm.privacy':'The record is the pharmacy’s alone: the Saydali+ team cannot read it.',
+  'tm.youMay':'You may','tm.notEmployed':'You do not work at a pharmacy on Saydali+ yet.','tm.myDay':'My day','tm.ownOnly':'You see your own record; the owner sees everyone’s.',
+  'tm.invitesYou':'{ph} invites you to work there','tm.invitesYouS':'As {pos}. You start with selling; the owner grants anything else.','tm.accept':'Accept','tm.haveCode':'Have an invitation code?','tm.join':'Join',
+  'tm.badCode':'That code is not right.','tm.note.needInvite':'Type a name, and a phone number or email.','tm.note.already':'This person is already on the team or invited.',
+  'tk.drawerClose':'Closed the drawer · difference {v}','tk.price':'Price of {name}: {to}','tk.adjust':'Corrected {name} {n} — {why}','tk.grant':'Granted {who}: {what}','tk.revoke':'Took from {who}: {what}',
+  'tk.denied':'Refused: {what} (not granted)','tk.invited':'Invited {who}','tk.ended':'Ended {who}’s employment','tk.staffJoined':'Accepted the invitation and joined','tk.inviteWithdrawn':'Withdrew an invitation',
+  'tk.cleared':'Emptied the basket','tk.countStarted':'Started counting a shelf','tk.countCommitted':'Confirmed a count','tk.drawerSigned':'Signed off a drawer difference','tk.priceOnce':'A price for one sale, offline',
+  'tk.localItem':'Added an item of the pharmacy’s own','tk.barcodeSetting':'Changed the barcode setting','tk.logo':'Uploaded the receipt logo','tk.signOffOver':'Changed the sign-off amount','tk.adjust0':'Corrected stock',
   /* v0.0014 */
   'dr.title':'Cash drawer','dr.openT':'Open the drawer','dr.openS':'Count the cash in the drawer before the first sale. What it should hold is not shown until you have counted.',
   'dr.countCash':'Cash in the drawer (IQD)','dr.openGo':'Open the drawer','dr.later':'Later','dr.laterNote':'“Later” opens the drawer uncounted, and the record says so. It never stops a sale.',
@@ -3207,6 +3278,8 @@ const myVerifiedPharmacies = () => myPharmacies().filter(p => p.verification ===
    owner of several is looking at all of them. */
 function currentPharmacy() {
   const mine = myPharmacies();
+  /* v0.0015: someone who owns none works where they are employed. */
+  if (!mine.length && S.staff && S.staff.length) { const w = workPharmacies(); return w.length === 1 ? w[0] : w.find(p => p.id === S.pharmacyTab) || null; }
   if (mine.length === 1) return mine[0];
   return mine.find(p => p.id === S.pharmacyTab) || null;
 }
@@ -3257,7 +3330,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0014';
+const VERSION = 'App_v0.0015';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -3327,9 +3400,13 @@ function screenAllowed(screen, role) {
      in check-only mode until selling is granted (v0.0015). */
   if (screen === 'till') return role === 'owner' || (role === 'pharmacist' && helperInTill());
   /* Stock is the owner's until permissions make it grantable (v0.0015). */
-  if (STOCK_SCREENS.includes(screen)) return role === 'owner';
-  /* v0.0014: the drawer is the seller's — the owner's until permissions. */
-  if (screen === 'drawer') return role === 'owner';
+  /* v0.0015: the owner's, or granted — Stock by the stock grant, the drawer
+     with selling. */
+  const granted = p => role === 'pharmacist' && S.role === 'pharmacist' && can(p);
+  if (STOCK_SCREENS.includes(screen)) return role === 'owner' || granted('stock');
+  if (screen === 'drawer') return role === 'owner' || granted('sell');
+  if (screen === 'team') return role === 'owner';
+  if (screen === 'activity') return role === 'pharmacist';
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -3468,6 +3545,8 @@ const S = {
   stockNote: null, importNote: null, supplierQuery: '', countQuery: '',
   clockShift: 0,
   scanTarget: 'till',
+  /* v0.0015 — the staff list, and who may do what. */
+  staff: [], openStaff: null, teamDay: null, teamPerson: null, teamNote: null,
   /* v0.0014 — the drawer, and the devices. */
   drawers: [], drawerStep: null, drawerSlip: null, signOffOver: {},
   devices: { A:{ online:true, since:null, queue:[], seq:{} }, B:{ online:true, since:null, queue:[], seq:{} } },
@@ -3554,9 +3633,10 @@ function headerHtml(eyebrow, title, opt) {
     '</div>' + headerActions() + '</div></div>';
 }
 /* Where each screen below the Pharmacy tabs goes back to. */
-const BACK_OF = { count:'stock', import:'stock', orders:'stock', order:'orders', suppliers:'stock', register:'stock',
+const BACK_OF = { team:'team', count:'stock', import:'stock', orders:'stock', order:'orders', suppliers:'stock', register:'stock',
                   products:'stock', product:'products', drug:'drugs', drawer:'till', labels:'count' };
 function headerBack() {
+  if (S.screen === 'team') return S.openStaff ? 'S.openStaff=null;render()' : null;
   const to = pharmacyModule() && BACK_OF[S.screen];
   if (!to || !screenAllowed(to)) return null;
   return to === 'drugs' ? 'backToReference()' : "goto('" + to + "')";
@@ -5094,6 +5174,7 @@ function screenCheckin() {
      home keeps the announcement, one job — check a prescription — and
      check-in. */
   if (helperInTill()) return '<div class="screen-body"><div class="constrain stack">' +
+    myInvitesCard() +
     bannerFor('home') +
     linkCard('till', t('hm.checkRx'), t('hm.checkRxS'), "goto('till')") +
     soonCard('clock', 'soon.checkinT', 'soon.checkinS') +
@@ -5262,10 +5343,11 @@ function pharmacyPrice(phId, code) {
   if (own != null) return own;
   return marketAverage(code);
 }
-const canSetPrices = () => S.role === 'owner';
-const canSeeMarket = () => S.role === 'owner';
-const canDiscount  = () => S.role === 'owner';
-const canRefund    = () => S.role === 'owner';
+/* v0.0015: the owner's, or granted by the owner (W23). */
+const canSetPrices = () => can('prices');
+const canSeeMarket = () => can('market');
+const canDiscount  = () => can('discounts');
+const canRefund    = () => can('voids');
 
 /* The record every later version builds on: who did what, where, when. The
    shift timeline (W23) reads it; the CRM never does. */
@@ -5277,7 +5359,7 @@ function tillLog(kind, detail) {
 }
 
 function setPrice(phId, code, v) {
-  if (!canSetPrices() || needsConnection()) return false;
+  if (!need('prices', phId) || needsConnection()) return false;
   const price = Math.round(Number(v));
   if (!isFinite(price) || price <= 0) return false;
   const from = pharmacyPrice(phId, code);
@@ -5403,6 +5485,8 @@ function tillQty(i, d) {
 function tillVoid(i) {
   const l = S.till.lines[i];
   if (!l) return;
+  /* Removing a line from a sale is a void; while only checking, it is not. */
+  if (tillMode() === 'sell' && !need('voids')) return;
   tillLog('void', { code:l.barcode, qty:l.qty, unit:l.unit });
   S.till.lines.splice(i, 1);
   render();
@@ -5509,7 +5593,7 @@ function tillTotals() {
 
 function tillOpenDiscount() { if (canDiscount()) { S.till.discountOpen = !S.till.discountOpen; render(); } }
 function tillApplyDiscount() {
-  if (!canDiscount()) return;
+  if (!need('discounts')) return;
   const T = S.till;
   const amount = Math.round(Number((document.getElementById('disc-amount') || {}).value));
   const reason = ((document.getElementById('disc-reason') || {}).value || '').trim();
@@ -5551,6 +5635,7 @@ let SALE_SEQ = 0;
 function completeSale() {
   const T = S.till;
   const ph = tillPharmacy();
+  if (ph && !need('sell', ph.id)) return;
   if (tillBlock(ph) || !T.lines.length || tillMode() !== 'sell' || T.lines.some(l => l.unit == null)) return;
   const { subtotal, discount, total } = tillTotals();
   let given = null, change = null;
@@ -5593,7 +5678,7 @@ function completeSale() {
 }
 
 function refundSale(id) {
-  if (!canRefund()) return;
+  if (!need('voids')) return;
   const sale = S.sales.find(x => x.id === id);
   const reason = ((document.getElementById('refund-reason') || {}).value || '').trim();
   if (!sale || sale.refunded) return;
@@ -5711,7 +5796,7 @@ function renderSlip(lines, rl, ph) {
 /* The logo, uploaded from the owner's view, per pharmacy. Kept small — it is
    printed in black on a 58 mm roll — and remembered on this device. */
 function setLogo(phId, dataUrl) {
-  if (!canSetPrices() || !PHARMACIES[phId]) return;
+  if (!PHARMACIES[phId] || !need('receipt', phId)) return;
   const img = new Image();
   img.onload = () => { LOGO_IMG[phId] = img; PHARMACIES[phId].logo = true; render(); };
   img.src = dataUrl;
@@ -5973,7 +6058,7 @@ function cameraModal() {
    reference. The market-on build keeps its own check for now (W8's dispensing
    tally lives there) — a leftover to fold in before W21. */
 const helperInTill = () => !FLAGS.marketplace;
-const canSell = () => S.role === 'owner';
+const canSell = () => can('sell');
 const tillMode = () => canSell() ? (S.till.mode || 'sell') : 'check';
 
 function setTillMode(m) {
@@ -5987,7 +6072,7 @@ function tillPromptPrice() {
   const l = S.till.lines.find(x => x.unit == null && !x.unknown);
   S.till.needPrice = l ? l.barcode : null;
 }
-function tillClear() { if (S.till.lines.length) tillLog('cleared', { lines:S.till.lines.length }); S.till = Object.assign(tillReset(), { mode:S.till.mode }); render(); }
+function tillClear() { if (S.till.lines.length && tillMode() === 'sell' && !need('voids')) return; if (S.till.lines.length) tillLog('cleared', { lines:S.till.lines.length }); S.till = Object.assign(tillReset(), { mode:S.till.mode }); render(); }
 
 /* Findings grouped by the drugs they are about. */
 function tillGroups(lines) {
@@ -6636,7 +6721,7 @@ function countedSummary(ph) {
 }
 
 /* Owner-only until permissions (v0.0015) make it grantable. */
-const canManageStock = () => S.role === 'owner';
+const canManageStock = () => can('stock');
 
 const stockOps = () => S.countSessions.concat(S.imports);
 
@@ -7120,7 +7205,7 @@ function discardCount(id) {
 }
 function confirmCount() {
   const sess = openCountSession();
-  if (!sess || !canManageStock()) return;
+  if (!sess || !need('stock')) return;
   if (!sess.items.length) { S.stockNote = { kind:'emptyCount' }; render(); return; }
   if (sess.items.some(it => !it.expiry)) { S.stockNote = { kind:'needExpiry' }; render(); return; }
   commitCount(sess);
@@ -7135,7 +7220,7 @@ function confirmCount() {
    movement with a reason, a date and a name — what an inspector or the
    supplier will ask for. */
 function writeOff(batchId) {
-  if (!canManageStock()) return;
+  if (!need('writeoffs')) return;
   const b = S.batches.find(x => x.id === batchId);
   const sel = document.getElementById('wo-' + batchId);
   const reason = sel ? sel.value : '';
@@ -7793,7 +7878,7 @@ function resultRows(results, act) {
 /* ---------- The pharmacy's own items ---------- */
 
 function openOwnItem(where, name) {
-  if (!canSetPrices()) return;
+  if (!can('ownItems')) return;
   S.ownDraft = { where, name:String(name || '').trim(), form:'', strength:'' };
   render();
   const el = document.getElementById('own-name'); if (el) el.focus();
@@ -7812,7 +7897,7 @@ function ownItemCard() {
 }
 const ownItemByName = (phId, name) => pharmacyItems(phId).find(x => drugNorm(x.name.en) === drugNorm(name)) || null;
 function createLocalItem(phId, name, form, strength) {
-  if (!canSetPrices() || !phId || !String(name || '').trim()) return null;
+  if (!phId || !String(name || '').trim() || !can('ownItems', phId)) return null;
   /* The same name twice is the same item. */
   const had = ownItemByName(phId, name);
   if (had) return had;
@@ -7841,7 +7926,7 @@ function saveOwnItem() {
 }
 /* Offered when a name search finds nothing, to the owner, wherever an item
    is looked for. */
-const ownOffer = (where, q) => canSetPrices() && currentPharmacy() && drugNorm(q).length >= 2 && !/^\d+$/.test(q.trim())
+const ownOffer = (where, q) => can('ownItems') && currentPharmacy() && drugNorm(q).length >= 2 && !/^\d+$/.test(q.trim())
   ? '<button class="row own-offer" style="width:100%;text-align:start;" onclick="openOwnItem(' + attr(where) + ',' + attr(q.trim()) + ')">' +
       '<span class="row-body"><span class="row-title" style="display:block;">' + esc(t('own.offer', { name:q.trim() })) + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(t('own.offerSub')) + '</span></span>' + icon('plus') + '</button>'
@@ -8140,17 +8225,18 @@ function finishCount() {
   if (!isFinite(left) || left < 0 || left > st.counted) { st.err = 'left'; render(); return; }
   /* Above the amount: the owner signs. An owner closing signs here; anyone
      else leaves it waiting for the owner. */
-  if (over && S.role === 'owner' && !sign) { st.err = 'sign'; render(); return; }
+  const signer = can('cashVariance', d.pharmacy);
+  if (over && signer && !sign) { st.err = 'sign'; render(); return; }
   Object.assign(d, { counted:st.counted, expectedAtClose:expected, variance, note, left, closedAt:nowIso(), closedBy:S.email,
-    state:over && S.role !== 'owner' ? 'waiting' : 'closed', signedBy:over && S.role === 'owner' ? S.email : null,
-    signedAt:over && S.role === 'owner' ? nowIso() : null });
+    state:over && !signer ? 'waiting' : 'closed', signedBy:over && signer ? S.email : null,
+    signedAt:over && signer ? nowIso() : null });
   tillLog('drawerClose', { drawer:d.id, counted:st.counted, expected, variance, note, state:d.state });
   S.drawerStep = null; S.drawerSlip = d.id;
   render(); scrollTop();
 }
 function signDrawer(id) {
   const d = S.drawers.find(x => x.id === id);
-  if (!d || d.state !== 'waiting' || S.role !== 'owner') return;
+  if (!d || d.state !== 'waiting' || !need('cashVariance', d.pharmacy)) return;
   d.state = 'closed'; d.signedBy = S.email; d.signedAt = nowIso();
   tillLog('drawerSigned', { drawer:d.id, variance:d.variance });
   render();
@@ -8248,7 +8334,7 @@ function screenDrawer() {
         (handover ? '<label class="field-label" for="dr-to">' + esc(t('dr.toL')) + '</label><input id="dr-to" placeholder="' + esc(t('dr.toPh')) + '">'
           : '<label class="field-label" for="dr-left">' + esc(t('dr.leftL')) + '</label>' +
             '<input id="dr-left" type="number" inputmode="numeric" dir="ltr" placeholder="0">' +
-            (over ? (S.role === 'owner'
+            (over ? (can('cashVariance', ph.id)
               ? '<label class="checkbox-row dr-signrow"><input type="checkbox" id="dr-sign"><span>' + esc(t('dr.signL', { amt:iqd(signOffOver(ph.id)) })) + '</span></label>'
               : '<p class="inline-note">' + esc(t('dr.willWait', { amt:iqd(signOffOver(ph.id)) })) + '</p>') : '')) +
         (st.err ? '<p class="auth-error">' + esc(t({ note:'dr.needNote', sign:'dr.needSign', left:'dr.badLeft', count:'dr.needCount' }[st.err])) + '</p>' : '') +
@@ -8282,7 +8368,7 @@ function screenDrawer() {
       esc(t('off.conflict', { name:productName(c.code), sales:c.sales.join(', ') })) +
       ' <button class="link-btn" onclick="resolveConflict(' + attr(c.id) + ')">' + esc(t('off.checked')) + '</button></p></div>').join('') +
     main + trail +
-    (waiting.length && S.role === 'owner' ? '<p class="section-eyebrow">' + esc(t('dr.waitingT')) + '</p><div class="card">' + waiting.map(w =>
+    (waiting.length && can('cashVariance', ph.id) ? '<p class="section-eyebrow">' + esc(t('dr.waitingT')) + '</p><div class="card">' + waiting.map(w =>
       '<div class="row dr-wait"><span class="row-body"><span class="row-title" style="display:block;">' + esc(w.id + ' · ' + signed(w.variance)) + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(personName(w.closedBy) + ' · ' + fmtWhen(w.closedAt) + (w.note ? ' · ' + w.note : '')) + '</span></span>' +
       '<button class="btn-small dr-signbtn" onclick="signDrawer(' + attr(w.id) + ')">' + esc(t('dr.sign')) + '</button></div>').join('') + '</div>' : '') +
@@ -8330,7 +8416,7 @@ function deviceCard(dev) {
    card, on the same record as everything else. */
 function adjustStock(code) {
   const ph = currentPharmacy();
-  if (!ph || !canManageStock()) return;
+  if (!ph || !need('stock')) return;
   const n = Math.round(Number((document.getElementById('adj-qty') || {}).value));
   const why = (document.getElementById('adj-why') || {}).value || '';
   const note = ((document.getElementById('adj-note') || {}).value || '').trim();
@@ -8420,6 +8506,274 @@ function screenLabels() {
       return '<div class="receipt-wrap"><img class="receipt-img shelf-label" data-code="' + r.code + '" alt="' + esc(s) + '" src="' + r.url + '" width="' + r.width + '"></div>'; }).join('')
       : '<div class="card card-pad till-empty">' + esc(t('shl.none')) + '</div>') +
     '<p class="inline-note">' + esc(t('till.printNote')) + '</p></div></div>';
+}
+
+/* ==========================================================================
+   v0.0015 — PERMISSIONS, THE STAFF LIST, AND WHAT WAS DONE EACH DAY (W23)
+
+   The owner's grants, per pharmacy, per person, default deny: a new employee
+   can sell — and, with selling, open, hand over and close a drawer — and
+   nothing else. Everything else is granted by the owner and can be taken
+   back; a grant and a revocation are themselves on the record. An action
+   tried without the grant is refused and recorded, never silently ignored.
+
+   The staff list: an employment record per person (pharmacist or assistant,
+   start date, end date), invitations for people without an account (a link
+   the owner sends, with a code as the fallback), and deactivation that keeps
+   the history. Grants are stored per person as a plain set of permissions,
+   so ready-made and custom roles (decided 28 Sep 2026, later) can sit on top
+   as saved sets without changing anything already granted.
+
+   The timeline: every action with who did it, per day (per shift once
+   check-in exists, v0.0017). The owner reads everyone's; an employee reads
+   their own. The CRM reads none of it.
+   ========================================================================== */
+
+const PERMS = ['sell', 'voids', 'discounts', 'prices', 'stock', 'writeoffs', 'cashVariance', 'receipt', 'market', 'ownItems', 'exchange'];
+const DEFAULT_GRANTS = ['sell'];
+/* Grantable only once the feature exists. */
+const PERM_LATER = { exchange:'v0.0018' };
+
+const ownsPharmacy = (phId, mail) => ownedIds(ACCOUNTS[mail || S.email]).includes(phId);
+const staffOf = phId => (S.staff || []).filter(x => x.pharmacy === phId);
+const staffRecord = (phId, mail) => (S.staff || []).find(x => x.pharmacy === phId && x.email === (mail || S.email) && x.state === 'active') || null;
+/* The pharmacies a person works at without owning them. */
+const workPharmacies = () => (S.staff || []).filter(x => x.email === S.email && x.state === 'active')
+  .map(x => pharmacyOf(x.pharmacy)).filter(Boolean);
+
+/* May the person signed in do this, at this pharmacy (the one on screen if
+   none is named)? The owner may do everything at a pharmacy they own. */
+function can(perm, phId) {
+  if (phId === undefined) { const p = currentPharmacy(); phId = p ? p.id : null; }
+  if (S.role === 'owner') return phId ? ownsPharmacy(phId) : true;
+  if (!phId) return false;
+  const st = staffRecord(phId);
+  return !!st && st.grants.includes(perm);
+}
+/* The same question, asked by an action: a refusal is said and recorded. */
+function need(perm, phId) {
+  if (can(perm, phId)) return true;
+  tillLog('denied', { perm });
+  toast(t('pm.denied', { what:t('pm.' + perm) }));
+  return false;
+}
+
+/* ---------- The staff list ---------- */
+
+let STAFF_SEQ = 0;
+function nextStaffId() { STAFF_SEQ = Math.max(STAFF_SEQ, (S.staff || []).length) + 1; return 'E' + String(STAFF_SEQ).padStart(3, '0'); }
+/* A six-digit code, and a link that carries it. */
+function inviteCode(id) {
+  let h = 7; for (const c of id + S.email) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return String(100000 + (h % 900000));
+}
+function inviteStaff() {
+  const ph = currentPharmacy();
+  if (!ph || S.role !== 'owner') return;
+  const name = ((document.getElementById('inv-name') || {}).value || '').trim();
+  const contact = ((document.getElementById('inv-contact') || {}).value || '').trim();
+  const position = (document.getElementById('inv-pos') || {}).value || 'pharmacist';
+  if (!name || !contact) { S.teamNote = { kind:'needInvite' }; render(); return; }
+  /* An existing account is invited by its email; anyone else by phone. */
+  const mail = ACCOUNTS[contact.toLowerCase()] ? contact.toLowerCase() : null;
+  if (mail && staffOf(ph.id).some(x => x.email === mail && x.state !== 'ended')) { S.teamNote = { kind:'already' }; render(); return; }
+  const id = nextStaffId(), code = inviteCode(id);
+  const rec = { id, pharmacy:ph.id, email:mail, name, contact, position, state:'invited', grants:DEFAULT_GRANTS.slice(),
+                start:null, end:null, invitedAt:nowIso(), invitedBy:S.email, code,
+                link:'https://saydali.example/join/' + ph.id.toLowerCase() + '-' + code };
+  S.staff.push(rec);
+  tillLog('staffInvited', { person:id, name, position });
+  S.teamNote = { kind:'invited', id }; S.openStaff = null;
+  render();
+}
+/* The invitation, accepted — from the link, or by typing the code. Someone
+   with no account gets one; the employment starts today. */
+function acceptInvite(code) {
+  const rec = (S.staff || []).find(x => x.state === 'invited' && x.code === String(code || '').trim());
+  if (!rec) return null;
+  if (!rec.email) {
+    const mail = 'staff' + rec.id.toLowerCase() + '@example.com', key = 'acc.staff' + rec.id;
+    STRINGS.en[key] = rec.name; STRINGS.ar[key] = rec.name;
+    ACCOUNTS[mail] = { type:'pharmacist', pharmacy:null, verified:true, nameKey:key, tagKey:key,
+                       initials:{ ar:initialsOf(rec.name), en:initialsOf(rec.name) }, trial:false, assistant:rec.position === 'assistant' };
+    rec.email = mail;
+  }
+  rec.state = 'active'; rec.start = TODAY_ISO; rec.acceptedAt = nowIso();
+  S.teamLog = S.teamLog || [];
+  S.tillLog.push({ kind:'staffJoined', at:nowIso(), by:rec.email, pharmacy:rec.pharmacy, person:rec.id, drawer:null, device:S.device });
+  return rec;
+}
+/* A pharmacist invited by their email accepts on their own home. */
+function acceptMyInvite(id) {
+  const rec = (S.staff || []).find(x => x.id === id && x.email === S.email && x.state === 'invited');
+  if (!rec) return;
+  acceptInvite(rec.code); render();
+}
+function joinByCode() {
+  const code = ((document.getElementById('join-code') || {}).value || '').trim();
+  const rec = (S.staff || []).find(x => x.state === 'invited' && x.code === code);
+  if (!rec || (rec.email && rec.email !== S.email)) { toast(t('tm.badCode')); return; }
+  if (!rec.email) rec.email = S.email;
+  acceptInvite(code); render();
+}
+function endEmployment(id) {
+  const rec = (S.staff || []).find(x => x.id === id);
+  if (!rec || S.role !== 'owner' || !ownsPharmacy(rec.pharmacy) || rec.state === 'ended') return;
+  const was = rec.state;
+  rec.state = 'ended'; rec.end = TODAY_ISO;
+  tillLog(was === 'invited' ? 'inviteWithdrawn' : 'staffEnded', { person:id, name:rec.name });
+  render();
+}
+function setGrant(id, perm, on) {
+  const rec = (S.staff || []).find(x => x.id === id);
+  if (!rec || S.role !== 'owner' || !ownsPharmacy(rec.pharmacy) || !PERMS.includes(perm) || PERM_LATER[perm]) return;
+  const has = rec.grants.includes(perm);
+  if (on === has) return;
+  rec.grants = on ? rec.grants.concat([perm]) : rec.grants.filter(p => p !== perm);
+  tillLog(on ? 'grant' : 'revoke', { person:id, name:rec.name, perm });
+  render();
+}
+const initialsOf = n => { const w = String(n || '?').trim().split(/\s+/); return (w[0][0] + (w.length > 1 ? w[w.length - 1].replace(/^al-/i, '')[0] : '')).toUpperCase(); };
+const staffName = rec => rec.email && ACCOUNTS[rec.email] ? personName(rec.email) : rec.name;
+
+/* ---------- The timeline ---------- */
+
+const dayOf = iso => { const d = new Date(iso), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); };
+const todayKey = () => dayOf(new Date(nowMs()).toISOString());
+function timelineEvents(phId, mail, day) {
+  return S.tillLog.filter(e => e.pharmacy === phId && (!mail || e.by === mail) && dayOf(e.at) === day)
+    .slice().sort((a, b) => a.at < b.at ? 1 : -1);
+}
+function timelineText(e) {
+  const perm = e.perm ? t('pm.' + e.perm) : '';
+  switch (e.kind) {
+    case 'sale': { const s = S.sales.find(x => x.id === e.sale); return t('au.sale', { no:s ? (s.no || s.id) : e.sale, amt:iqd(e.total) }) + (s && s.discount ? ' · ' + t('au.disc', { amt:iqd(s.discount) }) : ''); }
+    case 'refund': return t('au.refund', { amt:iqd(e.total), why:e.reason });
+    case 'void': return t('au.void', { name:productName(e.code), n:e.qty });
+    case 'noSale': return t('au.noSale', { why:e.reason });
+    case 'handover': return t('au.handover', { v:signed(e.variance) });
+    case 'drawerClose': return t('tk.drawerClose', { v:signed(e.variance) });
+    case 'price': return t('tk.price', { name:productName(e.code), to:iqd(e.to) });
+    case 'adjust': return t('tk.adjust', { name:productName(e.code), n:(e.qty > 0 ? '+' : '') + e.qty, why:t('adj.r.' + e.reason) === 'adj.r.' + e.reason ? e.reason : t('adj.r.' + e.reason) });
+    case 'grant': return t('tk.grant', { who:e.name, what:perm });
+    case 'revoke': return t('tk.revoke', { who:e.name, what:perm });
+    case 'denied': return t('tk.denied', { what:perm });
+    case 'staffInvited': return t('tk.invited', { who:e.name });
+    case 'staffEnded': return t('tk.ended', { who:e.name });
+    default: { const k = 'tk.' + e.kind, s = t(k); return s === k ? (t('au.' + e.kind) === 'au.' + e.kind ? e.kind : t('au.' + e.kind)) : s; }
+  }
+}
+function timelineHtml(phId, mail, day) {
+  const ev = timelineEvents(phId, mail, day);
+  if (!ev.length) return '<div class="card card-pad till-empty tl-empty">' + esc(t('tm.nothing')) + '</div>';
+  return '<div class="card tl-list">' + ev.map(e =>
+    '<div class="row tl-ev" data-kind="' + e.kind + '"' + (e.kind === 'denied' ? ' data-denied="1"' : '') + '><span class="tl-time figure">' + esc(fmtWhen(e.at).slice(-5)) + '</span>' +
+    '<span class="row-body"><span class="row-title" style="display:block;">' + esc(timelineText(e)) + '</span>' +
+    (mail ? '' : '<span class="row-sub" style="display:block;">' + esc(personName(e.by)) + '</span>') + '</span></div>').join('') + '</div>';
+}
+function dayPicker(day, fn) {
+  const shift = k => { const d = new Date(day + 'T12:00:00'); d.setDate(d.getDate() + k); return dayOf(d.toISOString()); };
+  const isToday = day === todayKey();
+  return '<div class="tl-days"><button class="btn-secondary tl-prev" onclick="' + fn + '(' + attr(shift(-1)) + ')" aria-label="' + esc(t('tm.prevDay')) + '">' + icon('back') + '</button>' +
+    '<span class="tl-day">' + esc(isToday ? t('tm.today') : day === shift(0) && false ? '' : day) + '</span>' +
+    '<button class="btn-secondary tl-next" ' + (isToday ? 'disabled ' : '') + 'onclick="' + fn + '(' + attr(shift(1)) + ')" aria-label="' + esc(t('tm.nextDay')) + '">' + icon('back') + '</button></div>';
+}
+function setTeamDay(d) { S.teamDay = d; render(); }
+function setTeamPerson(mail) { S.teamPerson = mail || null; render(); }
+
+/* ---------- The Team screen (the owner) ---------- */
+
+function screenTeam() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'team');
+  if (S.openStaff) return staffPage(ph, (S.staff || []).find(x => x.id === S.openStaff));
+  const list = staffOf(ph.id), active = list.filter(x => x.state === 'active'), invited = list.filter(x => x.state === 'invited'), ended = list.filter(x => x.state === 'ended');
+  const day = S.teamDay || todayKey();
+  const note = S.teamNote;
+  const justInvited = note && note.kind === 'invited' && list.find(x => x.id === note.id);
+  const row = x => '<button class="row tm-row" style="width:100%;text-align:start;" onclick="S.openStaff=' + attr(x.id) + ';S.teamNote=null;render();window.scrollTo(0,0)">' +
+    '<span class="avatar tm-av">' + esc(initialsOf(staffName(x))) + '</span>' +
+    '<span class="row-body"><span class="row-title" style="display:block;">' + esc(staffName(x)) + '</span>' +
+    '<span class="row-sub" style="display:block;">' + esc(t('tm.pos.' + x.position) + ' · ' +
+      (x.state === 'invited' ? t('tm.invitedOn', { d:dayOf(x.invitedAt) }) : x.state === 'ended' ? t('tm.endedOn', { d:x.end }) : t('tm.since', { d:x.start }))) + '</span>' +
+    '<span class="row-sub tm-grants" style="display:block;">' + esc(x.grants.map(p => t('pm.' + p)).join(' · ')) + '</span></span>' +
+    icon('chevron', 'more-chevron') + '</button>';
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    (note && note.kind !== 'invited' ? '<div class="banner banner-amber">' + icon('alert') + '<p>' + esc(t('tm.note.' + note.kind)) + '</p></div>' : '') +
+    (justInvited ? inviteCard(justInvited) : '') +
+    '<p class="section-eyebrow">' + esc(t('tm.staffT', { n:active.length })) + '</p>' +
+    (active.length ? '<div class="card">' + active.map(row).join('') + '</div>' : '<div class="card card-pad till-empty">' + esc(t('tm.noStaff')) + '</div>') +
+    (invited.length && !justInvited ? '<p class="section-eyebrow">' + esc(t('tm.invitedT')) + '</p><div class="card">' + invited.map(row).join('') + '</div>' : '') +
+    '<details class="card card-pad tm-invite"' + (active.length ? '' : ' open') + '><summary>' + esc(t('tm.invite')) + '</summary>' +
+      '<p class="inline-note" style="margin:8px 0;">' + esc(t('tm.inviteS')) + '</p>' +
+      '<div class="own-grid"><input id="inv-name" placeholder="' + esc(t('tm.name')) + '">' +
+        '<input id="inv-contact" dir="ltr" placeholder="' + esc(t('tm.contact')) + '">' +
+        '<select id="inv-pos"><option value="pharmacist">' + esc(t('tm.pos.pharmacist')) + '</option><option value="assistant">' + esc(t('tm.pos.assistant')) + '</option></select></div>' +
+      '<p class="inline-note">' + esc(t('tm.defaultS')) + '</p>' +
+      '<button class="btn-primary tm-invite-go" onclick="inviteStaff()">' + esc(t('tm.inviteGo')) + '</button></details>' +
+    '<p class="section-eyebrow">' + esc(t('tm.timelineT')) + '</p>' +
+    '<div class="tl-bar">' + dayPicker(day, 'setTeamDay') +
+      '<select class="tl-person" onchange="setTeamPerson(this.value)"><option value="">' + esc(t('tm.everyone')) + '</option>' +
+        [...new Set([S.email].concat(list.filter(x => x.email).map(x => x.email)))].map(m => '<option value="' + esc(m) + '"' + (S.teamPerson === m ? ' selected' : '') + '>' + esc(personName(m)) + '</option>').join('') + '</select></div>' +
+    timelineHtml(ph.id, S.teamPerson, day) +
+    (ended.length ? '<p class="section-eyebrow">' + esc(t('tm.endedT')) + '</p><div class="card">' + ended.map(row).join('') + '</div>' : '') +
+    '<p class="inline-note">' + esc(t('tm.privacy')) + '</p>' +
+    '</div></div>';
+}
+function inviteCard(x) {
+  const wa = 'https://wa.me/?text=' + encodeURIComponent(t('tm.waText', { ph:L(PHARMACIES[x.pharmacy].name), link:x.link, code:x.code }));
+  return '<div class="card card-pad tm-invcard"><p class="urgent-t">' + esc(t('tm.invitedT1', { who:x.name })) + '</p>' +
+    '<p class="urgent-s">' + esc(t('tm.invitedS')) + '</p>' +
+    '<p class="tm-link figure" dir="ltr">' + esc(x.link) + '</p>' +
+    '<p class="tm-code">' + esc(t('tm.code')) + ' <b class="figure" dir="ltr">' + esc(x.code) + '</b></p>' +
+    '<div class="dr-actions"><a class="btn-primary tm-wa" href="' + esc(wa) + '" target="_blank" rel="noopener">' + esc(t('tm.sendWa')) + '</a>' +
+      '<a class="btn-secondary tm-sms" href="sms:' + esc(x.contact) + '?body=' + encodeURIComponent(x.link) + '">' + esc(t('tm.sendSms')) + '</a></div>' +
+    '<button class="link-btn tm-accept-proto" onclick="acceptInvite(' + attr(x.code) + ');S.teamNote=null;render()">' + esc(t('tm.protoAccept')) + '</button></div>';
+}
+function staffPage(ph, x) {
+  if (!x) { S.openStaff = null; return screenTeam(); }
+  const day = S.teamDay || todayKey();
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="card card-pad tm-person"><p class="urgent-t">' + esc(staffName(x)) + '</p>' +
+      '<p class="urgent-s">' + esc(t('tm.pos.' + x.position) + ' · ' + (x.email || x.contact)) + '</p>' +
+      '<p class="urgent-s">' + esc(x.state === 'active' ? t('tm.since', { d:x.start }) : x.state === 'invited' ? t('tm.invitedOn', { d:dayOf(x.invitedAt) }) : t('tm.fromTo', { a:x.start || '—', b:x.end })) + '</p></div>' +
+    (x.state === 'invited' ? inviteCard(x) : '') +
+    '<p class="section-eyebrow">' + esc(t('tm.grantsT')) + '</p>' +
+    '<div class="card tm-grantlist">' + PERMS.map(p => {
+      const later = PERM_LATER[p], on = x.grants.includes(p), off = x.state === 'ended' || !!later;
+      return '<label class="row tm-grant" data-perm="' + p + '"><span class="row-body"><span class="row-title" style="display:block;">' + esc(t('pm.' + p)) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(later ? t('pm.later', { v:later }) : t('pm.' + p + 'S')) + '</span></span>' +
+        '<input type="checkbox" class="bc-toggle" ' + (on ? 'checked ' : '') + (off ? 'disabled ' : '') + 'onchange="setGrant(' + attr(x.id) + ',' + attr(p) + ',this.checked)"></label>';
+    }).join('') + '</div>' +
+    (x.email ? '<p class="section-eyebrow">' + esc(t('tm.theirDay')) + '</p>' + dayPicker(day, 'setTeamDay') + timelineHtml(ph.id, x.email, day) : '') +
+    (x.state !== 'ended' ? '<button class="btn-secondary tm-end" onclick="endEmployment(' + attr(x.id) + ')">' + esc(t(x.state === 'invited' ? 'tm.withdraw' : 'tm.end')) + '</button>' +
+      '<p class="inline-note">' + esc(t('tm.endS')) + '</p>' : '') +
+    '</div></div>';
+}
+
+/* ---------- An employee's own day ---------- */
+
+function screenActivity() {
+  const w = workPharmacies();
+  const ph = currentPharmacy() || w[0];
+  const day = S.teamDay || todayKey();
+  const rec = ph ? staffRecord(ph.id) : null;
+  return '<div class="screen-body"><div class="constrain stack">' +
+    (rec ? '<div class="card card-pad"><p class="urgent-t">' + esc(L(ph.name)) + '</p><p class="urgent-s">' + esc(t('tm.since', { d:rec.start })) + '</p>' +
+      '<p class="field-label" style="margin-top:10px;">' + esc(t('tm.youMay')) + '</p><p class="tm-grants">' + esc(rec.grants.map(p => t('pm.' + p)).join(' · ')) + '</p></div>'
+      : '<div class="card card-pad till-empty">' + esc(t('tm.notEmployed')) + '</div>') +
+    (ph ? '<p class="section-eyebrow">' + esc(t('tm.myDay')) + '</p>' + dayPicker(day, 'setTeamDay') + timelineHtml(ph.id, S.email, day) : '') +
+    '<p class="inline-note">' + esc(t('tm.ownOnly')) + '</p></div></div>';
+}
+/* On a pharmacist's home: an invitation waiting for them, and a code box. */
+function myInvitesCard() {
+  const mine = (S.staff || []).filter(x => x.state === 'invited' && x.email === S.email);
+  return mine.map(x => '<div class="card card-pad tm-myinv"><p class="urgent-t">' + esc(t('tm.invitesYou', { ph:L(PHARMACIES[x.pharmacy].name) })) + '</p>' +
+    '<p class="urgent-s">' + esc(t('tm.invitesYouS', { pos:t('tm.pos.' + x.position) })) + '</p>' +
+    '<button class="btn-primary tm-accept" onclick="acceptMyInvite(' + attr(x.id) + ')">' + esc(t('tm.accept')) + '</button></div>').join('') +
+    (workPharmacies().length ? '' : '<details class="card card-pad tm-join"><summary>' + esc(t('tm.haveCode')) + '</summary>' +
+      '<div class="till-inline" style="margin-top:10px;"><input id="join-code" inputmode="numeric" dir="ltr" placeholder="000000">' +
+      '<button class="btn-small" onclick="joinByCode()">' + esc(t('tm.join')) + '</button></div></details>');
 }
 
 function screenProducts() {
@@ -9567,6 +9921,9 @@ const SCREENS = {
   stock:         { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('nav.stock'), body:screenStock },
   count:         { eyebrow:()=>t('nav.stock'), title:()=>t('st.countShelf'), body:screenCount },
   drawer:        { eyebrow:()=>t('nav.till'), title:()=>t('dr.title'), body:screenDrawer },
+  team:          { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); },
+                   title:()=>{ const x = S.openStaff && (S.staff || []).find(y => y.id === S.openStaff); return x ? staffName(x) : t('nav.team'); }, body:screenTeam },
+  activity:      { eyebrow:()=>currentName(), title:()=>t('nav.activity'), body:screenActivity },
   labels:        { eyebrow:()=>t('nav.stock'), title:()=>t('shl.titleShort'), body:screenLabels },
   import:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.importSheet'), body:screenImport },
   orders:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.orders'), body:screenOrders },
@@ -9664,7 +10021,7 @@ const NAV_DARK = {
   /* v0.0013: Stock takes the catalogue's slot. The catalogue and its prices
      are one tap inside it, and in the sidebar. */
   owner:      [['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],
-               ['drugs','pill','nav.drugs'],['profile','user','nav.profile']]
+               ['drugs','pill','nav.drugs'],['team','users','nav.team'],['profile','user','nav.profile']]
 };
 
 function navFor(role) {
@@ -9736,6 +10093,7 @@ function sidebarGroups() {
 function ownerGroups() {
   const groups = [
     { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],['products','barcode','nav.products'],
+                                 ['team','users','nav.team'],
                                  ['post','plus','nav.post'],
                                  ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
                                  /* The pharmacy's own consumption. Commercial, not
@@ -9787,12 +10145,14 @@ function profileLinks() {
   /* Anything already on the bar is not repeated here, and anything switched
      off is not offered. */
   const onBar = navFor(S.role).map(x => x[0]);
-  return [['cv','clipboard','nav.cv'], ['products','barcode','nav.products'],
+  return [['activity','clock','nav.activity'], ['cv','clipboard','nav.cv'], ['products','barcode','nav.products'],
           ['notifications','bell','nav.notifications'], ['incidents','alert','nav.incidents'],
           /* A pharmacist who owns a pharmacy adds it here and becomes an owner. */
           ['addPharmacy','plus','ap.addFirst']]
     .filter(x => !onBar.includes(x[0]) && screenAllowed(x[0]))
-    .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
+    .filter(x => x[0] !== 'products' || !FLAGS.marketplace)
+    /* v0.0015: "My activity" once they work somewhere. */
+    .filter(x => x[0] !== 'activity' || (S.staff || []).some(r => r.email === S.email && r.state !== 'invited'));
 }
 
 /* Sidebar-only extras for the flat roles. */
@@ -10202,7 +10562,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0014.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0015.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }

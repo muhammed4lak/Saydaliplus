@@ -1324,8 +1324,8 @@ await signOut(dk);
 await signIn(dk, 'rahma@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) and their profile',
-   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,profile' &&
+ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) the team and their profile',
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,profile' &&
      pharmacyTabsFor('owner').map(x => x[0]).join() === 'till,stock,drugs'));
 {
   const txt = await dk.locator('#app-body').innerText();
@@ -2054,8 +2054,8 @@ console.log('\nstock and purchasing (v0.0013)');
   ]);
 
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
-  ok('an owner’s bar: home, the pharmacy, their profile',
-     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,profile'));
+  ok('an owner’s bar: home, the pharmacy, the team, their profile',
+     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,profile'));
   ok('the catalogue is one tap inside Stock — and, with Pharmacy one module (v0.0013.4), not a second line in the sidebar',
      await dk.evaluate(() => { goto('stock'); return /Catalogue and prices/.test(document.getElementById('app-body').innerText) &&
        !sidebarGroups()[0].items.some(x => x[0] === 'products') && sidebarGroups()[0].items.some(x => x[0] === 'pharmacy'); }));
@@ -2678,10 +2678,10 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
         await dk.evaluate(([w, d, s]) => { signOut(); signInAs(w); setLang(d); if (w === 'layla@example.com') setPharmacy('P2'); goto(s); }, [who, dir, s]);
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} ${s} (${dir})`);
         const bar = await dk.evaluate(() => [...document.querySelectorAll('#bottom-nav .nav-item')].map(b => b.innerText.trim()).join('|'));
-        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'لوحة التحكم|الصيدلية|الحساب' : 'Dashboard|Pharmacy|Profile')) wide.push('bar ' + bar);
+        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'لوحة التحكم|الصيدلية|الفريق|الحساب' : 'Dashboard|Pharmacy|Team|Profile')) wide.push('bar ' + bar);
       }
     }
-    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Profile${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Team, Profile${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
 }
@@ -2758,7 +2758,7 @@ console.log('\nthe UI review (v0.0013.5)');
      await dk.evaluate(() => { setLang('ar'); openDrug('Warfarin'); const r = getComputedStyle(document.querySelector('.header-back svg')).transform !== 'none'; setLang('en'); return r; }));
   ok('U5 — a pharmacist’s home: the announcement on top, then “Check a prescription”, then check-in',
      await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('checkin');
-       const kids = [...document.querySelector('#app-body .constrain').children];
+       const kids = [...document.querySelector('#app-body .constrain').children].filter(k => !k.classList.contains('tm-join'));
        return kids.length === 3 && kids[0].classList.contains('banner-slot') && /Check a prescription/.test(kids[1].innerText) &&
          /Check in/.test(kids[2].innerText) && !/Look up a product/.test(document.getElementById('app-body').innerText); }));
   ok('U7 — counting says “1 drug · 1 box” and “Confirm the count — 1 drug”',
@@ -2963,6 +2963,130 @@ console.log('\ncash, and the offline model (v0.0014)');
       }
     }
     ok(`the drawer, its count, the opening sheet and the labels fit at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    await dk.setViewportSize({ width: 1440, height: 900 });
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   v0.0015 — permissions, the staff list, and what was done each day (W23).
+   --------------------------------------------------------------------------- */
+console.log('\npermissions, the staff list, and the timeline (v0.0015)');
+{
+  await dk.evaluate(() => { window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+    window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+    signOut(); signInAs('rahma@example.com'); setLang('en'); S.staff = []; S.openStaff = null; S.teamDay = null; S.teamPerson = null; S.teamNote = null;
+    S.drawers = []; S.devices.A = { online:true, since:null, queue:[], seq:{} }; S.device = 'A'; S.clockShift = 0; S.till = tillReset(); goto('team'); });
+  ok('the owner has a Team, with nobody on it yet, and a way to invite',
+     await dk.evaluate(() => S.screen === 'team' && /No staff yet/.test(document.getElementById('app-body').innerText) && !!document.querySelector('.tm-invite')));
+  ok('an invitation needs a name and a phone number or email',
+     await dk.evaluate(() => { inviteStaff(); return !S.staff.length && /Type a name/.test(document.getElementById('app-body').innerText); }));
+  ok('inviting a pharmacist with an account: a link and a six-digit code, sent on WhatsApp or by text',
+     await dk.evaluate(() => { setv('inv-name', 'Ahmed Al-Kubaisi'); setv('inv-contact', 'ahmed@example.com'); inviteStaff();
+       const x = S.staff[0], wa = document.querySelector('.tm-wa');
+       return !!x && x.state === 'invited' && x.email === 'ahmed@example.com' && /^\d{6}$/.test(x.code) && x.link.endsWith(x.code) &&
+         !!wa && decodeURIComponent(wa.getAttribute('href')).includes(x.code) && !!document.querySelector('.tm-sms') &&
+         x.grants.join() === 'sell'; }));
+  ok('…and the invitation is on the day’s record',
+     await dk.evaluate(() => { S.teamNote = null; render(); return [...document.querySelectorAll('.tl-ev')].some(e => /Invited Ahmed/.test(e.innerText)); }));
+  ok('the pharmacist sees it on their home and accepts; they now work there, since today',
+     await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('checkin');
+       const card = document.querySelector('.tm-myinv'); const shown = !!card && /Al-Rahma Pharmacy invites you/.test(card.innerText);
+       tap('.tm-accept'); const x = S.staff[0];
+       return shown && x.state === 'active' && x.start === TODAY_ISO && currentPharmacy() && currentPharmacy().id === 'P1'; }));
+  ok('DEFAULT DENY — a new employee can sell (and so open the drawer), and nothing else',
+     await dk.evaluate(() => { goto('till'); const selling = tillMode() === 'sell' && !!document.querySelector('.till-mode');
+       tillScan('4000000001065'); confirmCash(); const sale = S.sales[0]; closeReceipt();
+       goto('drawer'); const drawer = S.screen === 'drawer';
+       goto('stock'); const noStock = S.screen !== 'stock';
+       return selling && sale.by === 'ahmed@example.com' && sale.pharmacy === 'P1' && drawer && noStock &&
+         pharmacyTabsFor().map(x => x[0]).join() === 'till,drugs'; }));
+  ok('AN ACTION WITHOUT THE PERMISSION IS REFUSED AND RECORDED: a refund, a discount, a price, removing a line',
+     await dk.evaluate(() => { const sale = S.sales.find(s => s.by === 'ahmed@example.com'); const n = S.tillLog.filter(e => e.kind === 'denied' && e.by === 'ahmed@example.com').length;
+       goto('till'); openReceipt(sale.id); const noRefundForm = !document.getElementById('refund-reason');
+       refundSale(sale.id); const notRefunded = !sale.refunded;
+       closeReceipt(); tillAdd('5000000001002'); S.till.discountOpen = true; tillApplyDiscount();
+       const price = setPrice('P1', '5000000001002', 9999) === false;
+       tillVoid(0); const kept = S.till.lines.length === 1;
+       const denied = S.tillLog.filter(e => e.kind === 'denied' && e.by === 'ahmed@example.com').map(e => e.perm);
+       return noRefundForm && notRefunded && price && kept && ['voids', 'discounts', 'prices'].every(p => denied.includes(p)) && denied.length >= n + 4; }));
+  ok('…and nothing an employee may not do is offered: no discount, no own item, no Stock tab',
+     await dk.evaluate(() => { goto('till'); S.till = tillReset(); tillQuery('zzqx new thing'); const noOffer = !document.querySelector('.own-offer');
+       tillQuery(''); tillAdd('5000000001002'); openPay(); const m = document.getElementById('modal-root').innerText; closeModal();
+       return noOffer && !/Discount/.test(m) && !document.querySelector('.mod-tab[data-tab="stock"]'); }));
+  ok('the owner grants voids and refunds — the grant is on the record — and the refund now goes through',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); tap('.tm-row');
+       const page = !!document.querySelector('.tm-grantlist'); setGrant(S.staff[0].id, 'voids', true);
+       const logged = S.tillLog.some(e => e.kind === 'grant' && e.perm === 'voids' && e.by === 'rahma@example.com');
+       signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('till'); S.till = tillReset(); render();
+       const sale = S.sales.find(s => s.by === 'ahmed@example.com'); openReceipt(sale.id); setv('refund-reason', 'wrong box'); refundSale(sale.id); closeReceipt();
+       return page && logged && !!sale.refunded && sale.refunded.by === 'ahmed@example.com'; }));
+  ok('granting Stock opens the Stock tab and its work to them',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setGrant(S.staff[0].id, 'stock', true);
+       signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('stock');
+       return S.screen === 'stock' && pharmacyTabsFor().map(x => x[0]).join() === 'till,stock,drugs'; }));
+  ok('taking a grant back closes it again, and that is on the record too',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setGrant(S.staff[0].id, 'stock', false);
+       const logged = S.tillLog.some(e => e.kind === 'revoke' && e.perm === 'stock');
+       signOut(); signInAs('ahmed@example.com'); goto('stock'); return logged && S.screen !== 'stock'; }));
+  ok('the drawer comes with selling; a difference over the amount waits for the owner unless cash differences are granted',
+     await dk.evaluate(() => { goto('drawer'); const d = openDrawer('P1') || ensureDrawer('P1');
+       S.drawerStep = { drawer:d.id, kind:'close', counted:drawerExpected(d) + 9000 }; render();
+       const noSign = !document.getElementById('dr-sign'); setv('dr-note', 'extra note found'); finishCount();
+       return noSign && d.state === 'waiting' && d.closedBy === 'ahmed@example.com'; }));
+  ok('an employee sees their own day — and nobody else’s',
+     await dk.evaluate(() => { goto('profile'); const link = [...document.querySelectorAll('#app-body [onclick]')].some(b => /goto\(['"]activity['"]\)/.test(b.getAttribute('onclick')));
+       goto('activity'); const evs = [...document.querySelectorAll('.tl-ev')];
+       const own = evs.length > 0 && evs.every(e => { const k = e.dataset.kind; return true; }) &&
+         timelineEvents('P1', 'ahmed@example.com', todayKey()).length === evs.length && !/Granted Ahmed/.test(document.getElementById('app-body').innerText);
+       return link && own && /You may/.test(document.getElementById('app-body').innerText) && /Voids and refunds/.test(document.getElementById('app-body').innerText); }));
+  ok('the owner reads everyone’s day, with who did each thing — and can narrow it to one person',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = null; render();
+       const all = [...document.querySelectorAll('.tl-ev')].map(e => e.innerText).join('\n');
+       const both = /Rahma/.test(all) && /Ahmed/.test(all) && /Refused: Discounts/.test(all);
+       setTeamPerson('ahmed@example.com'); const one = [...document.querySelectorAll('.tl-ev')];
+       const only = one.length === timelineEvents('P1', 'ahmed@example.com', todayKey()).length && one.every(e => !/Granted/.test(e.innerText));
+       setTeamPerson(''); return both && only; }));
+  ok('…day by day: yesterday shows yesterday, and the day after today cannot be opened',
+     await dk.evaluate(() => { const y = new Date(nowMs() - 864e5).toISOString();
+       S.tillLog.push({ kind:'noSale', at:y, by:'ahmed@example.com', pharmacy:'P1', reason:'yesterday test', drawer:null });
+       tap('.tl-prev'); const yday = /yesterday test/.test(document.querySelector('.tl-list') ? document.querySelector('.tl-list').innerText : '');
+       tap('.tl-next'); const back = S.teamDay === todayKey() && !/yesterday test/.test(document.getElementById('app-body').innerText);
+       return yday && back && document.querySelector('.tl-next').disabled; }));
+  ok('the owner signs the waiting drawer',
+     await dk.evaluate(() => { const d = S.drawers.find(x => x.state === 'waiting'); goto('drawer'); tap('.dr-signbtn'); return d.state === 'closed' && d.signedBy === 'rahma@example.com'; }));
+  ok('inviting someone with no account: the code works from the app, and they arrive with selling only',
+     await dk.evaluate(() => { goto('team'); setv('inv-name', 'Sara Hadi'); setv('inv-contact', '+964 770 000 0000'); setv('inv-pos', 'assistant'); inviteStaff();
+       const x = S.staff.find(s => s.name === 'Sara Hadi'); signOut(); signInAs('noor@example.com'); setLang('en'); goto('checkin');
+       const box = !!document.querySelector('.tm-join'); setv('join-code', '000000'); joinByCode(); const bad = x.state === 'invited';
+       setv('join-code', x.code); joinByCode();
+       return box && bad && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'assistant' && x.grants.join() === 'sell'; }));
+  ok('the near-expiry exchange cannot be granted before it exists (v0.0018)',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render();
+       const box = document.querySelector('.tm-grant[data-perm="exchange"] input'); setGrant(S.staff[0].id, 'exchange', true);
+       return !!box && box.disabled && !S.staff[0].grants.includes('exchange'); }));
+  ok('ending employment keeps the record, and they can do nothing there any more',
+     await dk.evaluate(() => { const x = S.staff[0]; endEmployment(x.id); const kept = x.state === 'ended' && x.end === TODAY_ISO &&
+         S.sales.some(s => s.by === 'ahmed@example.com') && S.tillLog.some(e => e.kind === 'staffEnded');
+       signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('till');
+       return kept && !currentPharmacy() && tillMode() === 'check' && !can('sell', 'P1'); }));
+  ok('an owner’s powers are at their own pharmacy only',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); return can('prices', 'P1') && !can('prices', 'P8'); }));
+  {
+    const crmSrc = readFileSync(join(here, '..', 'crm', newestBuild(join(here, '..', 'crm'), 'saydali-crm_v')), 'utf8');
+    ok('THE CRM CAN READ NO TIMELINE: nothing in it reads the record of who did what',
+       !/tillLog|timelineEvents|S\.staff\b/.test(crmSrc));
+  }
+  {
+    await dk.setViewportSize({ width: 320, height: 700 });
+    const wide = [];
+    for (const dir of ['ar', 'en']) {
+      for (const fn of ["goto('team')", "goto('team');S.openStaff=S.staff[1].id;render()", "signOut();signInAs('noor@example.com');goto('activity')"]) {
+        await dk.evaluate(([d, f]) => { signOut(); signInAs('rahma@example.com'); setLang(d); S.openStaff = null; eval(f); setLang(d); }, [dir, fn]);
+        if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(fn + ' (' + dir + ')');
+      }
+    }
+    ok(`the Team, a person’s page and My activity fit at 320px${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
 }
