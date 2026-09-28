@@ -1,0 +1,438 @@
+/* Digestive system, part one: acid and ulcer, nausea and motility,
+   antispasmodics, laxatives, diarrhoea. Shape: see data/drugs.mjs. */
+import { W, S, C } from './banks.mjs';
+
+export default [
+
+/* ---------- Acid, reflux and ulcer ---------- */
+{ sci:'Omeprazole', ar:'أوميبرازول', atc:'A02BC01', cat:'gis.acid', form:'capsule',
+  doses:['10 mg', '20 mg', '40 mg'], brand:['Losec', 'Prilosec'],
+  take:['beforeBreakfast'],
+  notes:{en:'Thirty minutes before breakfast, on an empty stomach. Long-term use reduces B12 and magnesium absorption.',
+         ar:'قبل الفطور بنصف ساعة على معدة فارغة. الاستعمال الطويل يقلّل امتصاص B12 والمغنيسيوم.'},
+  ix:[
+    ['Clopidogrel', S, 'Blocks clopidogrel activation — switch to pantoprazole.', 'يقلّل تفعيل كلوبيدوغريل — يُبدّل إلى بانتوبرازول.'],
+    ['Cefuroxime', W, 'Reduces cefuroxime absorption.', 'يقلّل امتصاص السيفوروكسيم.']
+  ],
+  ci:[{en:'Concurrent clopidogrel', ar:'الاستعمال المتزامن مع كلوبيدوغريل'}],
+  ask:['redFlagsGI', 'duration', 'thinner'] },
+
+{ sci:'Esomeprazole', ar:'إيزوميبرازول', atc:'A02BC05', cat:'gis.acid', form:'capsule',
+  doses:['20 mg', '40 mg'], brand:['Nexium'],
+  take:['beforeBreakfast'],
+  notes:{en:'Thirty minutes before food. Swallow whole, or sprinkle the granules on soft food without chewing.',
+         ar:'قبل الطعام بنصف ساعة. يُبلع كاملاً أو تُنثر الحبيبات على طعام لين دون مضغ.'},
+  ix:[
+    ['Clopidogrel', S, 'Blocks clopidogrel activation.', 'يقلّل تفعيل كلوبيدوغريل.']
+  ],
+  ci:[{en:'Concurrent clopidogrel', ar:'الاستعمال المتزامن مع كلوبيدوغريل'}],
+  ask:['redFlagsGI', 'duration', 'thinner'] },
+
+{ sci:'Pantoprazole', ar:'بانتوبرازول', atc:'A02BC02', cat:'gis.acid', form:'tablet',
+  doses:['20 mg', '40 mg'], brand:['Controloc', 'Protonix'],
+  take:['beforeBreakfast'],
+  notes:{en:'The proton pump inhibitor to use alongside clopidogrel — it does not block its activation.',
+         ar:'مثبّط المضخة المفضّل مع كلوبيدوغريل — لا يتداخل مع تفعيله.'},
+  ci:[{en:'Benzimidazole hypersensitivity', ar:'فرط الحساسية للبنزيميدازولات'}],
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Famotidine', ar:'فاموتيدين', atc:'A02BA03', cat:'gis.acid', form:'tablet',
+  doses:['20 mg', '40 mg'], brand:['Pepcid'],
+  tags:['qtPossible'],
+  notes:{en:'Works within an hour — faster than a proton pump inhibitor and shorter-lived. Dose reduced in kidney impairment.',
+         ar:'يعمل خلال ساعة — أسرع من مثبطات المضخة وأقل استمراراً. تُخفّض الجرعة مع قصور الكلية.'},
+  ix:[
+    ['Ketoconazole', W, 'Reduces oral ketoconazole absorption.', 'يقلّل امتصاص الكيتوكونازول الفموي.']
+  ],
+  ci:[{en:'Severe renal impairment without dose adjustment', ar:'قصور كلوي شديد دون تعديل الجرعة'}],
+  ask:['redFlagsGI', 'duration', 'kidney'] },
+
+{ sci:'Calcium carbonate', ar:'كربونات الكالسيوم', atc:'A02AC01', cat:'gis.acid', form:'tablet',
+  doses:['500 mg', '600 mg', '1250 mg'], brand:['Tums', 'Rennie'],
+  tags:['polyvalent'], take:['withFood'],
+  notes:{en:'Spaced away from iron, levothyroxine, quinolones and tetracyclines — it blocks all of them. No more than 600 mg elemental in one dose.',
+         ar:'يُباعد عن الحديد والليفوثيروكسين والكينولونات والتتراسيكلينات — يمنع امتصاصها. جرعة واحدة لا تزيد عن 600 ملغ عنصري.'},
+  ix:[
+    ['Levothyroxine', S, 'Blocks absorption — space by four hours.', 'يمنع الامتصاص — باعد أربع ساعات.'],
+    ['Ciprofloxacin', S, 'Chelates and loses absorption.', 'يرتبط به ويفقد الامتصاص.'],
+    ['Doxycycline', S, 'Chelates and loses absorption.', 'يرتبط به ويفقد الامتصاص.'],
+    ['Ferrous sulfate', W, 'Reduces iron absorption — space by two hours.', 'يقلّل امتصاص الحديد — باعد ساعتين.']
+  ],
+  ci:['hyperCa', {en:'Calcium renal stones', ar:'حصيات كلوية كلسية'}],
+  ask:['stones', 'otherMeds'] },
+
+{ sci:'Magnesium trisilicate', ar:'ثلاثي سيليكات المغنيسيوم', atc:'A02AA05', cat:'gis.acid', form:'tablet',
+  doses:['250 mg', '500 mg'],
+  tags:['polyvalent'],
+  notes:{en:'A fast, short-lived antacid. Two hours away from everything else — it reduces the absorption of a lot of things.',
+         ar:'مضاد حموضة سريع وقصير الأثر. يُباعد ساعتين عن أي دواء آخر — يقلّل امتصاص الكثير منها.'},
+  ix:[
+    ['Ciprofloxacin', S, 'Blocks absorption.', 'يمنع الامتصاص.'],
+    ['Doxycycline', S, 'Blocks absorption.', 'يمنع الامتصاص.'],
+    ['Nitrofurantoin', W, 'Reduces absorption.', 'يقلّل الامتصاص.'],
+    ['Fexofenadine', W, 'Reduces absorption — space by two hours.', 'يقلّل الامتصاص — باعد ساعتين.']
+  ],
+  ci:['renalSevere'],
+  ask:['kidney', 'duration', 'otherMeds'] },
+
+{ sci:'Lansoprazole', ar:'لانسوبرازول', atc:'A02BC03', cat:'gis.acid', form:'capsule',
+  doses:['15 mg', '30 mg', '15 mg and 30 mg orodispersible'], brand:['Lanzor', 'Prevacid'],
+  take:['beforeBreakfast'],
+  notes:{en:'Before breakfast, swallowed whole; orodispersible tablets melt on the tongue. For heartburn needing it for more than four weeks, or with warning signs, see a doctor.',
+         ar:'قبل الفطور، تُبلع كاملة؛ والأقراص القابلة للذوبان تذوب على اللسان. إن احتجته للحموضة أكثر من أربعة أسابيع، أو ظهرت علامات إنذار، راجع الطبيب.'},
+  ix:[
+    ['Tacrolimus', W, 'Raises tacrolimus — check the level.', 'يرفع التاكروليموس — افحص مستواه.']
+  ],
+  ask:['redFlagsGI', 'duration', 'thinner'] },
+
+{ sci:'Rabeprazole', ar:'رابيبرازول', atc:'A02BC04', cat:'gis.acid', form:'tablet',
+  doses:['10 mg', '20 mg'], brand:['Pariet', 'Aciphex'],
+  take:['beforeBreakfast'],
+  notes:{en:'Before breakfast, swallowed whole — do not crush or chew. For heartburn needing it for more than four weeks, or with warning signs, see a doctor.',
+         ar:'قبل الفطور، تُبلع كاملة — لا تُسحق ولا تُمضغ. إن احتجته للحموضة أكثر من أربعة أسابيع، أو ظهرت علامات إنذار، راجع الطبيب.'},
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Dexlansoprazole', ar:'ديكسلانسوبرازول', atc:'A02BC06', cat:'gis.acid', form:'capsule',
+  doses:['30 mg', '60 mg'], brand:['Dexilant'],
+  notes:{en:'Once a day with or without food; the capsule can be opened onto a spoon of apple sauce. See a doctor about warning signs or long use.',
+         ar:'مرة واحدة يومياً مع الطعام أو بدونه؛ يمكن فتح الكبسولة على ملعقة من هريس التفاح. راجع الطبيب عند علامات الإنذار أو الاستعمال الطويل.'},
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Ranitidine', ar:'رانيتيدين', atc:'A02BA02', cat:'gis.acid', form:'tablet',
+  doses:['150 mg', '300 mg', '50 mg/2 mL injection'], brand:['Zantac'],
+  notes:{en:'Most ranitidine was withdrawn worldwide in 2020 over an impurity (NDMA) — check the batch is currently registered. Famotidine is the usual alternative.',
+         ar:'سُحب معظم الرانيتيدين عالمياً عام 2020 بسبب شائبة (NDMA) — تحقّق أن التشغيلة مسجّلة حالياً. الفاموتيدين هو البديل المعتاد.'},
+  ask:['redFlagsGI', 'duration', 'kidney'] },
+
+{ sci:'Cimetidine', ar:'سيميتيدين', atc:'A02BA01', cat:'gis.acid', form:'tablet',
+  doses:['200 mg', '400 mg', '800 mg'], brand:['Tagamet'],
+  notes:{en:'It interferes with the breakdown of many medicines — tell us everything you take. Famotidine does the same job with fewer interactions.',
+         ar:'يعيق تفكيك أدوية كثيرة — أخبرنا بكل ما تأخذه. الفاموتيدين يؤدي العمل نفسه بتداخلات أقل.'},
+  ix:[
+    ['Warfarin', S, 'Raises the INR.', 'يرفع INR.'],
+    ['Theophylline', S, 'Raises theophylline towards toxicity.', 'يرفع الثيوفيلين نحو السمّية.'],
+    ['Phenytoin', S, 'Raises phenytoin.', 'يرفع الفينيتوين.']
+  ],
+  ask:['otherMeds', 'redFlagsGI'] },
+
+{ sci:'Aluminium hydroxide', ar:'هيدروكسيد الألمنيوم', atc:'A02AB01', cat:'gis.acid', form:'syrup',
+  doses:['320 mg/5 mL suspension', '300 mg tablet', 'with magnesium hydroxide'], brand:['Aludrox', 'Maalox'], aka:['Algeldrate'],
+  tags:['polyvalent'],
+  notes:{en:'Between meals and at bedtime. On its own it constipates (mixed with magnesium it does not). Keep two hours apart from other medicines.',
+         ar:'بين الوجبات وقبل النوم. وحده يسبّب الإمساك (ومع المغنيسيوم لا). افصل بينه وبين الأدوية الأخرى ساعتين.'},
+  ci:['renalSevere'],
+  ask:['kidney', 'otherMeds', 'duration'] },
+
+{ sci:'Magnesium hydroxide', ar:'هيدروكسيد المغنيسيوم', atc:'A02AA04', cat:'gis.acid', form:'syrup',
+  doses:['400 mg/5 mL suspension', 'with aluminium hydroxide'], brand:['Milk of Magnesia'],
+  tags:['polyvalent'],
+  notes:{en:'A small dose settles acid; a larger dose at bedtime works as a laxative. Keep two hours apart from other medicines. Not in kidney failure.',
+         ar:'الجرعة الصغيرة تهدّئ الحموضة؛ والجرعة الأكبر قبل النوم تعمل ملّيناً. افصل بينه وبين الأدوية الأخرى ساعتين. لا يُستعمل في الفشل الكلوي.'},
+  ci:['renalSevere'],
+  ask:['kidney', 'duration', 'otherMeds'] },
+
+{ sci:'Sodium alginate', ar:'ألجينات الصوديوم', atc:'A02BX13', cat:'gis.acid', form:'syrup',
+  doses:['500 mg/10 mL suspension', '250 mg chewable tablet'], brand:['Gaviscon'], aka:['Alginate'],
+  tags:['polyvalent'],
+  notes:{en:'After meals and at bedtime; it forms a raft on the stomach contents. It contains sodium — care with heart failure and high blood pressure.',
+         ar:'بعد الوجبات وقبل النوم؛ يشكّل طبقة عائمة فوق محتوى المعدة. يحتوي الصوديوم — الحذر مع قصور القلب وارتفاع الضغط.'},
+  ask:['redFlagsGI', 'duration', 'heartFailure'] },
+
+{ sci:'Sucralfate', ar:'سوكرالفات', atc:'A02BX02', cat:'gis.acid', form:'tablet',
+  doses:['1 g tablet', '1 g/5 mL suspension'], brand:['Ulcar', 'Antepsin', 'Carafate'],
+  tags:['polyvalent'], take:['emptyStomach'],
+  notes:{en:'On an empty stomach, an hour before meals. It coats the ulcer and binds other medicines — keep them two hours apart. Constipation is common.',
+         ar:'على معدة فارغة قبل الوجبات بساعة. يغلّف القرحة ويربط الأدوية الأخرى — افصل بينها ساعتين. الإمساك شائع.'},
+  ci:['renalSevere'],
+  ask:['kidney', 'otherMeds'] },
+
+{ sci:'Bismuth subcitrate', ar:'تحت سترات البزموت', atc:'A02BX05', cat:'gis.acid', form:'tablet',
+  doses:['120 mg'], brand:['De-Nol'], aka:['Tripotassium dicitratobismuthate', 'Colloidal bismuth subcitrate'],
+  tags:['polyvalent'], take:['beforeFood'],
+  notes:{en:'Usually part of treatment for H. pylori. It blackens the tongue and stools — harmless. Not with milk or antacids within half an hour.',
+         ar:'غالباً جزء من علاج الجرثومة الحلزونية. يسوّد اللسان والبراز — وهذا غير ضار. لا يؤخذ مع الحليب أو مضادات الحموضة خلال نصف ساعة.'},
+  ci:['renalSevere', 'preg'],
+  ask:['kidney', 'preg'] },
+
+{ sci:'Misoprostol', ar:'ميزوبروستول', atc:'A02BB01', cat:'gis.acid', form:'tablet',
+  doses:['200 microgram'], brand:['Cytotec'],
+  notes:{en:'Protects the stomach from NSAIDs, and is used in obstetrics under medical supervision. It causes miscarriage — never in pregnancy outside that supervision. Diarrhoea is common.',
+         ar:'يحمي المعدة من مضادات الالتهاب، ويُستعمل في التوليد بإشراف طبي. يسبّب الإجهاض — لا يُستعمل أبداً في الحمل خارج ذلك الإشراف. الإسهال شائع.'},
+  ci:['preg'],
+  ask:['pregTest', 'whatFor', 'prescription'] },
+
+/* ---------- Nausea, vomiting and motility ---------- */
+{ sci:'Domperidone', ar:'دومبيريدون', atc:'A03FA03', cat:'gis.antiemetic', form:'tablet',
+  doses:['10 mg', '1 mg/mL'], brand:['Motilium'],
+  tags:['qt', 'sub3a4crit'], take:['beforeFood'],
+  notes:{en:'Fifteen to thirty minutes before food. The shortest course possible — usually a week — because of the QT risk.',
+         ar:'قبل الطعام بـ 15–30 دقيقة. أقصر مدة ممكنة — أسبوع عادة — بسبب خطر QT.'},
+  ix:[
+    ['Azithromycin', S, 'Additive QT prolongation.', 'إطالة QT مضاعفة.'],
+    ['Fluconazole', S, 'Raises domperidone and prolongs QT.', 'يرفع الدومبيريدون ويطيل QT.'],
+    ['Clarithromycin', C, 'QT prolongation — avoid the combination.', 'إطالة QT — يُتجنّب الجمع.']
+  ],
+  ci:['qt', {en:'GI obstruction or haemorrhage', ar:'انسداد أو نزف هضمي'}, 'hepModSevere'],
+  ask:['rhythm', 'liver', 'childAge'] },
+
+{ sci:'Metoclopramide', ar:'ميتوكلوبراميد', atc:'A03FA01', cat:'gis.antiemetic', form:'tablet',
+  doses:['10 mg', '5 mg/5 mL', '10 mg/2 mL'], brand:['Primperan', 'Plasil'],
+  tags:['dopamineBlocker', 'qtPossible'], take:['beforeFood'],
+  notes:{en:'Five days maximum. Extrapyramidal reactions are commonest in the young and in women — a spasm of the neck or eyes needs urgent care.',
+         ar:'خمسة أيام كحد أقصى. الأعراض خارج الهرمية أشيع عند الشباب والنساء — تقلّص عضلي في الرقبة أو العين يستوجب الإسعاف.'},
+  ix:[
+    ['Levodopa', S, 'Each one blocks the other.', 'تضاد متبادل في الأثر.'],
+    ['Haloperidol', S, 'Compounded extrapyramidal effects.', 'أعراض خارج هرمية مضاعفة.']
+  ],
+  ci:[{en:'GI obstruction, haemorrhage or perforation', ar:'انسداد أو نزف أو انثقاب هضمي'}, 'parkinson', 'epilepsy', 'phaeo'],
+  ask:['parkinson', 'childAge', 'epilepsy'] },
+
+{ sci:'Ondansetron', ar:'أوندانسيترون', atc:'A04AA01', cat:'gis.antiemetic', form:'tablet',
+  doses:['4 mg', '8 mg', '4 mg/2 mL'], brand:['Zofran'],
+  tags:['qt', 'seroWeak'],
+  notes:{en:'Constipation is its commonest side effect. The orodispersible form is the one for a patient who cannot keep anything down.',
+         ar:'الإمساك أشيع أعراضه. الشكل الذائب في الفم مفيد عند تعذّر البلع.'},
+  ix:[
+    ['Amiodarone', S, 'Additive QT prolongation.', 'إطالة QT مضاعفة.'],
+    ['Tramadol', W, 'Blunts the analgesia and adds serotonergic risk.', 'يقلّل التسكين ويزيد خطر السيروتونين.']
+  ],
+  ci:['qt', {en:'Congenital long QT syndrome', ar:'متلازمة QT الطويل الخلقية'}],
+  ask:['rhythm', 'preg'] },
+
+{ sci:'Granisetron', ar:'غرانيسيترون', atc:'A04AA02', cat:'gis.antiemetic', form:'tablet',
+  doses:['1 mg', '2 mg', '3 mg/3 mL injection', '3.1 mg/24 h patch'], brand:['Kytril'],
+  tags:['qtPossible', 'seroWeak'],
+  notes:{en:'For nausea with chemotherapy or after surgery. Constipation and headache are common.',
+         ar:'للغثيان مع العلاج الكيميائي أو بعد الجراحة. الإمساك والصداع شائعان.'},
+  ask:['rhythm', 'otherMeds'] },
+
+{ sci:'Palonosetron', ar:'بالونوسيترون', atc:'A04AA05', cat:'gis.antiemetic', form:'injection',
+  doses:['0.25 mg/5 mL', '0.5 mg capsule'], brand:['Aloxi'],
+  tags:['seroWeak'],
+  notes:{en:'A single dose before chemotherapy that lasts for days. Constipation and headache are common.',
+         ar:'جرعة واحدة قبل العلاج الكيميائي يدوم أثرها أياماً. الإمساك والصداع شائعان.'},
+  ask:['rhythm'] },
+
+{ sci:'Aprepitant', ar:'أبريبيتانت', atc:'A04AD12', cat:'gis.antiemetic', form:'capsule',
+  doses:['80 mg', '125 mg'], brand:['Emend'],
+  tags:['inh3a4mod', 'sub3a4'],
+  notes:{en:'A three-day course with chemotherapy. It makes hormonal contraception unreliable for a month — use condoms as well.',
+         ar:'دورة ثلاثة أيام مع العلاج الكيميائي. يجعل موانع الحمل الهرمونية غير موثوقة لمدة شهر — استعملي الواقي أيضاً.'},
+  ix:[
+    ['#hormonalContraceptive', S, 'Contraception unreliable for 28 days — add a barrier method.', 'منع الحمل غير موثوق 28 يوماً — أضيفي وسيلة حاجزة.'],
+    ['Warfarin', W, 'Lowers the INR over the next two weeks — check it.', 'يخفض INR خلال الأسبوعين التاليين — افحصه.'],
+    ['Dexamethasone', W, 'Raises dexamethasone — its dose is usually halved.', 'يرفع الديكساميثازون — تُخفّض جرعته عادة إلى النصف.']
+  ],
+  ask:['ocp', 'thinner', 'otherMeds'] },
+
+{ sci:'Prochlorperazine', ar:'بروكلوربيرازين', atc:'N05AB04', cat:'gis.antiemetic', form:'tablet',
+  doses:['5 mg', '3 mg buccal', '12.5 mg/mL injection'], brand:['Stemetil', 'Buccastem'],
+  tags:['dopamineBlocker', 'sedative', 'qtPossible'],
+  notes:{en:'For nausea and vertigo, short term. Drowsiness is common. Tell us at once about a stiff neck, jaw spasm, rolling eyes or restlessness.',
+         ar:'للغثيان والدوار، لفترة قصيرة. النعاس شائع. أبلغ فوراً عن تيبّس الرقبة أو تشنّج الفك أو دوران العينين أو التململ.'},
+  ci:['parkinson', 'under12', 'cnsDepression'],
+  ask:['parkinson', 'drive', 'childAge'] },
+
+{ sci:'Itopride', ar:'إيتوبرايد', atc:'A03FA07', cat:'gis.antiemetic', form:'tablet',
+  doses:['50 mg'], brand:['Ganaton'],
+  take:['beforeFood'],
+  notes:{en:'For bloating and early fullness: three times a day before meals.',
+         ar:'للانتفاخ والشبع المبكر: ثلاث مرات يومياً قبل الوجبات.'},
+  ci:[{en:'GI bleeding, obstruction or perforation', ar:'نزف أو انسداد أو انثقاب هضمي'}],
+  ask:['redFlagsGI', 'duration'] },
+
+/* ---------- Antispasmodics and irritable bowel ---------- */
+{ sci:'Mebeverine', ar:'ميبيفيرين', atc:'A03AA04', cat:'gis.spasm', form:'tablet',
+  doses:['135 mg', '200 mg MR'], brand:['Duspatalin', 'Colofac'],
+  take:['beforeFood'],
+  notes:{en:'Twenty minutes before food. No use taken when the pain comes — it needs to be regular.',
+         ar:'قبل الطعام بـ 20 دقيقة. لا ينفع كمسكّن عند الطلب — يحتاج انتظاماً.'},
+  ci:['ileus'],
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Hyoscine butylbromide', ar:'هيوسين بوتيل بروميد', atc:'A03BB01', cat:'gis.spasm', form:'tablet',
+  doses:['10 mg', '20 mg/mL'], brand:['Buscopan'], aka:['Scopolamine butylbromide'],
+  tags:['anticholinergic'],
+  notes:{en:'For colicky cramp, as needed. Dry mouth and blurred vision are expected.',
+         ar:'للمغص التشنّجي عند الطلب. جفاف الفم وتشوّش الرؤية متوقّعان.'},
+  ix:[
+    ['Amitriptyline', W, 'Compounded anticholinergic effects.', 'آثار مضادة للكولين مضاعفة.']
+  ],
+  ci:['angleGlaucoma', 'myasthenia', {en:'Prostatic enlargement with retention', ar:'تضخّم البروستات مع احتباس بول'}],
+  ask:['glaucoma', 'prostate', 'rhythm'] },
+
+{ sci:'Drotaverine', ar:'دروتافيرين', atc:'A03AD02', cat:'gis.spasm', form:'tablet',
+  doses:['40 mg', '80 mg', '40 mg/2 mL injection'], brand:['No-Spa'],
+  notes:{en:'For cramping pain of the gut, bladder or periods. It can cause dizziness; the injection can drop blood pressure.',
+         ar:'للألم التشنّجي في الأمعاء أو المثانة أو الدورة. قد يسبّب دوخة؛ والحقنة قد تخفض الضغط.'},
+  ci:['hfSevere', 'hepRenalSevere', 'heartBlock'],
+  ask:['redFlagsGI', 'lowBp', 'preg'] },
+
+{ sci:'Otilonium bromide', ar:'بروميد الأوتيلونيوم', atc:'A03AB06', cat:'gis.spasm', form:'tablet',
+  doses:['40 mg'], brand:['Spasmomen'],
+  take:['beforeFood'],
+  notes:{en:'For irritable bowel cramps: 20 minutes before meals, two or three times a day.',
+         ar:'لتشنّجات القولون العصبي: قبل الوجبات بعشرين دقيقة، مرتين أو ثلاثاً يومياً.'},
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Pinaverium bromide', ar:'بروميد البينافيريوم', atc:'A03AX04', cat:'gis.spasm', form:'tablet',
+  doses:['50 mg', '100 mg'], brand:['Dicetel'],
+  take:['withFood'],
+  notes:{en:'Swallow with a full glass of water during a meal, sitting up — it irritates the gullet if it lodges there. Never at bedtime.',
+         ar:'يُبلع مع كأس ماء كامل أثناء الوجبة وأنت جالس — يهيّج المريء إن علق فيه. لا يؤخذ أبداً قبل النوم.'},
+  ask:['swallow', 'redFlagsGI'] },
+
+{ sci:'Alverine', ar:'ألفيرين', atc:'A03AX08', cat:'gis.spasm', form:'capsule',
+  doses:['60 mg', '120 mg', '60 mg + simeticone 300 mg'], brand:['Spasmonal', 'Meteospasmyl'],
+  notes:{en:'For irritable bowel and period cramps, up to three times a day. Rarely it affects the liver — report yellowing or dark urine.',
+         ar:'لتشنّجات القولون العصبي والدورة، حتى ثلاث مرات يومياً. نادراً ما يؤثر في الكبد — أبلغ عن الاصفرار أو غمق البول.'},
+  ci:['obstruction', 'ileus'],
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Trimebutine', ar:'تريميبوتين', atc:'A03AA05', cat:'gis.spasm', form:'tablet',
+  doses:['100 mg', '200 mg', '24 mg/5 mL suspension'], brand:['Debridat'],
+  notes:{en:'Regulates gut movement in irritable bowel — before meals, up to three times a day.',
+         ar:'ينظّم حركة الأمعاء في القولون العصبي — قبل الوجبات، حتى ثلاث مرات يومياً.'},
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Dicycloverine', ar:'ديسيكلوفيرين', atc:'A03AA07', cat:'gis.spasm', form:'tablet',
+  doses:['10 mg', '20 mg', '10 mg/5 mL syrup'], brand:['Merbentyl', 'Bentyl'], aka:['Dicyclomine'],
+  tags:['anticholinergic'],
+  notes:{en:'For gut cramps. Dry mouth, blurred vision and drowsiness can occur. Never for babies under six months.',
+         ar:'لتشنّجات الأمعاء. قد يسبّب جفاف الفم وتشوّش الرؤية والنعاس. لا يُعطى أبداً للرضّع دون ستة أشهر.'},
+  ci:['angleGlaucoma', 'retention', {en:'Infants under 6 months', ar:'الرضّع دون 6 أشهر'}],
+  ask:['glaucoma', 'prostate', 'childAge'] },
+
+{ sci:'Clidinium bromide', ar:'بروميد الكليدينيوم', atc:'A03AB03', cat:'gis.spasm', form:'tablet',
+  doses:['2.5 mg (with chlordiazepoxide 5 mg)'], brand:['Librax'],
+  tags:['anticholinergic'],
+  notes:{en:'Almost always sold with chlordiazepoxide, a benzodiazepine: it causes drowsiness and dependence with long use, and falls under the controlled-drug rules.',
+         ar:'يُباع دائماً تقريباً مع الكلورديازيبوكسيد، وهو من البنزوديازيبينات: يسبّب النعاس والاعتماد مع الاستعمال الطويل، ويخضع لقواعد الأدوية المراقبة.'},
+  ci:['angleGlaucoma', 'retention', 'myasthenia'],
+  ask:['glaucoma', 'prostate', 'drive'] },
+
+{ sci:'Phloroglucinol', ar:'فلوروغلوسينول', atc:'A03AX12', cat:'gis.spasm', form:'tablet',
+  doses:['80 mg', '40 mg/4 mL injection'], brand:['Spasfon'],
+  notes:{en:'For cramping pain of the gut, bile ducts or urinary tract. Side effects are uncommon.',
+         ar:'للألم التشنّجي في الأمعاء أو القنوات الصفراوية أو المسالك البولية. آثاره الجانبية غير شائعة.'},
+  ask:['redFlagsGI', 'preg'] },
+
+/* ---------- Laxatives ---------- */
+{ sci:'Lactulose', ar:'لاكتولوز', atc:'A06AD11', cat:'gis.laxative', form:'syrup',
+  doses:['3.35 g/5 mL'], brand:['Duphalac'],
+  notes:{en:'It takes two to three days to work — not a rescue laxative. The bloating settles. Plenty of fluid.',
+         ar:'يحتاج 2–3 أيام ليعمل — ليس ملّيناً فورياً. الانتفاخ يقلّ مع الوقت. سوائل وفيرة.'},
+  ci:['obstruction', {en:'Galactose intolerance', ar:'عدم تحمّل الغالاكتوز'}],
+  ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Bisacodyl', ar:'بيساكوديل', atc:'A06AB02', cat:'gis.laxative', form:'tablet',
+  doses:['5 mg tablet', '5 mg and 10 mg suppository'], brand:['Dulcolax'],
+  take:['bedtime'],
+  notes:{en:'Tablets at bedtime work overnight: swallow whole, not within an hour of milk or antacids. Suppositories work in 20–60 minutes. Cramps are common. Not for daily long-term use without advice.',
+         ar:'الأقراص قبل النوم تعمل خلال الليل: تُبلع كاملة، ولا تؤخذ خلال ساعة من الحليب أو مضادات الحموضة. التحاميل تعمل خلال 20–60 دقيقة. المغص شائع. لا يُستعمل يومياً لفترة طويلة دون استشارة.'},
+  ci:['obstruction', {en:'Acute abdominal pain of unknown cause', ar:'ألم بطني حاد مجهول السبب'}, 'dehydration'],
+  ask:['duration', 'redFlagsGI', 'childAge'] },
+
+{ sci:'Senna', ar:'سنامكي', atc:'A06AB06', cat:'gis.laxative', form:'tablet',
+  doses:['7.5 mg sennosides', '7.5 mg/5 mL syrup'], brand:['Senokot'], aka:['Sennosides'],
+  take:['bedtime'],
+  notes:{en:'At bedtime; works in 8–12 hours. Cramping is common, and urine may turn reddish. Not for long-term daily use without advice.',
+         ar:'قبل النوم؛ يعمل خلال 8–12 ساعة. المغص شائع، وقد يصبح البول محمراً. لا يُستعمل يومياً لفترة طويلة دون استشارة.'},
+  ci:['obstruction', {en:'Acute abdominal pain of unknown cause', ar:'ألم بطني حاد مجهول السبب'}],
+  ask:['duration', 'redFlagsGI'] },
+
+{ sci:'Sodium picosulfate', ar:'بيكوسلفات الصوديوم', atc:'A06AB08', cat:'gis.laxative', form:'drops',
+  doses:['7.5 mg/mL drops', '5 mg tablet', 'bowel preparation sachet with magnesium citrate'], brand:['Laxoberon', 'Guttalax', 'Picolax'],
+  take:['bedtime'],
+  notes:{en:'Drops at bedtime act by morning. As bowel preparation before a colonoscopy, follow the timing sheet exactly and drink the clear fluids advised.',
+         ar:'النقط قبل النوم تعمل بحلول الصباح. كتحضير للأمعاء قبل تنظير القولون، اتبع جدول المواعيد بدقة واشرب السوائل الصافية الموصى بها.'},
+  ci:['obstruction', 'dehydration'],
+  ask:['duration', 'redFlagsGI', 'kidney'] },
+
+{ sci:'Macrogol', ar:'ماكروغول', atc:'A06AD15', cat:'gis.laxative', form:'sachet',
+  doses:['13.8 g with electrolytes', '10 g (macrogol 4000)', 'bowel preparation'], brand:['Movicol', 'Forlax'], aka:['Polyethylene glycol', 'PEG 3350', 'Macrogol 4000'],
+  notes:{en:'Dissolve each sachet in a glass of water. It works in one to three days and suits regular use in adults and children when advised.',
+         ar:'يُذاب كل كيس في كأس ماء. يعمل خلال يوم إلى ثلاثة أيام ويناسب الاستعمال المنتظم للبالغين والأطفال عند النصح بذلك.'},
+  ci:['obstruction', {en:'Severe inflammatory bowel disease or toxic megacolon', ar:'داء أمعاء التهابي شديد أو تضخّم قولون سمّي'}],
+  ask:['duration', 'redFlagsGI', 'childAge'] },
+
+{ sci:'Glycerol', ar:'غليسيرول', atc:'A06AX01', cat:'gis.laxative', form:'suppository',
+  doses:['1 g infant', '2 g child', '4 g adult'], aka:['Glycerin', 'Glycerine'],
+  notes:{en:'Moisten with water and insert; works in 15–30 minutes. Use the size for the age.',
+         ar:'تُرطّب بالماء وتُدخل؛ تعمل خلال 15–30 دقيقة. استعمل الحجم المناسب للعمر.'},
+  ask:['childAge', 'duration'] },
+
+{ sci:'Ispaghula husk', ar:'قشر الإسباغولا', atc:'A06AC01', cat:'gis.laxative', form:'sachet',
+  doses:['3.5 g sachet'], brand:['Fybogel', 'Metamucil'], aka:['Psyllium'],
+  notes:{en:'Stir into a full glass of water, drink at once, then drink more — never take it dry or just before lying down. Keep two hours apart from other medicines.',
+         ar:'يُحرّك في كأس ماء كامل ويُشرب فوراً ثم يُتبع بمزيد من الماء — لا يؤخذ أبداً جافاً أو قبل الاستلقاء مباشرة. افصل بينه وبين الأدوية الأخرى ساعتين.'},
+  ci:['obstruction', {en:'Difficulty swallowing', ar:'صعوبة البلع'}],
+  ask:['swallow', 'duration', 'otherMeds'] },
+
+{ sci:'Prucalopride', ar:'بروكالوبرايد', atc:'A06AX05', cat:'gis.laxative', form:'tablet',
+  doses:['1 mg', '2 mg'], brand:['Resolor'],
+  notes:{en:'For long-standing constipation in adults when laxatives have failed. Headache and cramps are common on the first day.',
+         ar:'للإمساك المزمن عند البالغين بعد فشل الملينات. الصداع والمغص شائعان في اليوم الأول.'},
+  ci:['obstruction', 'renal30'],
+  ask:['duration', 'preg'] },
+
+{ sci:'Sodium phosphate enema', ar:'حقنة فوسفات الصوديوم الشرجية', atc:'A06AG01', cat:'gis.laxative', form:'solution',
+  doses:['133 mL enema', '66 mL paediatric enema'], brand:['Fleet'],
+  notes:{en:'Rectal use only; works in 2–5 minutes. Never for children under two, and care in kidney disease because phosphate is absorbed.',
+         ar:'للاستعمال الشرجي فقط؛ يعمل خلال 2–5 دقائق. لا يُستعمل أبداً للأطفال دون السنتين، والحذر في أمراض الكلى لأن الفوسفات يُمتص.'},
+  ci:['under2', 'renalSevere', 'obstruction'],
+  ask:['childAge', 'kidney'] },
+
+/* ---------- Diarrhoea and rehydration ---------- */
+{ sci:'Loperamide', ar:'لوبيراميد', atc:'A07DA03', cat:'gis.diarrhoea', form:'capsule',
+  doses:['2 mg'], brand:['Imodium'],
+  tags:['qtPossible'],
+  notes:{en:'Not with a fever or blood in the stool — it traps the infection. Fluid and salts matter more than it does.',
+         ar:'لا يُستعمل مع حمّى أو دم في البراز — يحبس الإنتان. السوائل والأملاح أهم منه.'},
+  ix:[
+    ['Clarithromycin', S, 'Raises loperamide and the QT risk.', 'يرفع اللوبيراميد وخطر إطالة QT.']
+  ],
+  ci:['dysentery', 'ucAcute', 'under12'],
+  ask:['feverBlood', 'childAge', 'duration'] },
+
+{ sci:'Oral rehydration salts', ar:'أملاح الإماهة الفموية', atc:'A07CA', cat:'gis.diarrhoea', form:'sachet',
+  doses:['1 sachet/200 mL', '1 sachet/1 L'], brand:['Dioralyte'], aka:['ORS'],
+  notes:{en:'Clean water only, and exactly the volume on the sachet — a concentrated mix makes dehydration worse. Discard after 24 hours.',
+         ar:'يُذاب بماء نظيف فقط وبالحجم المكتوب — الخلطة المركّزة تزيد التجفاف. يُتلف بعد 24 ساعة.'},
+  ci:['obstruction', {en:'Severe dehydration needing IV fluids', ar:'تجفاف شديد يستوجب الوريد'}],
+  ask:['childAge', 'dehydrationSigns', 'feverBlood'] },
+
+{ sci:'Racecadotril', ar:'راسيكادوتريل', atc:'A07XA04', cat:'gis.diarrhoea', form:'sachet',
+  doses:['10 mg and 30 mg sachet', '100 mg capsule'], brand:['Hidrasec', 'Tiorfan'],
+  notes:{en:'Reduces fluid loss in acute diarrhoea — always with oral rehydration, never instead of it. Not for bloody diarrhoea or a high fever.',
+         ar:'يقلّل فقدان السوائل في الإسهال الحاد — دائماً مع محلول الإرواء، لا بدلاً عنه. لا يُستعمل للإسهال الدموي أو الحرارة العالية.'},
+  ci:['dysentery'],
+  ask:['childAge', 'feverBlood', 'dehydrationSigns'] },
+
+{ sci:'Diphenoxylate', ar:'ديفينوكسيلات', atc:'A07DA01', cat:'gis.diarrhoea', form:'tablet',
+  doses:['2.5 mg (with atropine 25 microgram)'], brand:['Lomotil'],
+  notes:{en:'Slows the bowel in diarrhoea. Dangerous in overdose, especially for children — keep it well out of reach. Not for bloody diarrhoea.',
+         ar:'يبطّئ الأمعاء في الإسهال. خطير عند الجرعة الزائدة، خاصة على الأطفال — أبعده جيداً عن متناولهم. لا يُستعمل للإسهال الدموي.'},
+  ci:['under6', 'dysentery', 'ucAcute'],
+  ask:['childAge', 'feverBlood', 'duration'] },
+
+{ sci:'Nifuroxazide', ar:'نيفوروكسازيد', atc:'A07AX03', cat:'gis.diarrhoea', form:'capsule',
+  doses:['200 mg capsule', '220 mg/5 mL suspension'], brand:['Ercefuryl', 'Antinal'],
+  notes:{en:'A gut antiseptic for acute diarrhoea, for no more than seven days and always with rehydration. See a doctor for blood in the stool or high fever.',
+         ar:'مطهّر معوي للإسهال الحاد، لمدة لا تتجاوز سبعة أيام ودائماً مع الإرواء. راجع الطبيب عند وجود دم في البراز أو حرارة عالية.'},
+  ci:['under2'],
+  ask:['childAge', 'feverBlood', 'duration'] },
+
+{ sci:'Diosmectite', ar:'ديوسمكتيت', atc:'A07BC05', cat:'gis.diarrhoea', form:'sachet',
+  doses:['3 g sachet'], brand:['Smecta'], aka:['Dioctahedral smectite'],
+  notes:{en:'Stir into water; always alongside rehydration. It binds other medicines — keep them two hours apart. Constipation can follow.',
+         ar:'يُحرّك في الماء؛ ودائماً مع الإرواء. يربط الأدوية الأخرى — افصل بينها ساعتين. قد يعقبه إمساك.'},
+  ask:['childAge', 'feverBlood', 'otherMeds'] },
+
+{ sci:'Kaolin', ar:'كاولين', atc:'A07BC02', cat:'gis.diarrhoea', form:'syrup',
+  doses:['with pectin, suspension'], aka:['Kaolin/Pectin'],
+  notes:{en:'An old adsorbent for mild diarrhoea. It does not replace rehydration and binds other medicines — keep them two hours apart.',
+         ar:'مادة ماصّة قديمة للإسهال الخفيف. لا تغني عن الإرواء، وتربط الأدوية الأخرى — افصل بينها ساعتين.'},
+  ask:['childAge', 'feverBlood'] }
+
+];
