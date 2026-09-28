@@ -153,6 +153,9 @@ export default [
   doses:['200 mg', '300 mg pen'], brand:['Dupixent'],
   notes:{en:'An injection every two weeks for eczema, asthma or nasal polyps, kept in the fridge. Red, sore eyes are common — report them.',
          ar:'حقنة كل أسبوعين للإكزيما أو الربو أو السلائل الأنفية، تُحفظ في الثلاجة. احمرار العينين وألمهما شائعان — أبلغ عنهما.'},
+  ix:[
+    ['#liveVaccine', S, 'Live vaccines are avoided during treatment.', 'تُتجنّب اللقاحات الحية أثناء العلاج.']
+  ],
   ask:['injectTech', 'cold', 'eyeRedFlags'] },
 
 { sci:'Vedolizumab', ar:'فيدوليزوماب', atc:'L04AG05', cat:'imm.biologic', form:'injection',

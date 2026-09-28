@@ -34,6 +34,10 @@ export default [
   doses:['1 g', '2 g', '4 g vial'], aka:['Piperacillin sodium'],
   notes:{en:'A hospital penicillin for serious infections, usually given with tazobactam. Any penicillin allergy must be known first.',
          ar:'بنسلين للمستشفى للالتهابات الخطيرة، يُعطى مع التازوباكتام عادة. يجب معرفة أي حساسية من البنسلين أولاً.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['Methotrexate', S, 'Penicillins slow methotrexate removal — toxicity.', 'البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.']
+  ],
   ci:['penAllergy'],
   ask:['allergyPen', 'kidney'] },
 
@@ -41,6 +45,9 @@ export default [
   doses:['1 MU vial', '300,000 U + benzylpenicillin 100,000 U (fortified)'], aka:['Procaine penicillin', 'Penicillin G procaine', 'Fortified procaine penicillin'],
   notes:{en:'A deep muscle injection only — never into a vein. Rarely, the procaine causes brief fear, confusion or hallucinations just after the injection.',
          ar:'حقنة عضلية عميقة فقط — لا تُعطى في الوريد أبداً. نادراً ما يسبّب البروكايين خوفاً أو تشوّشاً أو هلوسة عابرة بعد الحقن مباشرة.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['penAllergy', {en:'Allergy to procaine', ar:'الحساسية من البروكايين'}],
   ask:['allergyPen', 'allergy'] },
 
@@ -49,6 +56,11 @@ export default [
   take:['emptyStomach'],
   notes:{en:'Capsules on an empty stomach. A rash is common, and almost certain with glandular fever. Finish the course.',
          ar:'الكبسولات على معدة فارغة. الطفح شائع، ويكاد يكون مؤكداً مع كثرة الوحيدات. أكمل الدورة.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['Methotrexate', S, 'Penicillins slow methotrexate removal — toxicity.', 'البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.'],
+    ['Allopurinol', W, 'More skin rashes.', 'طفح جلدي أكثر.']
+  ],
   ci:['penAllergy', {en:'Infectious mononucleosis', ar:'كثرة الوحيدات العدائية'}],
   ask:['allergyPen', 'childAge'] },
 
@@ -56,6 +68,10 @@ export default [
   doses:['1.5 g', '3 g vial', '375 mg tablet (sultamicillin)', '250 mg/5 mL suspension'], brand:['Unasyn'], aka:['Sultamicillin'],
   notes:{en:'An injection in hospital, or sultamicillin tablets and suspension by mouth. Diarrhoea is common; finish the course.',
          ar:'حقنة في المستشفى، أو أقراص ومعلّق السلتاميسيلين بالفم. الإسهال شائع؛ أكمل الدورة.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['Methotrexate', S, 'Penicillins slow methotrexate removal — toxicity.', 'البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.']
+  ],
   ci:['penAllergy'],
   ask:['allergyPen', 'kidney', 'childAge'] },
 
@@ -64,6 +80,10 @@ export default [
   take:['emptyStomach'],
   notes:{en:'An hour before food, four times a day. Rarely it causes jaundice, even weeks after stopping — report yellowing or dark urine.',
          ar:'قبل الطعام بساعة، أربع مرات يومياً. نادراً ما يسبّب اليرقان ولو بعد أسابيع من الإيقاف — أبلغ عن الاصفرار أو غمق البول.'},
+  ix:[
+    ['Warfarin', W, 'May lower the INR — flucloxacillin speeds warfarin breakdown.', 'قد يخفض INR — يسرّع الفلوكلوكساسيلين تفكّك الوارفارين.'],
+    ['Paracetamol', W, 'Rarely, a serious acid build-up (metabolic acidosis) in frail patients on long courses.', 'نادراً، تراكم حمضي خطير (حماض استقلابي) عند المرضى الضعفاء في الدورات الطويلة.']
+  ],
   ci:['penAllergy', {en:'Previous jaundice with flucloxacillin', ar:'يرقان سابق مع الفلوكلوكساسيلين'}],
   ask:['allergyPen', 'liver', 'childAge'] },
 
@@ -72,6 +92,9 @@ export default [
   take:['emptyStomach'],
   notes:{en:'An hour before food, four times a day. Finish the course.',
          ar:'قبل الطعام بساعة، أربع مرات يومياً. أكمل الدورة.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['penAllergy'],
   ask:['allergyPen', 'childAge'] },
 
@@ -79,6 +102,10 @@ export default [
   doses:['500,000 units', '1 million units', '5 million units vial'], brand:['Crystapen'], aka:['Penicillin G', 'Crystalline penicillin'],
   notes:{en:'An injection for serious infections, given several times a day in hospital.',
          ar:'حقنة للالتهابات الخطيرة، تُعطى عدة مرات يومياً في المستشفى.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['Methotrexate', S, 'Penicillins slow methotrexate removal — toxicity.', 'البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.']
+  ],
   ci:['penAllergy'],
   ask:['allergyPen'] },
 
@@ -86,6 +113,9 @@ export default [
   doses:['600,000 units', '1.2 million units', '2.4 million units vial'], brand:['Retarpen', 'Extencilline', 'Bicillin L-A'], aka:['Benzathine penicillin'],
   notes:{en:'A deep injection into muscle — never into a vein — for syphilis, or every 3–4 weeks to prevent rheumatic fever. Keep every appointment.',
          ar:'حقنة عميقة في العضل — لا في الوريد أبداً — للزهري، أو كل 3–4 أسابيع للوقاية من الحمى الروماتيزمية. التزم بكل موعد.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['penAllergy'],
   ask:['allergyPen', 'whoFor'] },
 
@@ -94,6 +124,10 @@ export default [
   take:['emptyStomach'],
   notes:{en:'On an empty stomach, four times a day, for the full ten days in a strep throat.',
          ar:'على معدة فارغة، أربع مرات يومياً، لعشرة أيام كاملة في التهاب الحلق العقدي.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['Methotrexate', S, 'Penicillins slow methotrexate removal — toxicity.', 'البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.']
+  ],
   ci:['penAllergy'],
   ask:['allergyPen', 'childAge'] },
 
@@ -143,6 +177,9 @@ export default [
   doses:['2 g vial'], brand:['Trobicin'],
   notes:{en:'A single deep muscle injection for gonorrhoea when other antibiotics cannot be used; partners need treatment too.',
          ar:'حقنة عضلية عميقة واحدة للسيلان حين لا يمكن استعمال مضادات أخرى؛ ويحتاج الشريك إلى العلاج أيضاً.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ask:['allergy', 'preg'] },
 
 { sci:'Ceftriaxone', ar:'سيفترياكسون', atc:'J01DD04', cat:'inf.cephalosporin', form:'injection',
@@ -171,6 +208,9 @@ export default [
   doses:['500 mg capsule', '1 g tablet', '125 mg/5 mL', '250 mg/5 mL'], brand:['Duricef'],
   notes:{en:'Once or twice a day, with or without food. Finish the course.',
          ar:'مرة أو مرتين يومياً، مع الطعام أو بدونه. أكمل الدورة.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'childAge'] },
 
@@ -178,6 +218,9 @@ export default [
   doses:['250 mg', '500 mg', '375 mg MR', '125 mg/5 mL', '250 mg/5 mL'], brand:['Ceclor', 'Distaclor'],
   notes:{en:'Three times a day. A rash with joint pains (a serum-sickness reaction) is more common with cefaclor in children — report it.',
          ar:'ثلاث مرات يومياً. الطفح مع آلام المفاصل (تفاعل يشبه داء المصل) أشيع مع السيفاكلور عند الأطفال — أبلغ عنه.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'childAge'] },
 
@@ -185,6 +228,9 @@ export default [
   doses:['250 mg', '500 mg', '125 mg/5 mL', '250 mg/5 mL'], brand:['Cefzil'],
   notes:{en:'Once or twice a day. Finish the course.',
          ar:'مرة أو مرتين يومياً. أكمل الدورة.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'childAge'] },
 
@@ -201,6 +247,10 @@ export default [
   take:['withFood'],
   notes:{en:'Twice a day with food. Antacids and acid-reducing medicines lower its absorption.',
          ar:'مرتين يومياً مع الطعام. مضادات الحموضة وخافضات الحمض تقلّل امتصاصه.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['#acidReducer', W, 'Acid reducers lower its absorption.', 'خافضات الحمض تقلّل امتصاصه.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'childAge', 'antacids'] },
 
@@ -208,6 +258,9 @@ export default [
   doses:['500 mg', '1 g vial'], brand:['Kefzol', 'Ancef'],
   notes:{en:'A hospital injection, often given just before surgery to prevent infection.',
          ar:'حقنة في المستشفى، تُعطى غالباً قبل الجراحة مباشرة للوقاية من العدوى.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'kidney'] },
 
@@ -215,6 +268,9 @@ export default [
   doses:['500 mg', '1 g', '2 g vial'], brand:['Claforan'],
   notes:{en:'An injection into a vein or muscle for serious infections; the intramuscular form comes with a lidocaine solvent.',
          ar:'حقنة في الوريد أو العضل للالتهابات الخطيرة؛ الشكل العضلي يأتي مع مذيب يحتوي الليدوكائين.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'childAge'] },
 
@@ -222,6 +278,9 @@ export default [
   doses:['500 mg', '1 g', '2 g vial'], brand:['Fortum', 'Fortaz'],
   notes:{en:'A hospital injection, including for Pseudomonas; the dose is cut in kidney impairment.',
          ar:'حقنة في المستشفى، ومنها لعدوى الزائفة؛ تُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'kidney'] },
 
@@ -229,6 +288,9 @@ export default [
   doses:['2.5 g vial'], brand:['Zavicefta', 'Avycaz'],
   notes:{en:'A reserve hospital antibiotic for resistant infections; the dose is adjusted for the kidneys.',
          ar:'مضاد حيوي احتياطي للمستشفى للعدوى المقاومة؛ تُعدّل الجرعة حسب الكلى.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'kidney'] },
 
@@ -236,6 +298,9 @@ export default [
   doses:['1 g', '2 g vial'], brand:['Maxipime'],
   notes:{en:'A hospital injection. In kidney impairment the dose must be cut — high levels cause confusion and fits.',
          ar:'حقنة في المستشفى. في القصور الكلوي يجب تخفيض الجرعة — المستويات العالية تسبّب التشوّش والاختلاج.'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ci:['cephAllergy', 'betaLactamAnaphylaxis'],
   ask:['allergyPen', 'kidney', 'epilepsy'] },
 
@@ -287,6 +352,9 @@ export default [
   doses:['1 g vial', '75 mg inhalation'], brand:['Azactam', 'Cayston'],
   notes:{en:'A hospital antibiotic that is usually safe in penicillin allergy (though not with a ceftazidime allergy).',
          ar:'مضاد حيوي للمستشفى آمن عادة مع حساسية البنسلين (لكن ليس مع حساسية السيفتازيديم).'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.']
+  ],
   ask:['allergy', 'kidney'] },
 
 /* ---------- Macrolides and clindamycin ---------- */
@@ -361,6 +429,10 @@ export default [
   take:['emptyStomach'],
   notes:{en:'On an empty stomach. Severe or bloody diarrhoea during or after the course means stop and see a doctor (C. difficile).',
          ar:'على معدة فارغة. الإسهال الشديد أو الدموي أثناء الدورة أو بعدها يستوجب الإيقاف ومراجعة الطبيب (المطثية العسيرة).'},
+  ix:[
+    ['Warfarin', W, 'Antibiotics can raise the INR — check it during the course.', 'المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.'],
+    ['Kaolin', W, 'Kaolin reduces lincomycin absorption.', 'الكاولين يقلّل امتصاص اللينكومايسين.']
+  ],
   ci:['colitisHistory'],
   ask:['abxDiarrhoea', 'allergy'] },
 

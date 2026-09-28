@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE } from '../data/drugs.mjs';
+import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE, CATEGORIES, TAGS, RULES, OUTSIDE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -50,16 +50,32 @@ const P_END = '/* PRODUCTS:END */';
    rather than in a screen that renders a blank chip. */
 const problems = [];
 const seen = new Set();
+const SCIS = new Set(DRUGS.map(d => d.sci));
+const both = x => x && typeof x.ar === 'string' && x.ar && typeof x.en === 'string' && x.en;
 for (const d of DRUGS) {
   if (seen.has(d.sci)) problems.push(`duplicate scientific name: ${d.sci}`);
   seen.add(d.sci);
-  for (const k of ['sci', 'ar', 'atc', 'form']) if (!d[k]) problems.push(`${d.sci}: missing ${k}`);
+  for (const k of ['sci', 'ar', 'atc', 'form', 'cat']) if (!d[k]) problems.push(`${d.sci}: missing ${k}`);
+  /* v0.0015.3 — the category is a class ("cvs.acei") of a group ("cvs"). */
+  if (!CATEGORIES[d.cat] || !d.cat.includes('.') || !CATEGORIES[d.cat.split('.')[0]]) problems.push(`${d.sci}: unknown category "${d.cat}"`);
+  for (const t of d.tags || []) if (!TAGS[t]) problems.push(`${d.sci}: unknown interaction class "${t}"`);
+  for (const k of ['brand', 'aka']) if (k in d && (!Array.isArray(d[k]) || d[k].some(x => typeof x !== 'string' || !x))) problems.push(`${d.sci}: ${k} must be a list of names`);
+  /* At most three questions — the three whose answer changes what happens
+     next. A fourth is the one nobody asks. */
+  if (!Array.isArray(d.ask) || !d.ask.length || d.ask.length > 3) problems.push(`${d.sci}: needs one to three questions to ask`);
+  for (const q of d.ask || []) if (!both(q)) problems.push(`${d.sci}: a question needs both languages`);
   if (!FORM_KEYS.includes(d.form)) problems.push(`${d.sci}: unknown form "${d.form}"`);
   if (!Array.isArray(d.doses) || !d.doses.length) problems.push(`${d.sci}: no doses`);
   if (!d.notes || !d.notes.ar || !d.notes.en) problems.push(`${d.sci}: notes need both languages`);
   for (const i of d.interactions || []) {
     if (!['warning', 'serious', 'critical'].includes(i.severity)) problems.push(`${d.sci}: bad severity "${i.severity}"`);
     if (!i.with || !i.note || !i.note.ar || !i.note.en) problems.push(`${d.sci}: incomplete interaction`);
+    /* A partner is a drug of the reference, a class ("#nsaid"), or one of the
+       few partners that are not medicines. Anything else is a typo that would
+       never match a basket. */
+    else if (i.with === d.sci) problems.push(`${d.sci}: interacts with itself`);
+    else if (i.with.startsWith('#') ? !TAGS[i.with.slice(1)] : !SCIS.has(i.with) && !OUTSIDE.includes(i.with))
+      problems.push(`${d.sci}: interaction partner "${i.with}" is not a drug, a class or a known outside partner`);
   }
   for (const c of d.contraindications || []) {
     if (!c.ar || !c.en) problems.push(`${d.sci}: contraindication needs both languages`);
@@ -68,6 +84,14 @@ for (const d of DRUGS) {
   if ('controlled' in d && d.controlled !== true) problems.push(`${d.sci}: controlled must be true or absent`);
 }
 for (const [k, v] of Object.entries(TAKE)) if (!v.ar || !v.en) problems.push(`take ${k}: needs both languages`);
+for (const [k, v] of Object.entries(CATEGORIES)) if (!both(v)) problems.push(`category ${k}: needs both languages`);
+for (const [k, v] of Object.entries(TAGS)) if (!both(v)) problems.push(`class ${k}: needs both languages`);
+for (const r of RULES) {
+  const [a, b, severity, en, ar] = r;
+  if (!TAGS[a] || !TAGS[b]) problems.push(`class rule ${a} + ${b}: unknown class`);
+  if (!['warning', 'serious', 'critical'].includes(severity)) problems.push(`class rule ${a} + ${b}: bad severity`);
+  if (!en || !ar) problems.push(`class rule ${a} + ${b}: needs both languages`);
+}
 for (const r of DUPLICATE_RULES) {
   if (!r.id || !r.codes || !r.codes.length) problems.push(`duplicate rule ${r.id}: no codes`);
   if (!['warning', 'serious', 'critical'].includes(r.severity)) problems.push(`duplicate rule ${r.id}: bad severity`);
@@ -113,6 +137,18 @@ const block = BEGIN + '\n' +
   'const DUPLICATE_RULES = [\n' +
   DUPLICATE_RULES.map(r => '  ' + JSON.stringify(r)).join(',\n') +
   '\n];\n' +
+  /* v0.0015.3 — the categories, the interaction classes, and the class rules
+     that hold whichever two members of the classes meet. */
+  'const DRUG_CATEGORIES = {\n' +
+  Object.entries(CATEGORIES).map(([k, v]) => '  ' + JSON.stringify(k) + ':' + JSON.stringify(v)).join(',\n') +
+  '\n};\n' +
+  'const DRUG_TAGS = {\n' +
+  Object.entries(TAGS).map(([k, v]) => '  ' + JSON.stringify(k) + ':' + JSON.stringify(v)).join(',\n') +
+  '\n};\n' +
+  'const DRUG_RULES = [\n' +
+  RULES.map(([a, b, severity, en, ar]) => '  ' + JSON.stringify({ a, b, severity, note:{ ar, en } })).join(',\n') +
+  '\n];\n' +
+  'const DRUG_OUTSIDE = ' + JSON.stringify(OUTSIDE) + ';\n' +
   'const DRUGS = [\n' +
   DRUGS.map(d => '  ' + JSON.stringify(d)).join(',\n') +
   '\n];\n' + END;

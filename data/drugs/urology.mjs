@@ -52,6 +52,9 @@ export default [
   doses:['0.5 mg', '0.5 mg with tamsulosin 0.4 mg'], brand:['Avodart', 'Duodart'],
   notes:{en:'Swallow whole — the capsule contents should not be handled by a woman who is or may be pregnant. It halves the PSA result. Takes months to work.',
          ar:'تُبلع كاملة — يجب ألا تلمس المرأة الحامل أو التي قد تحمل محتوى الكبسولة. يخفض نتيجة PSA إلى النصف. يحتاج أشهراً ليعمل.'},
+  ix:[
+    ['#inh3a4', W, 'Raises dutasteride levels.', 'يرفع مستوى الدوتاستيريد.']
+  ],
   ci:[{en:'Women and children', ar:'النساء والأطفال'}, 'hepSevere'],
   ask:['labs', 'mood', 'pregnantHandler'] },
 
@@ -60,6 +63,10 @@ export default [
   doses:['500 microgram/mL infusion (newborns)', '10 and 20 microgram penile injection', 'urethral stick'], brand:['Prostin VR', 'Caverject', 'MUSE'], aka:['Prostaglandin E1', 'PGE1'],
   notes:{en:'In newborn units it keeps a heart duct open until surgery (breathing pauses are watched for). As a penile injection for erections: an erection lasting over four hours needs emergency care.',
          ar:'في وحدات حديثي الولادة يُبقي قناة قلبية مفتوحة حتى الجراحة (تُراقب توقفات التنفس). كحقنة في القضيب للانتصاب: الانتصاب الذي يتجاوز أربع ساعات يحتاج رعاية طارئة.'},
+  ix:[
+    ['#anticoag', W, 'More bleeding at the injection site.', 'نزف أكثر في موضع الحقن.'],
+    ['#pde5', W, 'Prolonged erection — not combined.', 'انتصاب مديد — لا يُجمعان.']
+  ],
   ci:[{en:'Conditions that predispose to priapism (sickle cell, leukaemia)', ar:'حالات تهيّئ للقساح (فقر الدم المنجلي، ابيضاض الدم)'}],
   ask:['whoFor', 'thinner', 'pde5'] },
 
@@ -193,6 +200,10 @@ export default [
   doses:['sachet', 'effervescent granules with citric acid'], brand:['Citravescent'],
   notes:{en:'Eases the burning of cystitis by making urine less acidic, with plenty of water; it is high in sodium. Also found in some cough syrups.',
          ar:'يخفّف حرقة التهاب المثانة بتقليل حموضة البول، مع الإكثار من الماء؛ وهو غني بالصوديوم. يوجد أيضاً في بعض أشربة السعال.'},
+  ix:[
+    ['Lithium', W, 'Alkaline urine lowers lithium.', 'البول القلوي يخفض الليثيوم.'],
+    ['Aluminium hydroxide', S, 'Citrate increases aluminium absorption — avoid, above all in kidney failure.', 'السترات تزيد امتصاص الألمنيوم — يُتجنّب، خصوصاً في الفشل الكلوي.']
+  ],
   ci:['hfDecomp', 'renalSevere'],
   ask:['bp', 'kidney', 'duration'] },
 

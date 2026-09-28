@@ -166,6 +166,9 @@ export default [
   doses:['200 microgram'], brand:['Cytotec'],
   notes:{en:'Protects the stomach from NSAIDs, and is used in obstetrics under medical supervision. It causes miscarriage — never in pregnancy outside that supervision. Diarrhoea is common.',
          ar:'يحمي المعدة من مضادات الالتهاب، ويُستعمل في التوليد بإشراف طبي. يسبّب الإجهاض — لا يُستعمل أبداً في الحمل خارج ذلك الإشراف. الإسهال شائع.'},
+  ix:[
+    ['Magnesium hydroxide', W, 'Magnesium antacids worsen its diarrhoea.', 'مضادات الحموضة بالمغنيسيوم تزيد إسهاله.']
+  ],
   ci:['preg'],
   ask:['pregTest', 'whatFor', 'prescription'] },
 
@@ -246,6 +249,9 @@ export default [
   take:['beforeFood'],
   notes:{en:'For bloating and early fullness: three times a day before meals.',
          ar:'للانتفاخ والشبع المبكر: ثلاث مرات يومياً قبل الوجبات.'},
+  ix:[
+    ['#anticholinergic', W, 'Anticholinergics weaken its effect on the gut.', 'مضادات الكولين تُضعف أثره على الأمعاء.']
+  ],
   ci:[{en:'GI bleeding, obstruction or perforation', ar:'نزف أو انسداد أو انثقاب هضمي'}],
   ask:['redFlagsGI', 'duration'] },
 
@@ -289,6 +295,9 @@ export default [
   doses:['40 mg', '80 mg', '40 mg/2 mL injection'], brand:['No-Spa'],
   notes:{en:'For cramping pain of the gut, bladder or periods. It can cause dizziness; the injection can drop blood pressure.',
          ar:'للألم التشنّجي في الأمعاء أو المثانة أو الدورة. قد يسبّب دوخة؛ والحقنة قد تخفض الضغط.'},
+  ix:[
+    ['Levodopa', W, 'May weaken levodopa.', 'قد يُضعف الليفودوبا.']
+  ],
   ci:['hfSevere', 'hepRenalSevere', 'heartBlock'],
   ask:['redFlagsGI', 'lowBp', 'preg'] },
 
@@ -339,6 +348,9 @@ export default [
   doses:['80 mg', '40 mg/4 mL injection'], brand:['Spasfon'],
   notes:{en:'For cramping pain of the gut, bile ducts or urinary tract. Side effects are uncommon.',
          ar:'للألم التشنّجي في الأمعاء أو القنوات الصفراوية أو المسالك البولية. آثاره الجانبية غير شائعة.'},
+  ix:[
+    ['#opioid', W, 'Opioids counter its antispasmodic effect.', 'الأفيونات تعاكس أثره المضاد للتشنّج.']
+  ],
   ask:['redFlagsGI', 'preg'] },
 
 /* ---------- Laxatives ---------- */
@@ -354,6 +366,9 @@ export default [
   take:['bedtime'],
   notes:{en:'Tablets at bedtime work overnight: swallow whole, not within an hour of milk or antacids. Suppositories work in 20–60 minutes. Cramps are common. Not for daily long-term use without advice.',
          ar:'الأقراص قبل النوم تعمل خلال الليل: تُبلع كاملة، ولا تؤخذ خلال ساعة من الحليب أو مضادات الحموضة. التحاميل تعمل خلال 20–60 دقيقة. المغص شائع. لا يُستعمل يومياً لفترة طويلة دون استشارة.'},
+  ix:[
+    ['#acidReducer', W, 'Antacids and acid reducers dissolve the coating early — stomach irritation; keep an hour apart.', 'مضادات الحموضة وخافضات الحمض تذيب الغلاف مبكراً — تهيّج المعدة؛ افصل بينهما ساعة.']
+  ],
   ci:['obstruction', {en:'Acute abdominal pain of unknown cause', ar:'ألم بطني حاد مجهول السبب'}, 'dehydration'],
   ask:['duration', 'redFlagsGI', 'childAge'] },
 
@@ -362,6 +377,10 @@ export default [
   take:['bedtime'],
   notes:{en:'At bedtime; works in 8–12 hours. Cramping is common, and urine may turn reddish. Not for long-term daily use without advice.',
          ar:'قبل النوم؛ يعمل خلال 8–12 ساعة. المغص شائع، وقد يصبح البول محمراً. لا يُستعمل يومياً لفترة طويلة دون استشارة.'},
+  ix:[
+    ['Digoxin', W, 'Low potassium from heavy use makes digoxin toxic.', 'انخفاض البوتاسيوم من الإفراط يجعل الديجوكسين ساماً.'],
+    ['#kLosing', W, 'More potassium loss.', 'مزيد من فقدان البوتاسيوم.']
+  ],
   ci:['obstruction', {en:'Acute abdominal pain of unknown cause', ar:'ألم بطني حاد مجهول السبب'}],
   ask:['duration', 'redFlagsGI'] },
 
@@ -370,6 +389,10 @@ export default [
   take:['bedtime'],
   notes:{en:'Drops at bedtime act by morning. As bowel preparation before a colonoscopy, follow the timing sheet exactly and drink the clear fluids advised.',
          ar:'النقط قبل النوم تعمل بحلول الصباح. كتحضير للأمعاء قبل تنظير القولون، اتبع جدول المواعيد بدقة واشرب السوائل الصافية الموصى بها.'},
+  ix:[
+    ['Digoxin', W, 'Low potassium from heavy use makes digoxin toxic.', 'انخفاض البوتاسيوم من الإفراط يجعل الديجوكسين ساماً.'],
+    ['#kLosing', W, 'More potassium loss.', 'مزيد من فقدان البوتاسيوم.']
+  ],
   ci:['obstruction', 'dehydration'],
   ask:['duration', 'redFlagsGI', 'kidney'] },
 
@@ -390,6 +413,9 @@ export default [
   doses:['3.5 g sachet'], brand:['Fybogel', 'Metamucil'], aka:['Psyllium'],
   notes:{en:'Stir into a full glass of water, drink at once, then drink more — never take it dry or just before lying down. Keep two hours apart from other medicines.',
          ar:'يُحرّك في كأس ماء كامل ويُشرب فوراً ثم يُتبع بمزيد من الماء — لا يؤخذ أبداً جافاً أو قبل الاستلقاء مباشرة. افصل بينه وبين الأدوية الأخرى ساعتين.'},
+  ix:[
+    ['Levothyroxine', W, 'Keep two hours apart — it can hold other medicines back.', 'افصل بينهما ساعتين — قد يؤخّر امتصاص الأدوية الأخرى.']
+  ],
   ci:['obstruction', {en:'Difficulty swallowing', ar:'صعوبة البلع'}],
   ask:['swallow', 'duration', 'otherMeds'] },
 
@@ -404,6 +430,10 @@ export default [
   doses:['133 mL enema', '66 mL paediatric enema'], brand:['Fleet'],
   notes:{en:'Rectal use only; works in 2–5 minutes. Never for children under two, and care in kidney disease because phosphate is absorbed.',
          ar:'للاستعمال الشرجي فقط؛ يعمل خلال 2–5 دقائق. لا يُستعمل أبداً للأطفال دون السنتين، والحذر في أمراض الكلى لأن الفوسفات يُمتص.'},
+  ix:[
+    ['#raas', W, 'Kidney injury risk — use with care.', 'خطر أذية كلوية — بحذر.'],
+    ['#diuretic', W, 'Dehydration and salt imbalance.', 'جفاف واضطراب الأملاح.']
+  ],
   ci:['under2', 'renalSevere', 'obstruction'],
   ask:['childAge', 'kidney'] },
 
@@ -430,13 +460,20 @@ export default [
   doses:['10 mg and 30 mg sachet', '100 mg capsule'], brand:['Hidrasec', 'Tiorfan'],
   notes:{en:'Reduces fluid loss in acute diarrhoea — always with oral rehydration, never instead of it. Not for bloody diarrhoea or a high fever.',
          ar:'يقلّل فقدان السوائل في الإسهال الحاد — دائماً مع محلول الإرواء، لا بدلاً عنه. لا يُستعمل للإسهال الدموي أو الحرارة العالية.'},
+  ix:[
+    ['#acei', W, 'Higher risk of swelling of the face and tongue (angioedema).', 'خطر أعلى لتورم الوجه واللسان (الوذمة الوعائية).']
+  ],
   ci:['dysentery'],
   ask:['childAge', 'feverBlood', 'dehydrationSigns'] },
 
 { sci:'Diphenoxylate', ar:'ديفينوكسيلات', atc:'A07DA01', cat:'gis.diarrhoea', form:'tablet',
   doses:['2.5 mg (with atropine 25 microgram)'], brand:['Lomotil'],
+  tags:['anticholinergic', 'sedative'],
   notes:{en:'Slows the bowel in diarrhoea. Dangerous in overdose, especially for children — keep it well out of reach. Not for bloody diarrhoea.',
          ar:'يبطّئ الأمعاء في الإسهال. خطير عند الجرعة الزائدة، خاصة على الأطفال — أبعده جيداً عن متناولهم. لا يُستعمل للإسهال الدموي.'},
+  ix:[
+    ['#maoi', S, 'Hypertensive crisis possible.', 'نوبة ارتفاع ضغط ممكنة.']
+  ],
   ci:['under6', 'dysentery', 'ucAcute'],
   ask:['childAge', 'feverBlood', 'duration'] },
 
@@ -444,6 +481,9 @@ export default [
   doses:['200 mg capsule', '220 mg/5 mL suspension'], brand:['Ercefuryl', 'Antinal'],
   notes:{en:'A gut antiseptic for acute diarrhoea, for no more than seven days and always with rehydration. See a doctor for blood in the stool or high fever.',
          ar:'مطهّر معوي للإسهال الحاد، لمدة لا تتجاوز سبعة أيام ودائماً مع الإرواء. راجع الطبيب عند وجود دم في البراز أو حرارة عالية.'},
+  ix:[
+    ['Alcohol', W, 'Avoid alcohol during the course.', 'تجنّب الكحول أثناء العلاج.']
+  ],
   ci:['under2'],
   ask:['childAge', 'feverBlood', 'duration'] },
 
@@ -451,12 +491,20 @@ export default [
   doses:['3 g sachet'], brand:['Smecta'], aka:['Dioctahedral smectite'],
   notes:{en:'Stir into water; always alongside rehydration. It binds other medicines — keep them two hours apart. Constipation can follow.',
          ar:'يُحرّك في الماء؛ ودائماً مع الإرواء. يربط الأدوية الأخرى — افصل بينها ساعتين. قد يعقبه إمساك.'},
+  ix:[
+    ['Digoxin', W, 'Binds other medicines — keep two hours apart.', 'يربط الأدوية الأخرى — افصل بينهما ساعتين.'],
+    ['Ciprofloxacin', W, 'Binds other medicines — keep two hours apart.', 'يربط الأدوية الأخرى — افصل بينهما ساعتين.']
+  ],
   ask:['childAge', 'feverBlood', 'otherMeds'] },
 
 { sci:'Kaolin', ar:'كاولين', atc:'A07BC02', cat:'gis.diarrhoea', form:'syrup',
   doses:['with pectin, suspension'], aka:['Kaolin/Pectin'],
   notes:{en:'An old adsorbent for mild diarrhoea. It does not replace rehydration and binds other medicines — keep them two hours apart.',
          ar:'مادة ماصّة قديمة للإسهال الخفيف. لا تغني عن الإرواء، وتربط الأدوية الأخرى — افصل بينها ساعتين.'},
+  ix:[
+    ['Digoxin', W, 'Binds other medicines — keep two hours apart.', 'يربط الأدوية الأخرى — افصل بينهما ساعتين.'],
+    ['Ciprofloxacin', W, 'Binds other medicines — keep two hours apart.', 'يربط الأدوية الأخرى — افصل بينهما ساعتين.']
+  ],
   ask:['childAge', 'feverBlood'] }
 
 ];

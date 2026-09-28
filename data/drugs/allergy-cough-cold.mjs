@@ -57,6 +57,9 @@ export default [
   take:['evening'],
   notes:{en:'Once a day — in the evening if it makes you drowsy. Avoid alcohol with it.',
          ar:'مرة واحدة يومياً — مساءً إن سبّب لك النعاس. تجنّب الكحول معه.'},
+  ix:[
+    ['Alcohol', W, 'More drowsiness in some people.', 'نعاس أكثر عند بعض الناس.']
+  ],
   ci:[{en:'End-stage kidney disease', ar:'مرض كلوي في مراحله الأخيرة'}],
   ask:['drive', 'childAge', 'kidney'] },
 
@@ -75,6 +78,9 @@ export default [
   take:['emptyStomach'],
   notes:{en:'On an empty stomach — an hour before or two hours after food or fruit juice, which block its absorption.',
          ar:'على معدة فارغة — قبل الطعام أو عصير الفاكهة بساعة أو بعدهما بساعتين، لأنهما يمنعان امتصاصه.'},
+  ix:[
+    ['Grapefruit juice', W, 'Grapefruit and other fruit juices lower its absorption — take it an hour before or two hours after food or juice.', 'الغريب فروت وعصائر الفاكهة الأخرى تقلّل امتصاصه — خذه قبل الطعام أو العصير بساعة أو بعدهما بساعتين.']
+  ],
   ask:['childAge'] },
 
 { sci:'Ebastine', ar:'إيباستين', atc:'R06AX22', cat:'res.antihistamine', form:'tablet',
@@ -199,6 +205,10 @@ export default [
   doses:['200 mg sachet', '600 mg effervescent', '100 mg/mL solution', '200 mg/mL injection (antidote)'], brand:['Fluimucil', 'ACC', 'Parvolex'], aka:['N-acetylcysteine', 'NAC'],
   notes:{en:'As a mucolytic, dissolve the sachet or effervescent tablet in water; a faint sulphur smell is normal. The injection is the antidote to paracetamol overdose, given in hospital.',
          ar:'كمُسيّل للبلغم، يُذاب الكيس أو القرص الفوّار في الماء؛ ورائحة الكبريت الخفيفة طبيعية. الحقنة هي ترياق الجرعة الزائدة من الباراسيتامول، وتُعطى في المستشفى.'},
+  ix:[
+    ['Glyceryl trinitrate', W, 'Can deepen the headache and fall in blood pressure from nitrates.', 'قد يزيد صداع النترات وهبوط الضغط.'],
+    ['Activated charcoal', W, 'Charcoal binds acetylcysteine taken by mouth.', 'الفحم يربط الأسيتيل سيستئين المأخوذ بالفم.']
+  ],
   ask:['productiveCough', 'asthma', 'childAge'] },
 
 { sci:'Erdosteine', ar:'إردوستئين', atc:'R05CB15', cat:'res.cough', form:'capsule',
@@ -218,6 +228,9 @@ export default [
   doses:['30 mg/5 mL syrup', '60 mg tablet'], brand:['Levopront'],
   notes:{en:'For a dry cough. It rarely causes drowsiness. Not with a phlegm-loosening medicine.',
          ar:'للسعال الجاف. نادراً ما يسبّب النعاس. لا يُجمع مع مُسيّل للبلغم.'},
+  ix:[
+    ['#sedative', W, 'More drowsiness.', 'نعاس أكثر.']
+  ],
   ci:['under2', 'hepSevere'],
   ask:['productiveCough', 'childAge'] },
 
@@ -239,6 +252,7 @@ export default [
 /* ---------- Nose ---------- */
 { sci:'Xylometazoline', ar:'زايلوميتازولين', atc:'R01AA07', cat:'res.nasal', form:'spray',
   doses:['0.05%', '0.1%'], brand:['Otrivin'],
+  tags:['sympathomimetic'],
   notes:{en:'Five days maximum — longer causes a rebound congestion that is hard to undo.',
          ar:'خمسة أيام كحدّ أقصى — الاستعمال الأطول يسبّب احتقاناً ارتدادياً يصعب علاجه.'},
   ci:[{en:'After trans-sphenoidal surgery', ar:'بعد جراحة عبر الأنف الوتدي'}, 'angleGlaucoma', 'under2'],
@@ -246,12 +260,14 @@ export default [
 
 { sci:'Oxymetazoline', ar:'أوكسي ميتازولين', atc:'R01AA05', cat:'res.nasal', form:'spray',
   doses:['0.05% nasal spray', '0.025% children', '0.01% infant drops'], brand:['Afrin', 'Nasivin'],
+  tags:['sympathomimetic'],
   notes:{en:'No more than 5–7 days — longer use causes a rebound blocked nose. Use the strength made for the child’s age.',
          ar:'لا يتجاوز 5–7 أيام — الاستعمال الأطول يسبّب انسداداً ارتدادياً. استعمل التركيز المخصّص لعمر الطفل.'},
   ask:['useLength', 'childAge', 'bp'] },
 
 { sci:'Naphazoline', ar:'نافازولين', atc:'R01AA08', cat:'res.nasal', form:'drops',
   doses:['0.05% nasal drops', '0.1%', 'with pheniramine, eye drops'], brand:['Privine', 'Naphcon-A'],
+  tags:['sympathomimetic'],
   notes:{en:'For a blocked nose or red eyes, for a few days only — longer use causes rebound. Not for infants.',
          ar:'لانسداد الأنف أو احمرار العين، لأيام قليلة فقط — الاستعمال الأطول يسبّب ارتداداً. لا يُستعمل للرضّع.'},
   ci:['angleGlaucoma', 'under2'],
@@ -269,6 +285,9 @@ export default [
   doses:['0.1% nasal spray', '0.05% eye drops', 'with fluticasone, nasal spray'], brand:['Allergodil', 'Dymista'],
   notes:{en:'A bitter taste after spraying is common — tilt the head forward, not back. It can cause mild drowsiness.',
          ar:'الطعم المرّ بعد الرشّ شائع — أمل الرأس إلى الأمام لا إلى الخلف. قد يسبّب نعاساً خفيفاً.'},
+  ix:[
+    ['Alcohol', W, 'More drowsiness.', 'نعاس أكثر.']
+  ],
   ask:['childAge', 'drive'] },
 
 { sci:'Mometasone', ar:'موميتازون', atc:'R01AD09', cat:'res.nasal', form:'spray',

@@ -224,6 +224,7 @@ export default [
 
 { sci:'Thiocolchicoside', ar:'ثيوكولشيكوسايد', atc:'M03BX05', cat:'msk.relaxant', form:'capsule',
   doses:['4 mg', '8 mg', '4 mg/2 mL injection', '0.25% ointment'], brand:['Muscoril', 'Coltramyl'],
+  tags:['seizure'],
   notes:{en:'No more than 7 days by mouth (5 by injection): longer use raises concern about damage to chromosomes. Not in pregnancy or breastfeeding; women need contraception.',
          ar:'لا يتجاوز 7 أيام فموياً (5 حقناً): الاستعمال الأطول يثير القلق من أذية الصبغيات. لا يُستعمل في الحمل أو الإرضاع؛ وتلزم المرأة وسيلة لمنع الحمل.'},
   ci:['pregBf', 'epilepsy', 'under16'],
@@ -257,6 +258,10 @@ export default [
   doses:['20 mg vial', '25 mg capsule'], brand:['Dantrium'],
   notes:{en:'The injection is the treatment for malignant hyperthermia in theatre. Capsules for spasticity need regular liver tests.',
          ar:'الحقنة هي علاج فرط الحرارة الخبيث في غرفة العمليات. الكبسولات للتشنّج العضلي تحتاج فحوص كبد منتظمة.'},
+  ix:[
+    ['#nondhp', C, 'With intravenous dantrolene, verapamil or diltiazem can cause dangerously high potassium and heart failure — avoid.', 'مع الدانترولين الوريدي قد يسبّب الفيراباميل أو الديلتيازيم ارتفاعاً خطيراً في البوتاسيوم وقصوراً قلبياً — يُتجنّب.'],
+    ['Alcohol', W, 'More drowsiness.', 'نعاس أكثر.']
+  ],
   ci:['hepActive'],
   ask:['liver'] },
 
@@ -333,6 +338,7 @@ export default [
 
 { sci:'Zoledronic acid', ar:'حمض الزوليدرونيك', atc:'M05BA08', cat:'msk.bone', form:'injection',
   doses:['5 mg/100 mL yearly', '4 mg/5 mL (cancer)'], brand:['Aclasta', 'Zometa'],
+  tags:['nephrotoxic'],
   notes:{en:'An infusion once a year for osteoporosis (every 3–4 weeks in cancer). Drink well beforehand; flu-like symptoms for a few days are common. A dental check first, with calcium and vitamin D alongside.',
          ar:'تسريب مرة في السنة لهشاشة العظام (كل 3–4 أسابيع في السرطان). اشرب جيداً قبله؛ أعراض تشبه الإنفلونزا لبضعة أيام شائعة. فحص الأسنان أولاً، مع الكالسيوم وفيتامين د.'},
   ci:['hypoCa', {en:'Creatinine clearance below 35 mL/min', ar:'تصفية كرياتينين أقل من 35 مل/دقيقة'}],
@@ -342,6 +348,9 @@ export default [
   doses:['60 mg every 6 months', '120 mg monthly (Xgeva)'], brand:['Prolia', 'Xgeva'],
   notes:{en:'An injection every six months — never late, and never stopped without a plan: bone loss and fractures rebound quickly. Calcium and vitamin D alongside; a dental check first.',
          ar:'حقنة كل ستة أشهر — لا تتأخر أبداً، ولا تُوقف دون خطة: فقدان العظم والكسور يرتدّان بسرعة. مع الكالسيوم وفيتامين د؛ وفحص الأسنان أولاً.'},
+  ix:[
+    ['#immunosuppressant', W, 'Higher risk of infections.', 'خطر أعلى للالتهابات.']
+  ],
   ci:['hypoCa'],
   ask:['dental', 'kidney', 'labs'] },
 
@@ -349,6 +358,9 @@ export default [
   doses:['20 microgram/day pen'], brand:['Forsteo', 'Forteo'],
   notes:{en:'A daily injection for up to two years; keep the pen in the fridge. Dizziness on standing after the first doses — inject sitting or lying down at first.',
          ar:'حقنة يومية لمدة تصل إلى سنتين؛ يُحفظ القلم في الثلاجة. دوخة عند الوقوف بعد الجرعات الأولى — احقن جالساً أو مستلقياً في البداية.'},
+  ix:[
+    ['Digoxin', W, 'A passing rise in calcium can make digoxin toxic.', 'ارتفاع عابر في الكالسيوم قد يجعل الديجوكسين ساماً.']
+  ],
   ci:['hyperCa', 'renalSevere', {en:'Paget’s disease or previous radiotherapy to bone', ar:'داء باجيت أو علاج إشعاعي سابق للعظام'}],
   ask:['injectTech', 'cold', 'stones'] },
 
@@ -356,6 +368,11 @@ export default [
   doses:['60 mg'], brand:['Evista'],
   notes:{en:'Once a day. It raises the risk of clots in the legs and lungs — stop before long immobility or surgery. Hot flushes and leg cramps are common.',
          ar:'مرة واحدة يومياً. يرفع خطر الجلطات في الساقين والرئتين — يُوقف قبل عدم الحركة الطويل أو الجراحة. الهبّات الساخنة وتشنّجات الساق شائعة.'},
+  ix:[
+    ['Colestyramine', S, 'Blocks raloxifene absorption — do not combine.', 'يمنع امتصاص الرالوكسيفين — لا يُجمعان.'],
+    ['Warfarin', W, 'May lower the INR slightly.', 'قد يخفض INR قليلاً.'],
+    ['Estradiol', W, 'Not used with oestrogen therapy.', 'لا يُستعمل مع العلاج بالإستروجين.']
+  ],
   ci:['vte', 'vaginalBleeding', 'hepSevere'],
   ask:['clots', 'dental'] },
 
@@ -515,6 +532,9 @@ export default [
   take:['withFood'],
   notes:{en:'With meals. Diarrhoea is common — stop if it is severe. Urine may turn yellow-brown. Not for people over 65.',
          ar:'مع الوجبات. الإسهال شائع — أوقفه إن كان شديداً. قد يصبح البول أصفر بنياً. لا يُستعمل فوق سن 65.'},
+  ix:[
+    ['#polyvalent', W, 'Antacids reduce its absorption — keep two hours apart.', 'مضادات الحموضة تقلّل امتصاصه — افصل بينهما ساعتين.']
+  ],
   ci:['hep', {en:'Over 65 years of age', ar:'العمر فوق 65 سنة'}],
   ask:['liver', 'whoFor'] },
 

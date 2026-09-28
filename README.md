@@ -19,10 +19,12 @@ npm run dev
 ```
 
 ```bash
-npm test          # 94 unit tests — the business rules
+npm test          # 135 unit tests — the business rules and the drug reference
 npm run typecheck
 npm run build
-npm run drugs     # re-embed data/drugs.mjs into both single-file builds
+npm run drugs         # re-embed data/drugs.mjs into both single-file builds
+npm run drugs:export  # write the reference to data/export/ (JSON and CSV)
+python3 scripts/read-sources.py   # re-map the Ministry register and the EDL onto the reference
 ```
 
 ### Database
@@ -182,27 +184,70 @@ npm run check:crm     # drives it in a real browser
 
 ### The drug reference
 
-`data/drugs.mjs` holds 119 molecules — the hundred an Iraqi community pharmacy
-actually turns over, plus the nineteen the first hundred *named* as the other
-half of an interaction without being in the list themselves. A checker that
-warns about methotrexate eight times and then cannot be shown methotrexate is
-incoherent. `npm run drugs` writes them into both single-file builds between
-`DRUGS:BEGIN` / `DRUGS:END` markers. **One list, two
+Since v0.0015.3 the reference is **every molecule on the Iraqi market** —
+1,174 of them, drawn from the Ministry of Health register (5,214 products) and
+the NCDS Essential Drugs List (597 items). They live in `data/drugs/`, one file
+per part of the body (32 files: blood pressure, heart, antibiotics, skin,
+eye, anaesthesia, antidotes, herbal…), and `data/drugs.mjs` joins them into
+the one list everything else reads. `npm run drugs` writes it into both
+single-file builds between `DRUGS:BEGIN` / `DRUGS:END` markers. **One list, two
 readers.** The CRM has it as a module with editing, CSV import and brand links
 on top; the app has it as a lookup a pharmacist opens at the counter. Two copies
 of the same reference drift, and the copy that drifts is the one somebody is
 reading with a patient in front of them.
 
-Each molecule carries its scientific and Arabic names, ATC code, main dosage
-form, the strengths actually marketed, a counselling line, the interactions
-worth stopping a sale for with a severity, and its contraindications. The
-interaction pairs and contraindications run into the hundreds. The script validates
-before it writes — a duplicate scientific name, an unknown form or a severity
-outside warning/serious/critical fails the run rather than rendering as a blank
-chip later.
+Each molecule carries its **category** (a class in one of 20 groups — *ACE
+inhibitors* in *Heart and blood vessels*; 136 classes in all), its scientific
+and Arabic names, other names it goes by, the international brands it is asked
+for by, ATC code, main dosage form, the strengths marketed, a counselling line
+(what you say handing it over), the interactions worth stopping a sale for with
+a severity, its contraindications, and **at most three questions to ask the
+patient** when dispensing it — the three whose answer changes what happens next.
+The source files write a drug briefly, drawing on shared banks in
+`data/drugs/banks.mjs` (114 questions, 111 contraindications, 65 interaction
+classes, 57 class rules), and `data/drugs/expand.mjs` turns it into the full
+shape; an unknown bank key fails the build, naming the drug.
 
-**What is reference content and what is a fixture.** The molecule data is real:
-the codes, the strengths, the interactions. The brand rows in the CRM are
+**Interactions come three ways.** A drug names another drug (873 lines); names
+a *class* (`#nsaid`, `#statin`, `#contrast` — 195 of those lines); or falls
+under a **class rule** that holds whichever two members of the classes meet
+(any opioid with any benzodiazepine is critical) — written once rather than on
+every drug. 936 of the 1,174 have at least one; most of the rest are creams,
+eye drops, IV fluids and diagnostics, and a drug with none listed is still not
+a drug with none.
+
+**A cream is not its tablet.** A molecule that also comes as tablets has its
+skin and eye forms as entries of their own — `Diclofenac (topical)`,
+`Ciprofloxacin (eye)` — with their own counselling and without the tablet's
+interaction classes, so a gel does not raise the tablet's bleeding alert.
+
+**Brands registered in Iraq come from the register, not from memory.**
+`scripts/read-sources.py` matches every registered product's ingredients to the
+reference — by scientific name, other names and the register's own spellings;
+it splits run-together text (`rivaroxaban20`), puts misspelt names back
+(`loratidine`, `ceftriaxon`) when one name is clearly nearest, sends creams,
+vaginal forms and eye drops to the right entry, and falls back to brand names
+for rows with no ingredient text. **5,103 of the 5,186 registered products now
+link to the reference** (2,245 before), and every generic the Essential Drugs
+List names is in it. A drug's page lists the trade names it is registered
+under.
+
+**Exports.** `npm run drugs:export` writes `data/export/`: `medications.json`
+(everything, with the banks, the registered trade names and EDL codes),
+`medications.csv` (one row per molecule, English and Arabic side by side) and
+`interactions.csv` (every interaction and class rule). The CSV files open in
+Excel with the Arabic intact.
+
+The embed step validates before it writes — a duplicate scientific name, an
+unknown category, form, class or bank key, a fourth question, a partner that is
+neither a drug, a class nor a known outside partner, or a severity outside
+warning/serious/critical fails the run rather than rendering as a blank chip
+later. `tests/unit/drugs.test.ts` holds the data module to the same rules.
+
+**What is reference content and what is a fixture.** The molecule data is
+written from standard formulary sources and is **placeholder clinical content
+until the clinical curator has reviewed it** (the header of `data/drugs.mjs`
+says so). The brand rows in the CRM are
 invented, because who holds an Iraqi registration for what changes with every
 renewal and cannot be verified from here — and a plausible-looking wrong
 registration in front of an operator is worse than an obviously invented one.
@@ -215,9 +260,12 @@ counter, not the complete set; a drug with none listed is not a drug with none.
 In the app it sits in the bottom bar rather than behind "More", because it is
 the one screen used *during* the work — several times a shift, with someone
 waiting. What it displaced is the CV, opened a handful of times a year, which
-moved to More along with incident reporting. Search matches either script and
-the ATC code, and flattens diacritics, hamza and ta-marbuta on both sides,
-because a pharmacist keying a name in a hurry writes ا for أ and ه for ة.
+moved to More along with incident reporting. Search matches either script,
+the ATC code, other names, international brands and the trade names in the
+register, and flattens diacritics, hamza and ta-marbuta on both sides, because a
+pharmacist keying a name in a hurry writes ا for أ and ه for ة. A name that
+starts with what was typed comes first — Enter adds the top hit. The list
+draws the first hundred and counts the rest; category chips narrow it.
 
 ### The dispensing check
 
@@ -234,10 +282,10 @@ prescription and it reports, worst first:
    adjacent ones.
 2. **Therapeutic duplication**, from a curated list of classes rather than from
    the ATC codes (see below).
-3. **The contraindications, turned into questions.** The app does not know the
-   patient, so a contraindication is not a warning — it is something to ask.
-   They are deduplicated across the basket, so three drugs contraindicated in
-   pregnancy is one question rather than three.
+3. **The questions to ask.** The app does not know the patient, so what it
+   cannot know it asks: each drug's own (at most three), deduplicated across
+   the basket, so three drugs that need "are you pregnant?" ask it once.
+   The contraindications stay on each drug's record.
 
 **The bidirectional index is the part that matters.** Interactions in the
 reference are written from one side: 149 of the pairs are one-way. Amiodarone
@@ -247,7 +295,9 @@ when the two drugs happen to be added in the order the data was written. Same
 two boxes, opposite order, silence, and no error to show for it. The pairs are
 therefore normalised once into an undirected index, and where the two sides
 disagree on severity the worse one wins. Both orders are asserted in the check
-suite.
+suite. Since v0.0015.3 a lookup also reads the two drugs' classes — a drug's
+`#class` lines and the class rules — and the worst of the three kinds wins; at
+equal severity the drug's own wording is kept.
 
 **Duplication is curated, not computed.** The obvious implementation is "two
 drugs sharing an ATC class", and it is wrong: run it over this list and it
@@ -265,8 +315,8 @@ those two statements is where a missed interaction stops being a known limit
 and becomes a broken promise. So the verdict reports what was checked — *"4
 drugs, 6 pairs checked against the reference"* — and says the reference is not
 complete. Coverage gets the same treatment: a partner named by a drug in the
-basket but absent from the reference (contrast media is named by metformin and
-will never be in any formulary) is shown as a card, not a footnote.
+basket that no basket can hold (alcohol, named by metronidazole; grapefruit
+juice) is shown as a card, not a footnote.
 
 ### The dispensing log: tallies, never baskets
 

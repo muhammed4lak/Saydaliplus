@@ -45,12 +45,19 @@ export default [
   doses:['in B-complex', '500 mg', '4% gel'], aka:['Niacinamide', 'Vitamin B3'],
   notes:{en:'A B vitamin found in B-complex and multivitamin products; the gel is used for acne.',
          ar:'فيتامين B يوجد في مستحضرات B المركّب والفيتامينات المتعددة؛ والهلام يُستعمل لحب الشباب.'},
+  ix:[
+    ['Carbamazepine', W, 'High doses raise carbamazepine.', 'الجرعات العالية ترفع الكاربامازيبين.']
+  ],
   ask:['whoFor'] },
 
 { sci:'Pyridoxine', ar:'بيريدوكسين', atc:'A11HA02', cat:'nut.vitamin', form:'tablet',
   doses:['10 mg', '25 mg', '50 mg', '100 mg/2 mL injection', 'in B-complex'], aka:['Vitamin B6'],
   notes:{en:'Given with isoniazid to prevent nerve damage, and for nausea in pregnancy (with doxylamine). Very high doses for months can themselves damage the nerves.',
          ar:'يُعطى مع الأيزونيازيد للوقاية من أذية الأعصاب، ولغثيان الحمل (مع الدوكسيلامين). الجرعات العالية جداً لأشهر قد تؤذي الأعصاب بنفسها.'},
+  ix:[
+    ['Levodopa', S, 'Pyridoxine weakens levodopa given on its own (not with carbidopa or benserazide).', 'البيريدوكسين يُضعف الليفودوبا المعطى وحده (لا مع الكاربيدوبا أو البنسيرازيد).'],
+    ['Phenytoin', W, 'High doses lower phenytoin.', 'الجرعات العالية تخفض الفينيتوين.']
+  ],
   ask:['otherMeds', 'preg'] },
 
 { sci:'Biotin', ar:'بيوتين', atc:'A11HA05', cat:'nut.vitamin', form:'tablet',
@@ -63,12 +70,18 @@ export default [
   doses:['tablet', 'syrup', 'injection', 'B1 + B6 + B12'], brand:['Neurobion', 'Becozyme', 'B-Plex'],
   notes:{en:'A mix of B vitamins for deficiency and nerve symptoms. It turns urine bright yellow. The injections are given into muscle, slowly.',
          ar:'مزيج من فيتامينات B للنقص وأعراض الأعصاب. يلوّن البول بالأصفر الفاقع. الحقن تُعطى في العضل ببطء.'},
+  ix:[
+    ['Levodopa', W, 'The B6 in it can weaken levodopa given on its own.', 'فيتامين B6 فيه قد يُضعف الليفودوبا المعطى وحده.']
+  ],
   ask:['whoFor', 'diabetes'] },
 
 { sci:'Ascorbic acid', ar:'حمض الأسكوربيك', atc:'A11GA01', cat:'nut.vitamin', form:'tablet',
   doses:['500 mg', '1 g effervescent', '100 mg/mL drops', '500 mg/5 mL injection'], brand:['Redoxon', 'Cebion'], aka:['Vitamin C'],
   notes:{en:'High doses can cause kidney stones and diarrhoea; effervescent tablets contain a lot of sodium. It helps iron absorption when taken together.',
          ar:'الجرعات العالية قد تسبّب حصى الكلى والإسهال؛ والأقراص الفوّارة تحتوي كثيراً من الصوديوم. يساعد امتصاص الحديد إذا أُخذ معه.'},
+  ix:[
+    ['Deferoxamine', S, 'High doses with deferoxamine can strain the heart — only small doses, after the first month.', 'الجرعات العالية مع الديفيروكسامين قد تُجهد القلب — جرعات صغيرة فقط وبعد الشهر الأول.']
+  ],
   ask:['stones', 'kidney', 'g6pd'] },
 
 { sci:'Tocopherol', ar:'توكوفيرول', atc:'A11HA03', cat:'nut.vitamin', form:'capsule',
@@ -84,13 +97,21 @@ export default [
   doses:['50,000 IU'], aka:['Vitamin D2'],
   notes:{en:'High-dose vitamin D, usually weekly for a set number of weeks — not daily. Report thirst, nausea or confusion (too much calcium).',
          ar:'فيتامين د بجرعة عالية، أسبوعياً عادة لعدد محدد من الأسابيع — لا يومياً. أبلغ عن العطش أو الغثيان أو التشوّش (زيادة الكالسيوم).'},
+  ix:[
+    ['#thiazide', W, 'Thiazides raise calcium — too much calcium with high-dose vitamin D.', 'الثيازيدات ترفع الكالسيوم — زيادة الكالسيوم مع فيتامين د بجرعة عالية.'],
+    ['Digoxin', W, 'High calcium makes digoxin toxic.', 'ارتفاع الكالسيوم يجعل الديجوكسين ساماً.']
+  ],
   ci:['hyperCa'],
   ask:['stones', 'whoFor'] },
 
 { sci:'Multivitamins', ar:'الفيتامينات المتعددة', atc:'A11BA', cat:'nut.vitamin', form:'tablet',
   doses:['tablet', 'syrup', 'drops', 'with minerals', 'pregnancy formulas'], brand:['Centrum', 'Pregnacare', 'Supradyn'], aka:['Multivitamin', 'Multivitamins with minerals'],
+  tags:['polyvalent'],
   notes:{en:'One a day with food; not a replacement for a varied diet. Products with iron are dangerous to small children — keep them out of reach. In pregnancy, use a pregnancy formula (limited vitamin A).',
          ar:'واحدة يومياً مع الطعام؛ لا تغني عن غذاء متنوّع. المستحضرات الحاوية على الحديد خطيرة على الأطفال الصغار — أبعدها عن متناولهم. في الحمل استعملي تركيبة مخصّصة للحمل (فيتامين أ محدود).'},
+  ix:[
+    ['Warfarin', W, 'Products with vitamin K can lower the INR — keep to the same product.', 'المستحضرات الحاوية على فيتامين K قد تخفض INR — التزم بالمستحضر نفسه.']
+  ],
   ask:['preg', 'childAge', 'otherMeds'] },
 
 /* ---------- Minerals ---------- */
@@ -140,6 +161,9 @@ export default [
   doses:['0.25 mg', '0.5 mg', '1 mg tablet or drops'], brand:['Zymafluor'],
   notes:{en:'Only where drinking water is low in fluoride and on a dentist’s advice — too much mottles the teeth.',
          ar:'فقط حيث يكون الفلوريد في ماء الشرب منخفضاً وبنصيحة طبيب الأسنان — الزيادة تبقّع الأسنان.'},
+  ix:[
+    ['#polyvalent', W, 'Calcium and magnesium bind fluoride — keep them apart.', 'الكالسيوم والمغنيسيوم يربطان الفلوريد — افصل بينها.']
+  ],
   ask:['childAge'] },
 
 { sci:'Sevelamer', ar:'سيفيلامير', atc:'V03AE02', cat:'nut.mineral', form:'tablet',
@@ -177,6 +201,9 @@ export default [
   doses:['1 g/10 mL oral solution', '330 mg', '500 mg tablet', '1 g/5 mL injection'], brand:['Carnitor'], aka:['L-carnitine', 'Carnitine'],
   notes:{en:'For carnitine deficiency and in dialysis. As a slimming or sports supplement the evidence is weak. A fishy body odour can occur.',
          ar:'لنقص الكارنيتين وفي الغسيل الكلوي. كمكمّل للتنحيف أو الرياضة الأدلة ضعيفة. قد تظهر رائحة جسم تشبه السمك.'},
+  ix:[
+    ['Warfarin', W, 'INR rises have been reported.', 'سُجّل ارتفاع INR.']
+  ],
   ask:['kidney', 'whatFor'] },
 
 { sci:'Aspartame', ar:'أسبارتام', atc:'V06', cat:'nut.supplement', form:'tablet',

@@ -71,24 +71,36 @@ export default [
   doses:['20 microgram/dose inhaler', '250 microgram/mL nebuliser solution', 'nasal spray'], brand:['Atrovent'], aka:['Ipratropium bromide'],
   notes:{en:'With a nebuliser mask, keep the mist away from the eyes — it can bring on glaucoma. A dry mouth is common.',
          ar:'مع قناع جهاز الإرذاذ، أبعد الرذاذ عن العينين — قد يُحدث الزرق. جفاف الفم شائع.'},
+  ix:[
+    ['#anticholinergic', W, 'Adds to anticholinergic effects — not recommended with other anticholinergics.', 'يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.']
+  ],
   ask:['glaucoma', 'prostate', 'inhaler'] },
 
 { sci:'Tiotropium', ar:'تيوتروبيوم', atc:'R03BB04', cat:'res.bronchodilator', form:'inhaler',
   doses:['18 microgram capsule (HandiHaler)', '2.5 microgram Respimat'], brand:['Spiriva'], aka:['Tiotropium bromide'],
   notes:{en:'Once a day at the same time. The capsules are for the inhaler — never swallow them. Dry mouth is common; report eye pain or difficulty passing urine.',
          ar:'مرة واحدة يومياً في الوقت نفسه. الكبسولات لجهاز الاستنشاق — لا تُبلع أبداً. جفاف الفم شائع؛ أبلغ عن ألم العين أو صعوبة التبوّل.'},
+  ix:[
+    ['#anticholinergic', W, 'Adds to anticholinergic effects — not recommended with other anticholinergics.', 'يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.']
+  ],
   ask:['inhaler', 'glaucoma', 'prostate'] },
 
 { sci:'Glycopyrronium', ar:'غليكوبيرونيوم', atc:'R03BB06', cat:'res.bronchodilator', form:'inhaler',
   doses:['44 microgram capsule (Breezhaler)', 'with indacaterol', 'with formoterol and budesonide', '200 microgram/mL injection', '320 microgram/mL oral solution'], brand:['Seebri', 'Ultibro', 'Trixeo', 'Robinul', 'Sialanar'], aka:['Glycopyrrolate', 'Glycopyrronium bromide'],
   notes:{en:'For COPD, once a day at the same time; the capsules go in the inhaler — never swallow them. Dry mouth is common; report eye pain or difficulty passing urine. The injection dries secretions during surgery; the oral solution treats drooling in children.',
          ar:'للانسداد الرئوي المزمن، مرة يومياً في الوقت نفسه؛ الكبسولات لجهاز الاستنشاق — لا تُبلع أبداً. جفاف الفم شائع؛ أبلغ عن ألم العين أو صعوبة التبوّل. الحقنة تجفّف الإفرازات أثناء الجراحة؛ والمحلول الفموي يعالج سيلان اللعاب عند الأطفال.'},
+  ix:[
+    ['#anticholinergic', W, 'Adds to anticholinergic effects — not recommended with other anticholinergics.', 'يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.']
+  ],
   ask:['inhaler', 'glaucoma', 'prostate'] },
 
 { sci:'Umeclidinium', ar:'يوميكليدينيوم', atc:'R03BB07', cat:'res.bronchodilator', form:'inhaler',
   doses:['55 microgram Ellipta', 'with vilanterol', 'with vilanterol and fluticasone furoate'], brand:['Incruse', 'Anoro', 'Trelegy'], aka:['Umeclidinium bromide'],
   notes:{en:'For COPD, one inhalation once a day at the same time. Dry mouth is common; report eye pain or difficulty passing urine.',
          ar:'للانسداد الرئوي المزمن، استنشاقة واحدة يومياً في الوقت نفسه. جفاف الفم شائع؛ أبلغ عن ألم العين أو صعوبة التبوّل.'},
+  ix:[
+    ['#anticholinergic', W, 'Adds to anticholinergic effects — not recommended with other anticholinergics.', 'يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.']
+  ],
   ask:['inhaler', 'glaucoma', 'prostate'] },
 
 { sci:'Aminophylline', ar:'أمينوفيلين', atc:'R03DA05', cat:'res.bronchodilator', form:'injection',
@@ -106,6 +118,7 @@ export default [
 
 { sci:'Doxofylline', ar:'دوكسوفيلين', atc:'R03DA11', cat:'res.bronchodilator', form:'tablet',
   doses:['400 mg', '200 mg/10 mL injection'], brand:['Ansimar'],
+  tags:['xanthine'],
   notes:{en:'A theophylline-like bronchodilator with fewer interactions, usually twice a day. Nausea or palpitations mean the dose may be too high.',
          ar:'موسّع قصبات شبيه بالثيوفيلين بتداخلات أقل، مرتين يومياً عادة. الغثيان أو الخفقان يعني أن الجرعة قد تكون مرتفعة.'},
   ci:['recentMI'],
@@ -127,6 +140,9 @@ export default [
   doses:['50 mcg/dose', '100 mcg/dose', '250 mcg/dose'], brand:['Clenil', 'Qvar'], aka:['Beclomethasone'],
   notes:{en:'A pure preventer — no use during an attack. Rinse the mouth every time.',
          ar:'وقائي محض — لا يفيد أثناء النوبة. المضمضة بعد كل استعمال.'},
+  ix:[
+    ['Ritonavir', W, 'Raises steroid levels (much less than with fluticasone).', 'يرفع مستوى الكورتيزون (أقل بكثير منه مع الفلوتيكازون).']
+  ],
   ask:['inhaler', 'reliever'] },
 
 { sci:'Budesonide', ar:'بوديسونايد', atc:'R03BA02', cat:'res.inhaledsteroid', form:'inhaler',
@@ -150,6 +166,9 @@ export default [
   doses:['80 microgram', '160 microgram/dose'], brand:['Alvesco'],
   notes:{en:'Once a day as a preventer. It causes less thrush than other inhaled steroids, but rinsing the mouth is still wise.',
          ar:'مرة واحدة يومياً كوقائي. يسبّب قلاعاً أقل من غيره من الكورتيزونات المستنشقة، ويبقى المضمضة تصرفاً حكيماً.'},
+  ix:[
+    ['Ritonavir', W, 'Raises steroid levels (much less than with fluticasone).', 'يرفع مستوى الكورتيزون (أقل بكثير منه مع الفلوتيكازون).']
+  ],
   ask:['inhaler', 'reliever'] },
 
 /* ---------- Other asthma and COPD medicines ---------- */
@@ -224,12 +243,19 @@ export default [
   doses:['20 mg/mL oral solution', '20 mg/mL injection'], brand:['Peyona', 'Cafcit'],
   notes:{en:'For breathing pauses in premature babies, once a day; heart rate and feeding are watched.',
          ar:'لتوقّف التنفس عند الخدّج، مرة واحدة يومياً؛ تُراقب سرعة القلب والتغذية.'},
+  ix:[
+    ['Theophylline', S, 'Not given together in newborns — theophylline turns into caffeine.', 'لا يُعطيان معاً لحديثي الولادة — الثيوفيلين يتحوّل إلى كافيين.']
+  ],
   ask:['childAge'] },
 
 { sci:'Doxapram', ar:'دوكسابرام', atc:'R07AB01', cat:'res.other', form:'injection',
   doses:['20 mg/mL'], brand:['Dopram'],
   notes:{en:'A hospital respiratory stimulant, given by infusion under close monitoring.',
          ar:'منبّه تنفسي للمستشفى، يُعطى تسريباً مع مراقبة دقيقة.'},
+  ix:[
+    ['#maoi', S, 'Raises blood pressure.', 'يرفع الضغط.'],
+    ['#sympathomimetic', S, 'Raises blood pressure.', 'يرفع الضغط.']
+  ],
   ci:['epilepsy', 'uncontrolledHtn', 'ihd'],
   ask:['epilepsy', 'heart'] },
 

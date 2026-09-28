@@ -1,0 +1,931 @@
+﻿kind,drug,drug_ar,with,with_type,severity,note,note_ar
+drug,Lisinopril,ليزينوبريل,Spironolactone,drug,serious,Hyperkalaemia — monitor.,فرط بوتاسيوم — يُراقب مخبرياً.
+drug,Lisinopril,ليزينوبريل,Ibuprofen,drug,serious,"With a diuretic, a risk of acute kidney injury.",مع مدرّ بول: خطر أذية كلوية حادة.
+drug,Lisinopril,ليزينوبريل,Potassium chloride,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Enalapril,إينالابريل,Spironolactone,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Enalapril,إينالابريل,Ibuprofen,drug,serious,Risk of acute kidney injury.,خطر أذية كلوية حادة.
+drug,Captopril,كابتوبريل,Allopurinol,drug,warning,More hypersensitivity reactions and low white cells.,تفاعلات تحسّس أكثر ونقص في الكريات البيض.
+drug,Fosinopril,فوسينوبريل,"Antacids and calcium, iron, zinc or magnesium (class)",class,warning,Antacids reduce its absorption — two hours apart.,مضادات الحموضة تقلّل امتصاصه — بفاصل ساعتين.
+drug,Quinapril,كينابريل,Tetracycline,drug,warning,The tablet’s magnesium binds tetracycline — two hours apart.,المغنيسيوم في الحبة يربط التتراسيكلين — بفاصل ساعتين.
+drug,Losartan,لوسارتان,Spironolactone,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Losartan,لوسارتان,Lithium,drug,serious,Raises lithium.,يرفع الليثيوم.
+drug,Valsartan,فالسارتان,Spironolactone,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Valsartan,فالسارتان,Ibuprofen,drug,serious,Blunts the effect and raises renal risk.,يقلّل الأثر ويزيد الخطر الكلوي.
+drug,Telmisartan,تلميسارتان,Digoxin,drug,warning,Raises digoxin levels — check them when starting.,يرفع مستوى الديجوكسين — افحصه عند البدء.
+drug,Bisoprolol,بيسوبرولول,Verapamil,drug,critical,Severe bradycardia and heart block — avoid the combination.,بطء قلب شديد وحصار — يُتجنّب الجمع.
+drug,Bisoprolol,بيسوبرولول,Salbutamol,drug,warning,Blunts the bronchodilator.,يقلّل أثر موسّع القصبات.
+drug,Atenolol,أتينولول,Verapamil,drug,critical,Severe bradycardia and heart block.,بطء قلب شديد وحصار.
+drug,Atenolol,أتينولول,Gliclazide,drug,warning,Masks the warning signs of hypoglycaemia.,يُخفي أعراض نقص السكر.
+drug,Metoprolol,ميتوبرولول,Verapamil,drug,critical,Severe bradycardia and heart block.,بطء قلب شديد وحصار.
+drug,Metoprolol,ميتوبرولول,Fluoxetine,drug,serious,Substantially raises metoprolol levels.,يرفع مستوى الميتوبرولول كثيراً.
+drug,Carvedilol,كارفيديلول,Verapamil,drug,critical,Severe bradycardia and heart block.,بطء قلب شديد وحصار.
+drug,Carvedilol,كارفيديلول,Digoxin,drug,serious,Raises digoxin and slows the heart.,يرفع الديجوكسين ويبطّئ القلب.
+drug,Propranolol,بروبرانولول,Rizatriptan,drug,serious,"Raises rizatriptan — use the 5 mg dose, not 10 mg.",يرفع الريزاتريبتان — تُستعمل جرعة 5 ملغ لا 10.
+drug,Propranolol,بروبرانولول,Chlorpromazine,drug,warning,Each raises the other — more hypotension.,كلٌّ منهما يرفع الآخر — هبوط ضغط أكثر.
+drug,Amlodipine,أملوديبين,Simvastatin,drug,warning,Limit simvastatin to 20 mg daily.,يُحدّ سيمفاستاتين بـ 20 ملغ يومياً.
+drug,Amlodipine,أملوديبين,Clarithromycin,drug,serious,Raises amlodipine and causes hypotension.,يرفع الأملوديبين ويسبّب هبوط ضغط.
+drug,Nifedipine,نيفيديبين,Clarithromycin,drug,serious,Severe hypotension.,هبوط ضغط شديد.
+drug,Nifedipine,نيفيديبين,Carbamazepine,drug,warning,Reduces nifedipine’s effect.,يقلّل فعالية النيفيديبين.
+drug,Verapamil,فيراباميل,Bisoprolol,drug,critical,Severe bradycardia and heart block — avoid the combination.,بطء قلب شديد وحصار — يُتجنّب الجمع.
+drug,Verapamil,فيراباميل,Atenolol,drug,critical,Severe bradycardia and heart block.,بطء قلب شديد وحصار.
+drug,Verapamil,فيراباميل,Digoxin,drug,serious,Raises digoxin.,يرفع الديجوكسين.
+drug,Verapamil,فيراباميل,Simvastatin,drug,serious,Myopathy risk — limit to 20 mg.,خطر اعتلال عضلي — يُحدّ بـ 20 ملغ.
+drug,Diltiazem,ديلتيازيم,Digoxin,drug,warning,Raises digoxin and slows the heart further.,يرفع الديجوكسين ويبطّئ القلب أكثر.
+drug,Felodipine,فيلوديبين,Grapefruit juice,outside,serious,Raises felodipine several-fold — none during treatment.,يرفع الفيلوديبين أضعافاً — لا يُشرب أثناء العلاج.
+drug,Lercanidipine,ليركانيديبين,Grapefruit juice,outside,serious,Raises lercanidipine — none during treatment.,يرفع الليركانيديبين — لا يُشرب أثناء العلاج.
+drug,Nimodipine,نيموديبين,Grapefruit juice,outside,serious,Raises nimodipine — none during treatment.,يرفع النيموديبين — لا يُشرب أثناء العلاج.
+drug,Hydrochlorothiazide,هيدروكلوروثيازيد,Lithium,drug,serious,Raises lithium to toxic levels.,يرفع الليثيوم إلى حدّ السميّة.
+drug,Hydrochlorothiazide,هيدروكلوروثيازيد,Digoxin,drug,serious,The potassium loss makes digoxin toxic.,نقص البوتاسيوم يزيد سميّة الديجوكسين.
+drug,Furosemide,فوروسيميد,Digoxin,drug,serious,The potassium loss makes digoxin toxic.,نقص البوتاسيوم يزيد سميّة الديجوكسين.
+drug,Furosemide,فوروسيميد,Lithium,drug,serious,Raises lithium.,يرفع الليثيوم.
+drug,Furosemide,فوروسيميد,Gentamicin,drug,serious,Compounded ear and kidney toxicity.,سميّة أذنية وكلوية مضاعفة.
+drug,Spironolactone,سبيرونولاكتون,Lisinopril,drug,serious,Hyperkalaemia — monitor.,فرط بوتاسيوم — يُراقب مخبرياً.
+drug,Spironolactone,سبيرونولاكتون,Trimethoprim/Sulfamethoxazole,drug,serious,Dangerous hyperkalaemia.,فرط بوتاسيوم خطر.
+drug,Spironolactone,سبيرونولاكتون,Potassium chloride,drug,critical,Life-threatening hyperkalaemia.,فرط بوتاسيوم مهدّد للحياة.
+drug,Methyldopa,ميثيل دوبا,Ferrous sulfate,drug,warning,Iron reduces methyldopa absorption — two hours apart.,الحديد يقلّل امتصاص الميثيل دوبا — بفاصل ساعتين.
+drug,Hydralazine,هيدرالازين,Alpha-blockers (class),class,warning,Added fall in blood pressure.,هبوط إضافي في الضغط.
+drug,Aliskiren,أليسكيرين,Ciclosporin,drug,critical,Raises aliskiren sharply — contraindicated.,يرفع الأليسكيرين بشدة — ممنوع الجمع.
+drug,Aliskiren,أليسكيرين,Itraconazole,drug,critical,Raises aliskiren sharply — contraindicated.,يرفع الأليسكيرين بشدة — ممنوع الجمع.
+drug,Sodium nitroprusside,نتروبروسيد الصوديوم,PDE5 inhibitors (class),class,critical,Severe fall in blood pressure — contraindicated.,هبوط شديد في الضغط — ممنوع الجمع.
+drug,Isosorbide dinitrate,أيزوسوربيد ثنائي النترات,Sildenafil,drug,critical,Fatal hypotension — the combination is contraindicated.,هبوط ضغط قاتل — ممنوع الجمع.
+drug,Glyceryl trinitrate,ثلاثي نترات الغليسيريل,Sildenafil,drug,critical,Fatal hypotension — the combination is contraindicated.,هبوط ضغط قاتل — ممنوع الجمع.
+drug,Trimetazidine,تريميتازيدين,Dopamine blockers acting on the brain (class),class,warning,Both can cause parkinsonism — tremor and stiffness.,كلاهما قد يسبّب أعراض باركنسون — رعاش وتيبّس.
+drug,Ivabradine,إيفابرادين,Grapefruit juice,outside,serious,Raises ivabradine — none during treatment.,يرفع الإيفابرادين — لا يُشرب أثناء العلاج.
+drug,Ivabradine,إيفابرادين,Verapamil and diltiazem (class),class,critical,Verapamil and diltiazem raise ivabradine and slow the heart — contraindicated.,الفيراباميل والديلتيازيم يرفعان الإيفابرادين ويبطّئان القلب — ممنوع الجمع.
+drug,Ranolazine,رانولازين,Simvastatin,drug,serious,Raises simvastatin — no more than 20 mg.,يرفع السيمفاستاتين — لا يتجاوز 20 ملغ.
+drug,Ranolazine,رانولازين,Metformin,drug,warning,"Raises metformin — no more than 1,700 mg a day with ranolazine 1,000 mg.",يرفع الميتفورمين — لا يتجاوز 1700 ملغ يومياً مع رانولازين 1000 ملغ.
+drug,Amiodarone,أميودارون,Digoxin,drug,critical,Doubles digoxin levels — halve the dose.,يضاعف الديجوكسين — تُنصّف الجرعة.
+drug,Amiodarone,أميودارون,Warfarin,drug,critical,Greatly raises INR — cut the warfarin dose.,يرفع INR كثيراً — تُخفّض جرعة الوارفارين.
+drug,Amiodarone,أميودارون,Simvastatin,drug,serious,Myopathy risk — limit to 20 mg.,خطر اعتلال عضلي — يُحدّ بـ 20 ملغ.
+drug,Mexiletine,ميكسيليتين,Theophylline,drug,serious,Raises theophylline — toxicity.,يرفع الثيوفيلين — تسمّم.
+drug,Mexiletine,ميكسيليتين,Enzyme inducers (class),class,warning,Lowers mexiletine.,يخفض الميكسيليتين.
+drug,Propafenone,بروبافينون,Digoxin,drug,serious,Raises digoxin — check the level.,يرفع الديجوكسين — افحص مستواه.
+drug,Propafenone,بروبافينون,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Adenosine,أدينوزين,Dipyridamole,drug,serious,Greatly increases the effect — a much smaller dose is needed.,يزيد المفعول كثيراً — تلزم جرعة أصغر بكثير.
+drug,Adenosine,أدينوزين,Theophylline and aminophylline (class),class,serious,Theophylline blocks adenosine.,الثيوفيلين يُبطل مفعول الأدينوزين.
+drug,Digoxin,ديجوكسين,Furosemide,drug,serious,The potassium loss makes digoxin toxic.,نقص البوتاسيوم يزيد سميّة الديجوكسين.
+drug,Digoxin,ديجوكسين,Amiodarone,drug,critical,Doubles digoxin levels — halve the dose.,يضاعف الديجوكسين — تُنصّف الجرعة.
+drug,Digoxin,ديجوكسين,Verapamil,drug,serious,Raises digoxin.,يرفع الديجوكسين.
+drug,Sacubitril/Valsartan,ساكوبيتريل/فالسارتان,ACE inhibitors (class),class,critical,Angio-oedema — contraindicated; stop the ACE inhibitor 36 hours before the first dose.,وذمة وعائية — ممنوع الجمع؛ يُوقف مثبط ACE قبل الجرعة الأولى بـ 36 ساعة.
+drug,Milrinone,ميلرينون,Nitrates (class),class,warning,More low blood pressure.,مزيد من انخفاض الضغط.
+drug,Levosimendan,ليفوسيميندان,Nitrates (class),class,warning,More low blood pressure.,مزيد من انخفاض الضغط.
+drug,Adrenaline,أدرينالين,Non-selective beta-blockers (class),class,serious,"Unopposed alpha effect — severe hypertension, and anaphylaxis responds poorly.",تأثير ألفا غير متوازن — ارتفاع ضغط شديد، والتأق يستجيب ضعيفاً.
+drug,Terlipressin,تيرليبريسين,Heart-rate-slowing drugs (class),class,serious,Severe slowing of the heart.,بطء شديد في القلب.
+drug,Bosentan,بوسنتان,Ciclosporin,drug,critical,Raises bosentan sharply and lowers ciclosporin — contraindicated.,يرفع البوسنتان بشدة ويخفض السيكلوسبورين — ممنوع الجمع.
+drug,Bosentan,بوسنتان,Glibenclamide,drug,critical,Liver injury — contraindicated.,أذية كبدية — ممنوع الجمع.
+drug,Ambrisentan,أمبريسنتان,Ciclosporin,drug,serious,Raises ambrisentan — the dose is capped at 5 mg.,يرفع الأمبريسنتان — لا تتجاوز الجرعة 5 ملغ.
+drug,Riociguat,ريوسيغوات,PDE5 inhibitors (class),class,critical,Severe hypotension — contraindicated.,هبوط ضغط شديد — ممنوع الجمع.
+drug,Riociguat,ريوسيغوات,Nitrates (class),class,critical,Severe hypotension — contraindicated.,هبوط ضغط شديد — ممنوع الجمع.
+drug,Pentoxifylline,بنتوكسيفيلين,Anticoagulants (class),class,warning,More bleeding — monitor.,نزف أكثر — يُراقب.
+drug,Pentoxifylline,بنتوكسيفيلين,Theophylline,drug,warning,Raises theophylline.,يرفع الثيوفيلين.
+drug,Cilostazol,سيلوستازول,Grapefruit juice,outside,warning,Raises cilostazol.,يرفع السيلوستازول.
+drug,Atorvastatin,أتورفاستاتين,Clarithromycin,drug,serious,Raises the statin — hold it for the course.,يرفع الستاتين — يُوقف طوال الكورس.
+drug,Atorvastatin,أتورفاستاتين,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Atorvastatin,أتورفاستاتين,Colchicine,drug,serious,Compounded myopathy risk.,خطر اعتلال عضلي مضاعف.
+drug,Rosuvastatin,روزوفاستاتين,Warfarin,drug,serious,Raises INR — recheck within a week.,يرفع INR — يُعاد الفحص بعد أسبوع.
+drug,Rosuvastatin,روزوفاستاتين,Clopidogrel,drug,warning,Raises rosuvastatin levels.,يرفع مستوى الروزوفاستاتين.
+drug,Simvastatin,سيمفاستاتين,Clarithromycin,drug,critical,Rhabdomyolysis — the combination is contraindicated.,انحلال ربيدات — ممنوع الجمع.
+drug,Simvastatin,سيمفاستاتين,Amlodipine,drug,warning,Limit simvastatin to 20 mg daily.,يُحدّ السيمفاستاتين بـ 20 ملغ يومياً.
+drug,Simvastatin,سيمفاستاتين,Fluconazole,drug,serious,Myopathy risk.,خطر اعتلال عضلي.
+drug,Fluvastatin,فلوفاستاتين,Fluconazole,drug,warning,Raises fluvastatin levels.,يرفع مستوى الفلوفاستاتين.
+drug,Ezetimibe,إيزيتيمايب,Ciclosporin,drug,warning,Each raises the other — monitor.,كلٌّ منهما يرفع الآخر — يُراقب.
+drug,Fenofibrate,فينوفايبرات,Warfarin,drug,serious,Raises the INR — check it and lower warfarin.,يرفع INR — افحصه وخفّض الوارفارين.
+drug,Fenofibrate,فينوفايبرات,Statins (class),class,warning,More risk of muscle damage — report muscle pain.,خطر أكبر لأذية العضلات — أبلغ عن ألم العضلات.
+drug,Gemfibrozil,جيمفيبروزيل,Simvastatin,drug,critical,Rhabdomyolysis — contraindicated.,انحلال العضلات المخططة — ممنوع الجمع.
+drug,Gemfibrozil,جيمفيبروزيل,Statins (class),class,serious,Muscle damage — avoid; fenofibrate is the fibrate to use with a statin.,أذية عضلية — يُتجنّب؛ الفينوفايبرات هو الفايبرات المناسب مع الستاتين.
+drug,Gemfibrozil,جيمفيبروزيل,Repaglinide,drug,critical,Severe prolonged hypoglycaemia — contraindicated.,هبوط سكر شديد مطوّل — ممنوع الجمع.
+drug,Gemfibrozil,جيمفيبروزيل,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Omega-3 acid ethyl esters,إسترات أحماض أوميغا 3,Anticoagulants (class),class,warning,Slightly more bleeding at high doses.,نزف أكثر قليلاً بالجرعات العالية.
+drug,Colestyramine,كوليستيرامين,Levothyroxine,drug,serious,Binds it — four hours apart.,يربطه — بفاصل أربع ساعات.
+drug,Colestyramine,كوليستيرامين,Warfarin,drug,serious,Binds it — an erratic INR.,يربطه — INR غير مستقر.
+drug,Colestyramine,كوليستيرامين,Digoxin,drug,warning,Binds it — keep the doses apart.,يربطه — افصل بين الجرعات.
+drug,Aspirin,أسبرين,Warfarin,drug,serious,Major bleeding risk — combined only on a specialist’s decision.,خطر نزف كبير — يُجمع بينهما بقرار اختصاصي فقط.
+drug,Aspirin,أسبرين,Ibuprofen,drug,serious,Cancels the antiplatelet effect — separate the doses.,يلغي التأثير المضاد للصفيحات — باعد بين الجرعتين.
+drug,Aspirin,أسبرين,Methotrexate,drug,serious,Reduces methotrexate clearance.,يقلّل طرح الميثوتريكسيت.
+drug,Clopidogrel,كلوبيدوغريل,Omeprazole,drug,serious,Blocks clopidogrel activation — switch to pantoprazole.,يقلّل تفعيل كلوبيدوغريل — يُبدّل إلى بانتوبرازول.
+drug,Clopidogrel,كلوبيدوغريل,Esomeprazole,drug,serious,The same problem — switch to pantoprazole.,نفس المشكلة — يُبدّل إلى بانتوبرازول.
+drug,Clopidogrel,كلوبيدوغريل,Warfarin,drug,serious,Major bleeding risk.,خطر نزف كبير.
+drug,Ticagrelor,تيكاغريلور,Aspirin,drug,warning,Aspirin above 100 mg a day makes ticagrelor work less well.,الأسبرين فوق 100 ملغ يومياً يُضعف مفعول التيكاغريلور.
+drug,Ticagrelor,تيكاغريلور,Simvastatin,drug,serious,Raises simvastatin — no more than 40 mg.,يرفع السيمفاستاتين — لا يتجاوز 40 ملغ.
+drug,Warfarin,وارفارين,Trimethoprim/Sulfamethoxazole,drug,critical,Sharp rise in INR — avoid the combination.,ارتفاع حاد في INR — يُتجنّب الجمع.
+drug,Warfarin,وارفارين,Metronidazole,drug,serious,Markedly raises INR.,يرفع INR بوضوح.
+drug,Warfarin,وارفارين,Ibuprofen,drug,serious,GI bleeding.,نزف هضمي.
+drug,Warfarin,وارفارين,Carbamazepine,drug,serious,Lowers INR and loses the protection.,يخفض INR ويفقد الحماية.
+drug,Rivaroxaban,ريفاروكسابان,Clarithromycin,drug,serious,Raises rivaroxaban levels and bleeding risk.,يرفع مستوى الريفاروكسابان وخطر النزف.
+drug,Rivaroxaban,ريفاروكسابان,Ibuprofen,drug,serious,GI bleeding.,نزف هضمي.
+drug,Rivaroxaban,ريفاروكسابان,Carbamazepine,drug,serious,Lowers levels and loses the protection.,يخفض المستوى ويفقد الحماية.
+drug,Dabigatran,دابيغاتران,Verapamil,drug,serious,Raises dabigatran — a lower dose is used.,يرفع الدابيغاتران — تُستعمل جرعة أقل.
+drug,Dabigatran,دابيغاتران,Ketoconazole,drug,critical,Raises dabigatran sharply — contraindicated with ketoconazole tablets.,يرفع الدابيغاتران بشدة — ممنوع مع أقراص الكيتوكونازول.
+drug,Acenocoumarol,أسينوكومارول,Metronidazole,drug,serious,Markedly raises the INR.,يرفع INR كثيراً.
+drug,Acenocoumarol,أسينوكومارول,Trimethoprim/Sulfamethoxazole,drug,critical,Sharp rise in the INR — avoid.,ارتفاع حاد في INR — يُتجنّب.
+drug,Acenocoumarol,أسينوكومارول,Fluconazole,drug,serious,Raises the INR.,يرفع INR.
+drug,Alteplase,ألتيبلاز,Anticoagulants (class),class,serious,"Bleeding — given only in hospital, with careful timing of the anticoagulant.",نزف — يُعطى في المستشفى فقط مع توقيت دقيق لمضاد التخثّر.
+drug,Alteplase,ألتيبلاز,Antiplatelets (class),class,serious,Bleeding risk.,خطر نزف.
+drug,Alteplase,ألتيبلاز,ACE inhibitors (class),class,warning,Higher risk of swelling of the tongue and throat (angioedema).,خطر أعلى لتورم اللسان والحلق (الوذمة الوعائية).
+drug,Tenecteplase,تينيكتيبلاز,Anticoagulants (class),class,serious,"Bleeding — given only in hospital, with careful timing of the anticoagulant.",نزف — يُعطى في المستشفى فقط مع توقيت دقيق لمضاد التخثّر.
+drug,Tenecteplase,تينيكتيبلاز,Antiplatelets (class),class,serious,Bleeding risk.,خطر نزف.
+drug,Streptokinase,ستربتوكيناز,Anticoagulants (class),class,serious,"Bleeding — given only in hospital, with careful timing of the anticoagulant.",نزف — يُعطى في المستشفى فقط مع توقيت دقيق لمضاد التخثّر.
+drug,Streptokinase,ستربتوكيناز,Antiplatelets (class),class,serious,Bleeding risk.,خطر نزف.
+drug,Ferrous sulfate,كبريتات الحديدوز,Levothyroxine,drug,serious,Blocks levothyroxine absorption — space by four hours.,يمنع امتصاص الليفوثيروكسين — باعد أربع ساعات.
+drug,Ferrous sulfate,كبريتات الحديدوز,Doxycycline,drug,serious,Chelates with doxycycline and loses absorption.,يرتبط بالدوكسيسيكلين ويفقد الامتصاص.
+drug,Ferrous sulfate,كبريتات الحديدوز,Ciprofloxacin,drug,serious,Chelates with ciprofloxacin and loses absorption.,يرتبط بالسيبروفلوكساسين ويفقد الامتصاص.
+drug,Folic acid,حمض الفوليك,Methotrexate,drug,warning,Given on a different day from the methotrexate.,يُعطى بيوم مختلف عن الميثوتريكسيت.
+drug,Folic acid,حمض الفوليك,Phenytoin,drug,serious,Lowers phenytoin levels.,يخفض مستوى الفينيتوين.
+drug,Iron polymaltose,الحديد متعدد المالتوز,Drugs bound by antacids and minerals (class),class,warning,"Binds less than iron salts, but keep two hours apart from quinolones and tetracyclines.",يرتبط أقل من أملاح الحديد، لكن افصله ساعتين عن الكينولونات والتتراسيكلينات.
+drug,Iron dextran,دكستران الحديد,Ferrous sulfate,drug,warning,Oral iron adds nothing alongside injected iron — stop it until five days after the last injection.,الحديد الفموي لا يضيف شيئاً مع الحديد المحقون — يُوقف حتى خمسة أيام بعد آخر حقنة.
+drug,Iron sucrose,سكروز الحديد,Ferrous sulfate,drug,warning,Oral iron adds nothing alongside injected iron — stop it until five days after the last injection.,الحديد الفموي لا يضيف شيئاً مع الحديد المحقون — يُوقف حتى خمسة أيام بعد آخر حقنة.
+drug,Ferric carboxymaltose,كربوكسي مالتوز الحديديك,Ferrous sulfate,drug,warning,Oral iron adds nothing alongside injected iron — stop it until five days after the last injection.,الحديد الفموي لا يضيف شيئاً مع الحديد المحقون — يُوقف حتى خمسة أيام بعد آخر حقنة.
+drug,Cyanocobalamin,سيانوكوبالامين,Metformin,drug,warning,Metformin lowers vitamin B12 over years — levels are checked on long treatment.,الميتفورمين يخفض فيتامين B12 على مدى السنوات — يُفحص المستوى في العلاج الطويل.
+drug,Cyanocobalamin,سيانوكوبالامين,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,Long-term acid reducers lower B12 absorption from food and tablets (not from injections).,خافضات الحمض لفترات طويلة تقلّل امتصاص B12 من الطعام والأقراص (لا من الحقن).
+drug,Hydroxocobalamin,هيدروكسوكوبالامين,Chloramphenicol,drug,warning,Chloramphenicol blunts the blood response to B12.,الكلورامفينيكول يُضعف استجابة الدم لفيتامين B12.
+drug,Mecobalamin,ميكوبالامين,Metformin,drug,warning,Metformin lowers vitamin B12 over years — levels are checked on long treatment.,الميتفورمين يخفض فيتامين B12 على مدى السنوات — يُفحص المستوى في العلاج الطويل.
+drug,Mecobalamin,ميكوبالامين,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,Long-term acid reducers lower B12 absorption from food and tablets (not from injections).,خافضات الحمض لفترات طويلة تقلّل امتصاص B12 من الطعام والأقراص (لا من الحقن).
+drug,Erythropoietin,إريثروبويتين,ACE inhibitors (class),class,warning,ACE inhibitors can blunt the response.,مثبطات ACE قد تُضعف الاستجابة.
+drug,Darbepoetin alfa,داربيبويتين ألفا,ACE inhibitors (class),class,warning,ACE inhibitors can blunt the response.,مثبطات ACE قد تُضعف الاستجابة.
+drug,Tranexamic acid,حمض الترانيكساميك,Hormonal contraceptives (class),class,warning,Together they raise the clot risk.,معاً يرفعان خطر الجلطات.
+drug,Phytomenadione,فيتوميناديون,Warfarin,drug,serious,Reverses warfarin for days — the dose must be deliberate.,يعكس الوارفارين لأيام — يجب أن تكون الجرعة مقصودة.
+drug,Phytomenadione,فيتوميناديون,Acenocoumarol,drug,serious,Reverses acenocoumarol for days — the dose must be deliberate.,يعكس الأسينوكومارول لأيام — يجب أن تكون الجرعة مقصودة.
+drug,Factor VIII,العامل الثامن,Emicizumab,drug,warning,Emicizumab distorts the usual factor VIII tests — the laboratory needs a special assay.,الإيميسيزوماب يُربك فحوص العامل الثامن المعتادة — يحتاج المختبر فحصاً خاصاً.
+drug,Eptacog alfa,إبتاكوغ ألفا,Prothrombin complex concentrate,drug,serious,Together they raise the risk of clots — avoid.,معاً يرفعان خطر الجلطات — يُتجنّب.
+drug,Prothrombin complex concentrate,مركّز معقّد البروثرومبين,Tranexamic acid,drug,warning,Added clot risk.,خطر جلطات إضافي.
+drug,Emicizumab,إيميسيزوماب,Factor VIII inhibitor bypassing activity,drug,critical,"Thrombotic microangiopathy and clots — avoid, or the lowest dose under specialist advice.",اعتلال أوعية دقيقة خثاري وجلطات — يُتجنّب، أو بأقل جرعة بإشراف مختص.
+drug,Deferasirox,ديفيراسيروكس,Aluminium hydroxide,drug,warning,Do not take aluminium antacids at the same time.,لا تُؤخذ مضادات الحموضة الحاوية على الألمنيوم معه.
+drug,Deferasirox,ديفيراسيروكس,NSAIDs (class),class,warning,More stomach ulceration and bleeding.,تقرّح ونزف معدي أكثر.
+drug,Deferoxamine,ديفيروكسامين,Ascorbic acid,drug,serious,"High-dose vitamin C with deferoxamine can strain the heart — only small doses, after the first month.",فيتامين C بجرعة عالية مع الديفيروكسامين قد يُجهد القلب — جرعات صغيرة فقط وبعد الشهر الأول.
+drug,Deferoxamine,ديفيروكسامين,Prochlorperazine,drug,warning,Loss of consciousness has been reported together — avoid.,سُجّل فقدان للوعي عند الجمع — يُتجنّب.
+drug,Deferiprone,ديفيريبرون,Clozapine,drug,serious,Both can wipe out white cells — avoid together.,كلاهما قد يُفني الكريات البيض — يُتجنّب الجمع.
+drug,Deferiprone,ديفيريبرون,"Antacids and calcium, iron, zinc or magnesium (class)",class,warning,Aluminium antacids and minerals bind it — keep apart.,مضادات الحموضة بالألمنيوم والمعادن تربطه — افصل بينها.
+drug,Hydroxyethyl starch,نشاء هيدروكسي إيثيل,Kidney-toxic drugs (class),class,serious,Starch solutions add to kidney injury — avoid in sepsis and kidney disease.,محاليل النشا تزيد أذية الكلى — تُتجنّب في الإنتان وأمراض الكلى.
+drug,Omeprazole,أوميبرازول,Clopidogrel,drug,serious,Blocks clopidogrel activation — switch to pantoprazole.,يقلّل تفعيل كلوبيدوغريل — يُبدّل إلى بانتوبرازول.
+drug,Omeprazole,أوميبرازول,Cefuroxime,drug,warning,Reduces cefuroxime absorption.,يقلّل امتصاص السيفوروكسيم.
+drug,Esomeprazole,إيزوميبرازول,Clopidogrel,drug,serious,Blocks clopidogrel activation.,يقلّل تفعيل كلوبيدوغريل.
+drug,Famotidine,فاموتيدين,Ketoconazole,drug,warning,Reduces oral ketoconazole absorption.,يقلّل امتصاص الكيتوكونازول الفموي.
+drug,Calcium carbonate,كربونات الكالسيوم,Levothyroxine,drug,serious,Blocks absorption — space by four hours.,يمنع الامتصاص — باعد أربع ساعات.
+drug,Calcium carbonate,كربونات الكالسيوم,Ciprofloxacin,drug,serious,Chelates and loses absorption.,يرتبط به ويفقد الامتصاص.
+drug,Calcium carbonate,كربونات الكالسيوم,Doxycycline,drug,serious,Chelates and loses absorption.,يرتبط به ويفقد الامتصاص.
+drug,Calcium carbonate,كربونات الكالسيوم,Ferrous sulfate,drug,warning,Reduces iron absorption — space by two hours.,يقلّل امتصاص الحديد — باعد ساعتين.
+drug,Magnesium trisilicate,ثلاثي سيليكات المغنيسيوم,Ciprofloxacin,drug,serious,Blocks absorption.,يمنع الامتصاص.
+drug,Magnesium trisilicate,ثلاثي سيليكات المغنيسيوم,Doxycycline,drug,serious,Blocks absorption.,يمنع الامتصاص.
+drug,Magnesium trisilicate,ثلاثي سيليكات المغنيسيوم,Nitrofurantoin,drug,warning,Reduces absorption.,يقلّل الامتصاص.
+drug,Magnesium trisilicate,ثلاثي سيليكات المغنيسيوم,Fexofenadine,drug,warning,Reduces absorption — space by two hours.,يقلّل الامتصاص — باعد ساعتين.
+drug,Lansoprazole,لانسوبرازول,Tacrolimus,drug,warning,Raises tacrolimus — check the level.,يرفع التاكروليموس — افحص مستواه.
+drug,Cimetidine,سيميتيدين,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Cimetidine,سيميتيدين,Theophylline,drug,serious,Raises theophylline towards toxicity.,يرفع الثيوفيلين نحو السمّية.
+drug,Cimetidine,سيميتيدين,Phenytoin,drug,serious,Raises phenytoin.,يرفع الفينيتوين.
+drug,Misoprostol,ميزوبروستول,Magnesium hydroxide,drug,warning,Magnesium antacids worsen its diarrhoea.,مضادات الحموضة بالمغنيسيوم تزيد إسهاله.
+drug,Domperidone,دومبيريدون,Azithromycin,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Domperidone,دومبيريدون,Fluconazole,drug,serious,Raises domperidone and prolongs QT.,يرفع الدومبيريدون ويطيل QT.
+drug,Domperidone,دومبيريدون,Clarithromycin,drug,critical,QT prolongation — avoid the combination.,إطالة QT — يُتجنّب الجمع.
+drug,Metoclopramide,ميتوكلوبراميد,Levodopa,drug,serious,Each one blocks the other.,تضاد متبادل في الأثر.
+drug,Metoclopramide,ميتوكلوبراميد,Haloperidol,drug,serious,Compounded extrapyramidal effects.,أعراض خارج هرمية مضاعفة.
+drug,Ondansetron,أوندانسيترون,Amiodarone,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Ondansetron,أوندانسيترون,Tramadol,drug,warning,Blunts the analgesia and adds serotonergic risk.,يقلّل التسكين ويزيد خطر السيروتونين.
+drug,Aprepitant,أبريبيتانت,Hormonal contraceptives (class),class,serious,Contraception unreliable for 28 days — add a barrier method.,منع الحمل غير موثوق 28 يوماً — أضيفي وسيلة حاجزة.
+drug,Aprepitant,أبريبيتانت,Warfarin,drug,warning,Lowers the INR over the next two weeks — check it.,يخفض INR خلال الأسبوعين التاليين — افحصه.
+drug,Aprepitant,أبريبيتانت,Dexamethasone,drug,warning,Raises dexamethasone — its dose is usually halved.,يرفع الديكساميثازون — تُخفّض جرعته عادة إلى النصف.
+drug,Itopride,إيتوبرايد,Anticholinergic drugs (class),class,warning,Anticholinergics weaken its effect on the gut.,مضادات الكولين تُضعف أثره على الأمعاء.
+drug,Hyoscine butylbromide,هيوسين بوتيل بروميد,Amitriptyline,drug,warning,Compounded anticholinergic effects.,آثار مضادة للكولين مضاعفة.
+drug,Drotaverine,دروتافيرين,Levodopa,drug,warning,May weaken levodopa.,قد يُضعف الليفودوبا.
+drug,Phloroglucinol,فلوروغلوسينول,Opioids (class),class,warning,Opioids counter its antispasmodic effect.,الأفيونات تعاكس أثره المضاد للتشنّج.
+drug,Bisacodyl,بيساكوديل,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,Antacids and acid reducers dissolve the coating early — stomach irritation; keep an hour apart.,مضادات الحموضة وخافضات الحمض تذيب الغلاف مبكراً — تهيّج المعدة؛ افصل بينهما ساعة.
+drug,Senna,سنامكي,Digoxin,drug,warning,Low potassium from heavy use makes digoxin toxic.,انخفاض البوتاسيوم من الإفراط يجعل الديجوكسين ساماً.
+drug,Senna,سنامكي,Potassium-losing diuretics (class),class,warning,More potassium loss.,مزيد من فقدان البوتاسيوم.
+drug,Sodium picosulfate,بيكوسلفات الصوديوم,Digoxin,drug,warning,Low potassium from heavy use makes digoxin toxic.,انخفاض البوتاسيوم من الإفراط يجعل الديجوكسين ساماً.
+drug,Sodium picosulfate,بيكوسلفات الصوديوم,Potassium-losing diuretics (class),class,warning,More potassium loss.,مزيد من فقدان البوتاسيوم.
+drug,Ispaghula husk,قشر الإسباغولا,Levothyroxine,drug,warning,Keep two hours apart — it can hold other medicines back.,افصل بينهما ساعتين — قد يؤخّر امتصاص الأدوية الأخرى.
+drug,Sodium phosphate enema,حقنة فوسفات الصوديوم الشرجية,"ACE inhibitors, sartans and aliskiren (class)",class,warning,Kidney injury risk — use with care.,خطر أذية كلوية — بحذر.
+drug,Sodium phosphate enema,حقنة فوسفات الصوديوم الشرجية,Diuretics (class),class,warning,Dehydration and salt imbalance.,جفاف واضطراب الأملاح.
+drug,Loperamide,لوبيراميد,Clarithromycin,drug,serious,Raises loperamide and the QT risk.,يرفع اللوبيراميد وخطر إطالة QT.
+drug,Racecadotril,راسيكادوتريل,ACE inhibitors (class),class,warning,Higher risk of swelling of the face and tongue (angioedema).,خطر أعلى لتورم الوجه واللسان (الوذمة الوعائية).
+drug,Diphenoxylate,ديفينوكسيلات,MAO inhibitors (including linezolid) (class),class,serious,Hypertensive crisis possible.,نوبة ارتفاع ضغط ممكنة.
+drug,Nifuroxazide,نيفوروكسازيد,Alcohol,outside,warning,Avoid alcohol during the course.,تجنّب الكحول أثناء العلاج.
+drug,Diosmectite,ديوسمكتيت,Digoxin,drug,warning,Binds other medicines — keep two hours apart.,يربط الأدوية الأخرى — افصل بينهما ساعتين.
+drug,Diosmectite,ديوسمكتيت,Ciprofloxacin,drug,warning,Binds other medicines — keep two hours apart.,يربط الأدوية الأخرى — افصل بينهما ساعتين.
+drug,Kaolin,كاولين,Digoxin,drug,warning,Binds other medicines — keep two hours apart.,يربط الأدوية الأخرى — افصل بينهما ساعتين.
+drug,Kaolin,كاولين,Ciprofloxacin,drug,warning,Binds other medicines — keep two hours apart.,يربط الأدوية الأخرى — افصل بينهما ساعتين.
+drug,Mesalazine,ميسالازين,Azathioprine,drug,warning,More risk of low white cells.,خطر أكبر لانخفاض الكريات البيض.
+drug,Mesalazine,ميسالازين,Warfarin,drug,warning,May weaken warfarin.,قد يُضعف الوارفارين.
+drug,Sulfasalazine,سلفاسالازين,Digoxin,drug,warning,Lowers digoxin absorption.,يقلّل امتصاص الديجوكسين.
+drug,Sulfasalazine,سلفاسالازين,Folic acid,drug,warning,Lowers folate absorption.,يقلّل امتصاص الفولات.
+drug,Sulfasalazine,سلفاسالازين,Azathioprine,drug,warning,More marrow suppression.,مزيد من تثبيط نقي العظم.
+drug,Sulfasalazine,سلفاسالازين,Methotrexate,drug,warning,More liver and marrow toxicity.,مزيد من السمّية على الكبد ونقي العظم.
+drug,Ursodeoxycholic acid,حمض الأورسوديوكسيكوليك,Aluminium hydroxide,drug,warning,Binds it — two hours apart.,يربطه — بفاصل ساعتين.
+drug,Ursodeoxycholic acid,حمض الأورسوديوكسيكوليك,Colestyramine,drug,warning,Binds it — keep the doses apart.,يربطه — افصل بين الجرعات.
+drug,Rifaximin,ريفاكسيمين,Ciclosporin,drug,serious,Raises rifaximin levels many times over.,يرفع مستوى الريفاكسيمين أضعافاً.
+drug,Rifaximin,ريفاكسيمين,Warfarin,drug,warning,INR changes reported — check it.,سُجّلت تغيّرات في INR — افحصه.
+drug,Pancreatin,بانكرياتين,Acarbose,drug,warning,Pancreatic enzymes weaken acarbose.,إنزيمات البنكرياس تُضعف الأكاربوز.
+drug,Simeticone,سيميثيكون,Levothyroxine,drug,warning,May reduce absorption — keep four hours apart.,قد يقلّل الامتصاص — افصل بينهما أربع ساعات.
+drug,Saccharomyces boulardii,سكارومايسس بولاردي,Fluconazole,drug,warning,Antifungals kill the yeast — do not take together.,مضادات الفطريات تقتل الخميرة — لا يُؤخذان معاً.
+drug,Saccharomyces boulardii,سكارومايسس بولاردي,Nystatin,drug,warning,Antifungals kill the yeast — do not take together.,مضادات الفطريات تقتل الخميرة — لا يُؤخذان معاً.
+drug,Lactobacillus,لاكتوباسيلس,Amoxicillin,drug,warning,Antibiotics kill it — take it two hours away from the antibiotic.,المضادات الحيوية تقتله — خذه بفاصل ساعتين عن المضاد.
+drug,Salbutamol,سالبوتامول,Bisoprolol,drug,serious,Beta blockers cancel the bronchodilator.,حاصرات بيتا تلغي أثر موسّع القصبات.
+drug,Salbutamol,سالبوتامول,Furosemide,drug,warning,Compounded potassium loss at high doses.,نقص بوتاسيوم مضاعف مع الجرعات العالية.
+drug,Theophylline,ثيوفيلين,Ciprofloxacin,drug,serious,Raises theophylline to toxic levels.,يرفع الثيوفيلين إلى حدّ السميّة.
+drug,Theophylline,ثيوفيلين,Clarithromycin,drug,serious,Raises theophylline.,يرفع الثيوفيلين.
+drug,Theophylline,ثيوفيلين,Carbamazepine,drug,warning,Lowers theophylline and loses control.,يخفض الثيوفيلين ويفقد السيطرة.
+drug,Ipratropium,إبراتروبيوم,Anticholinergic drugs (class),class,warning,Adds to anticholinergic effects — not recommended with other anticholinergics.,يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.
+drug,Tiotropium,تيوتروبيوم,Anticholinergic drugs (class),class,warning,Adds to anticholinergic effects — not recommended with other anticholinergics.,يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.
+drug,Glycopyrronium,غليكوبيرونيوم,Anticholinergic drugs (class),class,warning,Adds to anticholinergic effects — not recommended with other anticholinergics.,يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.
+drug,Umeclidinium,يوميكليدينيوم,Anticholinergic drugs (class),class,warning,Adds to anticholinergic effects — not recommended with other anticholinergics.,يزيد الآثار المضادة للكولين — لا يُنصح به مع مضادات الكولين الأخرى.
+drug,Aminophylline,أمينوفيلين,Ciprofloxacin,drug,serious,Raises theophylline to toxic levels.,يرفع الثيوفيلين إلى حدّ السمّية.
+drug,Aminophylline,أمينوفيلين,Clarithromycin,drug,serious,Raises theophylline.,يرفع الثيوفيلين.
+drug,Aminophylline,أمينوفيلين,Erythromycin,drug,serious,Raises theophylline.,يرفع الثيوفيلين.
+drug,Budesonide/Formoterol,بوديزونيد/فورموتيرول,Bisoprolol,drug,serious,Beta blockers cancel the formoterol.,حاصرات بيتا تلغي أثر الفورموتيرول.
+drug,Budesonide/Formoterol,بوديزونيد/فورموتيرول,Clarithromycin,drug,warning,Raises systemic budesonide.,يرفع البوديزونيد الجهازي.
+drug,Beclometasone,بيكلوميتازون,Ritonavir,drug,warning,Raises steroid levels (much less than with fluticasone).,يرفع مستوى الكورتيزون (أقل بكثير منه مع الفلوتيكازون).
+drug,Fluticasone,فلوتيكازون,Ritonavir,drug,critical,Cushing’s syndrome and adrenal suppression — avoid.,متلازمة كوشينغ وتثبيط الكظر — يُتجنّب.
+drug,Ciclesonide,سيكليسونايد,Ritonavir,drug,warning,Raises steroid levels (much less than with fluticasone).,يرفع مستوى الكورتيزون (أقل بكثير منه مع الفلوتيكازون).
+drug,Montelukast,مونتيلوكاست,Phenobarbital,drug,warning,Lowers montelukast levels.,يقلّل مستوى المونتيلوكاست.
+drug,Pirfenidone,بيرفينيدون,Fluvoxamine,drug,critical,Raises pirfenidone several-fold — contraindicated.,يرفع البيرفينيدون أضعافاً — ممنوع الجمع.
+drug,Pirfenidone,بيرفينيدون,Ciprofloxacin,drug,serious,Raises pirfenidone — a lower dose is needed.,يرفع البيرفينيدون — تلزم جرعة أقل.
+drug,Nintedanib,نينتيدانيب,Anticoagulants (class),class,warning,More bleeding.,نزف أكثر.
+drug,Caffeine citrate,سترات الكافيين,Theophylline,drug,serious,Not given together in newborns — theophylline turns into caffeine.,لا يُعطيان معاً لحديثي الولادة — الثيوفيلين يتحوّل إلى كافيين.
+drug,Doxapram,دوكسابرام,MAO inhibitors (including linezolid) (class),class,serious,Raises blood pressure.,يرفع الضغط.
+drug,Doxapram,دوكسابرام,Decongestants and stimulants (class),class,serious,Raises blood pressure.,يرفع الضغط.
+drug,Cetirizine,سيتريزين,Diazepam,drug,warning,Compounded sedation.,تنويم مضاعف.
+drug,Fexofenadine,فيكسوفينادين,Magnesium trisilicate,drug,warning,Reduces absorption — space by two hours.,يقلّل الامتصاص — باعد ساعتين.
+drug,Chlorphenamine,كلورفينيرامين,Amitriptyline,drug,warning,Compounded anticholinergic effects and sedation.,آثار مضادة للكولين وتنويم مضاعف.
+drug,Chlorphenamine,كلورفينيرامين,Diazepam,drug,serious,Marked sedation.,تنويم شديد.
+drug,Levocetirizine,ليفوسيتيريزين,Alcohol,outside,warning,More drowsiness in some people.,نعاس أكثر عند بعض الناس.
+drug,Rupatadine,روباتادين,Grapefruit juice,outside,serious,Raises rupatadine several-fold — none with it.,يرفع الروباتادين أضعافاً — لا يُشرب معه.
+drug,Bilastine,بيلاستين,Grapefruit juice,outside,warning,Grapefruit and other fruit juices lower its absorption — take it an hour before or two hours after food or juice.,الغريب فروت وعصائر الفاكهة الأخرى تقلّل امتصاصه — خذه قبل الطعام أو العصير بساعة أو بعدهما بساعتين.
+drug,Dextromethorphan,ديكستروميثورفان,Fluoxetine,drug,serious,Serotonin syndrome.,متلازمة السيروتونين.
+drug,Dextromethorphan,ديكستروميثورفان,Sertraline,drug,serious,Serotonin syndrome.,متلازمة السيروتونين.
+drug,Acetylcysteine,أسيتيل سيستئين,Glyceryl trinitrate,drug,warning,Can deepen the headache and fall in blood pressure from nitrates.,قد يزيد صداع النترات وهبوط الضغط.
+drug,Acetylcysteine,أسيتيل سيستئين,Activated charcoal,drug,warning,Charcoal binds acetylcysteine taken by mouth.,الفحم يربط الأسيتيل سيستئين المأخوذ بالفم.
+drug,Levodropropizine,ليفودروبروبيزين,Sedating drugs (class),class,warning,More drowsiness.,نعاس أكثر.
+drug,Azelastine,أزيلاستين,Alcohol,outside,warning,More drowsiness.,نعاس أكثر.
+drug,Mometasone,موميتازون,Ritonavir,drug,serious,Raises steroid levels — Cushing’s syndrome is possible.,يرفع مستوى الكورتيزون — متلازمة كوشينغ ممكنة.
+drug,Paracetamol,باراسيتامول,Warfarin,drug,warning,Regular high-dose use may raise INR.,الاستخدام المنتظم بجرعة عالية قد يرفع INR.
+drug,Paracetamol,باراسيتامول,Carbamazepine,drug,warning,Enzyme induction increases the hepatotoxic metabolite.,تحريض الإنزيمات يزيد المستقلب السام للكبد.
+drug,Caffeine,كافيين,Ciprofloxacin,drug,warning,Raises caffeine — jitteriness and palpitations.,يرفع الكافيين — عصبية وخفقان.
+drug,Caffeine,كافيين,Theophylline,drug,warning,Adds to theophylline’s side effects.,يزيد الآثار الجانبية للثيوفيلين.
+drug,Caffeine,كافيين,Lithium,drug,warning,Lowers lithium; stopping caffeine suddenly raises it.,يخفض الليثيوم؛ والتوقف المفاجئ عن الكافيين يرفعه.
+drug,Metamizole,ميتاميزول,Methotrexate,drug,serious,More marrow toxicity — avoid.,سمّية نقي أكثر — يُتجنّب.
+drug,Metamizole,ميتاميزول,Ciclosporin,drug,warning,Lowers ciclosporin levels.,يخفض مستوى السيكلوسبورين.
+drug,Tramadol,ترامادول,Sertraline,drug,serious,Serotonin syndrome when combined with an SSRI.,متلازمة السيروتونين — الجمع مع مثبطات استرداد السيروتونين.
+drug,Tramadol,ترامادول,Fluoxetine,drug,serious,"Serotonin syndrome, and reduces tramadol’s effect.",متلازمة السيروتونين، ويقلّل فعالية الترامادول.
+drug,Tramadol,ترامادول,Carbamazepine,drug,warning,Reduces tramadol’s effect through enzyme induction.,يقلّل فعالية الترامادول بتحريض الإنزيمات.
+drug,Carbamazepine,كاربامازيبين,Warfarin,drug,serious,Lowers INR and loses the protection.,يخفض INR ويفقد الحماية.
+drug,Carbamazepine,كاربامازيبين,Clarithromycin,drug,serious,Raises carbamazepine to toxic levels.,يرفع الكاربامازيبين إلى حدّ السميّة.
+drug,Carbamazepine,كاربامازيبين,Rivaroxaban,drug,serious,Lowers levels and loses the protection.,يخفض المستوى ويفقد الحماية.
+drug,Carbamazepine,كاربامازيبين,Sertraline,drug,warning,Reduces sertraline’s effect.,يقلّل فعالية السيرترالين.
+drug,Sodium valproate,فالبروات الصوديوم,Carbamazepine,drug,serious,Each one shifts the other’s level.,تغيّر متبادل في المستويات.
+drug,Sodium valproate,فالبروات الصوديوم,Aspirin,drug,serious,Raises free valproate.,يرفع الفالبروات الحر.
+drug,Sodium valproate,فالبروات الصوديوم,Lamotrigine,drug,critical,Doubles lamotrigine and the risk of a severe rash.,يضاعف اللاموتريجين وخطر الطفح الشديد.
+drug,Pregabalin,بريغابالين,Tramadol,drug,serious,Respiratory depression and compounded sedation.,تثبيط تنفسي وتنويم مضاعف.
+drug,Pregabalin,بريغابالين,Diazepam,drug,serious,Marked sedation.,تنويم شديد.
+drug,Phenobarbital,فينوباربيتال,Warfarin,drug,serious,Lowers INR and loses the protection.,يخفض INR ويفقد الحماية.
+drug,Phenobarbital,فينوباربيتال,Montelukast,drug,warning,Lowers montelukast levels.,يقلّل مستوى المونتيلوكاست.
+drug,Phenobarbital,فينوباربيتال,Diazepam,drug,serious,Compounded respiratory depression.,تثبيط تنفسي مضاعف.
+drug,Lamotrigine,لاموتريجين,Sodium valproate,drug,critical,Doubles lamotrigine and the risk of a severe rash — halve the dose.,يضاعف اللاموتريجين وخطر الطفح الشديد — تُنصّف الجرعة.
+drug,Lamotrigine,لاموتريجين,Carbamazepine,drug,serious,Lowers lamotrigine and loses control.,يخفض اللاموتريجين ويفقد السيطرة.
+drug,Phenytoin,فينيتوين,Warfarin,drug,serious,Unpredictable INR movement in both directions.,تغيّر غير متوقّع في INR في الاتجاهين.
+drug,Phenytoin,فينيتوين,Folic acid,drug,serious,Lowers phenytoin levels.,يخفض مستوى الفينيتوين.
+drug,Phenytoin,فينيتوين,Omeprazole,drug,warning,Raises phenytoin.,يرفع الفينيتوين.
+drug,Phenytoin,فينيتوين,Trimethoprim/Sulfamethoxazole,drug,serious,Raises phenytoin to toxic levels.,يرفع الفينيتوين إلى حدّ السميّة.
+drug,Levetiracetam,ليفيتيراسيتام,Methotrexate,drug,warning,Can raise methotrexate levels.,قد يرفع مستوى الميثوتريكسيت.
+drug,Levetiracetam,ليفيتيراسيتام,Alcohol,outside,warning,More drowsiness.,نعاس أكثر.
+drug,Gabapentin,غابابنتين,Aluminium hydroxide,drug,warning,Reduces gabapentin absorption — two hours apart.,يقلّل امتصاص الغابابنتين — بفاصل ساعتين.
+drug,Gabapentin,غابابنتين,Magnesium hydroxide,drug,warning,Reduces gabapentin absorption — two hours apart.,يقلّل امتصاص الغابابنتين — بفاصل ساعتين.
+drug,Topiramate,توبيرامات,Hormonal contraceptives (class),class,serious,"At 200 mg a day or more, the pill becomes unreliable.",بجرعة 200 ملغ يومياً أو أكثر يصبح منع الحمل بالحبوب غير موثوق.
+drug,Oxcarbazepine,أوكسكاربازيبين,Hormonal contraceptives (class),class,serious,Makes hormonal contraception unreliable — use another method.,يجعل منع الحمل الهرموني غير موثوق — استعملي وسيلة أخرى.
+drug,Lacosamide,لاكوساميد,Heart-rate-slowing drugs (class),class,warning,Slows conduction in the heart (PR prolongation) — heart block risk with other drugs that do.,يبطئ التوصيل في القلب (إطالة PR) — خطر إحصار مع أدوية أخرى تفعل ذلك.
+drug,Vigabatrin,فيغاباترين,Phenytoin,drug,warning,Lowers phenytoin levels.,يخفض مستوى الفينيتوين.
+drug,Perampanel,بيرامبانيل,Hormonal contraceptives (class),class,warning,At 12 mg a day it can weaken progestogen-only contraception.,بجرعة 12 ملغ يومياً قد يُضعف موانع الحمل البروجستينية.
+drug,Perampanel,بيرامبانيل,Alcohol,outside,warning,"Worse mood, aggression and drowsiness.",تدهور المزاج والعدوانية والنعاس.
+drug,Levodopa,ليفودوبا,Metoclopramide,drug,serious,Each one blocks the other.,تضاد متبادل في الأثر.
+drug,Levodopa,ليفودوبا,Haloperidol,drug,serious,Cancels levodopa’s effect.,يلغي أثر الليفودوبا.
+drug,Levodopa,ليفودوبا,Ferrous sulfate,drug,warning,Reduces absorption — space by two hours.,يقلّل الامتصاص — باعد ساعتين.
+drug,Ropinirole,روبينيرول,Ciprofloxacin,drug,serious,Raises ropinirole — watch for side effects.,يرفع الروبينيرول — راقب الآثار الجانبية.
+drug,Entacapone,إنتاكابون,MAO inhibitors (including linezolid) (class),class,serious,Not with non-selective MAO inhibitors.,لا يُجمع مع مثبطات MAO غير الانتقائية.
+drug,Entacapone,إنتاكابون,"Antacids and calcium, iron, zinc or magnesium (class)",class,warning,Iron binds entacapone — take them two to three hours apart.,الحديد يربط الإنتاكابون — بفاصل ساعتين إلى ثلاث.
+drug,Memantine,ميمانتين,Amantadine,drug,serious,Both act on the same brain receptors — risk of psychosis; avoid.,كلاهما يعمل على المستقبلات نفسها — خطر ذهان؛ يُتجنّب.
+drug,Memantine,ميمانتين,Dextromethorphan,drug,warning,Same receptors — more side effects.,المستقبلات نفسها — آثار جانبية أكثر.
+drug,Betahistine,بيتاهيستين,Chlorphenamine,drug,warning,Antihistamines can weaken betahistine.,مضادات الهيستامين قد تُضعف البيتاهيستين.
+drug,Betahistine,بيتاهيستين,Cinnarizine,drug,warning,Antihistamines can weaken betahistine.,مضادات الهيستامين قد تُضعف البيتاهيستين.
+drug,Piracetam,بيراسيتام,Anticoagulants (class),class,warning,Affects platelets — more bleeding.,يؤثر في الصفيحات — نزف أكثر.
+drug,Citicoline,سيتيكولين,Levodopa,drug,warning,May strengthen the effects of levodopa.,قد يقوّي آثار الليفودوبا.
+drug,Cerebrolysin,سيريبروليسين,MAO inhibitors (including linezolid) (class),class,warning,Possible added effects with MAO inhibitors.,تأثيرات مضافة ممكنة مع مثبطات MAO.
+drug,Vinpocetine,فينبوسيتين,Anticoagulants (class),class,warning,More bleeding.,نزف أكثر.
+drug,Interferon beta-1a,إنترفيرون بيتا-1a,Zidovudine,drug,warning,More low blood counts.,مزيد من انخفاض تعداد الدم.
+drug,Interferon beta-1b,إنترفيرون بيتا-1b,Zidovudine,drug,warning,More low blood counts.,مزيد من انخفاض تعداد الدم.
+drug,Riluzole,ريلوزول,Ciprofloxacin,drug,warning,Ciprofloxacin and fluvoxamine raise riluzole.,السيبروفلوكساسين والفلوفوكسامين يرفعان الريلوزول.
+drug,Botulinum toxin type A,ذيفان البوتولينوم نوع A,Ear-toxic drugs (class),class,warning,Aminoglycosides strengthen the toxin’s effect.,الأمينوغليكوزيدات تقوّي أثر الذيفان.
+drug,Thioctic acid,حمض الثيوكتيك,Insulin and sulfonylureas (class),class,warning,Can lower blood sugar further — check it.,قد يخفض السكر أكثر — افحصه.
+drug,Haloperidol,هالوبيريدول,Metoclopramide,drug,serious,Compounded extrapyramidal effects.,أعراض خارج هرمية مضاعفة.
+drug,Haloperidol,هالوبيريدول,Amiodarone,drug,critical,QT prolongation — avoid the combination.,إطالة QT — يُتجنّب الجمع.
+drug,Haloperidol,هالوبيريدول,Escitalopram,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Clozapine,كلوزابين,Carbamazepine,drug,critical,Both suppress the marrow — contraindicated.,كلاهما يثبّط نقي العظم — ممنوع الجمع.
+drug,Clozapine,كلوزابين,Fluvoxamine,drug,critical,Raises clozapine many-fold.,يرفع الكلوزابين أضعافاً.
+drug,Clozapine,كلوزابين,Ciprofloxacin,drug,serious,Raises clozapine sharply.,يرفع الكلوزابين بشدة.
+drug,Maprotiline,مابروتيلين,MAO inhibitors (including linezolid) (class),class,critical,Serotonin toxicity and dangerous blood pressure — two weeks apart.,تسمّم سيروتونيني وضغط خطير — بفاصل أسبوعين.
+drug,Amitriptyline,أميتريبتيلين,Fluoxetine,drug,serious,Raises amitriptyline and the serotonergic risk.,يرفع الأميتريبتيلين ويزيد خطر السيروتونين.
+drug,Amitriptyline,أميتريبتيلين,Tramadol,drug,serious,Seizures and serotonin syndrome.,اختلاج ومتلازمة سيروتونين.
+drug,Amitriptyline,أميتريبتيلين,Amiodarone,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Fluoxetine,فلوكسيتين,Tramadol,drug,serious,Serotonin syndrome and seizures.,متلازمة السيروتونين واختلاج.
+drug,Fluoxetine,فلوكسيتين,Metoprolol,drug,serious,Substantially raises metoprolol.,يرفع الميتوبرولول كثيراً.
+drug,Fluoxetine,فلوكسيتين,Warfarin,drug,serious,Raised bleeding risk.,خطر نزف مرتفع.
+drug,Fluoxetine,فلوكسيتين,Ibuprofen,drug,serious,GI bleeding.,نزف هضمي.
+drug,Sertraline,سيرترالين,Tramadol,drug,serious,Serotonin syndrome.,متلازمة السيروتونين.
+drug,Sertraline,سيرترالين,Warfarin,drug,serious,Raised bleeding risk.,خطر نزف مرتفع.
+drug,Sertraline,سيرترالين,Ibuprofen,drug,serious,GI bleeding.,نزف هضمي.
+drug,Escitalopram,إسيتالوبرام,Amiodarone,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Escitalopram,إسيتالوبرام,Tramadol,drug,serious,Serotonin syndrome.,متلازمة السيروتونين.
+drug,Escitalopram,إسيتالوبرام,Omeprazole,drug,warning,Raises escitalopram.,يرفع الإسيتالوبرام.
+drug,Paroxetine,باروكسيتين,Tamoxifen,drug,serious,Blocks activation of tamoxifen — use another antidepressant.,يمنع تنشيط التاموكسيفين — استعمل مضاد اكتئاب آخر.
+drug,Paroxetine,باروكسيتين,Metoprolol,drug,warning,Raises metoprolol.,يرفع الميتوبرولول.
+drug,Fluvoxamine,فلوفوكسامين,Tizanidine,drug,critical,Raises tizanidine many-fold — contraindicated.,يرفع التيزانيدين أضعافاً — ممنوع الجمع.
+drug,Fluvoxamine,فلوفوكسامين,Theophylline,drug,critical,Raises theophylline to toxic levels — avoid.,يرفع الثيوفيلين إلى حدّ السمّية — يُتجنّب.
+drug,Fluvoxamine,فلوفوكسامين,Melatonin,drug,serious,Raises melatonin many-fold.,يرفع الميلاتونين أضعافاً.
+drug,Duloxetine,دولوكسيتين,Ciprofloxacin,drug,critical,Raises duloxetine sharply — contraindicated.,يرفع الدولوكسيتين بشدة — ممنوع الجمع.
+drug,Duloxetine,دولوكسيتين,Fluvoxamine,drug,critical,Raises duloxetine sharply — contraindicated.,يرفع الدولوكسيتين بشدة — ممنوع الجمع.
+drug,Bupropion,بوبروبيون,Tamoxifen,drug,serious,Blocks activation of tamoxifen — avoid.,يمنع تنشيط التاموكسيفين — يُتجنّب.
+drug,Bupropion,بوبروبيون,Tramadol,drug,serious,Seizure risk.,خطر الاختلاج.
+drug,Agomelatine,أغوميلاتين,Fluvoxamine,drug,critical,Raises agomelatine many-fold — contraindicated.,يرفع الأغوميلاتين أضعافاً — ممنوع الجمع.
+drug,Agomelatine,أغوميلاتين,Ciprofloxacin,drug,serious,Raises agomelatine.,يرفع الأغوميلاتين.
+drug,Moclobemide,موكلوبيمايد,Tyramine-rich food,outside,warning,Large amounts can raise blood pressure.,الكميات الكبيرة قد ترفع الضغط.
+drug,Lithium,ليثيوم,Hydrochlorothiazide,drug,serious,Raises lithium to toxic levels.,يرفع الليثيوم إلى حدّ السميّة.
+drug,Lithium,ليثيوم,Ibuprofen,drug,serious,NSAIDs raise lithium.,مضادات الالتهاب ترفع الليثيوم.
+drug,Lithium,ليثيوم,Lisinopril,drug,serious,Raises lithium.,يرفع الليثيوم.
+drug,Lithium,ليثيوم,Metronidazole,drug,serious,Raises lithium.,يرفع الليثيوم.
+drug,Meprobamate,ميبروبامات,Alcohol,outside,serious,Deep sedation and slowed breathing.,تهدئة عميقة وتباطؤ التنفس.
+drug,Diazepam,ديازيبام,Tramadol,drug,critical,Respiratory depression — avoid the combination.,تثبيط تنفسي — يُتجنّب الجمع.
+drug,Diazepam,ديازيبام,Clarithromycin,drug,serious,Raises diazepam and prolongs sedation.,يرفع الديازيبام ويطيل التنويم.
+drug,Alprazolam,ألبرازولام,Tramadol,drug,critical,Respiratory depression.,تثبيط تنفسي.
+drug,Alprazolam,ألبرازولام,Clarithromycin,drug,serious,Substantially raises alprazolam.,يرفع الألبرازولام كثيراً.
+drug,Alprazolam,ألبرازولام,Fluconazole,drug,serious,Raises alprazolam.,يرفع الألبرازولام.
+drug,Buspirone,بوسبيرون,Grapefruit juice,outside,serious,Raises buspirone several-fold.,يرفع البوسبيرون أضعافاً.
+drug,Modafinil,مودافينيل,Hormonal contraceptives (class),class,serious,Contraception unreliable during and for two months after.,منع الحمل غير موثوق أثناء العلاج وشهرين بعده.
+drug,Naltrexone,نالتريكسون,Opioids (class),class,critical,Blocks opioid pain relief and can bring on sudden withdrawal — stop naltrexone three days before opioids are needed.,يحجب تسكين الأفيونات وقد يسبّب انسحاباً مفاجئاً — يُوقف النالتريكسون قبل الحاجة إلى الأفيونات بثلاثة أيام.
+drug,Disulfiram,ديسلفيرام,Alcohol,outside,critical,"Violent flushing, vomiting, palpitations and collapse.",احمرار عنيف وقيء وخفقان وانهيار.
+drug,Disulfiram,ديسلفيرام,Metronidazole,drug,serious,Confusion and psychosis — avoid.,تشوّش وذهان — يُتجنّب.
+drug,Varenicline,فارينيكلين,Alcohol,outside,warning,"Alcohol may affect people more, with unusual behaviour reported — cut down.",قد يزيد تأثير الكحول، وسُجّل سلوك غير معتاد — قلّل منه.
+drug,Nicotine,نيكوتين,Theophylline,drug,warning,"Stopping smoking raises theophylline (and clozapine, olanzapine) levels — doses may need lowering.",الإقلاع عن التدخين يرفع مستوى الثيوفيلين (والكلوزابين والأولانزابين) — قد يلزم خفض الجرعات.
+drug,Ibuprofen,إيبوبروفين,Aspirin,drug,serious,Blocks aspirin’s antiplatelet effect if taken first — separate the doses.,يمنع التأثير المضاد للصفيحات إذا أُخذ قبل الأسبرين — باعد بينهما.
+drug,Ibuprofen,إيبوبروفين,Warfarin,drug,serious,Compounded GI bleeding risk.,خطر نزف هضمي مضاعف.
+drug,Ibuprofen,إيبوبروفين,Lisinopril,drug,serious,"With a diuretic, the ""triple whammy"" — acute kidney injury.",مع مدرّ بول: ثلاثي يؤذي الكلية حاداً.
+drug,Ibuprofen,إيبوبروفين,Methotrexate,drug,serious,Reduces methotrexate clearance.,يقلّل طرح الميثوتريكسيت.
+drug,Diclofenac,ديكلوفيناك,Warfarin,drug,serious,Compounded GI bleeding risk.,خطر نزف هضمي مضاعف.
+drug,Diclofenac,ديكلوفيناك,Methotrexate,drug,serious,Reduces methotrexate clearance.,يقلّل طرح الميثوتريكسيت.
+drug,Diclofenac,ديكلوفيناك,Aspirin,drug,warning,Doubles bleeding risk with no added benefit.,يضاعف خطر النزف دون فائدة إضافية.
+drug,Naproxen,نابروكسين,Warfarin,drug,serious,Compounded GI bleeding risk.,خطر نزف هضمي مضاعف.
+drug,Naproxen,نابروكسين,Lithium,drug,serious,Raises lithium to toxic levels.,يرفع مستوى الليثيوم إلى حدّ السميّة.
+drug,Naproxen,نابروكسين,Methotrexate,drug,serious,Reduces methotrexate clearance.,يقلّل طرح الميثوتريكسيت.
+drug,Mefenamic acid,حمض الميفيناميك,Warfarin,drug,serious,Compounded GI bleeding risk.,خطر نزف هضمي مضاعف.
+drug,Celecoxib,سيليكوكسيب,Warfarin,drug,serious,Raises INR — monitor coagulation.,يرفع INR — راقب التخثر.
+drug,Celecoxib,سيليكوكسيب,Fluconazole,drug,warning,Doubles celecoxib levels — halve the dose.,يضاعف مستوى السيليكوكسيب — تُنصّف الجرعة.
+drug,Meloxicam,ميلوكسيكام,Warfarin,drug,serious,Compounded GI bleeding risk.,خطر نزف هضمي مضاعف.
+drug,Meloxicam,ميلوكسيكام,Lisinopril,drug,serious,"With a diuretic, a risk of acute kidney injury.",مع مدرّ بول: خطر أذية كلوية حادة.
+drug,Tizanidine,تيزانيدين,Ciprofloxacin,drug,critical,Severe hypotension and sedation — the combination is contraindicated.,هبوط ضغط شديد ونعاس — ممنوع الجمع.
+drug,Tizanidine,تيزانيدين,Fluvoxamine,drug,critical,The combination is contraindicated.,ممنوع الجمع.
+drug,Dantrolene,دانترولين,Verapamil and diltiazem (class),class,critical,"With intravenous dantrolene, verapamil or diltiazem can cause dangerously high potassium and heart failure — avoid.",مع الدانترولين الوريدي قد يسبّب الفيراباميل أو الديلتيازيم ارتفاعاً خطيراً في البوتاسيوم وقصوراً قلبياً — يُتجنّب.
+drug,Dantrolene,دانترولين,Alcohol,outside,warning,More drowsiness.,نعاس أكثر.
+drug,Allopurinol,ألوبيورينول,Azathioprine,drug,critical,Life-threatening marrow suppression — the azathioprine dose drops to a quarter.,تثبيط نقي مهدّد للحياة — تُخفّض جرعة الآزاثيوبرين إلى الربع.
+drug,Allopurinol,ألوبيورينول,Amoxicillin/Clavulanic acid,drug,warning,Raises the chance of a rash.,يزيد احتمال الطفح.
+drug,Allopurinol,ألوبيورينول,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Colchicine,كولشيسين,Clarithromycin,drug,critical,Fatal colchicine toxicity — the combination is contraindicated.,سميّة كولشيسين قاتلة — ممنوع الجمع.
+drug,Colchicine,كولشيسين,Atorvastatin,drug,serious,Compounded myopathy risk.,خطر اعتلال عضلي مضاعف.
+drug,Colchicine,كولشيسين,Simvastatin,drug,serious,Rhabdomyolysis risk.,خطر انحلال ربيدات.
+drug,Probenecid,بروبينيسيد,Methotrexate,drug,serious,Raises methotrexate.,يرفع الميثوتريكسيت.
+drug,Denosumab,دينوسوماب,Immunosuppressants (class),class,warning,Higher risk of infections.,خطر أعلى للالتهابات.
+drug,Teriparatide,تيريباراتايد,Digoxin,drug,warning,A passing rise in calcium can make digoxin toxic.,ارتفاع عابر في الكالسيوم قد يجعل الديجوكسين ساماً.
+drug,Raloxifene,رالوكسيفين,Colestyramine,drug,serious,Blocks raloxifene absorption — do not combine.,يمنع امتصاص الرالوكسيفين — لا يُجمعان.
+drug,Raloxifene,رالوكسيفين,Warfarin,drug,warning,May lower the INR slightly.,قد يخفض INR قليلاً.
+drug,Raloxifene,رالوكسيفين,Estradiol,drug,warning,Not used with oestrogen therapy.,لا يُستعمل مع العلاج بالإستروجين.
+drug,Methotrexate,ميثوتريكسيت,Trimethoprim/Sulfamethoxazole,drug,critical,Severe marrow suppression — the combination is contraindicated.,تثبيط نقي شديد — ممنوع الجمع.
+drug,Methotrexate,ميثوتريكسيت,Ibuprofen,drug,serious,"Reduces methotrexate clearance, raising toxicity.",يقلّل طرح الميثوتريكسيت ويزيد سميّته.
+drug,Methotrexate,ميثوتريكسيت,Amoxicillin,drug,serious,Reduces renal clearance.,يقلّل الطرح الكلوي.
+drug,Methotrexate,ميثوتريكسيت,Omeprazole,drug,warning,Delays clearance at high doses.,يؤخّر الطرح مع الجرعات العالية.
+drug,Methyl salicylate,ساليسيلات الميثيل,Warfarin,drug,warning,Large amounts on the skin can raise the INR.,الكميات الكبيرة على الجلد قد ترفع INR.
+drug,Glucosamine,غلوكوزامين,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Chondroitin,كوندرويتين,Warfarin,drug,warning,May raise the INR.,قد يرفع INR.
+drug,Diacerein,دياسيرين,"Antacids and calcium, iron, zinc or magnesium (class)",class,warning,Antacids reduce its absorption — keep two hours apart.,مضادات الحموضة تقلّل امتصاصه — افصل بينهما ساعتين.
+drug,Insulin glargine,إنسولين غلارجين,Atenolol,drug,serious,Masks the warning signs of hypoglycaemia.,يُخفي أعراض نقص السكر.
+drug,Insulin glargine,إنسولين غلارجين,Prednisolone,drug,serious,Raises glucose — the dose may need to go up.,يرفع سكر الدم — قد تلزم زيادة الجرعة.
+drug,Insulin regular,إنسولين نظامي,Atenolol,drug,serious,Masks the warning signs of hypoglycaemia.,يُخفي أعراض نقص السكر.
+drug,Insulin regular,إنسولين نظامي,Prednisolone,drug,serious,Raises glucose.,يرفع سكر الدم.
+drug,Metformin,ميتفورمين,Iodinated contrast media (class),class,critical,Lactic acidosis risk — withhold before the procedure.,خطر الحماض اللبني — يُوقف قبل الإجراء.
+drug,Metformin,ميتفورمين,Furosemide,drug,warning,Dehydration raises the lactic acidosis risk.,التجفاف يرفع خطر الحماض اللبني.
+drug,Chlorpropamide,كلوربروباميد,Alcohol,outside,warning,Flushing (disulfiram-like) and low sugar.,احمرار (شبيه بالديسلفيرام) وهبوط السكر.
+drug,Gliclazide,غليكلازيد,Atenolol,drug,warning,Masks the warning signs of hypoglycaemia.,يُخفي أعراض نقص السكر.
+drug,Gliclazide,غليكلازيد,Fluconazole,drug,serious,Raises gliclazide and the risk of a hypo.,يرفع الغليكلازيد وخطر نقص السكر.
+drug,Gliclazide,غليكلازيد,Trimethoprim/Sulfamethoxazole,drug,serious,Severe hypoglycaemia.,نقص سكر شديد.
+drug,Glimepiride,غليميبيريد,Fluconazole,drug,serious,Risk of hypoglycaemia.,خطر نقص سكر.
+drug,Glimepiride,غليميبيريد,Atenolol,drug,warning,Masks the warning signs of hypoglycaemia.,يُخفي أعراض نقص السكر.
+drug,Glibenclamide,غليبنكلاميد,Fluconazole,drug,serious,Risk of prolonged hypoglycaemia.,خطر نقص سكر مطوّل.
+drug,Glibenclamide,غليبنكلاميد,Trimethoprim/Sulfamethoxazole,drug,serious,Severe hypoglycaemia.,نقص سكر شديد.
+drug,Sitagliptin,سيتاغليبتين,Gliclazide,drug,warning,Raises hypo risk — the sulfonylurea may need reducing.,يزيد خطر نقص السكر — قد تُخفّض السلفونيل يوريا.
+drug,Empagliflozin,إمباغليفلوزين,Furosemide,drug,serious,Dehydration and hypotension.,تجفاف وهبوط ضغط.
+drug,Empagliflozin,إمباغليفلوزين,Gliclazide,drug,warning,Raises hypo risk.,يزيد خطر نقص السكر.
+drug,Repaglinide,ريباغلينيد,Clopidogrel,drug,serious,Raises repaglinide — low sugar.,يرفع الريباغلينيد — هبوط سكر.
+drug,Tirzepatide,تيرزيباتايد,Hormonal contraceptives (class),class,serious,The pill is less reliable for 4 weeks after starting and after each increase — add a barrier method.,حبوب منع الحمل أقل موثوقية 4 أسابيع بعد البدء وبعد كل رفع — أضيفي وسيلة حاجزة.
+drug,Glucagon,غلوكاغون,Warfarin,drug,warning,High or repeated doses raise the INR.,الجرعات العالية أو المتكررة ترفع INR.
+drug,Glucagon,غلوكاغون,Beta-blockers (class),class,warning,A rise in pulse and blood pressure.,ارتفاع النبض والضغط.
+drug,Orlistat,أورليستات,Levothyroxine,drug,warning,Lowers absorption — four hours apart.,يقلّل الامتصاص — بفاصل أربع ساعات.
+drug,Orlistat,أورليستات,Ciclosporin,drug,serious,"Lowers ciclosporin — avoid, or separate and monitor.",يخفض السيكلوسبورين — يُتجنّب، أو يُفصل بينهما مع المراقبة.
+drug,Orlistat,أورليستات,Warfarin,drug,warning,Vitamin K absorption changes — check the INR.,يتغيّر امتصاص فيتامين K — افحص INR.
+drug,Levothyroxine,ليفوثيروكسين,Ferrous sulfate,drug,serious,Blocks absorption — space by four hours.,يمنع الامتصاص — باعد أربع ساعات.
+drug,Levothyroxine,ليفوثيروكسين,Calcium carbonate,drug,serious,Blocks absorption — space by four hours.,يمنع الامتصاص — باعد أربع ساعات.
+drug,Levothyroxine,ليفوثيروكسين,Omeprazole,drug,warning,Reduces absorption.,يقلّل الامتصاص.
+drug,Levothyroxine,ليفوثيروكسين,Warfarin,drug,serious,Warfarin’s effect grows as the thyroid state corrects.,يزيد أثر الوارفارين مع تحسّن الحالة الدرقية.
+drug,Carbimazole,كاربيمازول,Warfarin,drug,warning,"As the thyroid settles, the INR can change — check it.",مع استقرار الدرقية قد يتغيّر INR — افحصه.
+drug,Carbimazole,كاربيمازول,Digoxin,drug,warning,"As the thyroid settles, digoxin levels rise.",مع استقرار الدرقية يرتفع مستوى الديجوكسين.
+drug,Carbimazole,كاربيمازول,Clozapine,drug,serious,Both can wipe out white cells — avoid.,كلاهما قد يُفني الكريات البيض — يُتجنّب.
+drug,Thiamazole,ثيامازول,Warfarin,drug,warning,"As the thyroid settles, the INR can change — check it.",مع استقرار الدرقية قد يتغيّر INR — افحصه.
+drug,Thiamazole,ثيامازول,Digoxin,drug,warning,"As the thyroid settles, digoxin levels rise.",مع استقرار الدرقية يرتفع مستوى الديجوكسين.
+drug,Thiamazole,ثيامازول,Clozapine,drug,serious,Both can wipe out white cells — avoid.,كلاهما قد يُفني الكريات البيض — يُتجنّب.
+drug,Propylthiouracil,بروبيل ثيويوراسيل,Warfarin,drug,warning,"As the thyroid settles, the INR can change — check it.",مع استقرار الدرقية قد يتغيّر INR — افحصه.
+drug,Propylthiouracil,بروبيل ثيويوراسيل,Digoxin,drug,warning,"As the thyroid settles, digoxin levels rise.",مع استقرار الدرقية يرتفع مستوى الديجوكسين.
+drug,Propylthiouracil,بروبيل ثيويوراسيل,Clozapine,drug,serious,Both can wipe out white cells — avoid.,كلاهما قد يُفني الكريات البيض — يُتجنّب.
+drug,Prednisolone,بريدنيزولون,Ibuprofen,drug,serious,Compounded ulcer and GI bleeding risk.,خطر قرحة ونزف هضمي مضاعف.
+drug,Prednisolone,بريدنيزولون,Insulin glargine,drug,serious,Raises glucose — the dose may need to go up.,يرفع سكر الدم — قد تلزم زيادة الجرعة.
+drug,Prednisolone,بريدنيزولون,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Somatropin,سوماتروبين,Systemic corticosteroids (class),class,warning,Steroids blunt its growth effect.,الكورتيزون يُضعف أثره على النمو.
+drug,Somatropin,سوماتروبين,Diabetes medicines (class),class,warning,Raises blood sugar — diabetes treatment may need adjusting.,يرفع سكر الدم — قد يلزم تعديل علاج السكري.
+drug,Desmopressin,ديسموبريسين,NSAIDs (class),class,serious,Water retention and low sodium — fits.,احتباس الماء وانخفاض الصوديوم — نوبات.
+drug,Desmopressin,ديسموبريسين,SSRIs and SNRIs (class),class,serious,Low sodium risk.,خطر انخفاض الصوديوم.
+drug,Desmopressin,ديسموبريسين,Carbamazepine,drug,serious,Low sodium risk.,خطر انخفاض الصوديوم.
+drug,Calcitriol,كالسيتريول,Thiazide diuretics (class),class,warning,Thiazides raise calcium further — check it.,المدرّات الثيازيدية ترفع الكالسيوم أكثر — افحصه.
+drug,Alfacalcidol,ألفاكالسيدول,Thiazide diuretics (class),class,warning,Thiazides raise calcium further — check it.,المدرّات الثيازيدية ترفع الكالسيوم أكثر — افحصه.
+drug,Paricalcitol,باريكالسيتول,Digoxin,drug,warning,High calcium makes digoxin toxic.,ارتفاع الكالسيوم يجعل الديجوكسين ساماً.
+drug,Paricalcitol,باريكالسيتول,Strong CYP3A4 inhibitors (class),class,warning,Ketoconazole and similar raise paricalcitol.,الكيتوكونازول وأمثاله يرفعون الباريكالسيتول.
+drug,Cinacalcet,سيناكالسيت,Metoprolol,drug,warning,Raises metoprolol (and tricyclics).,يرفع الميتوبرولول (وثلاثيات الحلقات).
+drug,Cinacalcet,سيناكالسيت,Amitriptyline,drug,warning,Raises tricyclic levels.,يرفع مستوى ثلاثيات الحلقات.
+drug,Cinacalcet,سيناكالسيت,Strong CYP3A4 inhibitors (class),class,warning,Ketoconazole and similar raise cinacalcet.,الكيتوكونازول وأمثاله يرفعون السيناكالسيت.
+drug,Calcitonin,كالسيتونين,Lithium,drug,warning,Lowers lithium levels.,يخفض مستوى الليثيوم.
+drug,Testosterone,تستوستيرون,Warfarin,drug,serious,Raises the INR — bleeding.,يرفع INR — نزف.
+drug,Testosterone,تستوستيرون,Diabetes medicines (class),class,warning,May lower blood sugar.,قد يخفض سكر الدم.
+drug,Nandrolone,ناندرولون,Warfarin,drug,serious,Raises the INR — bleeding.,يرفع INR — نزف.
+drug,Nandrolone,ناندرولون,Diabetes medicines (class),class,warning,May lower blood sugar.,قد يخفض سكر الدم.
+drug,Mesterolone,ميستيرولون,Warfarin,drug,serious,Raises the INR — bleeding.,يرفع INR — نزف.
+drug,Mesterolone,ميستيرولون,Diabetes medicines (class),class,warning,May lower blood sugar.,قد يخفض سكر الدم.
+drug,Danazol,دانازول,Warfarin,drug,serious,Raises the INR — bleeding.,يرفع INR — نزف.
+drug,Danazol,دانازول,Diabetes medicines (class),class,warning,May lower blood sugar.,قد يخفض سكر الدم.
+drug,Danazol,دانازول,Carbamazepine,drug,serious,Raises carbamazepine to toxic levels.,يرفع الكاربامازيبين إلى حدّ السميّة.
+drug,Danazol,دانازول,Ciclosporin,drug,serious,Raises ciclosporin — kidney toxicity.,يرفع السيكلوسبورين — سمّية كلوية.
+drug,Drospirenone,دروسبيرينون,"ACE inhibitors, sartans and aliskiren (class)",class,warning,Can raise potassium — check it in the first month.,قد يرفع البوتاسيوم — افحصيه في الشهر الأول.
+drug,Ulipristal,أوليبريستال,Hormonal contraceptives (class),class,warning,Each blunts the other — wait 5 days before restarting the pill.,كلٌّ منهما يُضعف الآخر — انتظري 5 أيام قبل استئناف الحبوب.
+drug,Tibolone,تيبولون,Warfarin,drug,warning,May raise the INR.,قد يرفع INR.
+drug,Carboprost,كاربوبروست,Oxytocin,drug,warning,Strengthens the effect of oxytocin on the womb.,يقوّي أثر الأوكسيتوسين على الرحم.
+drug,Dinoprostone,دينوبروستون,Oxytocin,drug,serious,Not within six hours of each other — excessive contractions.,لا يُعطيان خلال ست ساعات من بعضهما — تقلّصات مفرطة.
+drug,Tamsulosin,تامسولوسين,Sildenafil,drug,serious,Postural hypotension.,هبوط ضغط انتصابي.
+drug,Tamsulosin,تامسولوسين,Clarithromycin,drug,serious,Raises tamsulosin and drops blood pressure.,يرفع التامسولوسين وهبوط الضغط.
+drug,Dutasteride,دوتاسترايد,Strong CYP3A4 inhibitors (class),class,warning,Raises dutasteride levels.,يرفع مستوى الدوتاستيريد.
+drug,Alprostadil,ألبروستاديل,Anticoagulants (class),class,warning,More bleeding at the injection site.,نزف أكثر في موضع الحقن.
+drug,Alprostadil,ألبروستاديل,PDE5 inhibitors (class),class,warning,Prolonged erection — not combined.,انتصاب مديد — لا يُجمعان.
+drug,Sildenafil,سيلدينافيل,Glyceryl trinitrate,drug,critical,Fatal hypotension — the combination is contraindicated.,هبوط ضغط قاتل — ممنوع الجمع.
+drug,Sildenafil,سيلدينافيل,Isosorbide dinitrate,drug,critical,Fatal hypotension — the combination is contraindicated.,هبوط ضغط قاتل — ممنوع الجمع.
+drug,Sildenafil,سيلدينافيل,Tamsulosin,drug,serious,Postural hypotension.,هبوط ضغط انتصابي.
+drug,Sildenafil,سيلدينافيل,Clarithromycin,drug,serious,Substantially raises sildenafil.,يرفع السيلدينافيل كثيراً.
+drug,Mirabegron,ميرابيغرون,Metoprolol,drug,warning,Raises metoprolol.,يرفع الميتوبرولول.
+drug,Mirabegron,ميرابيغرون,Digoxin,drug,warning,Raises digoxin — check the level.,يرفع الديجوكسين — افحص مستواه.
+drug,Sodium citrate,سترات الصوديوم,Lithium,drug,warning,Alkaline urine lowers lithium.,البول القلوي يخفض الليثيوم.
+drug,Sodium citrate,سترات الصوديوم,Aluminium hydroxide,drug,serious,"Citrate increases aluminium absorption — avoid, above all in kidney failure.",السترات تزيد امتصاص الألمنيوم — يُتجنّب، خصوصاً في الفشل الكلوي.
+drug,Amoxicillin,أموكسيسيلين,Methotrexate,drug,serious,"Reduces methotrexate clearance, raising toxicity.",يقلّل طرح الميثوتريكسيت ويزيد سميّته.
+drug,Amoxicillin,أموكسيسيلين,Warfarin,drug,warning,May raise INR — monitor coagulation.,قد يرفع INR — راقب التخثر.
+drug,Amoxicillin/Clavulanic acid,أموكسيسيلين/حمض الكلافولانيك,Methotrexate,drug,serious,Reduces methotrexate clearance.,يقلّل طرح الميثوتريكسيت.
+drug,Amoxicillin/Clavulanic acid,أموكسيسيلين/حمض الكلافولانيك,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Amoxicillin/Clavulanic acid,أموكسيسيلين/حمض الكلافولانيك,Allopurinol,drug,warning,Raises the chance of a rash.,يزيد احتمال الطفح الجلدي.
+drug,Piperacillin,بيبيراسيلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Piperacillin,بيبيراسيلين,Methotrexate,drug,serious,Penicillins slow methotrexate removal — toxicity.,البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.
+drug,Procaine benzylpenicillin,بروكايين بنزيل بنسلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Ampicillin,أمبيسيلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Ampicillin,أمبيسيلين,Methotrexate,drug,serious,Penicillins slow methotrexate removal — toxicity.,البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.
+drug,Ampicillin,أمبيسيلين,Allopurinol,drug,warning,More skin rashes.,طفح جلدي أكثر.
+drug,Ampicillin/Sulbactam,أمبيسيلين/سلباكتام,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Ampicillin/Sulbactam,أمبيسيلين/سلباكتام,Methotrexate,drug,serious,Penicillins slow methotrexate removal — toxicity.,البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.
+drug,Flucloxacillin,فلوكلوكساسيلين,Warfarin,drug,warning,May lower the INR — flucloxacillin speeds warfarin breakdown.,قد يخفض INR — يسرّع الفلوكلوكساسيلين تفكّك الوارفارين.
+drug,Flucloxacillin,فلوكلوكساسيلين,Paracetamol,drug,warning,"Rarely, a serious acid build-up (metabolic acidosis) in frail patients on long courses.",نادراً، تراكم حمضي خطير (حماض استقلابي) عند المرضى الضعفاء في الدورات الطويلة.
+drug,Cloxacillin,كلوكساسيلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Benzylpenicillin,بنزيل بنسلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Benzylpenicillin,بنزيل بنسلين,Methotrexate,drug,serious,Penicillins slow methotrexate removal — toxicity.,البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.
+drug,Benzathine benzylpenicillin,بنزاثين بنزيل بنسلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Phenoxymethylpenicillin,فينوكسي ميثيل بنسلين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Phenoxymethylpenicillin,فينوكسي ميثيل بنسلين,Methotrexate,drug,serious,Penicillins slow methotrexate removal — toxicity.,البنسلينات تبطئ طرح الميثوتريكسيت — تسمّم.
+drug,Piperacillin/Tazobactam,بيبيراسيلين/تازوباكتام,Vancomycin,drug,warning,More kidney injury together — monitor kidney function.,أذية كلوية أكثر معاً — راقب وظائف الكلى.
+drug,Piperacillin/Tazobactam,بيبيراسيلين/تازوباكتام,Methotrexate,drug,serious,Reduces methotrexate clearance.,يقلّل طرح الميثوتريكسيت.
+drug,Cefixime,سيفيكسيم,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Cephalexin,سيفالكسين,Metformin,drug,warning,Modestly raises metformin levels.,يرفع مستوى الميتفورمين قليلاً.
+drug,Cefditoren,سيفديتورين,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,Much less is absorbed.,يقلّ امتصاصه كثيراً.
+drug,Spectinomycin,سبكتينومايسين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Ceftriaxone,سيفترياكسون,Calcium gluconate,drug,critical,Precipitates in lung and kidney — the IV combination is contraindicated.,ترسّب في الرئة والكلية — ممنوع الجمع وريدياً.
+drug,Ceftriaxone,سيفترياكسون,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Cefuroxime,سيفوروكسيم,Omeprazole,drug,warning,Reduced stomach acid cuts absorption.,رفع حموضة المعدة يقلّل الامتصاص.
+drug,Cefadroxil,سيفادروكسيل,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefaclor,سيفاكلور,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefprozil,سيفبروزيل,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefpodoxime,سيفبودوكسيم,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefpodoxime,سيفبودوكسيم,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,Acid reducers lower its absorption.,خافضات الحمض تقلّل امتصاصه.
+drug,Cefazolin,سيفازولين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefotaxime,سيفوتاكسيم,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Ceftazidime,سيفتازيديم,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Ceftazidime/Avibactam,سيفتازيديم/أفيباكتام,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefepime,سيفيبيم,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Cefoperazone,سيفوبيرازون,Alcohol,outside,serious,"Flushing, vomiting and palpitations — none for 72 hours after.",احمرار وقيء وخفقان — لا كحول لمدة 72 ساعة بعده.
+drug,Cefoperazone,سيفوبيرازون,Warfarin,drug,warning,Raises the INR.,يرفع INR.
+drug,Meropenem,ميروبينيم,Sodium valproate,drug,critical,Valproate levels collapse within a day — fits; avoid the combination.,ينهار مستوى الفالبروات خلال يوم — اختلاج؛ يُتجنّب الجمع.
+drug,Imipenem/Cilastatin,إيميبينيم/سيلاستاتين,Sodium valproate,drug,critical,Valproate levels collapse — fits; avoid the combination.,ينهار مستوى الفالبروات — اختلاج؛ يُتجنّب الجمع.
+drug,Ertapenem,إرتابينيم,Sodium valproate,drug,critical,Valproate levels collapse — fits; avoid the combination.,ينهار مستوى الفالبروات — اختلاج؛ يُتجنّب الجمع.
+drug,Aztreonam,أزتريونام,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Azithromycin,أزيثرومايسين,Amiodarone,drug,critical,QT prolongation — avoid the combination.,إطالة QT — يُتجنّب الجمع.
+drug,Azithromycin,أزيثرومايسين,Domperidone,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Azithromycin,أزيثرومايسين,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Clarithromycin,كلاريثرومايسين,Simvastatin,drug,critical,Rhabdomyolysis — stop the statin for the course.,انحلال ربيدات — يُوقف الستاتين طوال الكورس.
+drug,Clarithromycin,كلاريثرومايسين,Amiodarone,drug,critical,QT prolongation — avoid the combination.,إطالة QT — يُتجنّب الجمع.
+drug,Clarithromycin,كلاريثرومايسين,Atorvastatin,drug,serious,Raises statin levels — reduce or hold.,يرفع مستوى الستاتين — تُخفّض الجرعة أو يُوقف.
+drug,Clarithromycin,كلاريثرومايسين,Warfarin,drug,serious,Markedly raises INR.,يرفع INR بوضوح.
+drug,Clindamycin,كليندامايسين,Erythromycin,drug,warning,Antagonistic mechanisms.,تضاد في آلية العمل.
+drug,Erythromycin,إريثرومايسين,Simvastatin,drug,critical,Rhabdomyolysis — hold the statin.,انحلال ربيدات — يُوقف الستاتين.
+drug,Erythromycin,إريثرومايسين,Warfarin,drug,serious,Raises INR.,يرفع INR.
+drug,Erythromycin,إريثرومايسين,Amiodarone,drug,critical,QT prolongation — avoid the combination.,إطالة QT — يُتجنّب الجمع.
+drug,Erythromycin,إريثرومايسين,Clindamycin,drug,warning,Antagonistic mechanisms.,تضاد في آلية العمل.
+drug,Lincomycin,لينكومايسين,Warfarin,drug,warning,Antibiotics can raise the INR — check it during the course.,المضادات الحيوية قد ترفع INR — افحصه أثناء الدورة.
+drug,Lincomycin,لينكومايسين,Kaolin,drug,warning,Kaolin reduces lincomycin absorption.,الكاولين يقلّل امتصاص اللينكومايسين.
+drug,Ciprofloxacin,سيبروفلوكساسين,Tizanidine,drug,critical,Severe hypotension and sedation — the combination is contraindicated.,هبوط ضغط شديد ونعاس — ممنوع الجمع.
+drug,Ciprofloxacin,سيبروفلوكساسين,Calcium carbonate,drug,serious,Chelates with calcium and loses absorption.,يرتبط بالكالسيوم ويفقد الامتصاص.
+drug,Ciprofloxacin,سيبروفلوكساسين,Theophylline,drug,serious,Raises theophylline to toxic levels.,يرفع الثيوفيلين إلى حدّ السميّة.
+drug,Ciprofloxacin,سيبروفلوكساسين,Warfarin,drug,serious,Raises INR.,يرفع INR.
+drug,Levofloxacin,ليفوفلوكساسين,Warfarin,drug,serious,Raises INR.,يرفع INR.
+drug,Levofloxacin,ليفوفلوكساسين,Calcium carbonate,drug,serious,Chelates with calcium and loses absorption.,يرتبط بالكالسيوم ويفقد الامتصاص.
+drug,Levofloxacin,ليفوفلوكساسين,Amiodarone,drug,serious,Additive QT prolongation.,إطالة QT مضاعفة.
+drug,Doxycycline,دوكسيسيكلين,Ferrous sulfate,drug,serious,Chelates with iron and loses absorption — space by two hours.,يرتبط بالحديد ويفقد الامتصاص — باعد ساعتين.
+drug,Doxycycline,دوكسيسيكلين,Calcium carbonate,drug,serious,Chelates with calcium and loses absorption.,يرتبط بالكالسيوم ويفقد الامتصاص.
+drug,Doxycycline,دوكسيسيكلين,Isotretinoin,drug,serious,Raised intracranial pressure.,ارتفاع ضغط داخل القحف.
+drug,Doxycycline,دوكسيسيكلين,Warfarin,drug,warning,May raise INR.,قد يرفع INR.
+drug,Gentamicin,جنتامايسين,Furosemide,drug,serious,Compounded ear and kidney toxicity.,سميّة أذنية وكلوية مضاعفة.
+drug,Gentamicin,جنتامايسين,Ibuprofen,drug,serious,Compounded renal risk.,خطر كلوي مضاعف.
+drug,Metronidazole,ميترونيدازول,Warfarin,drug,serious,Markedly raises INR.,يرفع INR بوضوح.
+drug,Metronidazole,ميترونيدازول,Lithium,drug,serious,Raises lithium to toxic levels.,يرفع الليثيوم إلى حدّ السميّة.
+drug,Metronidazole,ميترونيدازول,Alcohol,outside,serious,"Flushing, vomiting and palpitations (disulfiram-like) — no alcohol during and for 48 hours after.",احمرار وتقيؤ وخفقان (تفاعل شبيه بالديسلفيرام) — لا كحول أثناء العلاج و48 ساعة بعده.
+drug,Nitrofurantoin,نيتروفورانتوين,Magnesium trisilicate,drug,warning,Reduces absorption — space the doses.,يقلّل الامتصاص — باعد بينهما.
+drug,Trimethoprim/Sulfamethoxazole,تراي ميثوبريم/سلفاميثوكسازول,Warfarin,drug,critical,Sharp rise in INR and bleeding — avoid the combination.,ارتفاع حاد في INR ونزف — يُتجنّب الجمع.
+drug,Trimethoprim/Sulfamethoxazole,تراي ميثوبريم/سلفاميثوكسازول,Methotrexate,drug,critical,Severe marrow suppression — the combination is contraindicated.,تثبيط نقي شديد — ممنوع الجمع.
+drug,Trimethoprim/Sulfamethoxazole,تراي ميثوبريم/سلفاميثوكسازول,Spironolactone,drug,serious,Dangerous hyperkalaemia.,فرط بوتاسيوم خطر.
+drug,Trimethoprim/Sulfamethoxazole,تراي ميثوبريم/سلفاميثوكسازول,Lisinopril,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Linezolid,لينيزوليد,Tyramine-rich food,outside,warning,Large amounts can raise blood pressure.,الكميات الكبيرة قد ترفع الضغط.
+drug,Fosfomycin,فوسفومايسين,Metoclopramide,drug,warning,Lowers fosfomycin absorption.,يقلّل امتصاص الفوسفومايسين.
+drug,Trimethoprim,تراي ميثوبريم,Methotrexate,drug,critical,Severe marrow suppression — avoid.,تثبيط نقي شديد — يُتجنّب.
+drug,Trimethoprim,تراي ميثوبريم,"ACE inhibitors, sartans and aliskiren (class)",class,serious,Raises potassium.,يرفع البوتاسيوم.
+drug,Trimethoprim,تراي ميثوبريم,Potassium-sparing diuretics (class),class,serious,Dangerous rise in potassium.,ارتفاع خطير في البوتاسيوم.
+drug,Tinidazole,تينيدازول,Alcohol,outside,serious,"Flushing, vomiting and palpitations — none for 72 hours after.",احمرار وقيء وخفقان — لا كحول لمدة 72 ساعة بعده.
+drug,Tinidazole,تينيدازول,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Secnidazole,سيكنيدازول,Alcohol,outside,serious,Flushing and vomiting — none for 48 hours after.,احمرار وقيء — لا كحول لمدة 48 ساعة بعده.
+drug,Ornidazole,أورنيدازول,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Chloramphenicol,كلورامفينيكول,Warfarin,drug,serious,By mouth or injection it raises the INR.,بالفم أو الحقن يرفع INR.
+drug,Chloramphenicol,كلورامفينيكول,Phenytoin,drug,serious,Raises phenytoin to toxic levels.,يرفع الفينيتوين إلى حدّ السميّة.
+drug,Chloramphenicol,كلورامفينيكول,Clozapine,drug,serious,Both can wipe out the marrow — avoid.,كلاهما قد يُفني نقي العظم — يُتجنّب.
+drug,Fusidic acid,حمض الفوسيديك,Statins (class),class,critical,"Rhabdomyolysis, sometimes fatal — stop the statin for the course and a week after.",انحلال عضلات قد يكون مميتاً — يُوقف الستاتين طوال الدورة وأسبوعاً بعدها.
+drug,Sulfadiazine,سلفاديازين,Methotrexate,drug,serious,Raises methotrexate toxicity.,يزيد سمّية الميثوتريكسيت.
+drug,Sulfadiazine,سلفاديازين,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Sulfadiazine,سلفاديازين,Phenytoin,drug,warning,Raises phenytoin.,يرفع الفينيتوين.
+drug,Daptomycin,داباتومايسين,Statins (class),class,warning,More muscle damage — consider pausing the statin.,أذية عضلية أكثر — فكّر بإيقاف الستاتين مؤقتاً.
+drug,Isoniazid,أيزونيازيد,Phenytoin,drug,serious,Raises phenytoin.,يرفع الفينيتوين.
+drug,Isoniazid,أيزونيازيد,Carbamazepine,drug,serious,Raises carbamazepine; more liver toxicity.,يرفع الكاربامازيبين؛ وسمّية كبدية أكثر.
+drug,Pyrazinamide,بيرازيناميد,Allopurinol,drug,warning,Pyrazinamide raises uric acid — gout may flare.,البيرازيناميد يرفع حمض البول — قد تشتد النقرس.
+drug,Ethambutol,إيثامبوتول,Aluminium hydroxide,drug,warning,Aluminium antacids lower its absorption — keep four hours apart.,مضادات الحموضة بالألمنيوم تقلّل امتصاصه — افصل بينهما أربع ساعات.
+drug,Cycloserine,سيكلوسيرين,Alcohol,outside,serious,Raises the risk of fits.,يرفع خطر النوبات.
+drug,Cycloserine,سيكلوسيرين,Isoniazid,drug,warning,More dizziness and drowsiness.,دوخة ونعاس أكثر.
+drug,Prothionamide,بروثيوناميد,Isoniazid,drug,warning,More liver toxicity and nerve side effects.,مزيد من سمّية الكبد والأعصاب.
+drug,Prothionamide,بروثيوناميد,Alcohol,outside,serious,More liver toxicity and mental effects.,مزيد من سمّية الكبد والآثار النفسية.
+drug,Aminosalicylic acid,حمض الأمينوساليسيليك,Digoxin,drug,warning,Lowers digoxin absorption.,يقلّل امتصاص الديجوكسين.
+drug,Aminosalicylic acid,حمض الأمينوساليسيليك,Isoniazid,drug,warning,Raises isoniazid levels.,يرفع مستوى الأيزونيازيد.
+drug,Dapsone,دابسون,Rifampicin,drug,warning,Lowers dapsone levels.,يخفض مستوى الدابسون.
+drug,Dapsone,دابسون,Trimethoprim,drug,warning,Raises both drugs — more methaemoglobinaemia.,يرفع كلا الدواءين — مزيد من ميتهيموغلوبينية الدم.
+drug,Isoniazid/Rifampicin,أيزونيازيد/ريفامبيسين,Hormonal contraceptives (class),class,serious,The pill fails — use another method.,تفشل حبوب منع الحمل — استعملي وسيلة أخرى.
+drug,Isoniazid/Rifampicin,أيزونيازيد/ريفامبيسين,Warfarin,drug,serious,Much weaker warfarin — INR checks.,وارفارين أضعف بكثير — فحوص INR.
+drug,Fluconazole,فلوكونازول,Warfarin,drug,serious,Markedly raises INR.,يرفع INR بوضوح.
+drug,Fluconazole,فلوكونازول,Simvastatin,drug,serious,Myopathy risk — hold the statin on longer courses.,خطر اعتلال عضلي — يُوقف الستاتين في الكورسات الطويلة.
+drug,Fluconazole,فلوكونازول,Amiodarone,drug,serious,QT prolongation.,إطالة QT.
+drug,Terbinafine,تيربينافين,Warfarin,drug,warning,May move INR either way.,قد يغيّر INR في الاتجاهين.
+drug,Terbinafine,تيربينافين,Amitriptyline,drug,warning,Raises amitriptyline levels.,يرفع مستوى الأميتريبتيلين.
+drug,Caspofungin,كاسبوفانجين,Ciclosporin,drug,warning,Liver enzymes rise — monitor.,ترتفع إنزيمات الكبد — يُراقب.
+drug,Caspofungin,كاسبوفانجين,Tacrolimus,drug,warning,Lowers tacrolimus levels.,يخفض مستوى التاكروليموس.
+drug,Caspofungin,كاسبوفانجين,Enzyme inducers (class),class,warning,Rifampicin and other inducers lower caspofungin — a higher dose is used.,الريفامبيسين والمحرّضات الأخرى تخفض الكاسبوفنجين — تُرفع الجرعة.
+drug,Micafungin,ميكافانجين,Nifedipine,drug,warning,Raises nifedipine.,يرفع النيفيديبين.
+drug,Griseofulvin,غريزيوفولفين,Alcohol,outside,warning,Flushing and a racing heart.,احمرار وتسارع في القلب.
+drug,Acyclovir,أسيكلوفير,Ibuprofen,drug,warning,Compounded renal risk at high doses.,خطر كلوي مضاعف مع الجرعات العالية.
+drug,Valaciclovir,فالاسيكلوفير,Kidney-toxic drugs (class),class,warning,Drugs that strain the kidneys raise its levels — keep well hydrated.,الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.
+drug,Famciclovir,فامسيكلوفير,Kidney-toxic drugs (class),class,warning,Drugs that strain the kidneys raise its levels — keep well hydrated.,الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.
+drug,Ganciclovir,غانسيكلوفير,Zidovudine,drug,serious,Both lower blood counts — severe anaemia and low white cells.,كلاهما يخفض تعداد الدم — فقر دم شديد ونقص الكريات البيض.
+drug,Ganciclovir,غانسيكلوفير,Mycophenolate,drug,warning,More marrow suppression.,مزيد من تثبيط نقي العظم.
+drug,Ganciclovir,غانسيكلوفير,Imipenem/Cilastatin,drug,serious,Fits have been reported together.,سُجّلت نوبات عند الجمع.
+drug,Valganciclovir,فالغانسيكلوفير,Zidovudine,drug,serious,Both lower blood counts — severe anaemia and low white cells.,كلاهما يخفض تعداد الدم — فقر دم شديد ونقص الكريات البيض.
+drug,Valganciclovir,فالغانسيكلوفير,Mycophenolate,drug,warning,More marrow suppression.,مزيد من تثبيط نقي العظم.
+drug,Valganciclovir,فالغانسيكلوفير,Imipenem/Cilastatin,drug,serious,Fits have been reported together.,سُجّلت نوبات عند الجمع.
+drug,Ribavirin,ريبافيرين,Zidovudine,drug,serious,More anaemia — avoid.,مزيد من فقر الدم — يُتجنّب.
+drug,Ribavirin,ريبافيرين,Azathioprine,drug,serious,Severe marrow suppression.,تثبيط شديد لنقي العظم.
+drug,Remdesivir,ريمديسيفير,Hydroxychloroquine,drug,serious,Weakens remdesivir — not given together.,يُضعف الريمديسيفير — لا يُعطيان معاً.
+drug,Favipiravir,فافيبيرافير,Paracetamol,drug,warning,Raises paracetamol levels — keep to the lower daily dose.,يرفع مستوى الباراسيتامول — الزم الجرعة اليومية الأدنى.
+drug,Favipiravir,فافيبيرافير,Pyrazinamide,drug,warning,Higher uric acid.,ارتفاع حمض البول.
+drug,Entecavir,إنتيكافير,Kidney-toxic drugs (class),class,warning,Drugs that strain the kidneys raise its levels — keep well hydrated.,الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.
+drug,Lamivudine,لاميفودين,Trimethoprim/Sulfamethoxazole,drug,warning,Raises lamivudine levels.,يرفع مستوى اللاميفودين.
+drug,Sofosbuvir,سوفوسبوفير,Amiodarone,drug,critical,"Severe, sometimes fatal slowing of the heart — contraindicated.",بطء شديد في القلب قد يكون مميتاً — ممنوع الجمع.
+drug,Sofosbuvir,سوفوسبوفير,Enzyme inducers (class),class,critical,Loses its effect — contraindicated.,يفقد مفعوله — ممنوع الجمع.
+drug,Daclatasvir,داكلاتاسفير,Amiodarone,drug,critical,With sofosbuvir: severe slowing of the heart — contraindicated.,مع السوفوسبوفير: بطء شديد في القلب — ممنوع الجمع.
+drug,Peginterferon alfa,بيغ إنترفيرون ألفا,Theophylline,drug,warning,Raises theophylline.,يرفع الثيوفيلين.
+drug,Peginterferon alfa,بيغ إنترفيرون ألفا,Zidovudine,drug,serious,More low blood counts.,مزيد من انخفاض تعداد الدم.
+drug,Interferon alfa,إنترفيرون ألفا,Theophylline,drug,warning,Raises theophylline.,يرفع الثيوفيلين.
+drug,Interferon alfa,إنترفيرون ألفا,Zidovudine,drug,serious,More low blood counts.,مزيد من انخفاض تعداد الدم.
+drug,Dolutegravir,دولوتيغرافير,Metformin,drug,warning,Raises metformin — the dose may need lowering.,يرفع الميتفورمين — قد تحتاج جرعته إلى تخفيض.
+drug,Tenofovir disoproxil/Lamivudine/Dolutegravir,تينوفوفير ديزوبروكسيل/لاميفودين/دولوتيغرافير,"Antacids and calcium, iron, zinc or magnesium (class)",class,serious,Binds dolutegravir — separate the doses.,يربط الدولوتيغرافير — افصل بين الجرعات.
+drug,Tenofovir disoproxil/Lamivudine/Dolutegravir,تينوفوفير ديزوبروكسيل/لاميفودين/دولوتيغرافير,Metformin,drug,warning,Raises metformin levels.,يرفع مستوى الميتفورمين.
+drug,Zidovudine/Lamivudine,زيدوفودين/لاميفودين,Ganciclovir,drug,serious,Severe anaemia and low white cells.,فقر دم شديد ونقص الكريات البيض.
+drug,Zidovudine/Lamivudine,زيدوفودين/لاميفودين,Ribavirin,drug,serious,More anaemia — avoid.,مزيد من فقر الدم — يُتجنّب.
+drug,Zidovudine,زيدوفودين,Ganciclovir,drug,serious,Severe anaemia and low white cells.,فقر دم شديد ونقص الكريات البيض.
+drug,Zidovudine,زيدوفودين,Ribavirin,drug,serious,More anaemia — avoid.,مزيد من فقر الدم — يُتجنّب.
+drug,Abacavir,أباكافير,Alcohol,outside,warning,Alcohol raises abacavir levels.,الكحول يرفع مستوى الأباكافير.
+drug,Abacavir,أباكافير,Methadone,drug,warning,May lower methadone levels.,قد يخفض مستوى الميثادون.
+drug,Emtricitabine,إمتريسيتابين,Kidney-toxic drugs (class),class,warning,Drugs that strain the kidneys raise its levels — keep well hydrated.,الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.
+drug,Albendazole,ألبيندازول,Enzyme inducers (class),class,warning,"Carbamazepine, phenytoin and phenobarbital lower albendazole — it may fail in hydatid disease.",الكاربامازيبين والفينيتوين والفينوباربيتال تخفض الألبيندازول — قد يفشل في الكيسات المائية.
+drug,Albendazole,ألبيندازول,Dexamethasone,drug,warning,Raises albendazole levels.,يرفع مستوى الألبيندازول.
+drug,Levamisole,ليفاميزول,Warfarin,drug,warning,Raises the INR.,يرفع INR.
+drug,Levamisole,ليفاميزول,Alcohol,outside,warning,A disulfiram-like reaction is possible.,تفاعل شبيه بالديسلفيرام ممكن.
+drug,Piperazine,بيبرازين,Pyrantel,drug,serious,Opposing actions on the worm — do not combine.,تأثيران متعاكسان على الديدان — لا يُجمعان.
+drug,Piperazine,بيبرازين,Chlorpromazine,drug,warning,May increase the risk of fits.,قد يزيد خطر النوبات.
+drug,Mebendazole,ميبيندازول,Metronidazole,drug,serious,A dangerous skin reaction (Stevens–Johnson) has been reported — avoid together.,سُجّل تفاعل جلدي خطير (ستيفنز جونسون) — يُتجنّب الجمع.
+drug,Pyrantel,بيرانتيل,Piperazine,drug,serious,Opposing actions on the worm — do not combine.,تأثيران متعاكسان على الديدان — لا يُجمعان.
+drug,Ivermectin,إيفرمكتين,Warfarin,drug,warning,INR rises have been reported.,سُجّل ارتفاع INR.
+drug,Praziquantel,برازيكوانتيل,Rifampicin,drug,critical,Praziquantel levels fall to almost nothing — contraindicated.,ينخفض مستوى البرازيكوانتيل إلى ما يقارب الصفر — ممنوع الجمع.
+drug,Niclosamide,نيكلوساميد,Alcohol,outside,warning,Avoid alcohol on the day of treatment.,تجنّب الكحول يوم العلاج.
+drug,Nitazoxanide,نيتازوكسانيد,Warfarin,drug,warning,Highly protein-bound — the INR may change.,يرتبط بشدة ببروتينات الدم — قد يتغيّر INR.
+drug,Miltefosine,ميلتيفوسين,Hormonal contraceptives (class),class,warning,Vomiting and diarrhoea can make the pill fail — use a second method.,التقيؤ والإسهال قد يُفشلان الحبوب — استعملي وسيلة إضافية.
+drug,Artesunate,أرتيسونات,Enzyme inducers (class),class,warning,Lowers artesunate levels.,يخفض مستوى الأرتيسونات.
+drug,Atovaquone/Proguanil,أتوفاكون/بروغوانيل,Warfarin,drug,warning,May raise the INR.,قد يرفع INR.
+drug,Pyrimethamine,بيريميثامين,Methotrexate,drug,serious,Both block folate — marrow suppression.,كلاهما يمنع الفولات — تثبيط نقي العظم.
+drug,Fluorouracil,فلورويوراسيل,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Capecitabine,كابيسيتابين,Warfarin,drug,critical,"Sharp, sometimes fatal rise in the INR — avoid or monitor closely.",ارتفاع حاد وقد يكون مميتاً في INR — يُتجنّب أو يُراقب عن كثب.
+drug,Capecitabine,كابيسيتابين,Phenytoin,drug,serious,Raises phenytoin.,يرفع الفينيتوين.
+drug,Pemetrexed,بيميتريكسيد,NSAIDs (class),class,serious,Reduces pemetrexed clearance — avoid around the dose.,يقلّل طرح البيميتريكسيد — يُتجنّب حول الجرعة.
+drug,Bleomycin,بليومايسين,Brentuximab vedotin,drug,critical,Serious lung toxicity — contraindicated.,سمّية رئوية خطيرة — ممنوع الجمع.
+drug,Bleomycin,بليومايسين,Cisplatin,drug,warning,Cisplatin slows bleomycin removal — lung toxicity.,السيسبلاتين يبطئ طرح البليومايسين — سمّية رئوية.
+drug,Carfilzomib,كارفيلزوميب,Hormonal contraceptives (class),class,warning,Higher clot risk with combined hormonal contraception.,خطر جلطات أعلى مع موانع الحمل الهرمونية المركّبة.
+drug,Asparaginase,أسباراجيناز,Vincristine,drug,serious,More nerve toxicity when given before vincristine.,سمّية عصبية أكثر إذا أُعطي قبل الفينكريستين.
+drug,Asparaginase,أسباراجيناز,Methotrexate,drug,warning,Timing matters — asparaginase can blunt methotrexate.,التوقيت مهم — قد يُضعف الأسباراجيناز الميثوتريكسيت.
+drug,Lenalidomide,ليناليدوميد,Erythropoietin,drug,serious,Higher clot risk.,خطر جلطات أعلى.
+drug,Lenalidomide,ليناليدوميد,Hormonal contraceptives (class),class,serious,Combined hormonal contraception raises the clot risk — use another reliable method.,موانع الحمل الهرمونية المركّبة ترفع خطر الجلطات — استعملي وسيلة موثوقة أخرى.
+drug,Lenalidomide,ليناليدوميد,Digoxin,drug,warning,Raises digoxin levels.,يرفع مستوى الديجوكسين.
+drug,Pomalidomide,بوماليدوميد,Erythropoietin,drug,serious,Higher clot risk.,خطر جلطات أعلى.
+drug,Pomalidomide,بوماليدوميد,Hormonal contraceptives (class),class,serious,Combined hormonal contraception raises the clot risk — use another reliable method.,موانع الحمل الهرمونية المركّبة ترفع خطر الجلطات — استعملي وسيلة موثوقة أخرى.
+drug,Pomalidomide,بوماليدوميد,Fluvoxamine,drug,warning,Fluvoxamine and ciprofloxacin raise pomalidomide.,الفلوفوكسامين والسيبروفلوكساسين يرفعان البوماليدوميد.
+drug,Calcium folinate,فولينات الكالسيوم,Fluorouracil,drug,serious,Strengthens fluorouracil — both its effect and its toxicity; the doses are planned together.,يقوّي الفلورويوراسيل — أثره وسمّيته؛ تُخطّط الجرعات معاً.
+drug,Calcium folinate,فولينات الكالسيوم,Phenytoin,drug,warning,May lower phenytoin levels.,قد يخفض مستوى الفينيتوين.
+drug,Filgrastim,فيلغراستيم,Fluorouracil,drug,warning,Not given within 24 hours before or after chemotherapy.,لا يُعطى خلال 24 ساعة قبل العلاج الكيميائي أو بعده.
+drug,Filgrastim,فيلغراستيم,Lithium,drug,warning,Lithium adds to the rise in white cells.,الليثيوم يزيد ارتفاع الكريات البيض.
+drug,Pegfilgrastim,بيغفيلغراستيم,Fluorouracil,drug,warning,Not given within 24 hours before or after chemotherapy.,لا يُعطى خلال 24 ساعة قبل العلاج الكيميائي أو بعده.
+drug,Pegfilgrastim,بيغفيلغراستيم,Lithium,drug,warning,Lithium adds to the rise in white cells.,الليثيوم يزيد ارتفاع الكريات البيض.
+drug,Tamoxifen,تاموكسيفين,Warfarin,drug,serious,Raises the INR markedly.,يرفع INR كثيراً.
+drug,Letrozole,ليتروزول,Tamoxifen,drug,warning,Tamoxifen lowers letrozole levels — not used together.,التاموكسيفين يخفض مستوى الليتروزول — لا يُستعملان معاً.
+drug,Letrozole,ليتروزول,Estradiol,drug,serious,Oestrogens cancel its effect.,الإستروجينات تُبطل أثره.
+drug,Anastrozole,أناستروزول,Estradiol,drug,serious,Oestrogens cancel its effect.,الإستروجينات تُبطل أثره.
+drug,Anastrozole,أناستروزول,Tamoxifen,drug,warning,Not used together — no added benefit.,لا يُستعملان معاً — دون فائدة إضافية.
+drug,Exemestane,إكسيميستان,Estradiol,drug,serious,Oestrogens cancel its effect.,الإستروجينات تُبطل أثره.
+drug,Fulvestrant,فولفيسترانت,Anticoagulants (class),class,warning,Bruising and bleeding at the injection sites.,كدمات ونزف في مواضع الحقن.
+drug,Bicalutamide,بيكالوتامايد,Warfarin,drug,warning,May raise the INR.,قد يرفع INR.
+drug,Flutamide,فلوتامايد,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Megestrol,ميجيسترول,Warfarin,drug,warning,May raise the INR.,قد يرفع INR.
+drug,Imatinib,إيماتينيب,Warfarin,drug,serious,Raises the INR — a heparin is preferred.,يرفع INR — يُفضّل الهيبارين.
+drug,Imatinib,إيماتينيب,Paracetamol,drug,warning,Regular high doses add to liver strain.,الجرعات العالية المنتظمة تزيد إجهاد الكبد.
+drug,Nilotinib,نيلوتينيب,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,PPIs lower absorption — an H2 blocker timed 10 hours before or 2 hours after is used instead.,مثبطات المضخة تقلّل الامتصاص — يُستعمل بدلها حاصر H2 قبله بعشر ساعات أو بعده بساعتين.
+drug,Dasatinib,داساتينيب,Acid-reducing medicines (PPIs and H2 blockers) (class),class,serious,Stops dasatinib being absorbed — avoid.,يمنع امتصاص الداساتينيب — يُتجنّب.
+drug,Bosutinib,بوسوتينيب,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,"PPIs lower absorption — short-acting antacids, well separated, instead.",مثبطات المضخة تقلّل الامتصاص — تُستعمل بدلها مضادات حموضة قصيرة المفعول مع الفصل.
+drug,Erlotinib,إرلوتينيب,Acid-reducing medicines (PPIs and H2 blockers) (class),class,serious,Stops it being absorbed — avoid PPIs; an H2 blocker only with careful timing.,تمنع امتصاصه — تُتجنّب مثبطات المضخة؛ وحاصر H2 فقط مع توقيت دقيق.
+drug,Erlotinib,إرلوتينيب,Warfarin,drug,serious,Raises the INR.,يرفع INR.
+drug,Gefitinib,جيفيتينيب,Acid-reducing medicines (PPIs and H2 blockers) (class),class,serious,"Stops it being absorbed — avoid, or take gefitinib well before.",تمنع امتصاصه — تُتجنّب، أو يؤخذ الجيفيتينيب قبلها بوقت كافٍ.
+drug,Afatinib,أفاتينيب,Ritonavir,drug,warning,P-glycoprotein inhibitors raise afatinib — take them six hours apart.,مثبطات P-glycoprotein ترفع الأفاتينيب — بفاصل ست ساعات.
+drug,Sorafenib,سورافينيب,Warfarin,drug,warning,INR rises and bleeding reported.,سُجّل ارتفاع INR ونزف.
+drug,Pazopanib,بازوبانيب,Acid-reducing medicines (PPIs and H2 blockers) (class),class,serious,"Lowers absorption — avoid, or use short-acting antacids well apart.",يقلّل الامتصاص — يُتجنّب، أو تُستعمل مضادات حموضة قصيرة المفعول مع فصل كافٍ.
+drug,Trastuzumab,تراستوزوماب,Doxorubicin,drug,serious,"Heart damage — the heart is checked, and they are not given at the same time.",أذية قلبية — يُفحص القلب ولا يُعطيان في الوقت نفسه.
+drug,Trastuzumab emtansine,تراستوزوماب إمتانسين,Strong CYP3A4 inhibitors (class),class,warning,Strong inhibitors raise the emtansine part — avoid.,المثبطات القوية ترفع جزء الإمتانسين — تُتجنّب.
+drug,Pertuzumab,بيرتوزوماب,Doxorubicin,drug,serious,"Heart damage — the heart is checked, and they are not given at the same time.",أذية قلبية — يُفحص القلب ولا يُعطيان في الوقت نفسه.
+drug,Ramucirumab,راموسيروماب,Anticoagulants (class),class,warning,Bleeding risk.,خطر نزف.
+drug,Bevacizumab,بيفاسيزوماب,Anticoagulants (class),class,warning,Bleeding risk.,خطر نزف.
+drug,Bevacizumab,بيفاسيزوماب,Sunitinib,drug,serious,A blood-vessel disease of the kidney (microangiopathic anaemia) reported — avoid.,سُجّل مرض وعائي في الكلى (فقر دم اعتلال الأوعية الدقيقة) — يُتجنّب.
+drug,Pembrolizumab,بيمبروليزوماب,Systemic corticosteroids (class),class,warning,Steroids before starting can weaken the treatment — they are used freely for its side effects once started.,الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.
+drug,Nivolumab,نيفولوماب,Systemic corticosteroids (class),class,warning,Steroids before starting can weaken the treatment — they are used freely for its side effects once started.,الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.
+drug,Atezolizumab,أتيزوليزوماب,Systemic corticosteroids (class),class,warning,Steroids before starting can weaken the treatment — they are used freely for its side effects once started.,الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.
+drug,Durvalumab,دورفالوماب,Systemic corticosteroids (class),class,warning,Steroids before starting can weaken the treatment — they are used freely for its side effects once started.,الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.
+drug,Ipilimumab,إيبيليموماب,Systemic corticosteroids (class),class,warning,Steroids before starting can weaken the treatment — they are used freely for its side effects once started.,الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.
+drug,Brentuximab vedotin,برينتوكسيماب فيدوتين,Bleomycin,drug,critical,Serious lung toxicity — contraindicated.,سمّية رئوية خطيرة — ممنوع الجمع.
+drug,Brentuximab vedotin,برينتوكسيماب فيدوتين,Strong CYP3A4 inhibitors (class),class,warning,Raises the vedotin part — more nerve damage and low white cells.,يرفع جزء الفيدوتين — مزيد من أذية الأعصاب ونقص الكريات البيض.
+drug,Azathioprine,آزاثيوبرين,Allopurinol,drug,critical,Life-threatening marrow suppression — quarter the dose or avoid the combination.,تثبيط نقي مهدّد للحياة — تُخفّض الجرعة إلى الربع أو يُتجنّب الجمع.
+drug,Azathioprine,آزاثيوبرين,Trimethoprim/Sulfamethoxazole,drug,serious,Compounded marrow suppression.,تثبيط نقي مضاعف.
+drug,Azathioprine,آزاثيوبرين,Warfarin,drug,warning,Reduces warfarin’s effect.,يقلّل أثر الوارفارين.
+drug,Ciclosporin,سيكلوسبورين,Simvastatin,drug,critical,Rhabdomyolysis — contraindicated.,انحلال العضلات المخططة — ممنوع الجمع.
+drug,Ciclosporin,سيكلوسبورين,Statins (class),class,serious,Raises statin levels — muscle damage; use the lowest dose.,يرفع مستوى الستاتين — أذية عضلية؛ استعمل أقل جرعة.
+drug,Ciclosporin,سيكلوسبورين,Potassium-sparing diuretics (class),class,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Ciclosporin,سيكلوسبورين,Grapefruit juice,outside,serious,Raises ciclosporin — none during treatment.,يرفع السيكلوسبورين — لا يُشرب أثناء العلاج.
+drug,Tacrolimus,تاكروليموس,Grapefruit juice,outside,serious,Raises tacrolimus — none during treatment.,يرفع التاكروليموس — لا يُشرب أثناء العلاج.
+drug,Dupilumab,دوبيلوماب,Live vaccines (class),class,serious,Live vaccines are avoided during treatment.,تُتجنّب اللقاحات الحية أثناء العلاج.
+drug,Hepatitis B vaccine,لقاح التهاب الكبد B,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,"Poliomyelitis vaccine, inactivated",لقاح شلل الأطفال المعطّل (IPV),Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Pentavalent vaccine,اللقاح الخماسي,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Hexavalent vaccine,اللقاح السداسي,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,"Diphtheria, tetanus and pertussis vaccine",اللقاح الثلاثي (الدفتريا والكزاز والسعال الديكي),Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Diphtheria and tetanus vaccine,اللقاح الثنائي (الدفتريا والكزاز),Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Tetanus toxoid,ذوفان الكزاز,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Haemophilus influenzae type b vaccine,لقاح المستدمية النزلية نوع b,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Pneumococcal conjugate vaccine,لقاح المكورات الرئوية المقترن,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Pneumococcal polysaccharide vaccine,لقاح المكورات الرئوية عديد السكاريد,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Meningococcal vaccine,لقاح المكورات السحائية,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Influenza vaccine,لقاح الإنفلونزا,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Influenza vaccine,لقاح الإنفلونزا,Warfarin,drug,warning,The INR occasionally rises after flu vaccination.,يرتفع INR أحياناً بعد لقاح الإنفلونزا.
+drug,Hepatitis A vaccine,لقاح التهاب الكبد A,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Rabies vaccine,لقاح داء الكلب,Immunosuppressants (class),class,warning,The vaccine may work less well during immunosuppressive treatment.,قد يعمل اللقاح بدرجة أقل أثناء العلاج المثبط للمناعة.
+drug,Human normal immunoglobulin,الغلوبولين المناعي البشري الطبيعي,Live vaccines (class),class,warning,"Can stop a live vaccine working — live vaccines (measles, chickenpox) are delayed for three months.",قد يمنع اللقاح الحي من العمل — تُؤجّل اللقاحات الحية (الحصبة، الجدري المائي) ثلاثة أشهر.
+drug,Anti-D immunoglobulin,الغلوبولين المناعي المضاد لـ D,Live vaccines (class),class,warning,"Can stop a live vaccine working — live vaccines (measles, chickenpox) are delayed for three months.",قد يمنع اللقاح الحي من العمل — تُؤجّل اللقاحات الحية (الحصبة، الجدري المائي) ثلاثة أشهر.
+drug,Hepatitis B immunoglobulin,الغلوبولين المناعي لالتهاب الكبد B,Live vaccines (class),class,warning,"Can stop a live vaccine working — live vaccines (measles, chickenpox) are delayed for three months.",قد يمنع اللقاح الحي من العمل — تُؤجّل اللقاحات الحية (الحصبة، الجدري المائي) ثلاثة أشهر.
+drug,Tetanus immunoglobulin,الغلوبولين المناعي للكزاز,Live vaccines (class),class,warning,"Can stop a live vaccine working — live vaccines (measles, chickenpox) are delayed for three months.",قد يمنع اللقاح الحي من العمل — تُؤجّل اللقاحات الحية (الحصبة، الجدري المائي) ثلاثة أشهر.
+drug,Rabies immunoglobulin,الغلوبولين المناعي لداء الكلب,Live vaccines (class),class,warning,"Can stop a live vaccine working — live vaccines (measles, chickenpox) are delayed for three months.",قد يمنع اللقاح الحي من العمل — تُؤجّل اللقاحات الحية (الحصبة، الجدري المائي) ثلاثة أشهر.
+drug,Rabies immunoglobulin,الغلوبولين المناعي لداء الكلب,Rabies vaccine,drug,warning,"Given at a different site, and not over-dosed, or it weakens the vaccine.",يُعطى في موضع مختلف ودون زيادة الجرعة، وإلا أضعف اللقاح.
+drug,Cytomegalovirus immunoglobulin,الغلوبولين المناعي للفيروس المضخّم للخلايا,Live vaccines (class),class,warning,"Can stop a live vaccine working — live vaccines (measles, chickenpox) are delayed for three months.",قد يمنع اللقاح الحي من العمل — تُؤجّل اللقاحات الحية (الحصبة، الجدري المائي) ثلاثة أشهر.
+drug,Cholecalciferol,كولي كالسيفيرول,Digoxin,drug,warning,Hypercalcaemia raises digoxin toxicity.,فرط الكالسيوم يزيد سميّة الديجوكسين.
+drug,Cholecalciferol,كولي كالسيفيرول,Hydrochlorothiazide,drug,warning,Risk of hypercalcaemia.,خطر فرط كالسيوم.
+drug,Retinol,ريتينول,Isotretinoin,drug,serious,Vitamin A toxicity — no vitamin A supplements with it.,تسمّم بفيتامين أ — لا مكمّلات فيتامين أ معه.
+drug,Nicotinamide,نيكوتيناميد,Carbamazepine,drug,warning,High doses raise carbamazepine.,الجرعات العالية ترفع الكاربامازيبين.
+drug,Pyridoxine,بيريدوكسين,Levodopa,drug,serious,Pyridoxine weakens levodopa given on its own (not with carbidopa or benserazide).,البيريدوكسين يُضعف الليفودوبا المعطى وحده (لا مع الكاربيدوبا أو البنسيرازيد).
+drug,Pyridoxine,بيريدوكسين,Phenytoin,drug,warning,High doses lower phenytoin.,الجرعات العالية تخفض الفينيتوين.
+drug,Vitamin B complex,فيتامين B المركّب,Levodopa,drug,warning,The B6 in it can weaken levodopa given on its own.,فيتامين B6 فيه قد يُضعف الليفودوبا المعطى وحده.
+drug,Ascorbic acid,حمض الأسكوربيك,Deferoxamine,drug,serious,"High doses with deferoxamine can strain the heart — only small doses, after the first month.",الجرعات العالية مع الديفيروكسامين قد تُجهد القلب — جرعات صغيرة فقط وبعد الشهر الأول.
+drug,Tocopherol,توكوفيرول,Warfarin,drug,warning,High doses may raise the INR.,الجرعات العالية قد ترفع INR.
+drug,Ergocalciferol,إرغوكالسيفيرول,Thiazide diuretics (class),class,warning,Thiazides raise calcium — too much calcium with high-dose vitamin D.,الثيازيدات ترفع الكالسيوم — زيادة الكالسيوم مع فيتامين د بجرعة عالية.
+drug,Ergocalciferol,إرغوكالسيفيرول,Digoxin,drug,warning,High calcium makes digoxin toxic.,ارتفاع الكالسيوم يجعل الديجوكسين ساماً.
+drug,Multivitamins,الفيتامينات المتعددة,Warfarin,drug,warning,Products with vitamin K can lower the INR — keep to the same product.,المستحضرات الحاوية على فيتامين K قد تخفض INR — التزم بالمستحضر نفسه.
+drug,Potassium chloride,كلوريد البوتاسيوم,Spironolactone,drug,critical,Life-threatening hyperkalaemia.,فرط بوتاسيوم مهدّد للحياة.
+drug,Potassium chloride,كلوريد البوتاسيوم,Lisinopril,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Potassium chloride,كلوريد البوتاسيوم,Losartan,drug,serious,Hyperkalaemia.,فرط بوتاسيوم.
+drug,Sodium fluoride,فلوريد الصوديوم,"Antacids and calcium, iron, zinc or magnesium (class)",class,warning,Calcium and magnesium bind fluoride — keep them apart.,الكالسيوم والمغنيسيوم يربطان الفلوريد — افصل بينها.
+drug,Sevelamer,سيفيلامير,Ciprofloxacin,drug,serious,Binds it — ciprofloxacin two hours before.,يربطه — يؤخذ السيبروفلوكساسين قبله بساعتين.
+drug,Sevelamer,سيفيلامير,Levothyroxine,drug,warning,Binds it — four hours apart.,يربطه — بفاصل أربع ساعات.
+drug,Sevelamer,سيفيلامير,Mycophenolate,drug,warning,Lowers mycophenolate absorption.,يقلّل امتصاص الميكوفينولات.
+drug,Ubidecarenone,يوبيديكارينون,Warfarin,drug,warning,May lower the INR.,قد يخفض INR.
+drug,Levocarnitine,ليفوكارنيتين,Warfarin,drug,warning,INR rises have been reported.,سُجّل ارتفاع INR.
+drug,Calcium gluconate,غلوكونات الكالسيوم,Ceftriaxone,drug,critical,Precipitates in lung and kidney — the IV combination is contraindicated.,ترسّب في الرئة والكلية — ممنوع الجمع وريدياً.
+drug,Calcium gluconate,غلوكونات الكالسيوم,Digoxin,drug,serious,IV calcium with digoxin causes arrhythmia.,الكالسيوم الوريدي مع الديجوكسين يسبّب اضطراب نظم.
+drug,Compound sodium lactate,لاكتات الصوديوم المركّبة,Ceftriaxone,drug,critical,"The calcium in it forms crystals with ceftriaxone — never in the same line, and not within 48 hours in newborns.",الكالسيوم فيه يكوّن بلورات مع السيفترياكسون — لا يُعطيان في الخط نفسه أبداً، ولا خلال 48 ساعة عند حديثي الولادة.
+drug,Ringer's solution,محلول رينغر,Ceftriaxone,drug,critical,"The calcium in it forms crystals with ceftriaxone — never in the same line, and not within 48 hours in newborns.",الكالسيوم فيه يكوّن بلورات مع السيفترياكسون — لا يُعطيان في الخط نفسه أبداً، ولا خلال 48 ساعة عند حديثي الولادة.
+drug,Sodium bicarbonate,بيكربونات الصوديوم,Lithium,drug,warning,Alkaline urine lowers lithium levels.,البول القلوي يخفض مستوى الليثيوم.
+drug,Sodium bicarbonate,بيكربونات الصوديوم,Aspirin,drug,warning,Speeds aspirin removal (used deliberately in overdose).,يسرّع طرح الأسبرين (ويُستعمل عمداً في الجرعة الزائدة).
+drug,Magnesium sulfate,كبريتات المغنيسيوم,Nifedipine,drug,serious,A deep fall in blood pressure and muscle weakness.,هبوط عميق في الضغط وضعف عضلي.
+drug,Magnesium sulfate,كبريتات المغنيسيوم,Rocuronium,drug,serious,Magnesium deepens and prolongs the muscle block.,المغنيسيوم يعمّق الإحصار العضلي ويطيله.
+drug,Calcium chloride,كلوريد الكالسيوم,Digoxin,drug,serious,Heart rhythm problems — given with great care.,اضطرابات نظم القلب — يُعطى بحذر شديد.
+drug,Calcium chloride,كلوريد الكالسيوم,Ceftriaxone,drug,critical,Not in the same line or mixed — crystals can form.,لا يُعطيان في الخط نفسه ولا يُمزجان — قد تتكوّن بلورات.
+drug,Lipid emulsion,مستحلب الدهون,Warfarin,drug,warning,Soya-based emulsions carry vitamin K — they can lower the INR.,المستحلبات المصنوعة من الصويا تحمل فيتامين K — قد تخفض INR.
+drug,Sapropterin,سابروبتيرين,Levodopa,drug,warning,Fits and irritability reported together.,سُجّلت نوبات وهياج عند الجمع.
+drug,Sapropterin,سابروبتيرين,Methotrexate,drug,warning,Lowers its active levels.,يخفض مستوياته الفعّالة.
+drug,Sodium phenylbutyrate,فينيل بوتيرات الصوديوم,Sodium valproate,drug,serious,Valproate raises ammonia — it can bring on a crisis.,الفالبروات يرفع الأمونيا — قد يسبّب نوبة.
+drug,Sodium phenylbutyrate,فينيل بوتيرات الصوديوم,Systemic corticosteroids (class),class,warning,Steroids break down body protein and raise ammonia.,الكورتيزون يفكّك بروتين الجسم ويرفع الأمونيا.
+drug,Miconazole (topical),ميكونازول (موضعي),Warfarin,drug,serious,Vaginal and even skin use can raise the INR — check it.,الاستعمال المهبلي وحتى الجلدي قد يرفع INR — افحصه.
+drug,Isotretinoin,أيزوتريتينوين,Doxycycline,drug,serious,Raised intracranial pressure — avoid the combination.,ارتفاع ضغط داخل القحف — يُتجنّب الجمع.
+drug,Isotretinoin,أيزوتريتينوين,Cholecalciferol,drug,warning,Risk of hypervitaminosis A.,خطر فرط الفيتامين A.
+drug,Metronidazole (topical),ميترونيدازول (موضعي),Alcohol,outside,warning,Vaginal use: a disulfiram-like reaction is possible — no alcohol.,الاستعمال المهبلي: تفاعل شبيه بالديسلفيرام ممكن — لا كحول.
+drug,Metronidazole (topical),ميترونيدازول (موضعي),Warfarin,drug,warning,Vaginal use may raise the INR.,الاستعمال المهبلي قد يرفع INR.
+drug,Tacrolimus (topical),تاكروليموس (موضعي),Alcohol,outside,warning,Facial flushing and skin irritation.,احمرار الوجه وتهيّج الجلد.
+drug,Acitretin,أسيتريتين,Methotrexate,drug,critical,Severe liver damage — do not combine.,أذية كبدية شديدة — لا يُجمعان.
+drug,Acitretin,أسيتريتين,Tetracyclines (class),class,serious,Raised pressure in the skull — avoid the combination.,ارتفاع الضغط داخل الجمجمة — يُتجنّب الجمع.
+drug,Acitretin,أسيتريتين,Alcohol,outside,serious,"Turns it into a form that stays for years, lengthening the pregnancy ban.",يحوّله إلى شكل يبقى سنوات، فتطول مدة منع الحمل.
+drug,Acitretin,أسيتريتين,Retinol,drug,serious,Vitamin A toxicity — no vitamin A supplements.,تسمّم بفيتامين أ — لا مكمّلات فيتامين أ.
+drug,Timolol,تيمولول,Verapamil and diltiazem (class),class,serious,Slow pulse and heart block — even from eye drops.,بطء النبض وإحصار القلب — حتى من قطرة العين.
+drug,Timolol,تيمولول,Beta-blockers (class),class,warning,Adds to the slowing of the pulse and to the pressure-lowering; two beta-blockers are rarely needed.,يزيد بطء النبض وانخفاض الضغط؛ ونادراً ما يُحتاج إلى حاصرَي بيتا.
+drug,Carteolol,كارتيولول,Verapamil and diltiazem (class),class,serious,Slow pulse and heart block — even from eye drops.,بطء النبض وإحصار القلب — حتى من قطرة العين.
+drug,Betaxolol,بيتاكسولول,Verapamil and diltiazem (class),class,warning,Slower pulse is possible.,بطء النبض ممكن.
+drug,Brimonidine,بريمونيدين,MAO inhibitors (including linezolid) (class),class,critical,Contraindicated — risk of dangerous blood-pressure changes.,ممنوع — خطر تغيّرات خطيرة في ضغط الدم.
+drug,Brimonidine,بريمونيدين,Sedating drugs (class),class,warning,More drowsiness.,نعاس أكثر.
+drug,Acetazolamide,أسيتازولاميد,Aspirin,drug,serious,High-dose aspirin: acidosis and toxicity.,الأسبرين بجرعة عالية: حماض وتسمّم.
+drug,Acetazolamide,أسيتازولاميد,Lithium,drug,warning,Lithium levels change — monitor.,يتغيّر مستوى الليثيوم — يُراقب.
+drug,Miconazole,ميكونازول,Warfarin,drug,critical,"INR rises sharply with bleeding — avoid, or check the INR very closely.",يرتفع INR بشدة مع نزف — يُتجنّب، أو يُفحص INR عن كثب شديد.
+drug,Miconazole,ميكونازول,Gliclazide,drug,serious,Low blood sugar.,هبوط سكر الدم.
+drug,Miconazole,ميكونازول,Glimepiride,drug,serious,Low blood sugar.,هبوط سكر الدم.
+drug,Miconazole,ميكونازول,Glibenclamide,drug,serious,Low blood sugar.,هبوط سكر الدم.
+drug,Miconazole,ميكونازول,Phenytoin,drug,serious,Raises phenytoin to toxic levels.,يرفع الفينيتوين إلى حدّ السميّة.
+drug,Halothane,هالوثان,Adrenaline,drug,serious,Halothane sensitises the heart to adrenaline — dangerous rhythms; adrenaline in local anaesthetic is kept small.,يجعل الهالوثان القلب حساساً للأدرينالين — اضطرابات نظم خطيرة؛ ويُقلَّل الأدرينالين في المخدّر الموضعي.
+drug,Nitrous oxide,أكسيد النيتروز,Methotrexate,drug,serious,Nitrous oxide inactivates vitamin B12 and adds to methotrexate toxicity — avoid repeated use.,يُعطّل أكسيد النيتروز فيتامين B12 ويزيد سمّية الميثوتريكسيت — يُتجنّب الاستعمال المتكرر.
+drug,Lidocaine,ليدوكايين,Amiodarone,drug,serious,"Raises lidocaine levels when given into a vein — numbness, fits and rhythm problems.",يرفع مستوى الليدوكايين عند إعطائه وريدياً — تنميل ونوبات واضطراب نظم.
+drug,Lidocaine,ليدوكايين,Beta-blockers (class),class,warning,Propranolol and other beta-blockers raise lidocaine levels (intravenous use).,البروبرانولول وحاصرات بيتا الأخرى ترفع مستوى الليدوكايين (الاستعمال الوريدي).
+drug,Lidocaine/Prilocaine,ليدوكايين/بريلوكايين,Dapsone,drug,warning,Adds to the risk of methaemoglobinaemia (blood that cannot carry oxygen).,يزيد خطر ميتهيموغلوبينية الدم (عجز الدم عن حمل الأكسجين).
+drug,Lidocaine/Prilocaine,ليدوكايين/بريلوكايين,Trimethoprim/Sulfamethoxazole,drug,warning,Sulfonamides add to the risk of methaemoglobinaemia.,السلفوناميدات تزيد خطر ميتهيموغلوبينية الدم.
+drug,Bupivacaine,بوبيفاكايين,Amiodarone,drug,warning,Additive effects on the heart — more cardiac toxicity if levels run high.,تأثيرات مضافة على القلب — سمّية قلبية أكبر إذا ارتفعت المستويات.
+drug,Levobupivacaine,ليفوبوبيفاكايين,Amiodarone,drug,warning,Additive effects on the heart — more cardiac toxicity if levels run high.,تأثيرات مضافة على القلب — سمّية قلبية أكبر إذا ارتفعت المستويات.
+drug,Ropivacaine,روبيفاكايين,Amiodarone,drug,warning,Additive effects on the heart — more cardiac toxicity if levels run high.,تأثيرات مضافة على القلب — سمّية قلبية أكبر إذا ارتفعت المستويات.
+drug,Ropivacaine,روبيفاكايين,Fluvoxamine,drug,serious,"Fluvoxamine (and ciprofloxacin, less) raise ropivacaine — avoid long infusions together.",الفلوفوكسامين (والسيبروفلوكساسين بدرجة أقل) يرفع الروبيفاكايين — تُتجنّب التسريبات الطويلة معاً.
+drug,Prilocaine,بريلوكايين,Dapsone,drug,warning,Adds to the risk of methaemoglobinaemia (blood that cannot carry oxygen).,يزيد خطر ميتهيموغلوبينية الدم (عجز الدم عن حمل الأكسجين).
+drug,Prilocaine,بريلوكايين,Trimethoprim/Sulfamethoxazole,drug,warning,Sulfonamides add to the risk of methaemoglobinaemia.,السلفوناميدات تزيد خطر ميتهيموغلوبينية الدم.
+drug,Articaine,أرتيكايين,Non-selective beta-blockers (class),class,serious,The adrenaline in dental cartridges can cause a sharp rise in blood pressure with a slow pulse — use a plain cartridge or small volumes.,الأدرينالين في خراطيش الأسنان قد يسبّب ارتفاعاً حاداً في الضغط مع بطء النبض — تُستعمل خرطوشة دون أدرينالين أو كميات صغيرة.
+drug,Articaine,أرتيكايين,Amitriptyline,drug,warning,Tricyclics strengthen the effect of the adrenaline in dental cartridges on blood pressure.,ثلاثيات الحلقات تقوّي أثر أدرينالين خراطيش الأسنان على الضغط.
+drug,Mepivacaine,ميبيفاكايين,Non-selective beta-blockers (class),class,serious,The adrenaline in dental cartridges can cause a sharp rise in blood pressure with a slow pulse — use a plain cartridge or small volumes.,الأدرينالين في خراطيش الأسنان قد يسبّب ارتفاعاً حاداً في الضغط مع بطء النبض — تُستعمل خرطوشة دون أدرينالين أو كميات صغيرة.
+drug,Mepivacaine,ميبيفاكايين,Amitriptyline,drug,warning,Tricyclics strengthen the effect of the adrenaline in dental cartridges on blood pressure.,ثلاثيات الحلقات تقوّي أثر أدرينالين خراطيش الأسنان على الضغط.
+drug,Tetracaine,تتراكايين,Cholinesterase inhibitors (class),class,warning,Anticholinesterases slow the breakdown of tetracaine — more side effects.,مثبطات الكولين إستيراز تبطئ تفكّك التتراكايين — آثار جانبية أكثر.
+drug,Benzocaine,بنزوكايين,Dapsone,drug,warning,Adds to the risk of methaemoglobinaemia (blood that cannot carry oxygen).,يزيد خطر ميتهيموغلوبينية الدم (عجز الدم عن حمل الأكسجين).
+drug,Hyaluronidase,هيالورونيداز,Systemic corticosteroids (class),class,warning,High-dose steroids can weaken its effect.,الكورتيزون بجرعات عالية قد يُضعف أثره.
+drug,Suxamethonium,سوكساميثونيوم,Digoxin,drug,serious,Potassium released by suxamethonium can trigger dangerous rhythms with digoxin.,البوتاسيوم الذي يطلقه السوكساميثونيوم قد يثير اضطرابات نظم خطيرة مع الديجوكسين.
+drug,Suxamethonium,سوكساميثونيوم,Cholinesterase inhibitors (class),class,serious,Anticholinesterases prolong its effect — long paralysis.,مثبطات الكولين إستيراز تطيل أثره — شلل مديد.
+drug,Atracurium,أتراكوريوم,Gentamicin,drug,serious,Aminoglycoside antibiotics deepen and prolong the muscle block.,المضادات الأمينوغليكوزيدية تعمّق الإحصار العضلي وتطيله.
+drug,Atracurium,أتراكوريوم,Magnesium sulfate,drug,serious,Magnesium deepens and prolongs the muscle block.,المغنيسيوم يعمّق الإحصار العضلي ويطيله.
+drug,Cisatracurium,سيس أتراكوريوم,Gentamicin,drug,serious,Aminoglycoside antibiotics deepen and prolong the muscle block.,المضادات الأمينوغليكوزيدية تعمّق الإحصار العضلي وتطيله.
+drug,Cisatracurium,سيس أتراكوريوم,Magnesium sulfate,drug,serious,Magnesium deepens and prolongs the muscle block.,المغنيسيوم يعمّق الإحصار العضلي ويطيله.
+drug,Rocuronium,روكورونيوم,Gentamicin,drug,serious,Aminoglycoside antibiotics deepen and prolong the muscle block.,المضادات الأمينوغليكوزيدية تعمّق الإحصار العضلي وتطيله.
+drug,Rocuronium,روكورونيوم,Magnesium sulfate,drug,serious,Magnesium deepens and prolongs the muscle block.,المغنيسيوم يعمّق الإحصار العضلي ويطيله.
+drug,Vecuronium,فيكورونيوم,Gentamicin,drug,serious,Aminoglycoside antibiotics deepen and prolong the muscle block.,المضادات الأمينوغليكوزيدية تعمّق الإحصار العضلي وتطيله.
+drug,Vecuronium,فيكورونيوم,Magnesium sulfate,drug,serious,Magnesium deepens and prolongs the muscle block.,المغنيسيوم يعمّق الإحصار العضلي ويطيله.
+drug,Pancuronium,بانكورونيوم,Gentamicin,drug,serious,Aminoglycoside antibiotics deepen and prolong the muscle block.,المضادات الأمينوغليكوزيدية تعمّق الإحصار العضلي وتطيله.
+drug,Pancuronium,بانكورونيوم,Magnesium sulfate,drug,serious,Magnesium deepens and prolongs the muscle block.,المغنيسيوم يعمّق الإحصار العضلي ويطيله.
+drug,Sugammadex,سوغاماديكس,Hormonal contraceptives (class),class,serious,Works like a missed pill — use condoms for seven days.,يعمل كحبة منسية — يُستعمل الواقي سبعة أيام.
+drug,Pralidoxime,براليدوكسيم,Cholinesterase inhibitors (class),class,warning,Can weaken neostigmine and pyridostigmine.,قد يُضعف النيوستيغمين والبيريدوستيغمين.
+drug,Naloxone,نالوكسون,Opioids (class),class,warning,Reverses opioid pain relief as well as the overdose; withdrawal may follow in dependent people.,يعكس تسكين الأفيونات مع الجرعة الزائدة؛ وقد يتبعه انسحاب عند المعتمدين.
+drug,Flumazenil,فلومازينيل,Benzodiazepines and Z-drugs (class),class,warning,Reverses benzodiazepines — fits are possible after long use.,يعكس البنزوديازيبينات — النوبات ممكنة بعد الاستعمال الطويل.
+drug,Flumazenil,فلومازينيل,Amitriptyline,drug,serious,In tricyclic overdose it can bring on fits.,في جرعة ثلاثيات الحلقات الزائدة قد يسبّب نوبات.
+drug,Activated charcoal,الفحم المنشّط,Hormonal contraceptives (class),class,warning,Repeated doses can stop the pill working — use extra protection.,الجرعات المتكررة قد تُبطل حبوب منع الحمل — استعملي حماية إضافية.
+drug,Protamine,بروتامين,Heparin,drug,warning,Neutralises heparin — too much protamine is itself an anticoagulant.,يعادل الهيبارين — والزيادة من البروتامين مضادة للتخثّر بنفسها.
+drug,Amyl nitrite,نتريت الأميل,PDE5 inhibitors (class),class,critical,Dangerous fall in blood pressure.,هبوط خطير في ضغط الدم.
+drug,Idarucizumab,إيداروسيزوماب,Dabigatran,drug,warning,Reverses dabigatran within minutes — it is restarted when safe.,يعكس الدابيغاتران خلال دقائق — ويُستأنف حين يكون آمناً.
+drug,Digoxin immune fab,الأجسام المضادة للديجوكسين,Digoxin,drug,warning,Binds digoxin — digoxin blood tests are misleading for days after.,يربط الديجوكسين — تحاليل الديجوكسين مضلّلة لأيام بعده.
+drug,Dimercaprol,ديميركابرول,Ferrous sulfate,drug,critical,Iron with dimercaprol forms a toxic complex — no iron during treatment.,الحديد مع الديميركابرول يكوّن مركّباً ساماً — لا حديد أثناء العلاج.
+drug,Sodium calcium edetate,إيديتات الكالسيوم والصوديوم,Zinc sulfate,drug,warning,Removes zinc too — zinc may be needed.,يزيل الزنك أيضاً — قد يلزم تعويضه.
+drug,Scorpion antivenom,مضاد سم العقرب,Beta-blockers (class),class,warning,Beta-blockers can make an allergic reaction to the horse serum harder to treat.,حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.
+drug,Snake antivenom,مضاد سم الأفاعي,Beta-blockers (class),class,warning,Beta-blockers can make an allergic reaction to the horse serum harder to treat.,حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.
+drug,Diphtheria antitoxin,مضاد ذيفان الخناق,Beta-blockers (class),class,warning,Beta-blockers can make an allergic reaction to the horse serum harder to treat.,حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.
+drug,Botulism antitoxin,مضاد ذيفان التسمّم الوشيقي,Beta-blockers (class),class,warning,Beta-blockers can make an allergic reaction to the horse serum harder to treat.,حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.
+drug,Pelargonium sidoides,بيلارغونيوم سيدويدس,Anticoagulants (class),class,warning,Contains coumarins — a theoretical effect on the INR.,يحتوي كومارينات — تأثير نظري على INR.
+drug,Echinacea,إشنسا,Immunosuppressants (class),class,warning,May work against the immunosuppressant.,قد يعاكس أثر مثبط المناعة.
+drug,Peppermint oil,زيت النعناع,Acid-reducing medicines (PPIs and H2 blockers) (class),class,warning,The capsule opens too early — heartburn.,تنفتح الكبسولة مبكراً — حرقة.
+drug,Chamomile,البابونج,Warfarin,drug,warning,Large amounts may raise the INR.,الكميات الكبيرة قد ترفع INR.
+drug,Nigella sativa,الحبة السوداء,Diabetes medicines (class),class,warning,May lower blood sugar further.,قد يزيد انخفاض سكر الدم.
+drug,Nigella sativa,الحبة السوداء,Anticoagulants (class),class,warning,May add to bleeding in large amounts.,قد يزيد النزف بالكميات الكبيرة.
+drug,Cranberry,التوت البري,Warfarin,drug,warning,Large amounts may raise the INR.,الكميات الكبيرة قد ترفع INR.
+drug,"Terpenes (pinene, camphene, borneol, anethole, fenchone, cineole)",التربينات (بينين، كامفين، بورنيول، أنيثول، فينشون، سينيول),Warfarin,drug,warning,May weaken warfarin — check the INR.,قد يُضعف الوارفارين — افحص INR.
+drug,Saw palmetto,البلميط المنشاري,Anticoagulants (class),class,warning,Rare bleeding reports.,تقارير نادرة عن نزف.
+drug,St John's wort,عشبة سانت جون,Hormonal contraceptives (class),class,serious,The pill can fail — pregnancy risk.,قد تفشل حبوب منع الحمل — خطر الحمل.
+drug,St John's wort,عشبة سانت جون,Warfarin,drug,serious,Lowers the INR — clots.,يخفض INR — جلطات.
+drug,St John's wort,عشبة سانت جون,Digoxin,drug,serious,Lowers digoxin levels.,يخفض مستوى الديجوكسين.
+drug,Ginkgo biloba,الجنكة بيلوبا,Anticoagulants (class),class,warning,More bleeding.,نزف أكثر.
+drug,Ginkgo biloba,الجنكة بيلوبا,Antiplatelets (class),class,warning,More bleeding.,نزف أكثر.
+drug,Ginkgo biloba,الجنكة بيلوبا,NSAIDs (class),class,warning,More bleeding.,نزف أكثر.
+drug,Ginseng,الجنسنغ,Warfarin,drug,warning,May lower the INR.,قد يخفض INR.
+drug,Ginseng,الجنسنغ,Diabetes medicines (class),class,warning,May lower blood sugar further.,قد يزيد انخفاض سكر الدم.
+drug,Ginseng,الجنسنغ,MAO inhibitors (including linezolid) (class),class,warning,"Headache, tremor and mania have been reported.",سُجّل صداع ورعاش وهوس.
+drug,Valerian,الناردين,Sedating drugs (class),class,warning,More drowsiness.,نعاس أكثر.
+drug,Valerian,الناردين,Alcohol,outside,warning,More drowsiness.,نعاس أكثر.
+drug,Garlic,الثوم,Anticoagulants (class),class,warning,High doses: more bleeding.,الجرعات العالية: نزف أكثر.
+drug,Curcumin,الكركمين,Anticoagulants (class),class,warning,May add to bleeding.,قد يزيد النزف.
+drug,Boswellia serrata,اللبان الهندي,Anticoagulants (class),class,warning,May add to bleeding.,قد يزيد النزف.
+drug,Aescin,الإيسين,Anticoagulants (class),class,warning,May add to bleeding.,قد يزيد النزف.
+drug,Vitex agnus-castus,كف مريم,Parkinson's dopamine drugs (class),class,warning,May interfere with dopamine medicines.,قد يتداخل مع أدوية الدوبامين.
+drug,Vitex agnus-castus,كف مريم,Dopamine blockers acting on the brain (class),class,warning,May interfere with dopamine blockers.,قد يتداخل مع حاصرات الدوبامين.
+drug,Evening primrose oil,زيت زهرة الربيع المسائية,Anticoagulants (class),class,warning,May add to bleeding.,قد يزيد النزف.
+class rule,"Nitrates (class, 4 drugs)",النترات,"PDE5 inhibitors (class, 4 drugs)",class,critical,"Severe, possibly fatal fall in blood pressure — contraindicated.",هبوط ضغط شديد قد يكون مميتاً — ممنوع الجمع.
+class rule,"Strongly serotonergic drugs (class, 18 drugs)",الأدوية السيروتونينية القوية,"MAO inhibitors (including linezolid) (class, 5 drugs)",class,critical,Serotonin syndrome — contraindicated; a washout (usually 14 days) is needed between them.,متلازمة السيروتونين — ممنوع الجمع؛ يلزم فاصل (عادة 14 يوماً) بينهما.
+class rule,"Mildly serotonergic drugs (class, 16 drugs)",الأدوية السيروتونينية الخفيفة,"MAO inhibitors (including linezolid) (class, 5 drugs)",class,critical,Serotonin toxicity — avoid; a washout (usually 14 days) is needed.,تسمّم سيروتونيني — يُتجنّب؛ يلزم فاصل (عادة 14 يوماً).
+class rule,"Decongestants and stimulants (class, 12 drugs)",مزيلات الاحتقان والمنبّهات,"MAO inhibitors (including linezolid) (class, 5 drugs)",class,critical,Hypertensive crisis — contraindicated.,نوبة ارتفاع ضغط خطيرة — ممنوع الجمع.
+class rule,"Potassium-sparing diuretics (class, 3 drugs)",المدرّات الحافظة للبوتاسيوم,"Potassium supplements (class, 2 drugs)",class,critical,Life-threatening hyperkalaemia.,فرط بوتاسيوم مهدّد للحياة.
+class rule,"Opioids (class, 15 drugs)",الأفيونات,"Benzodiazepines and Z-drugs (class, 13 drugs)",class,critical,"Profound sedation, stopped breathing and death — only with a clear reason, at the lowest doses.",تهدئة عميقة وتوقّف تنفّس وقد يسبّب الوفاة — فقط لسبب واضح وبأقل الجرعات.
+class rule,"Strong CYP3A4 inhibitors (class, 9 drugs)",المثبطات القوية لـ CYP3A4,"Drugs contraindicated with strong CYP3A4 inhibitors (class, 26 drugs)",class,critical,Strong CYP3A4 inhibitor raises the other drug to dangerous levels — contraindicated; stop or swap one for the course.,مثبط قوي لـ CYP3A4 يرفع الدواء الآخر إلى مستوى خطير — ممنوع الجمع؛ أوقف أحدهما أو استبدله طوال العلاج.
+class rule,"Triptans (class, 4 drugs)",التريبتانات,"Ergot alkaloids (class, 3 drugs)",class,critical,Additive narrowing of blood vessels — never within 24 hours of each other.,تضيّق وعائي مضاف — لا يؤخذان خلال 24 ساعة من بعضهما.
+class rule,"Immunosuppressants (class, 73 drugs)",مثبطات المناعة,"Live vaccines (class, 6 drugs)",class,critical,A live vaccine can cause the infection it protects against in someone immunosuppressed — avoid.,اللقاح الحي قد يسبّب المرض نفسه لدى مثبَّط المناعة — يُتجنّب.
+class rule,"Beta-blockers (class, 9 drugs)",حاصرات بيتا,"Verapamil and diltiazem (class, 2 drugs)",class,critical,"Severe bradycardia, heart block and heart failure — avoid the combination, above all intravenous verapamil.",بطء قلب شديد وحصار قلبي وقصور — يُتجنّب الجمع، وقبل كل شيء الفيراباميل الوريدي.
+class rule,"Oral retinoids (class, 2 drugs)",الريتينويدات الفموية,"Tetracyclines (class, 5 drugs)",class,critical,Raised pressure in the skull (benign intracranial hypertension) — contraindicated.,ارتفاع الضغط داخل القحف — ممنوع الجمع.
+class rule,"Azathioprine and mercaptopurine (class, 2 drugs)",الأزاثيوبرين والمركابتوبورين,"Allopurinol and febuxostat (class, 2 drugs)",class,critical,Azathioprine or mercaptopurine builds up to toxic levels — severe marrow suppression; avoid or cut the dose to a quarter.,يتراكم الأزاثيوبرين أو المركابتوبورين إلى مستوى سام — تثبيط نقي شديد؛ يُتجنّب أو تُخفّض جرعته إلى الربع.
+class rule,"Drugs with a known risk of QT prolongation (class, 37 drugs)",أدوية ذات خطر معروف لإطالة QT,"Drugs with a known risk of QT prolongation (class, 37 drugs)",class,serious,Additive QT prolongation — risk of a dangerous rhythm (torsades); avoid the combination where possible.,إطالة QT مضافة — خطر اضطراب نظم خطير (torsades)؛ يُتجنّب الجمع ما أمكن.
+class rule,"Anticoagulants (class, 10 drugs)",مضادات التخثّر,"NSAIDs (class, 19 drugs)",class,serious,"Bleeding, especially from the stomach — avoid; if unavoidable, the shortest course with stomach protection.",نزف، خاصة من المعدة — يُتجنّب؛ وإن لزم فأقصر مدة مع حماية المعدة.
+class rule,"Anticoagulants (class, 10 drugs)",مضادات التخثّر,"Antiplatelets (class, 7 drugs)",class,serious,"Additive bleeding risk — only with a stated reason, such as after a stent.",خطر نزف مضاف — فقط لسبب واضح، كما بعد الدعامة.
+class rule,"Antiplatelets (class, 7 drugs)",مضادات الصفيحات,"NSAIDs (class, 19 drugs)",class,serious,Stomach bleeding risk; ibuprofen and naproxen can also block the effect of low-dose aspirin.,خطر نزف المعدة؛ وقد يمنع الإيبوبروفين والنابروكسين مفعول الأسبرين بجرعته المنخفضة.
+class rule,"NSAIDs (class, 19 drugs)",مضادات الالتهاب غير الستيرويدية,"ACE inhibitors, sartans and aliskiren (class, 16 drugs)",class,serious,Can cause acute kidney injury — worst with a diuretic or dehydration — and weakens blood-pressure control.,قد يسبّب أذية كلوية حادة — أسوأ مع مدرّ أو جفاف — ويُضعف ضبط الضغط.
+class rule,"ACE inhibitors, sartans and aliskiren (class, 16 drugs)",مثبطات ACE والسارتانات والأليسكيرين,"Potassium-sparing diuretics (class, 3 drugs)",class,serious,Hyperkalaemia — check potassium and kidney function.,فرط بوتاسيوم — افحص البوتاسيوم ووظائف الكلى.
+class rule,"ACE inhibitors, sartans and aliskiren (class, 16 drugs)",مثبطات ACE والسارتانات والأليسكيرين,"Potassium supplements (class, 2 drugs)",class,serious,Hyperkalaemia — potassium supplements are rarely needed alongside these.,فرط بوتاسيوم — نادراً ما تلزم مكمّلات البوتاسيوم معها.
+class rule,"Strongly serotonergic drugs (class, 18 drugs)",الأدوية السيروتونينية القوية,"Strongly serotonergic drugs (class, 18 drugs)",class,serious,"Serotonin syndrome risk — agitation, tremor, sweating, fever; confirm the combination is intended.",خطر متلازمة السيروتونين — هياج ورجفة وتعرّق وحرارة؛ تأكّد أن الجمع مقصود.
+class rule,"Opioids (class, 15 drugs)",الأفيونات,"Gabapentin and pregabalin (class, 2 drugs)",class,serious,Breathing depression and heavy sedation — and a combination often misused.,تثبيط تنفّس وتهدئة شديدة — وجمع كثيراً ما يُساء استعماله.
+class rule,"Opioids (class, 15 drugs)",الأفيونات,"Sedating drugs (class, 89 drugs)",class,serious,Additive sedation and breathing depression.,تهدئة وتثبيط تنفّس مضافان.
+class rule,"Strong CYP3A4 inhibitors (class, 9 drugs)",المثبطات القوية لـ CYP3A4,"Drugs raised by CYP3A4 inhibitors (class, 65 drugs)",class,serious,Strong CYP3A4 inhibitor raises the other drug — lower its dose or avoid; watch for side effects.,مثبط قوي لـ CYP3A4 يرفع مستوى الدواء الآخر — خفّض جرعته أو تجنّب الجمع؛ راقب الآثار الجانبية.
+class rule,"Moderate CYP3A4 inhibitors (class, 9 drugs)",المثبطات المتوسطة لـ CYP3A4,"Drugs contraindicated with strong CYP3A4 inhibitors (class, 26 drugs)",class,serious,Raises the other drug — dose limits apply (for example simvastatin no more than 20 mg).,يرفع مستوى الدواء الآخر — توجد حدود للجرعة (مثلاً سيمفاستاتين لا يتجاوز 20 ملغ).
+class rule,"Enzyme inducers (class, 14 drugs)",محرّضات الإنزيمات,"Hormonal contraceptives (class, 9 drugs)",class,serious,Makes hormonal contraception unreliable — use a copper coil or condoms during treatment and for 4 weeks after.,يجعل منع الحمل الهرموني غير موثوق — استخدمي اللولب النحاسي أو الواقي أثناء العلاج و4 أسابيع بعده.
+class rule,"Enzyme inducers (class, 14 drugs)",محرّضات الإنزيمات,"Drugs weakened by enzyme inducers (class, 53 drugs)",class,serious,Enzyme inducer lowers the other drug — it may stop working; the dose needs review.,محرّض الإنزيمات يخفض مستوى الدواء الآخر — قد يفقد مفعوله؛ تلزم مراجعة الجرعة.
+class rule,"Antacids and calcium, iron, zinc or magnesium (class, 18 drugs)",مضادات الحموضة والكالسيوم والحديد والزنك والمغنيسيوم,"Drugs bound by antacids and minerals (class, 15 drugs)",class,serious,Binds it in the gut so it is not absorbed — take it 2 hours before or 6 hours after.,يرتبط به في الأمعاء فلا يُمتص — يؤخذ قبله بساعتين أو بعده بست ساعات.
+class rule,"Anticholinergic drugs (class, 43 drugs)",الأدوية المضادة للكولين,"Cholinesterase inhibitors (class, 6 drugs)",class,serious,Opposing effects — the anticholinergic cancels the dementia treatment.,تأثيران متعاكسان — مضاد الكولين يُبطل علاج الخرف.
+class rule,"Dopamine blockers acting on the brain (class, 18 drugs)",حاصرات الدوبامين المركزية,"Parkinson's dopamine drugs (class, 7 drugs)",class,serious,Opposing effects — worsens Parkinson's and cancels its treatment.,تأثيران متعاكسان — يفاقم باركنسون ويُبطل علاجه.
+class rule,"Non-selective beta-blockers (class, 4 drugs)",حاصرات بيتا غير الانتقائية,"Beta-agonist bronchodilators (class, 7 drugs)",class,serious,Blocks the bronchodilator and can bring on bronchospasm in asthma.,يُبطل موسّع القصبات وقد يُحدث تشنّجاً قصبياً عند مريض الربو.
+class rule,"Quinolones (class, 6 drugs)",الكينولونات,"Systemic corticosteroids (class, 7 drugs)",class,serious,"Tendon rupture risk, highest over 60 — stop at the first tendon pain.",خطر تمزّق الأوتار، أعلاه فوق الستين — أوقف عند أول ألم في الوتر.
+class rule,"Kidney-toxic drugs (class, 18 drugs)",الأدوية السامّة للكلية,"Kidney-toxic drugs (class, 18 drugs)",class,serious,Additive kidney toxicity — monitor kidney function and drug levels.,سمّية كلوية مضافة — راقب وظائف الكلى ومستويات الدواء.
+class rule,"Potassium-losing diuretics (class, 11 drugs)",المدرّات المُفقِدة للبوتاسيوم,"Digoxin (class, 1 drugs)",class,serious,Low potassium makes digoxin toxic — check potassium.,نقص البوتاسيوم يجعل الديجوكسين ساماً — افحص البوتاسيوم.
+class rule,"Lithium (class, 1 drugs)",الليثيوم,"ACE inhibitors, sartans and aliskiren (class, 16 drugs)",class,serious,Raises lithium towards toxic levels — check lithium levels.,يرفع الليثيوم نحو مستوى سام — افحص مستواه.
+class rule,"Lithium (class, 1 drugs)",الليثيوم,"Thiazide diuretics (class, 4 drugs)",class,serious,Raises lithium to toxic levels.,يرفع الليثيوم إلى مستوى سام.
+class rule,"Lithium (class, 1 drugs)",الليثيوم,"NSAIDs (class, 19 drugs)",class,serious,NSAIDs raise lithium.,مضادات الالتهاب ترفع الليثيوم.
+class rule,"Methotrexate (class, 1 drugs)",الميثوتريكسيت,"NSAIDs (class, 19 drugs)",class,serious,"Reduces methotrexate clearance, raising toxicity.",يقلّل طرح الميثوتريكسيت فترتفع سمّيته.
+class rule,"Drugs with a known risk of QT prolongation (class, 37 drugs)",أدوية ذات خطر معروف لإطالة QT,"Drugs that may prolong QT (class, 68 drugs)",class,warning,"May add to QT prolongation — caution, especially with low potassium or heart disease.",قد يزيد إطالة QT — الحذر، خاصة مع نقص البوتاسيوم أو مرض القلب.
+class rule,"Anticoagulants (class, 10 drugs)",مضادات التخثّر,"SSRIs and SNRIs (class, 9 drugs)",class,warning,SSRIs weaken platelets — more bleeding with an anticoagulant.,مثبطات السيروتونين تُضعف الصفيحات — نزف أكثر مع مضاد التخثّر.
+class rule,"Antiplatelets (class, 7 drugs)",مضادات الصفيحات,"SSRIs and SNRIs (class, 9 drugs)",class,warning,"More bleeding, including from the stomach.",نزف أكثر، ومنه نزف المعدة.
+class rule,"NSAIDs (class, 19 drugs)",مضادات الالتهاب غير الستيرويدية,"SSRIs and SNRIs (class, 9 drugs)",class,warning,Higher risk of stomach bleeding — consider stomach protection.,خطر أعلى لنزف المعدة — فكّر بحماية المعدة.
+class rule,"NSAIDs (class, 19 drugs)",مضادات الالتهاب غير الستيرويدية,"Systemic corticosteroids (class, 7 drugs)",class,warning,Higher risk of stomach ulcer and bleeding.,خطر أعلى لقرحة المعدة والنزف.
+class rule,"NSAIDs (class, 19 drugs)",مضادات الالتهاب غير الستيرويدية,"Diuretics (class, 11 drugs)",class,warning,Weakens the diuretic and strains the kidneys.,يُضعف المدرّ ويُجهد الكليتين.
+class rule,"Strongly serotonergic drugs (class, 18 drugs)",الأدوية السيروتونينية القوية,"Mildly serotonergic drugs (class, 16 drugs)",class,warning,"Some added serotonin effect — watch for agitation, tremor or sweating.",تأثير سيروتونيني إضافي — راقب الهياج أو الرجفة أو التعرّق.
+class rule,"Sedating drugs (class, 89 drugs)",الأدوية المهدّئة,"Sedating drugs (class, 89 drugs)",class,warning,Additive drowsiness — no driving; take extra care in the elderly (falls).,نعاس مضاف — لا قيادة؛ وحذر أكبر مع كبار السن (السقوط).
+class rule,"Moderate CYP3A4 inhibitors (class, 9 drugs)",المثبطات المتوسطة لـ CYP3A4,"Drugs raised by CYP3A4 inhibitors (class, 65 drugs)",class,warning,May raise the other drug — watch for side effects.,قد يرفع مستوى الدواء الآخر — راقب الآثار الجانبية.
+class rule,"Antacids and calcium, iron, zinc or magnesium (class, 18 drugs)",مضادات الحموضة والكالسيوم والحديد والزنك والمغنيسيوم,"Drugs partly bound by antacids and minerals (class, 7 drugs)",class,warning,Reduces absorption — keep the doses at least 4 hours apart.,يقلّل الامتصاص — افصل بين الجرعتين 4 ساعات على الأقل.
+class rule,"Anticholinergic drugs (class, 43 drugs)",الأدوية المضادة للكولين,"Anticholinergic drugs (class, 43 drugs)",class,warning,"Additive anticholinergic effects — dry mouth, constipation, retention and confusion, worst in the elderly.",آثار مضادة للكولين مضافة — جفاف فم وإمساك واحتباس بول وتشوّش، أسوأ عند كبار السن.
+class rule,"Alpha-blockers (class, 7 drugs)",حاصرات ألفا,"PDE5 inhibitors (class, 4 drugs)",class,warning,Postural hypotension — start at a low dose and separate the doses.,هبوط ضغط انتصابي — ابدأ بجرعة منخفضة وافصل بين الجرعات.
+class rule,"Beta-blockers (class, 9 drugs)",حاصرات بيتا,"Heart-rate-slowing drugs (class, 10 drugs)",class,warning,Additive slowing of the heart — check the pulse.,إبطاء مضاف للقلب — افحص النبض.
+class rule,"Verapamil and diltiazem (class, 2 drugs)",الفيراباميل والديلتيازيم,"Heart-rate-slowing drugs (class, 10 drugs)",class,warning,Additive slowing of the heart — check the pulse.,إبطاء مضاف للقلب — افحص النبض.
+class rule,"Beta-blockers (class, 9 drugs)",حاصرات بيتا,"Insulin and sulfonylureas (class, 14 drugs)",class,warning,Masks the warning signs of low blood sugar (sweating remains).,يُخفي علامات هبوط السكر (يبقى التعرّق).
+class rule,"Quinolones (class, 6 drugs)",الكينولونات,"Insulin and sulfonylureas (class, 14 drugs)",class,warning,Can cause severe low or high blood sugar — check glucose more often.,قد يسبّب هبوطاً أو ارتفاعاً شديداً في السكر — افحص السكر أكثر.
+class rule,"Systemic corticosteroids (class, 7 drugs)",الكورتيزونات الجهازية,"Diabetes medicines (class, 31 drugs)",class,warning,Raises blood sugar — monitor and adjust the diabetes treatment.,يرفع سكر الدم — راقب وعدّل علاج السكري.
+class rule,"Ear-toxic drugs (class, 11 drugs)",الأدوية السامّة للأذن,"Ear-toxic drugs (class, 11 drugs)",class,warning,Additive risk of hearing loss.,خطر مضاف لفقدان السمع.
+class rule,"Drugs that lower the seizure threshold (class, 19 drugs)",أدوية تخفض عتبة الاختلاج,"Drugs that lower the seizure threshold (class, 19 drugs)",class,warning,Both lower the seizure threshold — caution with epilepsy.,كلاهما يخفض عتبة الاختلاج — الحذر مع الصرع.
+class rule,"Theophylline and aminophylline (class, 3 drugs)",الثيوفيلين والأمينوفيلين,"Quinolones (class, 6 drugs)",class,warning,"Quinolones can raise theophylline — watch for nausea, palpitations and fits.",قد ترفع الكينولونات الثيوفيلين — راقب الغثيان والخفقان والاختلاج.

@@ -15,7 +15,8 @@
     "check:crm": "node crm/check.mjs",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
-    "drugs": "node scripts/embed-drugs.mjs"
+    "drugs": "node scripts/embed-drugs.mjs",
+    "drugs:export": "node scripts/export-drugs.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",

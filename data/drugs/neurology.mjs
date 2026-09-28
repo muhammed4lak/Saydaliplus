@@ -87,6 +87,10 @@ export default [
   doses:['250 mg', '500 mg', '750 mg', '1000 mg', '100 mg/mL solution', '500 mg/5 mL injection'], brand:['Keppra'],
   notes:{en:'Twice a day; never stop suddenly. Irritability, low mood or aggression can occur — report them. The dose is lowered in kidney impairment.',
          ar:'مرتين يومياً؛ لا يُوقف فجأة أبداً. قد يسبّب العصبية أو انخفاض المزاج أو العدوانية — أبلغ عنها. تُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['Methotrexate', W, 'Can raise methotrexate levels.', 'قد يرفع مستوى الميثوتريكسيت.'],
+    ['Alcohol', W, 'More drowsiness.', 'نعاس أكثر.']
+  ],
   ask:['mood', 'kidney', 'preg'] },
 
 { sci:'Gabapentin', ar:'غابابنتين', atc:'N03AX12', cat:'cns.epilepsy', form:'capsule',
@@ -123,6 +127,9 @@ export default [
   doses:['50 mg', '100 mg', '150 mg', '200 mg', '10 mg/mL syrup', '200 mg/20 mL injection'], brand:['Vimpat'],
   notes:{en:'Twice a day. Dizziness and double vision are common. It slows conduction in the heart — report fainting or a slow pulse.',
          ar:'مرتين يومياً. الدوخة وازدواج الرؤية شائعان. يُبطئ التوصيل في القلب — أبلغ عن الإغماء أو بطء النبض.'},
+  ix:[
+    ['#bradycardic', W, 'Slows conduction in the heart (PR prolongation) — heart block risk with other drugs that do.', 'يبطئ التوصيل في القلب (إطالة PR) — خطر إحصار مع أدوية أخرى تفعل ذلك.']
+  ],
   ci:['heartBlock'],
   ask:['rhythm', 'slowPulse', 'drive'] },
 
@@ -154,13 +161,21 @@ export default [
   doses:['500 mg tablet', '500 mg sachet'], brand:['Sabril'],
   notes:{en:'It can permanently narrow the field of vision — visual-field tests every six months. Drowsiness and weight gain are common.',
          ar:'قد يُضيّق مجال الرؤية بشكل دائم — فحص مجال الرؤية كل ستة أشهر. النعاس وزيادة الوزن شائعان.'},
+  ix:[
+    ['Phenytoin', W, 'Lowers phenytoin levels.', 'يخفض مستوى الفينيتوين.']
+  ],
   ask:['vision', 'mood'] },
 
 { sci:'Perampanel', ar:'بيرامبانيل', atc:'N03AX22', cat:'cns.epilepsy', form:'tablet',
   doses:['2 mg', '4 mg', '6 mg', '8 mg', '10 mg', '12 mg'], brand:['Fycompa'],
   take:['bedtime'],
+  tags:['inducerSensitive'],
   notes:{en:'Once a day at bedtime. Dizziness is common; report irritability, aggression or any change in mood at once.',
          ar:'مرة واحدة قبل النوم. الدوخة شائعة؛ أبلغ فوراً عن العصبية أو العدوانية أو أي تغيّر في المزاج.'},
+  ix:[
+    ['#hormonalContraceptive', W, 'At 12 mg a day it can weaken progestogen-only contraception.', 'بجرعة 12 ملغ يومياً قد يُضعف موانع الحمل البروجستينية.'],
+    ['Alcohol', W, 'Worse mood, aggression and drowsiness.', 'تدهور المزاج والعدوانية والنعاس.']
+  ],
   ask:['mood', 'drive'] },
 
 { sci:'Primidone', ar:'بريميدون', atc:'N03AA03', cat:'cns.epilepsy', form:'tablet',
@@ -234,8 +249,13 @@ export default [
 
 { sci:'Entacapone', ar:'إنتاكابون', atc:'N04BX02', cat:'cns.parkinson', form:'tablet',
   doses:['200 mg', 'with levodopa and carbidopa'], brand:['Comtan', 'Stalevo'],
+  tags:['dopaminergic'],
   notes:{en:'Taken with every levodopa dose. It turns urine reddish-brown — harmless. It can bring on extra involuntary movements; report them.',
          ar:'يؤخذ مع كل جرعة ليفودوبا. يلوّن البول بني محمر — وهذا غير ضار. قد يزيد الحركات اللاإرادية؛ أبلغ عنها.'},
+  ix:[
+    ['#maoi', S, 'Not with non-selective MAO inhibitors.', 'لا يُجمع مع مثبطات MAO غير الانتقائية.'],
+    ['#polyvalent', W, 'Iron binds entacapone — take them two to three hours apart.', 'الحديد يربط الإنتاكابون — بفاصل ساعتين إلى ثلاث.']
+  ],
   ci:['hepSevere', 'phaeo'],
   ask:['otherMeds', 'liver'] },
 
@@ -291,6 +311,10 @@ export default [
   doses:['10 mg', '20 mg', '10 mg/mL solution'], brand:['Ebixa', 'Namenda'],
   notes:{en:'Built up weekly. Dizziness, headache and constipation are common at first. The dose is lowered in kidney impairment.',
          ar:'تُرفع الجرعة أسبوعياً. الدوخة والصداع والإمساك شائعة في البداية. تُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['Amantadine', S, 'Both act on the same brain receptors — risk of psychosis; avoid.', 'كلاهما يعمل على المستقبلات نفسها — خطر ذهان؛ يُتجنّب.'],
+    ['Dextromethorphan', W, 'Same receptors — more side effects.', 'المستقبلات نفسها — آثار جانبية أكثر.']
+  ],
   ask:['kidney', 'epilepsy'] },
 
 /* ---------- Vertigo and motion sickness ---------- */
@@ -300,6 +324,10 @@ export default [
   take:['withFood'],
   notes:{en:'For Ménière’s-type vertigo, with meals; it takes weeks to judge. Stomach upset is the common side effect.',
          ar:'لدوار مينيير، مع الوجبات؛ ويحتاج أسابيع للحكم على فائدته. اضطراب المعدة أشيع آثاره.'},
+  ix:[
+    ['Chlorphenamine', W, 'Antihistamines can weaken betahistine.', 'مضادات الهيستامين قد تُضعف البيتاهيستين.'],
+    ['Cinnarizine', W, 'Antihistamines can weaken betahistine.', 'مضادات الهيستامين قد تُضعف البيتاهيستين.']
+  ],
   ci:['phaeo'],
   ask:['asthma', 'ulcer'] },
 
@@ -351,12 +379,18 @@ export default [
   doses:['500 mg', '1000 mg', '100 mg/mL solution', '500 mg/4 mL injection'], brand:['Somazina', 'Cognizin'],
   notes:{en:'Used after stroke and for memory problems; the evidence is modest. It is well tolerated.',
          ar:'يُستعمل بعد السكتة ولمشاكل الذاكرة؛ والأدلة متواضعة. يتحمّله المرضى جيداً.'},
+  ix:[
+    ['Levodopa', W, 'May strengthen the effects of levodopa.', 'قد يقوّي آثار الليفودوبا.']
+  ],
   ask:['whatFor'] },
 
 { sci:'Cerebrolysin', ar:'سيريبروليسين', atc:'N06BX', cat:'cns.nootropic', form:'injection',
   doses:['5 mL', '10 mL ampoule'], brand:['Cerebrolysin'],
   notes:{en:'An injection course after stroke or brain injury; the evidence is limited.',
          ar:'دورة حقن بعد السكتة أو إصابة الدماغ؛ والأدلة محدودة.'},
+  ix:[
+    ['#maoi', W, 'Possible added effects with MAO inhibitors.', 'تأثيرات مضافة ممكنة مع مثبطات MAO.']
+  ],
   ci:['epilepsy', 'renalSevere'],
   ask:['epilepsy', 'kidney'] },
 
@@ -376,6 +410,9 @@ export default [
   doses:['30 microgram weekly', '22 and 44 microgram three times weekly'], brand:['Avonex', 'Rebif'], aka:['Interferon beta', 'Recombinant interferon beta'],
   notes:{en:'Injected on a fixed schedule; flu-like symptoms after each dose are common — paracetamol helps. Blood counts and liver tests are checked. Report low mood.',
          ar:'يُحقن وفق جدول ثابت؛ أعراض تشبه الإنفلونزا بعد كل جرعة شائعة — والباراسيتامول يفيد. يُفحص تعداد الدم ووظائف الكبد. أبلغ عن انخفاض المزاج.'},
+  ix:[
+    ['Zidovudine', W, 'More low blood counts.', 'مزيد من انخفاض تعداد الدم.']
+  ],
   ci:[{en:'Severe depression or suicidal thoughts', ar:'اكتئاب شديد أو أفكار انتحارية'}, 'hepActive'],
   ask:['mood', 'cold', 'injectTech'] },
 
@@ -383,6 +420,9 @@ export default [
   doses:['250 microgram every other day'], brand:['Betaferon', 'Extavia'],
   notes:{en:'Every other day under the skin; flu-like symptoms and injection-site reactions are common. Report low mood.',
          ar:'يوماً بعد يوم تحت الجلد؛ أعراض تشبه الإنفلونزا وتفاعلات موضع الحقن شائعة. أبلغ عن انخفاض المزاج.'},
+  ix:[
+    ['Zidovudine', W, 'More low blood counts.', 'مزيد من انخفاض تعداد الدم.']
+  ],
   ci:[{en:'Severe depression or suicidal thoughts', ar:'اكتئاب شديد أو أفكار انتحارية'}, 'hepActive'],
   ask:['mood', 'injectTech'] },
 
@@ -411,6 +451,7 @@ export default [
 { sci:'Dimethyl fumarate', ar:'فومارات ثنائي الميثيل', atc:'L04AX07', cat:'cns.neuro', form:'capsule',
   doses:['120 mg', '240 mg'], brand:['Tecfidera'],
   take:['withFood'],
+  tags:['immunosuppressant'],
   notes:{en:'With food, to reduce flushing and stomach upset. White-cell counts are checked regularly.',
          ar:'مع الطعام، لتقليل الاحمرار واضطراب المعدة. يُفحص تعداد الكريات البيض بانتظام.'},
   ask:['infection', 'labs'] },
@@ -452,6 +493,9 @@ export default [
   take:['emptyStomach'],
   notes:{en:'For motor neurone disease: on an empty stomach, twice a day. Liver tests and blood counts are checked; report fever.',
          ar:'لمرض العصبون الحركي: على معدة فارغة، مرتين يومياً. تُفحص وظائف الكبد وتعداد الدم؛ أبلغ عن الحرارة.'},
+  ix:[
+    ['Ciprofloxacin', W, 'Ciprofloxacin and fluvoxamine raise riluzole.', 'السيبروفلوكساسين والفلوفوكسامين يرفعان الريلوزول.']
+  ],
   ci:['hepActive'],
   ask:['liver', 'infection'] },
 

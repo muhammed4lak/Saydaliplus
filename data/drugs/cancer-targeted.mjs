@@ -23,6 +23,10 @@ export default [
   doses:['2.5 mg'], brand:['Femara'],
   notes:{en:'Once a day. Joint aches and hot flushes are common; bone density is checked, and calcium with vitamin D helps. Also used by fertility specialists to trigger ovulation.',
          ar:'مرة واحدة يومياً. آلام المفاصل والهبّات الساخنة شائعة؛ تُفحص كثافة العظام، والكالسيوم مع فيتامين د يفيدان. يستعمله أطباء الخصوبة أيضاً لتحريض الإباضة.'},
+  ix:[
+    ['Tamoxifen', W, 'Tamoxifen lowers letrozole levels — not used together.', 'التاموكسيفين يخفض مستوى الليتروزول — لا يُستعملان معاً.'],
+    ['Estradiol', S, 'Oestrogens cancel its effect.', 'الإستروجينات تُبطل أثره.']
+  ],
   ci:['preg'],
   ask:['pregTest', 'labs'] },
 
@@ -30,14 +34,22 @@ export default [
   doses:['1 mg'], brand:['Arimidex'],
   notes:{en:'Once a day after the menopause. Joint aches and hot flushes are common; bone density is checked.',
          ar:'مرة واحدة يومياً بعد انقطاع الطمث. آلام المفاصل والهبّات الساخنة شائعة؛ تُفحص كثافة العظام.'},
+  ix:[
+    ['Estradiol', S, 'Oestrogens cancel its effect.', 'الإستروجينات تُبطل أثره.'],
+    ['Tamoxifen', W, 'Not used together — no added benefit.', 'لا يُستعملان معاً — دون فائدة إضافية.']
+  ],
   ci:['preg', 'hepSevere'],
   ask:['pregTest', 'labs'] },
 
 { sci:'Exemestane', ar:'إكسيميستان', atc:'L02BG06', cat:'onc.hormonal', form:'tablet',
   doses:['25 mg'], brand:['Aromasin'],
   take:['afterFood'],
+  tags:['inducerSensitive'],
   notes:{en:'Once a day after a meal. Joint aches and hot flushes are common; bone density is checked.',
          ar:'مرة واحدة يومياً بعد وجبة. آلام المفاصل والهبّات الساخنة شائعة؛ تُفحص كثافة العظام.'},
+  ix:[
+    ['Estradiol', S, 'Oestrogens cancel its effect.', 'الإستروجينات تُبطل أثره.']
+  ],
   ci:['preg'],
   ask:['pregTest', 'labs'] },
 
@@ -64,6 +76,9 @@ export default [
   doses:['250 mg'], brand:['Eulexin'],
   notes:{en:'Three times a day for prostate cancer. It can damage the liver — tests are regular; report nausea, dark urine or yellowing.',
          ar:'ثلاث مرات يومياً لسرطان البروستاتا. قد يؤذي الكبد — الفحوص منتظمة؛ أبلغ عن الغثيان أو غمق البول أو الاصفرار.'},
+  ix:[
+    ['Warfarin', S, 'Raises the INR.', 'يرفع INR.']
+  ],
   ci:['hepActive'],
   ask:['liver', 'thinner'] },
 
@@ -114,6 +129,9 @@ export default [
   doses:['40 mg', '160 mg', '40 mg/mL suspension'], brand:['Megace'], aka:['Megestrol acetate'],
   notes:{en:'For some cancers and to improve appetite and weight in serious illness. It raises clot risk and blood sugar; after long use it is not stopped suddenly.',
          ar:'لبعض الأورام ولتحسين الشهية والوزن في الأمراض الشديدة. يرفع خطر الجلطات وسكر الدم؛ وبعد الاستعمال الطويل لا يُوقف فجأة.'},
+  ix:[
+    ['Warfarin', W, 'May raise the INR.', 'قد يرفع INR.']
+  ],
   ci:['vte', 'preg'],
   ask:['clots', 'diabetes'] },
 
@@ -208,6 +226,9 @@ export default [
   take:['emptyStomach'],
   notes:{en:'On an empty stomach. Diarrhoea is very common — start loperamide at the first loose stool. Rash and mouth sores are common.',
          ar:'على معدة فارغة. الإسهال شائع جداً — ابدأ اللوبيراميد عند أول براز ليّن. الطفح وقروح الفم شائعة.'},
+  ix:[
+    ['Ritonavir', W, 'P-glycoprotein inhibitors raise afatinib — take them six hours apart.', 'مثبطات P-glycoprotein ترفع الأفاتينيب — بفاصل ست ساعات.']
+  ],
   ci:['pregTeratogen'],
   ask:['otherMeds', 'pregTest'] },
 
@@ -222,8 +243,12 @@ export default [
 { sci:'Sorafenib', ar:'سورافينيب', atc:'L01EX02', cat:'onc.targeted', form:'tablet',
   doses:['200 mg'], brand:['Nexavar'],
   take:['emptyStomach'],
+  tags:['inducerSensitive', 'qtPossible'],
   notes:{en:'Without food or with a low-fat meal. Sore, blistering palms and soles, diarrhoea and high blood pressure are common. It slows wound healing — surgery is planned around it.',
          ar:'دون طعام أو مع وجبة قليلة الدسم. ألم وتقرّح راحتي اليدين وباطن القدمين والإسهال وارتفاع الضغط شائعة. يبطّئ التئام الجروح — تُخطّط الجراحة حوله.'},
+  ix:[
+    ['Warfarin', W, 'INR rises and bleeding reported.', 'سُجّل ارتفاع INR ونزف.']
+  ],
   ci:['pregTeratogen'],
   ask:['bp', 'dental', 'pregTest'] },
 
@@ -338,6 +363,9 @@ export default [
   doses:['150 mg', '440 mg vial', '600 mg subcutaneous'], brand:['Herceptin'],
   notes:{en:'Every three weeks. Heart scans every few months — report breathlessness or ankle swelling. Not in pregnancy.',
          ar:'كل ثلاثة أسابيع. فحوص للقلب كل بضعة أشهر — أبلغي عن ضيق النفس أو تورّم الكاحلين. لا يُستعمل في الحمل.'},
+  ix:[
+    ['Doxorubicin', S, 'Heart damage — the heart is checked, and they are not given at the same time.', 'أذية قلبية — يُفحص القلب ولا يُعطيان في الوقت نفسه.']
+  ],
   ci:['preg'],
   ask:['heart', 'pregTest'] },
 
@@ -345,6 +373,9 @@ export default [
   doses:['100 mg', '160 mg vial'], brand:['Kadcyla'],
   notes:{en:'Every three weeks. Liver tests, platelet counts and heart function are checked; report bleeding or yellowing.',
          ar:'كل ثلاثة أسابيع. تُفحص وظائف الكبد والصفيحات والقلب؛ أبلغي عن النزف أو الاصفرار.'},
+  ix:[
+    ['#inh3a4', W, 'Strong inhibitors raise the emtansine part — avoid.', 'المثبطات القوية ترفع جزء الإمتانسين — تُتجنّب.']
+  ],
   ci:['preg'],
   ask:['heart', 'liver'] },
 
@@ -352,6 +383,9 @@ export default [
   doses:['420 mg/14 mL'], brand:['Perjeta', 'Phesgo'],
   notes:{en:'Given with trastuzumab every three weeks. Diarrhoea is common; heart function is checked.',
          ar:'يُعطى مع التراستوزوماب كل ثلاثة أسابيع. الإسهال شائع؛ تُفحص وظيفة القلب.'},
+  ix:[
+    ['Doxorubicin', S, 'Heart damage — the heart is checked, and they are not given at the same time.', 'أذية قلبية — يُفحص القلب ولا يُعطيان في الوقت نفسه.']
+  ],
   ci:['preg'],
   ask:['heart', 'pregTest'] },
 
@@ -359,6 +393,9 @@ export default [
   doses:['100 mg/10 mL', '500 mg/50 mL vial'], brand:['Cyramza'],
   notes:{en:'An infusion every two or three weeks for stomach, lung, bowel and liver cancers. Blood pressure and urine protein are checked; wounds heal slowly — tell the team before any surgery.',
          ar:'تسريب كل أسبوعين أو ثلاثة لسرطانات المعدة والرئة والأمعاء والكبد. يُفحص الضغط والبروتين في البول؛ وتلتئم الجروح ببطء — أخبر الفريق قبل أي جراحة.'},
+  ix:[
+    ['#anticoag', W, 'Bleeding risk.', 'خطر نزف.']
+  ],
   ci:['pregTeratogen', 'uncontrolledHtn'],
   ask:['bp', 'dental', 'bleeding'] },
 
@@ -366,6 +403,10 @@ export default [
   doses:['100 mg/4 mL', '400 mg/16 mL'], brand:['Avastin'],
   notes:{en:'It raises blood pressure and protein in the urine, and slows wound healing — surgery is timed around it. Report stomach pain or bleeding. (Also injected into the eye for retinal disease.)',
          ar:'يرفع الضغط والبروتين في البول، ويبطّئ التئام الجروح — تُوقّت الجراحة حوله. أبلغ عن ألم البطن أو النزف. (يُحقن أيضاً في العين لأمراض الشبكية.)'},
+  ix:[
+    ['#anticoag', W, 'Bleeding risk.', 'خطر نزف.'],
+    ['Sunitinib', S, 'A blood-vessel disease of the kidney (microangiopathic anaemia) reported — avoid.', 'سُجّل مرض وعائي في الكلى (فقر دم اعتلال الأوعية الدقيقة) — يُتجنّب.']
+  ],
   ci:['preg', {en:'Recent surgery or an unhealed wound', ar:'جراحة حديثة أو جرح غير ملتئم'}],
   ask:['bp', 'dental', 'bleedNow'] },
 
@@ -379,30 +420,45 @@ export default [
   doses:['100 mg/4 mL'], brand:['Keytruda'],
   notes:{en:'Immunotherapy can inflame any organ, even months later: report diarrhoea, cough, rash, yellowing, unusual tiredness or thirst promptly, and always say you are on immunotherapy.',
          ar:'العلاج المناعي قد يسبّب التهاب أي عضو ولو بعد أشهر: أبلغ سريعاً عن الإسهال أو السعال أو الطفح أو الاصفرار أو التعب غير المعتاد أو العطش، وقل دائماً إنك تتلقّى علاجاً مناعياً.'},
+  ix:[
+    ['#corticosteroid', W, 'Steroids before starting can weaken the treatment — they are used freely for its side effects once started.', 'الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.']
+  ],
   ask:['thyroid', 'diabetes', 'steroids'] },
 
 { sci:'Nivolumab', ar:'نيفولوماب', atc:'L01FF01', cat:'onc.antibody', form:'injection',
   doses:['40 mg', '100 mg', '240 mg vial'], brand:['Opdivo'],
   notes:{en:'Immunotherapy can inflame any organ, even months later: report diarrhoea, cough, rash, yellowing or unusual tiredness promptly, and always say you are on immunotherapy.',
          ar:'العلاج المناعي قد يسبّب التهاب أي عضو ولو بعد أشهر: أبلغ سريعاً عن الإسهال أو السعال أو الطفح أو الاصفرار أو التعب غير المعتاد، وقل دائماً إنك تتلقّى علاجاً مناعياً.'},
+  ix:[
+    ['#corticosteroid', W, 'Steroids before starting can weaken the treatment — they are used freely for its side effects once started.', 'الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.']
+  ],
   ask:['thyroid', 'diabetes', 'steroids'] },
 
 { sci:'Atezolizumab', ar:'أتيزوليزوماب', atc:'L01FF05', cat:'onc.antibody', form:'injection',
   doses:['840 mg', '1200 mg vial'], brand:['Tecentriq'],
   notes:{en:'Immunotherapy can inflame any organ, even months later — report new symptoms promptly and say you are on immunotherapy.',
          ar:'العلاج المناعي قد يسبّب التهاب أي عضو ولو بعد أشهر — أبلغ عن الأعراض الجديدة سريعاً وقل إنك تتلقّى علاجاً مناعياً.'},
+  ix:[
+    ['#corticosteroid', W, 'Steroids before starting can weaken the treatment — they are used freely for its side effects once started.', 'الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.']
+  ],
   ask:['thyroid', 'diabetes', 'steroids'] },
 
 { sci:'Durvalumab', ar:'دورفالوماب', atc:'L01FF03', cat:'onc.antibody', form:'injection',
   doses:['120 mg', '500 mg vial'], brand:['Imfinzi'],
   notes:{en:'Immunotherapy can inflame any organ, even months later — report new symptoms promptly and say you are on immunotherapy.',
          ar:'العلاج المناعي قد يسبّب التهاب أي عضو ولو بعد أشهر — أبلغ عن الأعراض الجديدة سريعاً وقل إنك تتلقّى علاجاً مناعياً.'},
+  ix:[
+    ['#corticosteroid', W, 'Steroids before starting can weaken the treatment — they are used freely for its side effects once started.', 'الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.']
+  ],
   ask:['thyroid', 'diabetes', 'steroids'] },
 
 { sci:'Ipilimumab', ar:'إيبيليموماب', atc:'L01FX04', cat:'onc.antibody', form:'injection',
   doses:['50 mg', '200 mg vial'], brand:['Yervoy'],
   notes:{en:'Immune side effects — especially diarrhoea and colitis — are common and can be severe; report them the same day.',
          ar:'الآثار المناعية — خاصة الإسهال والتهاب القولون — شائعة وقد تكون شديدة؛ أبلغ عنها في اليوم نفسه.'},
+  ix:[
+    ['#corticosteroid', W, 'Steroids before starting can weaken the treatment — they are used freely for its side effects once started.', 'الكورتيزون قبل البدء قد يُضعف العلاج — ويُستعمل بحرية لآثاره الجانبية بعد البدء.']
+  ],
   ask:['thyroid', 'steroids', 'feverBlood'] },
 
 { sci:'Daratumumab', ar:'داراتوموماب', atc:'L01FC01', cat:'onc.antibody', form:'injection',
@@ -421,6 +477,10 @@ export default [
   doses:['50 mg vial'], brand:['Adcetris'],
   notes:{en:'For Hodgkin and some other lymphomas. Report numbness or tingling, and any new weakness, clumsiness or confusion.',
          ar:'للمفوما هودجكن وبعض أنواع اللمفوما الأخرى. أبلغ عن الخدر أو الوخز، وعن أي ضعف أو ارتباك في الحركة أو تشوّش جديد.'},
+  ix:[
+    ['Bleomycin', C, 'Serious lung toxicity — contraindicated.', 'سمّية رئوية خطيرة — ممنوع الجمع.'],
+    ['#inh3a4', W, 'Raises the vedotin part — more nerve damage and low white cells.', 'يرفع جزء الفيدوتين — مزيد من أذية الأعصاب ونقص الكريات البيض.']
+  ],
   ask:['infection', 'diabetes'] }
 
 ];

@@ -40,9 +40,8 @@
             part before the dot ("cvs", heart and blood vessels)
      form   the MAIN presentation, one of FORM_KEYS below. A molecule sold in
             several forms carries the one most dispensed here and the rest
-            among its strengths — diclofenac is a tablet that also comes as a
-            1% gel, so the gel is a strength rather than a second row. Both
-            builds label the field "main form" for that reason.
+            among its strengths. Both builds label the field "main form" for
+            that reason — except for skin and eye forms (ROUTES, below).
      doses  the strengths marketed, strongest last
      brand  optional — originator or international brand names the molecule
             is asked for by ("Augmentin", "Concor"). Search only; the brands
@@ -71,6 +70,16 @@
             something; a drug with none prints no default line at all, because
             "swallow with water" tells a patient nothing. Never a dose — the
             dose is typed by the dispensing pharmacist, every time.
+
+   ROUTES. A cream is not its tablet. Where a molecule is also a tablet or an
+   injection, its skin and eye forms are entries of their own, named
+   "<name> (topical)" and "<name> (eye)" — Diclofenac (topical), Ciprofloxacin
+   (eye) — with their own counselling and without the tablet's interaction
+   classes, so a gel does not raise the tablet's bleeding alert.
+   scripts/read-sources.py sends a registered product to the entry its form
+   says: creams, gels, ointments, lotions, shampoos and vaginal forms to
+   "(topical)"; eye and ear drops to "(eye)", then "(topical)"; everything
+   else to the plain name.
    ========================================================================== */
 
 import { CATEGORIES, QUESTIONS, CONTRA, TAGS, RULES, OUTSIDE } from './drugs/banks.mjs';

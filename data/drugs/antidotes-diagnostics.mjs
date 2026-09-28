@@ -23,6 +23,9 @@ export default [
   doses:['1 g vial', '600 mg auto-injector'], brand:['Protopam'], aka:['2-PAM', 'Pralidoxime chloride', 'Obidoxime'],
   notes:{en:'Given with atropine early in organophosphate poisoning to restart the blocked enzyme; it does not replace atropine.',
          ar:'يُعطى مع الأتروبين مبكراً في تسمّم الفوسفات العضوية لإعادة تنشيط الإنزيم المثبَّط؛ ولا يغني عن الأتروبين.'},
+  ix:[
+    ['#cholinesterase', W, 'Can weaken neostigmine and pyridostigmine.', 'قد يُضعف النيوستيغمين والبيريدوستيغمين.']
+  ],
   ci:['myasthenia'],
   ask:['whatTaken', 'kidney'] },
 
@@ -30,12 +33,19 @@ export default [
   doses:['400 microgram/mL injection', '1.8 mg nasal spray', '20 microgram/mL neonatal'], brand:['Narcan', 'Nyxoid', 'Prenoxad'],
   notes:{en:'Reverses an opioid overdose within minutes. It wears off sooner than many opioids, so breathing can fail again — call an ambulance and stay with the person. It can bring on sudden withdrawal.',
          ar:'يعكس جرعة الأفيونات الزائدة خلال دقائق. يزول أثره قبل كثير من الأفيونات، فقد يتوقف التنفس مجدداً — اتصل بالإسعاف وابقَ مع المصاب. قد يسبّب أعراض انسحاب مفاجئة.'},
+  ix:[
+    ['#opioid', W, 'Reverses opioid pain relief as well as the overdose; withdrawal may follow in dependent people.', 'يعكس تسكين الأفيونات مع الجرعة الزائدة؛ وقد يتبعه انسحاب عند المعتمدين.']
+  ],
   ask:['whatTaken', 'whoFor'] },
 
 { sci:'Flumazenil', ar:'فلومازينيل', atc:'V03AB25', cat:'tox.antidote', form:'injection',
   doses:['100 microgram/mL injection'], brand:['Anexate', 'Romazicon'],
   notes:{en:'Reverses benzodiazepine sedation after procedures. It is not used for unknown overdoses — in long-term benzodiazepine users or after tricyclic overdose it can cause seizures.',
          ar:'يعكس تهدئة البنزوديازيبينات بعد الإجراءات. لا يُستعمل للجرعات الزائدة المجهولة — عند مستخدمي البنزوديازيبينات لفترات طويلة أو بعد جرعة زائدة من مضادات الاكتئاب ثلاثية الحلقات قد يسبّب نوبات صرع.'},
+  ix:[
+    ['#benzo', W, 'Reverses benzodiazepines — fits are possible after long use.', 'يعكس البنزوديازيبينات — النوبات ممكنة بعد الاستعمال الطويل.'],
+    ['Amitriptyline', S, 'In tricyclic overdose it can bring on fits.', 'في جرعة ثلاثيات الحلقات الزائدة قد يسبّب نوبات.']
+  ],
   ci:[{en:'Tricyclic overdose or long-term benzodiazepine use for epilepsy', ar:'جرعة زائدة من ثلاثيات الحلقات أو استعمال البنزوديازيبينات طويلاً للصرع'}],
   ask:['whatTaken', 'epilepsy', 'sedatives'] },
 
@@ -53,6 +63,9 @@ export default [
   doses:['10 mg/mL injection'], aka:['Protamine sulfate'],
   notes:{en:'Reverses heparin, for example after heart surgery or bleeding; given slowly, as it can drop the blood pressure. It only partly reverses enoxaparin.',
          ar:'يعكس أثر الهيبارين، مثلاً بعد جراحة القلب أو عند النزف؛ ويُعطى ببطء لأنه قد يخفض الضغط. لا يعكس الإينوكسابارين إلا جزئياً.'},
+  ix:[
+    ['Heparin', W, 'Neutralises heparin — too much protamine is itself an anticoagulant.', 'يعادل الهيبارين — والزيادة من البروتامين مضادة للتخثّر بنفسها.']
+  ],
   ci:[{en:'Allergy to fish, or previous protamine insulin reaction', ar:'الحساسية من السمك، أو تفاعل سابق مع أنسولين البروتامين'}],
   ask:['allergy', 'diabetesMeds'] },
 
@@ -95,12 +108,18 @@ export default [
   doses:['2.5 g/50 mL vial (two given)'], brand:['Praxbind'],
   notes:{en:'Reverses dabigatran within minutes for emergency surgery or life-threatening bleeding.',
          ar:'يعكس الدابيغاتران خلال دقائق للجراحة الطارئة أو النزف المهدّد للحياة.'},
+  ix:[
+    ['Dabigatran', W, 'Reverses dabigatran within minutes — it is restarted when safe.', 'يعكس الدابيغاتران خلال دقائق — ويُستأنف حين يكون آمناً.']
+  ],
   ask:['thinner', 'whatTaken'] },
 
 { sci:'Digoxin immune fab', ar:'الأجسام المضادة للديجوكسين', atc:'V03AB24', cat:'tox.antidote', form:'injection',
   doses:['40 mg vial'], brand:['DigiFab', 'Digibind'], aka:['Digoxin antibody'],
   notes:{en:'Binds digoxin in a dangerous overdose or toxicity; potassium and the heart rhythm are watched closely.',
          ar:'يربط الديجوكسين في الجرعة الزائدة الخطيرة أو التسمّم؛ ويُراقب البوتاسيوم ونظم القلب عن كثب.'},
+  ix:[
+    ['Digoxin', W, 'Binds digoxin — digoxin blood tests are misleading for days after.', 'يربط الديجوكسين — تحاليل الديجوكسين مضلّلة لأيام بعده.']
+  ],
   ask:['whatTaken', 'kidney'] },
 
 { sci:'Methylthioninium chloride', ar:'كلوريد الميثيلثيونينيوم', atc:'V03AB17', cat:'tox.antidote', form:'injection',
@@ -115,6 +134,9 @@ export default [
   doses:['50 mg/mL oily injection'], aka:['BAL', 'British anti-Lewisite'],
   notes:{en:'A deep, painful muscle injection for arsenic, mercury, gold and severe lead poisoning.',
          ar:'حقنة عضلية عميقة مؤلمة لتسمّم الزرنيخ والزئبق والذهب والرصاص الشديد.'},
+  ix:[
+    ['Ferrous sulfate', C, 'Iron with dimercaprol forms a toxic complex — no iron during treatment.', 'الحديد مع الديميركابرول يكوّن مركّباً ساماً — لا حديد أثناء العلاج.']
+  ],
   ci:[{en:'Peanut allergy (peanut-oil base)', ar:'الحساسية من الفول السوداني (قاعدة زيت الفول السوداني)'}, 'g6pd'],
   ask:['whatTaken', 'allergy', 'g6pd'] },
 
@@ -122,6 +144,9 @@ export default [
   doses:['200 mg/mL injection'], brand:['Ledclair'], aka:['Calcium disodium EDTA', 'Edetate calcium disodium'],
   notes:{en:'A drip for lead poisoning, with kidney function watched.',
          ar:'تسريب لتسمّم الرصاص، مع مراقبة وظائف الكلى.'},
+  ix:[
+    ['Zinc sulfate', W, 'Removes zinc too — zinc may be needed.', 'يزيل الزنك أيضاً — قد يلزم تعويضه.']
+  ],
   ci:['anuria'],
   ask:['whatTaken', 'kidney'] },
 
@@ -137,24 +162,36 @@ export default [
   doses:['vial (equine F(ab’)2)'], aka:['Anti-scorpion serum', 'Scorpion antivenin'],
   notes:{en:'For severe scorpion stings, especially in children — sweating, vomiting, drooling, breathing trouble or abnormal movements. Given in hospital, watching for allergic reactions. Mild local pain only needs painkillers and a cold pack.',
          ar:'للدغات العقرب الشديدة، خصوصاً عند الأطفال — تعرّق وتقيؤ وسيلان لعاب وصعوبة تنفس أو حركات غير طبيعية. يُعطى في المستشفى مع مراقبة تفاعلات الحساسية. الألم الموضعي الخفيف يكفيه مسكّن وكمّادة باردة.'},
+  ix:[
+    ['#betaBlocker', W, 'Beta-blockers can make an allergic reaction to the horse serum harder to treat.', 'حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.']
+  ],
   ask:['childAge', 'allergy', 'whatTaken'] },
 
 { sci:'Snake antivenom', ar:'مضاد سم الأفاعي', atc:'J06AA03', cat:'tox.antivenom', form:'injection',
   doses:['polyvalent vial (equine)'], aka:['Polyvalent snake antivenom', 'Snake venom antiserum', 'Anti-snake venom'],
   notes:{en:'For snake bites with swelling spreading, bleeding or weakness. Keep the person still and the limb at heart level; no cutting, sucking or tight tourniquets. Given in hospital, watching for allergic reactions.',
          ar:'للدغات الأفاعي مع تورّم ممتد أو نزف أو ضعف. أبقِ المصاب ساكناً والطرف بمستوى القلب؛ لا جرح ولا مصّ ولا رباط ضاغط. يُعطى في المستشفى مع مراقبة تفاعلات الحساسية.'},
+  ix:[
+    ['#betaBlocker', W, 'Beta-blockers can make an allergic reaction to the horse serum harder to treat.', 'حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.']
+  ],
   ask:['allergy', 'thinner', 'whatTaken'] },
 
 { sci:'Diphtheria antitoxin', ar:'مضاد ذيفان الخناق', atc:'J06AA01', cat:'tox.antivenom', form:'injection',
   doses:['10,000 units vial (equine)'],
   notes:{en:'Given in hospital for suspected diphtheria, with antibiotics, after a test for horse-serum allergy.',
          ar:'يُعطى في المستشفى عند الاشتباه بالخناق، مع المضادات الحيوية، بعد اختبار الحساسية من مصل الخيل.'},
+  ix:[
+    ['#betaBlocker', W, 'Beta-blockers can make an allergic reaction to the horse serum harder to treat.', 'حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.']
+  ],
   ask:['allergy', 'vaccine'] },
 
 { sci:'Botulism antitoxin', ar:'مضاد ذيفان التسمّم الوشيقي', atc:'J06AA04', cat:'tox.antivenom', form:'injection',
   doses:['heptavalent vial (equine)'], aka:['Botulinum antitoxin'],
   notes:{en:'For botulism from spoiled canned or preserved food; given early in hospital to stop paralysis progressing.',
          ar:'للتسمّم الوشيقي من الأطعمة المعلّبة أو المحفوظة الفاسدة؛ يُعطى مبكراً في المستشفى لإيقاف تقدّم الشلل.'},
+  ix:[
+    ['#betaBlocker', W, 'Beta-blockers can make an allergic reaction to the horse serum harder to treat.', 'حاصرات بيتا قد تجعل تفاعل الحساسية لمصل الخيل أصعب علاجاً.']
+  ],
   ask:['allergy', 'whatTaken'] },
 
 /* ---------- Contrast media ---------- */

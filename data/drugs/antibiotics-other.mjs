@@ -89,6 +89,9 @@ export default [
   take:['emptyStomach', 'bedtime'],
   notes:{en:'A single sachet for simple cystitis: dissolve in water and drink on an empty stomach at bedtime, after emptying the bladder.',
          ar:'كيس واحد لالتهاب المثانة البسيط: يُذاب في الماء ويُشرب على معدة فارغة قبل النوم بعد إفراغ المثانة.'},
+  ix:[
+    ['Metoclopramide', W, 'Lowers fosfomycin absorption.', 'يقلّل امتصاص الفوسفومايسين.']
+  ],
   ci:['renal30'],
   ask:['preg', 'kidney', 'duration'] },
 
@@ -141,6 +144,11 @@ export default [
   doses:['0.5% eye drops', '1% eye ointment', '250 mg capsule', '1 g vial'], brand:['Chloromycetin', 'Optrex Infected Eyes'],
   notes:{en:'Mostly eye drops: every two hours for two days, then less often, for five days in all. By mouth or injection it can rarely wipe out the marrow and is reserved for serious infections.',
          ar:'في الغالب قطرة عين: كل ساعتين ليومين ثم أقل، لخمسة أيام إجمالاً. بالفم أو الحقن قد يُفني نقي العظم نادراً، فيُحصر في الالتهابات الخطيرة.'},
+  ix:[
+    ['Warfarin', S, 'By mouth or injection it raises the INR.', 'بالفم أو الحقن يرفع INR.'],
+    ['Phenytoin', S, 'Raises phenytoin to toxic levels.', 'يرفع الفينيتوين إلى حدّ السميّة.'],
+    ['Clozapine', S, 'Both can wipe out the marrow — avoid.', 'كلاهما قد يُفني نقي العظم — يُتجنّب.']
+  ],
   ci:['marrow', {en:'Neonates (grey baby syndrome) — systemic use', ar:'حديثو الولادة (متلازمة الطفل الرمادي) — الاستعمال الجهازي'}],
   ask:['contactLens', 'eyeRedFlags', 'childAge'] },
 
@@ -158,6 +166,11 @@ export default [
   doses:['500 mg'],
   notes:{en:'Used with pyrimethamine for toxoplasmosis. Drink plenty to protect the kidneys; report rash, fever or sore throat.',
          ar:'يُستعمل مع البيريميثامين لداء المقوّسات. اشرب كثيراً لحماية الكلى؛ أبلغ عن الطفح أو الحرارة أو التهاب الحلق.'},
+  ix:[
+    ['Methotrexate', S, 'Raises methotrexate toxicity.', 'يزيد سمّية الميثوتريكسيت.'],
+    ['Warfarin', S, 'Raises the INR.', 'يرفع INR.'],
+    ['Phenytoin', W, 'Raises phenytoin.', 'يرفع الفينيتوين.']
+  ],
   ci:['sulfaAllergy', 'g6pd', 'porphyria'],
   ask:['allergySulfa', 'g6pd', 'kidney'] },
 
@@ -217,6 +230,9 @@ export default [
   doses:['400 mg', '500 mg'], brand:['Zinamide'],
   notes:{en:'For the first two months of TB treatment. It raises uric acid (gout attacks) and can affect the liver — report joint pain, nausea or yellowing.',
          ar:'للشهرين الأولين من علاج السل. يرفع حمض البول (نوبات النقرس) وقد يؤثر في الكبد — أبلغ عن ألم المفاصل أو الغثيان أو الاصفرار.'},
+  ix:[
+    ['Allopurinol', W, 'Pyrazinamide raises uric acid — gout may flare.', 'البيرازيناميد يرفع حمض البول — قد تشتد النقرس.']
+  ],
   ci:['hepSevere', 'porphyria'],
   ask:['liver', 'gout', 'diabetes'] },
 
@@ -224,6 +240,9 @@ export default [
   doses:['100 mg', '400 mg'], brand:['Myambutol'],
   notes:{en:'Report any change in vision or colour vision at once — it can damage the optic nerve. The dose is lowered in kidney impairment.',
          ar:'أبلغ فوراً عن أي تغيّر في الرؤية أو رؤية الألوان — قد يؤذي العصب البصري. تُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['Aluminium hydroxide', W, 'Aluminium antacids lower its absorption — keep four hours apart.', 'مضادات الحموضة بالألمنيوم تقلّل امتصاصه — افصل بينهما أربع ساعات.']
+  ],
   ci:[{en:'Optic neuritis', ar:'التهاب العصب البصري'}],
   ask:['vision', 'kidney'] },
 
@@ -262,6 +281,10 @@ export default [
   doses:['250 mg'], brand:['Seromycin'],
   notes:{en:'For resistant TB. It can cause low mood, anxiety, confusion or fits — report any change. No alcohol.',
          ar:'للسل المقاوم. قد يسبّب انخفاض المزاج أو القلق أو التشوّش أو الاختلاج — أبلغ عن أي تغيّر. لا كحول.'},
+  ix:[
+    ['Alcohol', S, 'Raises the risk of fits.', 'يرفع خطر النوبات.'],
+    ['Isoniazid', W, 'More dizziness and drowsiness.', 'دوخة ونعاس أكثر.']
+  ],
   ci:['epilepsy', {en:'Depression or psychosis', ar:'الاكتئاب أو الذهان'}, 'renalSevere'],
   ask:['mood', 'epilepsy', 'alcohol'] },
 
@@ -269,6 +292,10 @@ export default [
   doses:['250 mg'],
   notes:{en:'For resistant TB. Nausea and a metallic taste are common; it can lower thyroid function and blood sugar.',
          ar:'للسل المقاوم. الغثيان والطعم المعدني شائعان؛ وقد يخفض وظيفة الدرق وسكر الدم.'},
+  ix:[
+    ['Isoniazid', W, 'More liver toxicity and nerve side effects.', 'مزيد من سمّية الكبد والأعصاب.'],
+    ['Alcohol', S, 'More liver toxicity and mental effects.', 'مزيد من سمّية الكبد والآثار النفسية.']
+  ],
   ci:['hepSevere'],
   ask:['liver', 'diabetes', 'thyroid'] },
 
@@ -276,6 +303,10 @@ export default [
   doses:['4 g granules'], brand:['PASER'], aka:['Para-aminosalicylic acid', 'PAS'],
   notes:{en:'Granules sprinkled on acidic food or juice for resistant TB. Stomach upset is common; it can lower thyroid function.',
          ar:'حبيبات تُنثر على طعام أو عصير حمضي للسل المقاوم. اضطراب المعدة شائع؛ وقد يخفض وظيفة الدرق.'},
+  ix:[
+    ['Digoxin', W, 'Lowers digoxin absorption.', 'يقلّل امتصاص الديجوكسين.'],
+    ['Isoniazid', W, 'Raises isoniazid levels.', 'يرفع مستوى الأيزونيازيد.']
+  ],
   ask:['thyroid', 'liver'] },
 
 { sci:'Clofazimine', ar:'كلوفازيمين', atc:'J04BA01', cat:'inf.tb', form:'capsule',
@@ -289,6 +320,10 @@ export default [
   doses:['50 mg', '100 mg', '5% gel'], brand:['Aczone'],
   notes:{en:'For leprosy, some skin diseases and pneumocystis prevention. It can break down red cells (worse with G6PD deficiency) — report breathlessness, blue lips, fever or sore throat.',
          ar:'للجذام وبعض أمراض الجلد والوقاية من المتكيسة الرئوية. قد يحلّ الكريات الحمر (أسوأ مع عوز G6PD) — أبلغ عن ضيق النفس أو زرقة الشفتين أو الحرارة أو التهاب الحلق.'},
+  ix:[
+    ['Rifampicin', W, 'Lowers dapsone levels.', 'يخفض مستوى الدابسون.'],
+    ['Trimethoprim', W, 'Raises both drugs — more methaemoglobinaemia.', 'يرفع كلا الدواءين — مزيد من ميتهيموغلوبينية الدم.']
+  ],
   ci:['g6pd', 'porphyria', 'sulfaAllergy'],
   ask:['g6pd', 'allergySulfa', 'labs'] },
 

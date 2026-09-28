@@ -291,6 +291,10 @@ export default [
   doses:['1 mg kit', '3 mg nasal powder'], brand:['GlucaGen', 'Baqsimi'],
   notes:{en:'For a severe low sugar when the person cannot swallow: inject into the thigh (or spray into the nose), turn them on their side, and give sugar once they wake. Show the family how.',
          ar:'لهبوط السكر الشديد حين لا يستطيع المريض البلع: يُحقن في الفخذ (أو يُرشّ في الأنف)، ويُدار المريض على جانبه، ويُعطى سكراً حين يستيقظ. علّم العائلة طريقة استعماله.'},
+  ix:[
+    ['Warfarin', W, 'High or repeated doses raise the INR.', 'الجرعات العالية أو المتكررة ترفع INR.'],
+    ['#betaBlocker', W, 'A rise in pulse and blood pressure.', 'ارتفاع النبض والضغط.']
+  ],
   ci:['phaeo'],
   ask:['injectTech', 'whoFor'] },
 

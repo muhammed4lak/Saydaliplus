@@ -340,7 +340,16 @@ ok('the module opens on the check, not the reference',
    await d.evaluate(() => S.drugTab) === 'check');
 await d.evaluate(() => setDrugTab('reference'));
 await d.waitForTimeout(200);
-ok('the module renders every drug', await d.locator('.drug-row').count() === DRUG_DATA.length);
+/* v0.0015.3 — over a thousand molecules: the first hundred are drawn, the
+   count names all of them, and one tap draws the rest. */
+ok(`the module draws the first hundred and counts all ${DRUG_DATA.length}`,
+   await d.locator('.drug-row').count() === 100
+   && (await d.locator('.section-eyebrow').first().innerText()).replace(/\D/g, '').startsWith(String(DRUG_DATA.length)));
+ok('and one tap draws every drug',
+   await d.evaluate(() => { setDrugShowAll(); const n = document.querySelectorAll('.drug-row').length; setDrugQuery(''); return n; }) === DRUG_DATA.length);
+ok('a category narrows the list to that category and nothing else',
+   await d.evaluate(() => { setDrugGroup('cvs'); const rows = document.querySelectorAll('.drug-row').length;
+     const n = DRUGS.filter(x => drugGroup(x) === 'cvs').length; setDrugGroup('all'); return rows === Math.min(n, 100) && n > 50; }));
 ok('and says what kind of reference it is',
    /مرجع مساعد|A reference, not a substitute/.test(await d.locator('.inline-note').first().innerText()));
 
@@ -348,9 +357,10 @@ ok('and says what kind of reference it is',
    the diacritics or the alif hamza that nobody keys in a hurry. */
 await d.evaluate(() => setDrugQuery('amox'));
 await d.waitForTimeout(200);
-ok('a Latin fragment finds the molecule',
-   await d.locator('.drug-row').count() === 2
-   && (await d.locator('.drug-row').first().innerText()).includes('Amox'));
+ok('a Latin fragment finds the molecule, and a name that starts with it comes first',
+   await d.locator('.drug-row').count() >= 2
+   && await d.evaluate(() => [...document.querySelectorAll('.drug-row')].slice(0, 2)
+        .every(r => /openDrug\(["']Amoxicillin/.test(r.getAttribute('onclick')))));
 await d.evaluate(() => setDrugQuery('اموكسيسيلين'));   // no hamza on the alif
 await d.waitForTimeout(200);
 ok('an Arabic query without the hamza still finds أموكسيسيلين',
@@ -402,11 +412,23 @@ ok('an interaction partner that is in the reference is a link to it',
    }));
 ok('and one that is not stays plain text rather than a dead link',
    await d.evaluate(() => {
-     openDrug('Metformin');
-     const inter = DRUGS.find(x => x.sci === 'Metformin').interactions;
-     const outside = inter.find(i => !DRUGS.some(x => x.sci === i.with));
-     return !!outside && document.querySelectorAll('.drug-inter-w').length > 0;
+     openDrug('Metronidazole');
+     const inter = DRUGS.find(x => x.sci === 'Metronidazole').interactions;
+     const outside = inter.find(i => i.with === 'Alcohol');
+     return !!outside && [...document.querySelectorAll('.drug-inter-w')].some(e => e.textContent === 'Alcohol');
    }));
+/* v0.0015.3 — interactions with a CLASS, and the class rules. */
+ok('a class partner reads as the class, marked as one',
+   await d.evaluate(() => { openDrug('Metformin');
+     return [...document.querySelectorAll('.drug-inter-class')].some(e => e.textContent === tagLabel('contrast')); }));
+ok('a drug lists the class rules it falls under beside its own lines',
+   await d.evaluate(() => { openDrug('Tramadol');
+     return drugRuleInteractions(DRUGS.find(x => x.sci === 'Tramadol')).length > 0
+       && document.querySelectorAll('.drug-inter').length >= (DRUGS.find(x => x.sci === 'Tramadol').interactions || []).length + 1; }));
+ok('a record carries its category, its questions and what it is registered as in Iraq',
+   await d.evaluate(() => { openDrug('Amlodipine'); const txt = document.getElementById('app-body').innerText;
+     return txt.includes(catLabel('cvs')) && document.querySelectorAll('.drug-ask .ask-q').length >= 1
+       && document.querySelectorAll('.drug-ask .ask-q').length <= 3 && document.querySelectorAll('.drug-registered .pill-tag').length > 0; }));
 
 /* The worst-interaction chip is computed, and the seed value is the classic
    way to get it wrong: a reduce seeded with '' compares against undefined and
@@ -611,14 +633,17 @@ ok('the ones that are often deliberate say so rather than crying wolf',
 await d.waitForTimeout(150);
 ok('and the screen marks them', await d.locator('.drug-inter .pill-tag').count() > 0);
 
-console.log('\ncontraindications become questions');
-await d.evaluate(() => { clearBasket(); ['Warfarin', 'Ibuprofen', 'Diclofenac'].forEach(addToBasket); });
+console.log('\neach drug\'s questions become one list');
+await d.evaluate(() => { clearBasket(); ['Aspirin', 'Ibuprofen', 'Diclofenac'].forEach(addToBasket); });
 await d.waitForTimeout(220);
 ok('one question, not one per drug, when several share it',
    await d.evaluate(() => {
-     const q = basketQuestions(S.basket).find(x => x.text.en === 'Active peptic ulcer');
+     const q = basketQuestions(S.basket).find(x => /stomach ulcer/.test(x.text.en));
      return !!q && q.drugs.length === 3;
    }));
+ok('at most three questions a drug, and every one of them asked',
+   await d.evaluate(() => DRUGS.every(x => x.ask.length >= 1 && x.ask.length <= 3)
+     && S.basket.every(sci => DRUGS.find(x => x.sci === sci).ask.every(a => basketQuestions(S.basket).some(q => q.text.en === a.en)))));
 ok('the questions touching most drugs come first',
    await d.evaluate(() => {
      const q = basketQuestions(S.basket);
@@ -630,11 +655,17 @@ ok('it is headed as something to ask, not as a warning',
    /Ask the patient/i.test(await d.locator('#app-body').innerText()));
 
 console.log('\ncoverage is shown, not footnoted');
-await d.evaluate(() => { clearBasket(); addToBasket('Metformin'); });
+await d.evaluate(() => { clearBasket(); addToBasket('Metronidazole'); });
 await d.waitForTimeout(220);
 ok('a partner outside the reference is named on screen',
    await d.locator('.coverage').count() === 1
-   && /Contrast media/.test(await d.locator('.coverage').innerText()));
+   && /Alcohol/.test(await d.locator('.coverage').innerText()));
+ok('while a class partner is checked against the basket, not named as outside it',
+   await d.evaluate(() => { clearBasket(); addToBasket('Metformin'); return basketCoverage(S.basket).namedOutside.every(w => w.charAt(0) !== '#'); }));
+ok('a class rule finds two drugs that name neither each other nor the class',
+   await d.evaluate(() => { const hit = INTERACTION_INDEX.get('Morphine', 'Diazepam'); return !!hit && hit.severity === 'critical' && !!hit.rule; }));
+await d.evaluate(() => { clearBasket(); addToBasket('Metronidazole'); });
+await d.waitForTimeout(220);
 ok('and the coverage block is a card, not small print',
    await d.evaluate(() => {
      const el = document.querySelector('.coverage');
@@ -2377,8 +2408,8 @@ console.log('\nthe till and the Helper as one (v0.0013.1)');
        return /Helper: 1 of 1 medicines checked · nothing found in what it checked/.test(c) && !document.querySelector('.till-flag') &&
          !document.querySelector('#app-body .banner-green'); }));
   ok('the Helper sheet names what was and was not checked',
-     await dk.evaluate(() => { tillScan('5000000001422'); openHelper(); const t = document.querySelector('.sheet .till-covdetail').innerText; closeModal();
-       return /Checked: Panadol 500 mg\./.test(t) && /Not checked: Actifed syrup\./.test(t); }));
+     await dk.evaluate(() => { tillScan('8690000001606'); openHelper(); const t = document.querySelector('.sheet .till-covdetail').innerText; closeModal();
+       return /Checked: Panadol 500 mg\./.test(t) && /Not checked: Royal jelly 1000 mg\./.test(t); }));
   ok('U5 — Pay opens a sheet; the sale closes it and shows the receipt',
      await dk.evaluate(() => { document.querySelector('.till-pay-btn').click(); const open = S.modal && S.modal.kind === 'tillPay' &&
        document.querySelectorAll('.sheet .till-tenders button').length === 3 && !!document.querySelector('.sheet .till-confirm');
@@ -3191,7 +3222,8 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
   ok('…linked to the reference where its scientific name is ours, so the Helper checks it',
      await dk.evaluate(() => { const p = productByCode('REG-R0102'); return p.mapping === 'auto' && p.molecules[0].sci === 'Amlodipine' && productCoverage(p).kind === 'full'; }));
   ok('a combination with ingredients the reference lacks is only partly checked, and says so',
-     await dk.evaluate(() => productCoverage(productByCode('REG-R2336')).kind !== 'full'));
+     await dk.evaluate(() => { const p = REG_PRODUCTS.find(x => x.molecules.some(m => m.other));
+       return !!p && productCoverage(p).kind === 'partial'; }));
   ok('the product page: internal code, no barcode yet, the composition and the registration',
      await dk.evaluate(() => { openProduct('REG-R0102'); const txt = document.getElementById('app-body').innerText;
        return /Internal code/.test(txt) && /REG-R0102/.test(txt) && /Linked the first time it is scanned/.test(txt) && /Amlodipine \(as besylate\)/.test(txt) &&
@@ -3216,23 +3248,28 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
      await dk.evaluate(() => { findProducts('warm', 'P1', 8); const t0 = performance.now(); ['p', 'pa', 'par', 'para', 'parac'].forEach(q => findProducts(q, 'P1', 8));
        return (performance.now() - t0) / 5 < 40; }));
 
-  /* The Essential Drugs List's other generics, in Drugs. */
-  ok('the EDL’s 355 generics the reference lacks are in Drugs, none duplicating the reference',
-     await dk.evaluate(() => EDL_DRUGS.length === 355 && EDL_DRUGS.every(d => !drugBySci(d.sci) && d.edlOnly && !d.doses.length && !d.interactions.length)));
-  ok('the reference lists them after its own, marked as having no clinical information, 40 until searched',
-     await dk.evaluate(() => { goto('drugs'); S.drugForm = 'all'; setDrugTab('reference'); setDrugQuery('');
-       const eb = document.querySelector('.edl-eyebrow'); return !!eb && /no clinical information yet · 355/.test(eb.textContent) &&
-         document.querySelectorAll('.edl-row').length === 40 && document.querySelectorAll('.drug-row').length === clinicalOnly(DRUGS).length; }));
-  ok('…and searching finds them',
+  /* The Essential Drugs List's other generics, in Drugs. v0.0015.3: the
+     reference now holds every generic the list names, so none is left over —
+     and the section that would show one is proved on a generic added here. */
+  ok('every generic on the EDL is in the reference: none is left without clinical information',
+     await dk.evaluate(() => EDL_DRUGS.length === 0 && EDL_GENERICS.length === 0));
+  const EG = { sci:'Ethynodiol diacetate', ar:'', atc:'', form:null, doses:[], interactions:[], edlOnly:true,
+    items:[{ code:'99-TST-001', item:'Ethynodiol diacetate 500 microgram tablet', cls:'Test class' }] };
+  await dk.evaluate(g => { EDL_DRUGS.push(g); }, EG);
+  ok('one that were left would be listed after the reference’s own, marked as having no clinical information',
+     await dk.evaluate(() => { goto('drugs'); S.drugForm = 'all'; S.drugGroup = 'all'; setDrugTab('reference'); setDrugQuery('');
+       const eb = document.querySelector('.edl-eyebrow'); return !!eb && /no clinical information yet · 1/.test(eb.textContent) &&
+         document.querySelectorAll('.edl-row').length === 1; }));
+  ok('…and searching finds it',
      await dk.evaluate(() => { const d = EDL_DRUGS[0]; setDrugQuery(d.sci); const rows = [...document.querySelectorAll('.edl-row')];
        const r = rows.some(x => x.innerText.includes(d.sci)); setDrugQuery(''); return r; }));
-  ok('an EDL generic’s page says plainly there is no clinical information and the Helper does not check it; its EDL entries and registered products follow',
-     await dk.evaluate(() => { const d = EDL_DRUGS.find(x => edlRegistered(x).length);
+  ok('its page says plainly there is no clinical information and the Helper does not check it; its EDL entries and registered products follow',
+     await dk.evaluate(() => { const d = EDL_DRUGS[0];
        openDrug(d.sci); const txt = document.getElementById('app-body').innerText;
-       return /No clinical information for this drug yet/.test(txt) && /does not check it/.test(txt) && document.querySelector('.edl-card .row') &&
+       return edlRegistered(d).length > 0 && /No clinical information for this drug yet/.test(txt) && /does not check it/.test(txt) && document.querySelector('.edl-card .row') &&
          !!document.querySelector('.eg-reg .row') && document.querySelector('.header-title').innerText.includes(d.sci); }));
   ok('…matched to the register by its name, not a loose word: Activated Charcoal is not NovoSeven (“activated” factor VII)',
-     await dk.evaluate(() => { const r = edlRegistered(edlDrugBySci('Activated Charcoal')); return !r.some(p => /NovoSeven|Aryoseven/i.test(p.name.en)); }));
+     await dk.evaluate(() => { const r = edlRegistered({ sci:'Activated Charcoal' }); return !r.some(p => /NovoSeven|Aryoseven/i.test(p.name.en)); }));
   ok('…in Arabic its name is its scientific name, never blank',
      await dk.evaluate(() => { setLang('ar'); const d = EDL_DRUGS[0]; const r = drugName(d) === d.sci && drugSub(d) === ''; setLang('en'); return r; }));
   ok('P1 — no paid or promoted content on an EDL generic’s page',

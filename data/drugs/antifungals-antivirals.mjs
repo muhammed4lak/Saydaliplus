@@ -63,12 +63,20 @@ export default [
   doses:['50 mg', '70 mg vial'], brand:['Cancidas'],
   notes:{en:'A daily hospital infusion for serious fungal infections.',
          ar:'تسريب يومي في المستشفى للعدوى الفطرية الخطيرة.'},
+  ix:[
+    ['Ciclosporin', W, 'Liver enzymes rise — monitor.', 'ترتفع إنزيمات الكبد — يُراقب.'],
+    ['Tacrolimus', W, 'Lowers tacrolimus levels.', 'يخفض مستوى التاكروليموس.'],
+    ['#inducer', W, 'Rifampicin and other inducers lower caspofungin — a higher dose is used.', 'الريفامبيسين والمحرّضات الأخرى تخفض الكاسبوفنجين — تُرفع الجرعة.']
+  ],
   ask:['liver'] },
 
 { sci:'Micafungin', ar:'ميكافانجين', atc:'J02AX05', cat:'inf.antifungal', form:'injection',
   doses:['50 mg', '100 mg vial'], brand:['Mycamine'],
   notes:{en:'A daily hospital infusion for serious fungal infections; liver tests are checked.',
          ar:'تسريب يومي في المستشفى للعدوى الفطرية الخطيرة؛ تُفحص وظائف الكبد.'},
+  ix:[
+    ['Nifedipine', W, 'Raises nifedipine.', 'يرفع النيفيديبين.']
+  ],
   ask:['liver'] },
 
 { sci:'Nystatin', ar:'نيستاتين', atc:'A07AA02', cat:'inf.antifungal', form:'drops',
@@ -103,18 +111,29 @@ export default [
   doses:['500 mg', '1 g'], brand:['Valtrex'], aka:['Valacyclovir'],
   notes:{en:'For cold sores or shingles, start at the first tingle or rash. Drink plenty of water. The dose is lowered in kidney impairment.',
          ar:'للقروح الباردة أو الحزام الناري، ابدأ عند أول وخز أو طفح. اشرب ماء كثيراً. تُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['#nephrotoxic', W, 'Drugs that strain the kidneys raise its levels — keep well hydrated.', 'الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.']
+  ],
   ask:['kidney', 'preg'] },
 
 { sci:'Famciclovir', ar:'فامسيكلوفير', atc:'J05AB09', cat:'inf.antiviral', form:'tablet',
   doses:['125 mg', '250 mg', '500 mg'], brand:['Famvir'],
   notes:{en:'For shingles and genital herpes, started as early as possible. The dose is lowered in kidney impairment.',
          ar:'للحزام الناري والحلأ التناسلي، يُبدأ به بأسرع وقت ممكن. تُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['#nephrotoxic', W, 'Drugs that strain the kidneys raise its levels — keep well hydrated.', 'الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.']
+  ],
   ask:['kidney', 'preg'] },
 
 { sci:'Ganciclovir', ar:'غانسيكلوفير', atc:'J05AB06', cat:'inf.antiviral', form:'injection',
   doses:['500 mg vial', '0.15% eye gel'], brand:['Cymevene', 'Virgan'],
   notes:{en:'A hospital infusion for CMV; blood counts are checked. It causes birth defects — contraception for both partners.',
          ar:'تسريب في المستشفى لفيروس CMV؛ يُفحص تعداد الدم. يسبّب تشوّهات للجنين — منع الحمل للزوجين.'},
+  ix:[
+    ['Zidovudine', S, 'Both lower blood counts — severe anaemia and low white cells.', 'كلاهما يخفض تعداد الدم — فقر دم شديد ونقص الكريات البيض.'],
+    ['Mycophenolate', W, 'More marrow suppression.', 'مزيد من تثبيط نقي العظم.'],
+    ['Imipenem/Cilastatin', S, 'Fits have been reported together.', 'سُجّلت نوبات عند الجمع.']
+  ],
   ci:['pregTeratogen', 'marrow'],
   ask:['pregTest', 'labs', 'kidney'] },
 
@@ -123,6 +142,11 @@ export default [
   take:['withFood'],
   notes:{en:'With food. Do not break or crush the tablets, and wash hands after handling. Blood counts are checked; it causes birth defects.',
          ar:'مع الطعام. لا تُكسر الأقراص ولا تُسحق، واغسل يديك بعد لمسها. يُفحص تعداد الدم؛ ويسبّب تشوّهات للجنين.'},
+  ix:[
+    ['Zidovudine', S, 'Both lower blood counts — severe anaemia and low white cells.', 'كلاهما يخفض تعداد الدم — فقر دم شديد ونقص الكريات البيض.'],
+    ['Mycophenolate', W, 'More marrow suppression.', 'مزيد من تثبيط نقي العظم.'],
+    ['Imipenem/Cilastatin', S, 'Fits have been reported together.', 'سُجّلت نوبات عند الجمع.']
+  ],
   ci:['pregTeratogen', 'marrow'],
   ask:['pregTest', 'labs', 'kidney'] },
 
@@ -138,6 +162,10 @@ export default [
   take:['withFood'],
   notes:{en:'It causes birth defects — two reliable contraceptive methods for both partners, during and for months after. It breaks down red cells; blood counts are checked.',
          ar:'يسبّب تشوّهات للجنين — وسيلتان موثوقتان لمنع الحمل للزوجين، أثناء العلاج ولأشهر بعده. يحلّ الكريات الحمر؛ يُفحص تعداد الدم.'},
+  ix:[
+    ['Zidovudine', S, 'More anaemia — avoid.', 'مزيد من فقر الدم — يُتجنّب.'],
+    ['Azathioprine', S, 'Severe marrow suppression.', 'تثبيط شديد لنقي العظم.']
+  ],
   ci:['pregTeratogen', {en:'Severe heart disease', ar:'مرض قلبي شديد'}, 'hepSevere'],
   ask:['pregTest', 'heart', 'labs'] },
 
@@ -145,12 +173,19 @@ export default [
   doses:['100 mg vial'], brand:['Veklury'],
   notes:{en:'A hospital infusion for COVID-19; liver and kidney tests are checked.',
          ar:'تسريب في المستشفى لكوفيد-19؛ تُفحص وظائف الكبد والكلى.'},
+  ix:[
+    ['Hydroxychloroquine', S, 'Weakens remdesivir — not given together.', 'يُضعف الريمديسيفير — لا يُعطيان معاً.']
+  ],
   ask:['liver', 'kidney'] },
 
 { sci:'Favipiravir', ar:'فافيبيرافير', atc:'J05AX27', cat:'inf.antiviral', form:'tablet',
   doses:['200 mg'], brand:['Avigan'],
   notes:{en:'An antiviral used for influenza and COVID-19 in some countries. It causes birth defects — not in pregnancy, and contraception for both partners.',
          ar:'مضاد فيروسي يُستعمل للإنفلونزا وكوفيد-19 في بعض الدول. يسبّب تشوّهات للجنين — لا يُستعمل في الحمل، ومنع الحمل للزوجين.'},
+  ix:[
+    ['Paracetamol', W, 'Raises paracetamol levels — keep to the lower daily dose.', 'يرفع مستوى الباراسيتامول — الزم الجرعة اليومية الأدنى.'],
+    ['Pyrazinamide', W, 'Higher uric acid.', 'ارتفاع حمض البول.']
+  ],
   ci:['pregTeratogen'],
   ask:['pregTest', 'liver', 'gout'] },
 
@@ -167,6 +202,9 @@ export default [
   take:['emptyStomach'],
   notes:{en:'For hepatitis B, on an empty stomach. Never stop without the specialist — the hepatitis can flare severely.',
          ar:'لالتهاب الكبد B، على معدة فارغة. لا يُوقف أبداً دون الطبيب المختص — قد ينتكس التهاب الكبد انتكاساً شديداً.'},
+  ix:[
+    ['#nephrotoxic', W, 'Drugs that strain the kidneys raise its levels — keep well hydrated.', 'الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.']
+  ],
   ask:['kidney', 'labs'] },
 
 { sci:'Tenofovir disoproxil', ar:'تينوفوفير ديزوبروكسيل', atc:'J05AF07', cat:'inf.antiviral', form:'tablet',
@@ -178,6 +216,7 @@ export default [
 
 { sci:'Tenofovir alafenamide', ar:'تينوفوفير ألافيناميد', atc:'J05AF13', cat:'inf.antiviral', form:'tablet',
   doses:['25 mg', 'in HIV combinations'], brand:['Vemlidy', 'Descovy'],
+  tags:['inducerSensitive'],
   notes:{en:'For hepatitis B and HIV, once a day with food; gentler on kidneys and bones than tenofovir disoproxil. Never stop hepatitis B treatment suddenly.',
          ar:'لالتهاب الكبد B وفيروس نقص المناعة، مرة واحدة يومياً مع الطعام؛ ألطف على الكلى والعظام من تينوفوفير ديزوبروكسيل. لا يُوقف علاج التهاب الكبد B فجأة أبداً.'},
   ask:['kidney', 'labs'] },
@@ -186,6 +225,9 @@ export default [
   doses:['100 mg (hepatitis B)', '150 mg', '300 mg', 'in HIV combinations'], brand:['Epivir', 'Zeffix'],
   notes:{en:'For HIV and hepatitis B. Well tolerated; the dose is lowered in kidney impairment. Stopping it in hepatitis B can cause a flare.',
          ar:'لفيروس نقص المناعة والتهاب الكبد B. جيد التحمّل؛ تُخفّض الجرعة في القصور الكلوي. إيقافه في التهاب الكبد B قد يسبّب انتكاساً.'},
+  ix:[
+    ['Trimethoprim/Sulfamethoxazole', W, 'Raises lamivudine levels.', 'يرفع مستوى اللاميفودين.']
+  ],
   ask:['kidney', 'labs'] },
 
 { sci:'Sofosbuvir', ar:'سوفوسبوفير', atc:'J05AP08', cat:'inf.antiviral', form:'tablet',
@@ -227,6 +269,10 @@ export default [
   doses:['135 microgram', '180 microgram prefilled syringe'], brand:['Pegasys', 'PegIntron'], aka:['Peginterferon alfa-2a', 'Peginterferon alfa-2b'],
   notes:{en:'A weekly injection for hepatitis B or C. Flu-like symptoms, tiredness and low mood are common — report depression. Blood counts are checked.',
          ar:'حقنة أسبوعية لالتهاب الكبد B أو C. أعراض تشبه الإنفلونزا والتعب وانخفاض المزاج شائعة — أبلغ عن الاكتئاب. يُفحص تعداد الدم.'},
+  ix:[
+    ['Theophylline', W, 'Raises theophylline.', 'يرفع الثيوفيلين.'],
+    ['Zidovudine', S, 'More low blood counts.', 'مزيد من انخفاض تعداد الدم.']
+  ],
   ci:['hepSevere', {en:'Severe depression', ar:'اكتئاب شديد'}, 'preg'],
   ask:['mood', 'labs', 'injectTech'] },
 
@@ -234,6 +280,10 @@ export default [
   doses:['3 MIU', '5 MIU', '10 MIU'], brand:['Intron A', 'Roferon-A'], aka:['Interferon alfa-2a', 'Interferon alfa-2b'],
   notes:{en:'Injections for some viral hepatitis and cancers. Flu-like symptoms and low mood are common — report depression.',
          ar:'حقن لبعض حالات التهاب الكبد الفيروسي والأورام. أعراض تشبه الإنفلونزا وانخفاض المزاج شائعة — أبلغ عن الاكتئاب.'},
+  ix:[
+    ['Theophylline', W, 'Raises theophylline.', 'يرفع الثيوفيلين.'],
+    ['Zidovudine', S, 'More low blood counts.', 'مزيد من انخفاض تعداد الدم.']
+  ],
   ci:['hepSevere', {en:'Severe depression', ar:'اكتئاب شديد'}],
   ask:['mood', 'labs', 'cold'] },
 
@@ -279,6 +329,10 @@ export default [
   doses:['300/150 mg', '60/30 mg dispersible (children)'], brand:['Combivir'], aka:['Lamivudine/zidovudine'],
   notes:{en:'Twice a day for HIV, including in babies to prevent infection from the mother. Anaemia and low white cells are checked; tiredness or breathlessness should be reported.',
          ar:'مرتين يومياً لفيروس الإيدز، ومنه للرضّع للوقاية من العدوى من الأم. يُفحص فقر الدم ونقص الكريات البيض؛ ويُبلغ عن التعب أو ضيق التنفس.'},
+  ix:[
+    ['Ganciclovir', S, 'Severe anaemia and low white cells.', 'فقر دم شديد ونقص الكريات البيض.'],
+    ['Ribavirin', S, 'More anaemia — avoid.', 'مزيد من فقر الدم — يُتجنّب.']
+  ],
   ci:['marrow'],
   ask:['childAge', 'labs', 'hepatitis'] },
 
@@ -286,6 +340,10 @@ export default [
   doses:['100 mg', '250 mg', '300 mg', 'with lamivudine', '50 mg/5 mL', '10 mg/mL infusion'], brand:['Retrovir', 'Combivir'], aka:['AZT'],
   notes:{en:'It can cause anaemia and low white cells — blood counts are checked. Headache and nausea at first.',
          ar:'قد يسبّب فقر الدم ونقص الكريات البيض — يُفحص تعداد الدم. صداع وغثيان في البداية.'},
+  ix:[
+    ['Ganciclovir', S, 'Severe anaemia and low white cells.', 'فقر دم شديد ونقص الكريات البيض.'],
+    ['Ribavirin', S, 'More anaemia — avoid.', 'مزيد من فقر الدم — يُتجنّب.']
+  ],
   ci:['marrow'],
   ask:['labs', 'otherMeds'] },
 
@@ -293,6 +351,10 @@ export default [
   doses:['300 mg', '600 mg with lamivudine 300 mg'], brand:['Ziagen', 'Kivexa'],
   notes:{en:'A serious allergic reaction can start in the first six weeks — fever, rash, vomiting, breathlessness: stop and never restart. The HLA-B*5701 test is done first.',
          ar:'قد يبدأ تفاعل تحسّسي خطير في الأسابيع الستة الأولى — حرارة أو طفح أو قيء أو ضيق نفس: أوقفه ولا تعد إليه أبداً. يُجرى فحص HLA-B*5701 أولاً.'},
+  ix:[
+    ['Alcohol', W, 'Alcohol raises abacavir levels.', 'الكحول يرفع مستوى الأباكافير.'],
+    ['Methadone', W, 'May lower methadone levels.', 'قد يخفض مستوى الميثادون.']
+  ],
   ci:[{en:'HLA-B*5701 positive, or previous hypersensitivity to abacavir', ar:'إيجابية HLA-B*5701، أو فرط حساسية سابق للأباكافير'}],
   ask:['allergy', 'heart'] },
 
@@ -300,6 +362,9 @@ export default [
   doses:['200 mg', 'with tenofovir'], brand:['Emtriva', 'Truvada'],
   notes:{en:'Part of HIV treatment and prevention. Stopping it can cause a hepatitis B flare in people who have both.',
          ar:'جزء من علاج فيروس نقص المناعة والوقاية منه. إيقافه قد يسبّب انتكاس التهاب الكبد B لمن لديه الاثنان.'},
+  ix:[
+    ['#nephrotoxic', W, 'Drugs that strain the kidneys raise its levels — keep well hydrated.', 'الأدوية المُجهدة للكلى ترفع مستواه — حافظ على الإرواء.']
+  ],
   ask:['kidney', 'hepatitis'] },
 
 { sci:'Lopinavir/Ritonavir', ar:'لوبينافير/ريتونافير', atc:'J05AR10', cat:'inf.hiv', form:'tablet',

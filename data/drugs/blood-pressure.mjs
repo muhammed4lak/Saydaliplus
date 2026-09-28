@@ -459,6 +459,9 @@ export default [
   doses:['25 mg', '50 mg', '20 mg injection'], brand:['Apresoline'],
   notes:{en:'Used in pregnancy and, with a nitrate, in heart failure. Headache and a racing heart are common at first. Report joint pains, rash or fever — a lupus-like reaction.',
          ar:'يُستعمل في الحمل، ومع النترات في قصور القلب. الصداع وتسارع القلب شائعان في البداية. أبلغ عن آلام المفاصل أو الطفح أو الحرارة — تفاعل يشبه الذئبة.'},
+  ix:[
+    ['#alphaBlocker', W, 'Added fall in blood pressure.', 'هبوط إضافي في الضغط.']
+  ],
   ci:[{en:'Systemic lupus erythematosus', ar:'الذئبة الحمامية الجهازية'}, {en:'Severe tachycardia or high-output heart failure', ar:'تسرّع قلب شديد أو قصور قلب عالي النتاج'}, 'porphyria'],
   ask:['preg', 'heart'] },
 
@@ -494,6 +497,9 @@ export default [
   doses:['50 mg vial'], brand:['Nipride'],
   notes:{en:'Hospital only, for hypertensive emergencies under continuous monitoring. Protect the infusion from light; cyanide builds up with long or high-dose use.',
          ar:'للمستشفى فقط، لطوارئ ارتفاع الضغط مع مراقبة مستمرة. يُحمى التسريب من الضوء؛ يتراكم السيانيد مع الاستعمال الطويل أو بجرعات عالية.'},
+  ix:[
+    ['#pde5', C, 'Severe fall in blood pressure — contraindicated.', 'هبوط شديد في الضغط — ممنوع الجمع.']
+  ],
   ci:[{en:'Compensatory hypertension (coarctation of the aorta, arteriovenous shunt)', ar:'ارتفاع ضغط معاوض (تضيّق برزخ الأبهر، تحويلة شريانية وريدية)'}, {en:'Leber’s optic atrophy or vitamin B12 deficiency', ar:'ضمور ليبر البصري أو عوز فيتامين B12'}],
   ask:['kidney', 'liver'] },
 

@@ -283,6 +283,14 @@ ok('every row carries an ATC code, a form and at least one strength',
    await p.evaluate(() => DATA.drugs.every(d => d.atc && d.form && d.doses.length)));
 ok('every row carries both scripts, in the data rather than the interface',
    await p.evaluate(() => DATA.drugs.every(d => /[؀-ۿ]/.test(d.ar) && /^[\x20-\x7E]+$/.test(d.sci))));
+/* v0.0015.3 — a category, and one to three questions to ask, on every drug. */
+ok('every drug has a category and one to three questions to ask',
+   await p.evaluate(() => DATA.drugs.every(d => DRUG_CATEGORIES[d.cat] && d.ask.length >= 1 && d.ask.length <= 3)));
+ok('a drug record shows its category, its class interactions and its questions',
+   await p.evaluate(() => { openRecord('drugs', 'Metformin'); const txt = document.getElementById('work-body').innerText;
+     const ok = txt.includes(L(DRUG_CATEGORIES['end.diabetes'])) && txt.includes(L(DRUG_TAGS.contrast))
+       && document.querySelectorAll('.drug-ask li').length === DATA.drugs.find(d => d.sci === 'Metformin').ask.length;
+     S.record = null; return ok; }));
 ok('the forms offered by the create form are the ones the reference recognises',
    await p.evaluate(() => {
      const used = new Set(DATA.drugs.map(d => d.form));
@@ -366,15 +374,17 @@ await p.waitForTimeout(220);
 ok('a file without the key column is refused outright', await p.locator('.imp-fatal').count() > 0);
 
 // a good file with one bad row and one duplicate
-// Nystatin is deliberately NOT one of the hundred in data/drugs.mjs, so this
-// row is genuinely new. A drug already in the reference would test the update
-// path twice and the insert path not at all.
+// Tiotixene is deliberately NOT in data/drugs.mjs — an old antipsychotic
+// that is not on the Iraqi market — so this row is genuinely new. A drug
+// already in the reference would test the update path twice and the insert
+// path not at all. (Until v0.0015.3 this was Nystatin, which the reference
+// now holds.)
 const csv = [
   'scientific_name,arabic_name,atc,form,doses,notes,interactions,contraindications',
-  'Nystatin,نيستاتين,A07AA02,syrup,100000 IU/mL,"Swish and hold, not swallowed straight down.",Warfarin:warning:May raise INR,Hypersensitivity|Systemic infection',
+  'Tiotixene,تيوتيكسين,N05AF04,capsule,2 mg|5 mg,"Take it at the same time each day, and report stiffness or restlessness.",Haloperidol:serious:Adds to movement side effects,Coma|Parkinson disease',
   'Amoxicillin,أموكسيسيلين,J01CA04,capsule,250 mg|500 mg,Updated note,,',
   ',Missing key,,tablet,,,,',
-  'Nystatin,مكرر,A07AA02,syrup,100000 IU/mL,,,'
+  'Tiotixene,مكرر,N05AF04,capsule,2 mg,,,'
 ].join('\n');
 await p.locator('#imp-text').fill(csv);
 await p.locator('.modal .btn', { hasText: /Check|تحقّق/ }).click();
@@ -385,9 +395,10 @@ ok(`preview counts them: ${counts.new} new, ${counts.update} update, ${counts.er
 ok('a quoted field containing a comma survives parsing',
    await p.evaluate(() => S.modal.parsed.items[0].rec.notes.en.includes(',')));
 ok('interactions parse into structured rows',
-   await p.evaluate(() => S.modal.parsed.items[0].rec.interactions[0].severity === 'warning'));
+   await p.evaluate(() => S.modal.parsed.items[0].rec.interactions[0].severity === 'serious'
+     && S.modal.parsed.items[0].rec.interactions[0].with === 'Haloperidol'));
 ok('nothing is written before Apply',
-   await p.evaluate(() => !DATA.drugs.some(d => d.sci === 'Nystatin')));
+   await p.evaluate(() => !DATA.drugs.some(d => d.sci === 'Tiotixene')));
 const drugsBefore = await p.evaluate(() => DATA.drugs.length);
 await p.locator('.modal .btn.primary').click();
 await p.waitForTimeout(280);

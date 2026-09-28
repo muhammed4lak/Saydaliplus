@@ -1606,6 +1606,64 @@ showed up.
 - Checks: 13 new (671 app in all); CRM unchanged (271). Mutation-tested: 7 of
   7 caught (two checks tightened after the first run).
 
+### v0.0015.3 — the medication database: every drug on the Iraqi market (28 Sep 2026)
+
+Asked: a database of every known drug, categorised, with brand and scientific
+names, each with interactions, contraindications and the notes a patient
+should hear, plus the most important questions to ask when dispensing it —
+at most three — kept to the Iraqi market, from the Ministry files already in
+the repository.
+- **1,174 molecules** (from 119), in `data/drugs/`, one file per part of the
+  body (32 files); `data/drugs.mjs` joins them. Each has a **category** (136
+  classes in 20 groups), scientific and Arabic names, other names, the
+  international brands (1,100 have them), ATC, main form, strengths,
+  counselling in both languages, contraindications, **one to three questions
+  to ask**, and interactions. The migrated 119 kept their wording verbatim
+  (checked field by field); metformin's "Contrast media" became the class
+  `#contrast`, and metronidazole gained alcohol as an interaction.
+- **Interactions three ways:** drug → drug (873 lines), drug → class
+  (`#nsaid`, 195 of them), and **57 class rules** that hold whichever two
+  members meet (opioid + benzodiazepine critical; strong CYP3A4 inhibitor +
+  sensitive substrate critical…). 936 molecules have at least one; the rest are
+  mostly topicals, eye drops, fluids and diagnostics.
+- **Skin and eye forms are their own entries** where the molecule is also a
+  tablet (33: `Diclofenac (topical)`, `Ciprofloxacin (eye)`…), so a gel does
+  not raise the tablet's alerts.
+- **The register mapped:** `read-sources.py` now matches ingredients by name,
+  other names and the register's spellings, splits run-together text, puts
+  misspelt names back when one name is clearly nearest (reviewed by hand:
+  *tyrosine* is not *thyroxine*, *gemifloxacin* is not *gatifloxacin*, a trade
+  name alone is never "corrected"), routes creams and eye drops to the right
+  entry, and falls back to brands. **5,103 of 5,186 registered products link**
+  (from 2,245). Every generic the EDL names is now in the reference (it was
+  355 short); 573 of its 597 lines map (the rest are fragments of the PDF).
+- **The app:** the interaction index reads classes and class rules; the
+  Helper's questions are each drug's own (contraindications stay on the
+  record); search ranks names that start with the query first and also finds
+  other names, international brands and registered trade names; the list
+  draws 100 and counts the rest, with category chips; a drug's page shows its
+  category, other names, brands, how to take it, its questions, what it is
+  registered as in Iraq, and its class interactions marked as classes.
+  **The CRM** record shows the category, other names, brands, class partners
+  and questions.
+- **Exports:** `npm run drugs:export` → `data/export/medications.json`,
+  `medications.csv` (one row per molecule, both languages, Excel-ready) and
+  `interactions.csv`.
+- Catalogue fixtures: pseudoephedrine, triprolidine and caffeine are now in
+  the reference, so the "outside the reference" examples are a propolis cough
+  syrup and royal jelly; Mebeverine 135 mg is mapped.
+- **Placeholder clinical content until the clinical curator reviews it** —
+  written from standard formulary knowledge, not yet checked line by line by a
+  pharmacist.
+- Not done: a combination entry for every fixed-dose combination (the
+  register's combinations link to their ingredients instead); interactions for
+  the ~240 molecules with none listed (mostly topicals); the multi-herb
+  formulas (Himalaya and similar) are not in the reference.
+- Checks: app 679, from 671 (the drug-list, search, question, coverage, till
+  and EDL checks rewritten for the new data; 9 new); CRM 273 (2 new; the CSV-import
+  test now adds Tiotixene, since Nystatin is in the reference); unit 135 (11
+  new in `tests/unit/drugs.test.ts`).
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not

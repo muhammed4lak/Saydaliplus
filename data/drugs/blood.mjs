@@ -48,6 +48,9 @@ export default [
   doses:['50 mg/5 mL syrup', '50 mg/mL drops', '100 mg chewable tablet', '100 mg/2 mL injection'], brand:['Maltofer', 'Ferrum Hausmann'], aka:['Ferric hydroxide polymaltose complex'],
   notes:{en:'Can be taken with food and causes less stomach upset than iron salts. Stools may darken. Drops for infants are measured by the dropper, not a spoon.',
          ar:'يمكن أخذه مع الطعام ويسبّب اضطراب معدة أقل من أملاح الحديد. قد يغمق لون البراز. نقط الرضّع تُقاس بالقطّارة لا بالملعقة.'},
+  ix:[
+    ['#chelatable', W, 'Binds less than iron salts, but keep two hours apart from quinolones and tetracyclines.', 'يرتبط أقل من أملاح الحديد، لكن افصله ساعتين عن الكينولونات والتتراسيكلينات.']
+  ],
   ci:[{en:'Anaemia not due to iron deficiency', ar:'فقر دم غير ناجم عن عوز الحديد'}, {en:'Iron overload (e.g. thalassaemia major)', ar:'فرط الحديد (كالثلاسيميا الكبرى)'}],
   ask:['childAge', {en:'Has the anaemia been confirmed as iron deficiency (not thalassaemia)?', ar:'هل تأكّد أن فقر الدم بسبب نقص الحديد (وليس ثلاسيميا)؟'}] },
 
@@ -55,6 +58,9 @@ export default [
   doses:['50 mg/mL (2 mL ampoule)'], brand:['CosmoFer', 'INFeD'],
   notes:{en:'Intravenous iron given in hospital, with a small test dose and observation for 30 minutes, as serious allergic reactions can occur.',
          ar:'حديد وريدي يُعطى في المستشفى، مع جرعة اختبار صغيرة ومراقبة 30 دقيقة، لأن تفاعلات تحسسية خطيرة قد تحدث.'},
+  ix:[
+    ['Ferrous sulfate', W, 'Oral iron adds nothing alongside injected iron — stop it until five days after the last injection.', 'الحديد الفموي لا يضيف شيئاً مع الحديد المحقون — يُوقف حتى خمسة أيام بعد آخر حقنة.']
+  ],
   ci:[{en:'Previous serious reaction to injected iron', ar:'تفاعل خطير سابق مع الحديد المحقون'}, 'asthmaUncontrolled'],
   ask:['allergy', 'asthma', 'infection'] },
 
@@ -70,6 +76,9 @@ export default [
   doses:['100 mg/5 mL ampoule'], brand:['Venofer'],
   notes:{en:'A slow intravenous injection or infusion in hospital or clinic, with 30 minutes of observation afterwards for allergic reactions. Oral iron is stopped while it is given.',
          ar:'حقن وريدي بطيء أو تسريب في المستشفى أو العيادة، مع مراقبة 30 دقيقة بعده لتفاعلات التحسّس. يُوقف الحديد الفموي خلال إعطائه.'},
+  ix:[
+    ['Ferrous sulfate', W, 'Oral iron adds nothing alongside injected iron — stop it until five days after the last injection.', 'الحديد الفموي لا يضيف شيئاً مع الحديد المحقون — يُوقف حتى خمسة أيام بعد آخر حقنة.']
+  ],
   ci:[{en:'Anaemia not due to iron deficiency', ar:'فقر دم غير ناجم عن عوز الحديد'}, {en:'Iron overload', ar:'فرط الحديد'}, 'preg1'],
   ask:['allergy', 'preg'] },
 
@@ -77,6 +86,9 @@ export default [
   doses:['500 mg/10 mL', '1000 mg/20 mL'], brand:['Ferinject'],
   notes:{en:'An intravenous infusion that replaces iron in one or two sittings, with observation afterwards. It can lower blood phosphate — tiredness or bone pain later should be reported.',
          ar:'تسريب وريدي يعوّض الحديد في جلسة أو جلستين، مع مراقبة بعده. قد يخفض الفوسفات في الدم — أبلغ عن التعب أو ألم العظام لاحقاً.'},
+  ix:[
+    ['Ferrous sulfate', W, 'Oral iron adds nothing alongside injected iron — stop it until five days after the last injection.', 'الحديد الفموي لا يضيف شيئاً مع الحديد المحقون — يُوقف حتى خمسة أيام بعد آخر حقنة.']
+  ],
   ci:[{en:'Anaemia not due to iron deficiency', ar:'فقر دم غير ناجم عن عوز الحديد'}, {en:'Iron overload', ar:'فرط الحديد'}, 'preg1'],
   ask:['allergy', 'preg'] },
 
@@ -84,24 +96,38 @@ export default [
   doses:['1000 microgram/mL injection', '1000 microgram tablet'], brand:['Cytamen'], aka:['Vitamin B12'],
   notes:{en:'For B12 deficiency, the injections follow a schedule — often for life after the loading course when absorption is the problem. Urine may turn pinkish; that is harmless.',
          ar:'لنقص B12، تُعطى الحقن وفق جدول — غالباً مدى الحياة بعد الجرعات الأولى إن كانت المشكلة في الامتصاص. قد يصبح البول وردياً؛ وهذا غير ضار.'},
+  ix:[
+    ['Metformin', W, 'Metformin lowers vitamin B12 over years — levels are checked on long treatment.', 'الميتفورمين يخفض فيتامين B12 على مدى السنوات — يُفحص المستوى في العلاج الطويل.'],
+    ['#acidReducer', W, 'Long-term acid reducers lower B12 absorption from food and tablets (not from injections).', 'خافضات الحمض لفترات طويلة تقلّل امتصاص B12 من الطعام والأقراص (لا من الحقن).']
+  ],
   ask:['otherMeds', 'whoFor'] },
 
 { sci:'Hydroxocobalamin', ar:'هيدروكسوكوبالامين', atc:'B03BA03', cat:'bld.anaemia', form:'injection',
   doses:['1000 microgram/mL', '5 g vial (cyanide antidote)'], brand:['Neo-Cytamen', 'Cyanokit'],
   notes:{en:'For B12 deficiency, an injection every two to three months after the loading doses. The 5 g vial is the antidote for cyanide poisoning and turns urine red.',
          ar:'لنقص B12، حقنة كل شهرين إلى ثلاثة بعد الجرعات الأولى. عبوة 5 غم هي ترياق التسمّم بالسيانيد وتجعل البول أحمر.'},
+  ix:[
+    ['Chloramphenicol', W, 'Chloramphenicol blunts the blood response to B12.', 'الكلورامفينيكول يُضعف استجابة الدم لفيتامين B12.']
+  ],
   ask:['whoFor'] },
 
 { sci:'Mecobalamin', ar:'ميكوبالامين', atc:'B03BA05', cat:'bld.anaemia', form:'tablet',
   doses:['500 microgram', '1500 microgram', '500 microgram/mL injection'], brand:['Methycobal'], aka:['Methylcobalamin'],
   notes:{en:'A form of vitamin B12 used for nerve pain and deficiency, usually three times a day. Mild stomach upset is uncommon.',
          ar:'شكل من فيتامين B12 يُستعمل لآلام الأعصاب والنقص، ثلاث مرات يومياً عادة. اضطراب المعدة الخفيف غير شائع.'},
+  ix:[
+    ['Metformin', W, 'Metformin lowers vitamin B12 over years — levels are checked on long treatment.', 'الميتفورمين يخفض فيتامين B12 على مدى السنوات — يُفحص المستوى في العلاج الطويل.'],
+    ['#acidReducer', W, 'Long-term acid reducers lower B12 absorption from food and tablets (not from injections).', 'خافضات الحمض لفترات طويلة تقلّل امتصاص B12 من الطعام والأقراص (لا من الحقن).']
+  ],
   ask:['diabetes', 'otherMeds'] },
 
 { sci:'Erythropoietin', ar:'إريثروبويتين', atc:'B03XA01', cat:'bld.anaemia', form:'injection',
   doses:['2,000 IU', '4,000 IU', '10,000 IU prefilled syringe'], brand:['Eprex', 'Recormon', 'Binocrit'], aka:['Epoetin alfa', 'Epoetin beta', 'Epoetin zeta', 'Recombinant human erythropoietin', 'EPO'],
   notes:{en:'Injected under the skin (or into the vein at dialysis). Keep it in the fridge. Blood pressure and haemoglobin are checked — too high a haemoglobin raises the risk of clots and stroke.',
          ar:'يُحقن تحت الجلد (أو في الوريد أثناء الغسيل). يُحفظ في الثلاجة. يُفحص الضغط والهيموغلوبين — الهيموغلوبين المرتفع أكثر من اللازم يزيد خطر الجلطات والسكتة.'},
+  ix:[
+    ['#acei', W, 'ACE inhibitors can blunt the response.', 'مثبطات ACE قد تُضعف الاستجابة.']
+  ],
   ci:['uncontrolledHtn', {en:'Pure red cell aplasia after erythropoietin', ar:'عدم تنسّج الكريات الحمر الصافي بعد الإريثروبويتين'}],
   ask:['bp', 'cold', 'injectTech'] },
 
@@ -109,6 +135,9 @@ export default [
   doses:['20–500 microgram prefilled syringe'], brand:['Aranesp'],
   notes:{en:'A longer-acting erythropoietin — weekly to monthly injections. Keep it in the fridge; blood pressure and haemoglobin are checked.',
          ar:'إريثروبويتين طويل المفعول — حقن أسبوعية إلى شهرية. يُحفظ في الثلاجة؛ ويُفحص الضغط والهيموغلوبين.'},
+  ix:[
+    ['#acei', W, 'ACE inhibitors can blunt the response.', 'مثبطات ACE قد تُضعف الاستجابة.']
+  ],
   ci:['uncontrolledHtn'],
   ask:['bp', 'cold', 'injectTech'] },
 
@@ -145,6 +174,9 @@ export default [
   doses:['250 IU', '500 IU', '1000 IU'], brand:['Advate', 'Octanate', 'Koate'], aka:['Coagulation factor VIII', 'Antihaemophilic factor', 'Octocog alfa'],
   notes:{en:'For haemophilia A — injected into a vein at home or in clinic as the haemophilia centre plans. Keep the cold chain and record every dose.',
          ar:'للناعور (الهيموفيليا) A — يُحقن في الوريد في البيت أو العيادة حسب خطة مركز الناعور. حافظ على سلسلة التبريد وسجّل كل جرعة.'},
+  ix:[
+    ['Emicizumab', W, 'Emicizumab distorts the usual factor VIII tests — the laboratory needs a special assay.', 'الإيميسيزوماب يُربك فحوص العامل الثامن المعتادة — يحتاج المختبر فحصاً خاصاً.']
+  ],
   ask:['injectTech', 'cold'] },
 
 { sci:'Factor IX', ar:'العامل التاسع', atc:'B02BD04', cat:'bld.haemostatic', form:'injection',
@@ -157,6 +189,9 @@ export default [
   doses:['1 mg', '2 mg', '5 mg'], brand:['NovoSeven'], aka:['Recombinant factor VIIa'],
   notes:{en:'Recombinant factor VIIa for bleeds in haemophilia with inhibitors and some other bleeding disorders; given intravenously by the haemophilia team.',
          ar:'العامل السابع المؤتلف لنزف الناعور المصحوب بمثبطات وبعض اضطرابات النزف الأخرى؛ يُعطى وريدياً بإشراف فريق الناعور.'},
+  ix:[
+    ['Prothrombin complex concentrate', S, 'Together they raise the risk of clots — avoid.', 'معاً يرفعان خطر الجلطات — يُتجنّب.']
+  ],
   ask:['clots'] },
 
 { sci:'Factor VIII inhibitor bypassing activity', ar:'عامل تجاوز مثبطات العامل الثامن', atc:'B02BD03', cat:'bld.haemostatic', form:'injection',
@@ -170,6 +205,9 @@ export default [
   doses:['500 IU'], brand:['Octaplex', 'Beriplex'], aka:['PCC', 'Human prothrombin complex'],
   notes:{en:'Hospital use to reverse warfarin urgently in serious bleeding, given with vitamin K.',
          ar:'للمستشفى لعكس الوارفارين بسرعة في النزف الخطير، ويُعطى مع فيتامين K.'},
+  ix:[
+    ['Tranexamic acid', W, 'Added clot risk.', 'خطر جلطات إضافي.']
+  ],
   ci:[{en:'Heparin-induced thrombocytopenia', ar:'نقص الصفيحات المحرّض بالهيبارين'}],
   ask:['thinner'] },
 
@@ -217,6 +255,10 @@ export default [
   doses:['500 mg vial'], brand:['Desferal'], aka:['Desferrioxamine'],
   notes:{en:'A slow infusion under the skin over 8–12 hours, usually five to seven nights a week, with a pump. Eyes and hearing are checked yearly. It is also the antidote for iron poisoning.',
          ar:'تسريب بطيء تحت الجلد خلال 8–12 ساعة، عادة خمس إلى سبع ليالٍ في الأسبوع، بمضخة. تُفحص العين والسمع سنوياً. وهو أيضاً ترياق التسمّم بالحديد.'},
+  ix:[
+    ['Ascorbic acid', S, 'High-dose vitamin C with deferoxamine can strain the heart — only small doses, after the first month.', 'فيتامين C بجرعة عالية مع الديفيروكسامين قد يُجهد القلب — جرعات صغيرة فقط وبعد الشهر الأول.'],
+    ['Prochlorperazine', W, 'Loss of consciousness has been reported together — avoid.', 'سُجّل فقدان للوعي عند الجمع — يُتجنّب.']
+  ],
   ci:['anuria'],
   ask:['hearing', 'vision', 'labs'] },
 
@@ -224,6 +266,10 @@ export default [
   doses:['500 mg', '1000 mg', '100 mg/mL solution'], brand:['Ferriprox'],
   notes:{en:'It can wipe out the white cells: a blood count every week, and at the first sign of fever or sore throat stop it and get a count the same day. Urine may turn reddish-brown.',
          ar:'قد يُفني الكريات البيض: تعداد دم كل أسبوع، وعند أول حرارة أو التهاب حلق يُوقف ويُجرى التعداد في اليوم نفسه. قد يصبح البول بنياً محمراً.'},
+  ix:[
+    ['Clozapine', S, 'Both can wipe out white cells — avoid together.', 'كلاهما قد يُفني الكريات البيض — يُتجنّب الجمع.'],
+    ['#polyvalent', W, 'Aluminium antacids and minerals bind it — keep apart.', 'مضادات الحموضة بالألمنيوم والمعادن تربطه — افصل بينها.']
+  ],
   ci:['marrow', {en:'Previous agranulocytosis', ar:'ندرة المحبّبات سابقاً'}],
   ask:['infection', 'labs'] },
 
@@ -254,6 +300,9 @@ export default [
   doses:['6% 500 mL'], brand:['Voluven', 'HAES-steril'], aka:['HES'],
   notes:{en:'A plasma substitute now restricted: not in sepsis, critical illness, burns or kidney impairment, where it harms the kidneys.',
          ar:'بديل بلازما صار مقيّداً: لا يُستعمل في الإنتان أو الحالات الحرجة أو الحروق أو القصور الكلوي، حيث يؤذي الكلى.'},
+  ix:[
+    ['#nephrotoxic', S, 'Starch solutions add to kidney injury — avoid in sepsis and kidney disease.', 'محاليل النشا تزيد أذية الكلى — تُتجنّب في الإنتان وأمراض الكلى.']
+  ],
   ci:['renal', {en:'Sepsis, burns or critical illness', ar:'الإنتان أو الحروق أو الحالات الحرجة'}],
   ask:['kidney'] },
 

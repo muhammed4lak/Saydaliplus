@@ -12,7 +12,9 @@
  *   nondrug   sold at the counter, not a medicine; nothing to check
  *
  * A molecule can also be linked but OUTSIDE the reference (`ref: false`):
- * caffeine, pseudoephedrine, triprolidine. Knowing a product contains one is
+ * propolis, royal jelly — since v0.0015.3 the reference holds every molecule
+ * on the Iraqi market, so what is left outside is mostly bee products and
+ * supplements. Knowing a product contains one is
  * not the same as the Dispensing Helper being able to check it, and the
  * Helper says so rather than implying coverage it does not have. Anything not
  * marked `ref: false` must name a molecule that is in the reference — the
@@ -24,8 +26,8 @@
  */
 const PRODUCTS = [
   {"barcode":"5000000001002","name":{"ar":"بنادول 500 ملغ","en":"Panadol 500 mg"},"form":"tablet","strength":"500 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":2500,"mapping":"verified","molecules":[{"sci":"Paracetamol","strength":"500 mg"}]},
-  {"barcode":"5000000001019","name":{"ar":"بنادول إكسترا","en":"Panadol Extra"},"form":"tablet","strength":"500/65 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":3000,"mapping":"verified","molecules":[{"sci":"Paracetamol","strength":"500 mg"},{"sci":"Caffeine","strength":"65 mg","ref":false}]},
-  {"barcode":"5000000001026","name":{"ar":"بنادول للزكام والإنفلونزا — نهاري","en":"Panadol Cold & Flu Day"},"form":"tablet","strength":"500/30 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":3500,"mapping":"auto","molecules":[{"sci":"Paracetamol","strength":"500 mg"},{"sci":"Pseudoephedrine","strength":"30 mg","ref":false}]},
+  {"barcode":"5000000001019","name":{"ar":"بنادول إكسترا","en":"Panadol Extra"},"form":"tablet","strength":"500/65 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":3000,"mapping":"verified","molecules":[{"sci":"Paracetamol","strength":"500 mg"},{"sci":"Caffeine","strength":"65 mg"}]},
+  {"barcode":"5000000001026","name":{"ar":"بنادول للزكام والإنفلونزا — نهاري","en":"Panadol Cold & Flu Day"},"form":"tablet","strength":"500/30 mg","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":3500,"mapping":"auto","molecules":[{"sci":"Paracetamol","strength":"500 mg"},{"sci":"Pseudoephedrine","strength":"30 mg"}]},
   {"barcode":"5000000001033","name":{"ar":"بروفين 400 ملغ","en":"Brufen 400 mg"},"form":"tablet","strength":"400 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":3000,"mapping":"verified","molecules":[{"sci":"Ibuprofen","strength":"400 mg"}]},
   {"barcode":"7600000001040","name":{"ar":"فولتارين 50 ملغ","en":"Voltaren 50 mg"},"form":"tablet","strength":"50 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":4000,"mapping":"verified","molecules":[{"sci":"Diclofenac","strength":"50 mg"}]},
   {"barcode":"7600000001057","name":{"ar":"كتافلام 50 ملغ","en":"Cataflam 50 mg"},"form":"tablet","strength":"50 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":4500,"mapping":"auto","molecules":[{"sci":"Diclofenac","strength":"50 mg"}]},
@@ -65,7 +67,7 @@ const PRODUCTS = [
   {"barcode":"7600000001392","name":{"ar":"زيرتك 10 ملغ","en":"Zyrtec 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":4000,"mapping":"verified","molecules":[{"sci":"Cetirizine","strength":"10 mg"}]},
   {"barcode":"4000000001409","name":{"ar":"كلاريتين 10 ملغ","en":"Claritine 10 mg"},"form":"tablet","strength":"10 mg","pack":{"ar":"10 أقراص","en":"10 tablets"},"price":3500,"mapping":"verified","molecules":[{"sci":"Loratadine","strength":"10 mg"}]},
   {"barcode":"7600000001415","name":{"ar":"أوتريفين بخاخ أنف 0.1%","en":"Otrivin 0.1% nasal spray"},"form":"spray","strength":"0.1%","pack":{"ar":"10 مل","en":"10 mL"},"price":3000,"mapping":"verified","molecules":[{"sci":"Xylometazoline","strength":"0.1%"}]},
-  {"barcode":"5000000001422","name":{"ar":"أكتيفيد شراب","en":"Actifed syrup"},"form":"syrup","strength":"1.25/30 mg per 5 mL","pack":{"ar":"قنينة 100 مل","en":"100 mL bottle"},"price":4000,"mapping":"verified","molecules":[{"sci":"Triprolidine","strength":"1.25 mg/5 mL","ref":false},{"sci":"Pseudoephedrine","strength":"30 mg/5 mL","ref":false}]},
+  {"barcode":"5000000001422","name":{"ar":"أكتيفيد شراب","en":"Actifed syrup"},"form":"syrup","strength":"1.25/30 mg per 5 mL","pack":{"ar":"قنينة 100 مل","en":"100 mL bottle"},"price":4000,"mapping":"verified","molecules":[{"sci":"Triprolidine","strength":"1.25 mg/5 mL"},{"sci":"Pseudoephedrine","strength":"30 mg/5 mL"}]},
   {"barcode":"7600000001439","name":{"ar":"تيغريتول 200 ملغ","en":"Tegretol 200 mg"},"form":"tablet","strength":"200 mg","pack":{"ar":"50 قرصاً","en":"50 tablets"},"price":7000,"mapping":"verified","molecules":[{"sci":"Carbamazepine","strength":"200 mg"}]},
   {"barcode":"3000000001448","name":{"ar":"ليريكا 75 ملغ","en":"Lyrica 75 mg"},"form":"capsule","strength":"75 mg","pack":{"ar":"14 كبسولة","en":"14 capsules"},"price":12000,"mapping":"verified","molecules":[{"sci":"Pregabalin","strength":"75 mg"}]},
   {"barcode":"3000000001455","name":{"ar":"زاناكس 0.5 ملغ","en":"Xanax 0.5 mg"},"form":"tablet","strength":"0.5 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":6000,"mapping":"verified","molecules":[{"sci":"Alprazolam","strength":"0.5 mg"}]},
@@ -77,7 +79,9 @@ const PRODUCTS = [
   {"barcode":"4000000001515","name":{"ar":"نيوروبيون","en":"Neurobion"},"form":"tablet","strength":"","pack":{"ar":"20 قرصاً","en":"20 tablets"},"price":5000,"mapping":"unmapped","molecules":[]},
   {"barcode":"5000000001521","name":{"ar":"سولبادين","en":"Solpadeine"},"form":"tablet","strength":"","pack":{"ar":"24 قرصاً","en":"24 tablets"},"price":4000,"mapping":"unmapped","molecules":[]},
   {"barcode":"5000000001538","name":{"ar":"غافيسكون شراب","en":"Gaviscon liquid"},"form":"syrup","strength":"","pack":{"ar":"قنينة 200 مل","en":"200 mL bottle"},"price":7000,"mapping":"unmapped","molecules":[]},
-  {"barcode":"8690000001545","name":{"ar":"ميبيفرين 135 ملغ","en":"Mebeverine 135 mg"},"form":"tablet","strength":"","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":5000,"mapping":"unmapped","molecules":[]},
+  {"barcode":"8690000001545","name":{"ar":"ميبيفرين 135 ملغ","en":"Mebeverine 135 mg"},"form":"tablet","strength":"135 mg","pack":{"ar":"30 قرصاً","en":"30 tablets"},"price":5000,"mapping":"auto","molecules":[{"sci":"Mebeverine","strength":"135 mg"}]},
+  {"barcode":"8690000001590","name":{"ar":"شراب السعال بالعسل والعكبر","en":"Honey & propolis cough syrup"},"form":"syrup","strength":"100 mg/5 mL","pack":{"ar":"قنينة 100 مل","en":"100 mL bottle"},"price":4500,"mapping":"auto","molecules":[{"sci":"Guaifenesin","strength":"100 mg/5 mL"},{"sci":"Propolis","strength":"","ref":false}]},
+  {"barcode":"8690000001606","name":{"ar":"غذاء ملكات النحل 1000 ملغ","en":"Royal jelly 1000 mg"},"form":"capsule","strength":"1000 mg","pack":{"ar":"30 كبسولة","en":"30 capsules"},"price":12000,"mapping":"auto","molecules":[{"sci":"Royal jelly","strength":"1000 mg","ref":false}]},
   {"barcode":"8690000001552","name":{"ar":"محرار رقمي","en":"Digital thermometer"},"form":null,"strength":"","pack":{"ar":"قطعة واحدة","en":"1 unit"},"price":6000,"mapping":"nondrug","molecules":[]},
   {"barcode":"4000000001560","name":{"ar":"حليب أبتاميل 1","en":"Aptamil 1 infant formula"},"form":null,"strength":"","pack":{"ar":"علبة 400 غ","en":"400 g tin"},"price":18000,"mapping":"nondrug","molecules":[]},
   {"barcode":"8690000001576","name":{"ar":"كمامات طبية","en":"Surgical face masks"},"form":null,"strength":"","pack":{"ar":"علبة 50","en":"Box of 50"},"price":3000,"mapping":"nondrug","molecules":[]},

@@ -11,6 +11,10 @@ export default [
   doses:['400 mg', '500 mg', '800 mg', '1 g', '1.2 g', '1 g suppository', '1 g enema', '2 g granules'], brand:['Pentasa', 'Asacol', 'Salofalk', 'Mezavant'], aka:['Mesalamine', '5-ASA'],
   notes:{en:'Swallow tablets whole. Brands release the drug differently, so stay on the same one. Report unexplained bruising, fever or a sore throat, and keep the kidney tests you are booked for.',
          ar:'تُبلع الأقراص كاملة. تختلف الماركات في طريقة إطلاق الدواء، فابقَ على الماركة نفسها. أبلغ عن كدمات غير مبرّرة أو حرارة أو التهاب حلق، والتزم بفحوص الكلى المحددة.'},
+  ix:[
+    ['Azathioprine', W, 'More risk of low white cells.', 'خطر أكبر لانخفاض الكريات البيض.'],
+    ['Warfarin', W, 'May weaken warfarin.', 'قد يُضعف الوارفارين.']
+  ],
   ci:['renalSevere', {en:'Salicylate hypersensitivity', ar:'فرط الحساسية للساليسيلات'}],
   ask:['kidney', 'allergyNsaid', 'labs'] },
 
@@ -19,6 +23,12 @@ export default [
   take:['afterFood'],
   notes:{en:'After food with plenty of water. It turns urine and sweat orange and can stain soft contact lenses. Blood counts and liver tests in the first months; report fever, sore throat or rash.',
          ar:'بعد الطعام مع ماء كثير. يلوّن البول والعرق باللون البرتقالي وقد يصبغ العدسات اللاصقة اللينة. تعداد دم وفحص كبد في الأشهر الأولى؛ أبلغ عن الحرارة أو التهاب الحلق أو الطفح.'},
+  ix:[
+    ['Digoxin', W, 'Lowers digoxin absorption.', 'يقلّل امتصاص الديجوكسين.'],
+    ['Folic acid', W, 'Lowers folate absorption.', 'يقلّل امتصاص الفولات.'],
+    ['Azathioprine', W, 'More marrow suppression.', 'مزيد من تثبيط نقي العظم.'],
+    ['Methotrexate', W, 'More liver and marrow toxicity.', 'مزيد من السمّية على الكبد ونقي العظم.']
+  ],
   ci:['sulfaAllergy', {en:'Salicylate hypersensitivity', ar:'فرط الحساسية للساليسيلات'}, 'porphyria'],
   ask:['allergySulfa', 'g6pd', 'labs'] },
 
@@ -60,6 +70,10 @@ export default [
   doses:['200 mg', '550 mg'], brand:['Xifaxan', 'Normix'],
   notes:{en:'An antibiotic that stays in the gut: short courses for traveller’s diarrhoea, and long term with lactulose to prevent confusion in liver disease.',
          ar:'مضاد حيوي يبقى في الأمعاء: دورات قصيرة لإسهال المسافرين، وطويلاً مع اللاكتولوز للوقاية من التشوّش الذهني في أمراض الكبد.'},
+  ix:[
+    ['Ciclosporin', S, 'Raises rifaximin levels many times over.', 'يرفع مستوى الريفاكسيمين أضعافاً.'],
+    ['Warfarin', W, 'INR changes reported — check it.', 'سُجّلت تغيّرات في INR — افحصه.']
+  ],
   ci:['dysentery'],
   ask:['liver', 'feverBlood'] },
 
@@ -69,12 +83,18 @@ export default [
   doses:['10,000', '25,000', '40,000 lipase units'], brand:['Creon'], aka:['Pancrelipase'],
   notes:{en:'With every meal and snack, swallowed whole — or the granules sprinkled on acidic soft food, not chewed. Drink plenty of fluid.',
          ar:'مع كل وجبة ووجبة خفيفة، تُبلع كاملة — أو تُنثر الحبيبات على طعام لين حمضي دون مضغ. اشرب سوائل كثيرة.'},
+  ix:[
+    ['Acarbose', W, 'Pancreatic enzymes weaken acarbose.', 'إنزيمات البنكرياس تُضعف الأكاربوز.']
+  ],
   ask:['whoFor', {en:'How many capsules do you take with a meal, and with a snack?', ar:'كم كبسولة تأخذ مع الوجبة، وكم مع الوجبة الخفيفة؟'}] },
 
 { sci:'Simeticone', ar:'سيميثيكون', atc:'A03AX13', cat:'gis.digestive', form:'drops',
   doses:['40 mg/mL drops', '80 mg chewable', '125 mg'], brand:['Espumisan', 'Infacol', 'Mylicon'], aka:['Simethicone', 'Dimeticone', 'Dimethicone'],
   notes:{en:'For wind and colic: after meals and at bedtime, or for infants before feeds. It is not absorbed.',
          ar:'للغازات والمغص: بعد الوجبات وقبل النوم، أو للرضّع قبل الرضعات. لا يُمتص.'},
+  ix:[
+    ['Levothyroxine', W, 'May reduce absorption — keep four hours apart.', 'قد يقلّل الامتصاص — افصل بينهما أربع ساعات.']
+  ],
   ask:['childAge', 'redFlagsGI'] },
 
 /* ---------- Haemorrhoids and anal fissure ---------- */
@@ -99,6 +119,10 @@ export default [
   doses:['250 mg capsule', '250 mg sachet'], brand:['Perenterol', 'Florastor', 'Ultra-Levure'],
   notes:{en:'A yeast probiotic for diarrhoea, including with antibiotics. Open into cool food or drink, never hot. Not for people with a central line or very weak immunity.',
          ar:'بروبيوتيك من الخمائر للإسهال، ومنه المرافق للمضادات الحيوية. يُفتح في طعام أو شراب بارد، لا ساخن أبداً. لا يُستعمل لمن لديه قثطرة وريدية مركزية أو مناعة ضعيفة جداً.'},
+  ix:[
+    ['Fluconazole', W, 'Antifungals kill the yeast — do not take together.', 'مضادات الفطريات تقتل الخميرة — لا يُؤخذان معاً.'],
+    ['Nystatin', W, 'Antifungals kill the yeast — do not take together.', 'مضادات الفطريات تقتل الخميرة — لا يُؤخذان معاً.']
+  ],
   ci:['immunocompromised', {en:'Central venous catheter', ar:'قثطرة وريدية مركزية'}],
   ask:['childAge', 'feverBlood'] },
 
@@ -106,6 +130,9 @@ export default [
   doses:['capsule', 'sachet', 'drops'], brand:['Lacteol', 'Culturelle', 'BioGaia'], aka:['Lactobacillus acidophilus', 'Lactobacillus rhamnosus', 'Lactobacillus reuteri', 'Bifidobacterium'],
   notes:{en:'A probiotic for diarrhoea or alongside antibiotics — take it two hours apart from the antibiotic dose.',
          ar:'بروبيوتيك للإسهال أو مع المضادات الحيوية — يؤخذ بفاصل ساعتين عن جرعة المضاد.'},
+  ix:[
+    ['Amoxicillin', W, 'Antibiotics kill it — take it two hours away from the antibiotic.', 'المضادات الحيوية تقتله — خذه بفاصل ساعتين عن المضاد.']
+  ],
   ci:['immunocompromised'],
   ask:['childAge', 'feverBlood'] },
 

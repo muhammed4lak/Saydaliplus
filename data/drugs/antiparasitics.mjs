@@ -11,6 +11,10 @@ export default [
   doses:['200 mg', '400 mg chewable', '200 mg/5 mL suspension'], brand:['Zentel', 'Alzental'],
   notes:{en:'For most worms a single 400 mg dose, chewed or swallowed; for pinworm, repeat after two weeks and treat the whole household. Longer courses (hydatid cysts) need liver tests and blood counts. Not in pregnancy.',
          ar:'لمعظم الديدان جرعة واحدة 400 ملغ، تُمضغ أو تُبلع؛ وللدودة الدبوسية تُكرّر بعد أسبوعين ويُعالج جميع أفراد البيت. الدورات الأطول (الأكياس المائية) تحتاج فحص الكبد وتعداد الدم. لا يُستعمل في الحمل.'},
+  ix:[
+    ['#inducer', W, 'Carbamazepine, phenytoin and phenobarbital lower albendazole — it may fail in hydatid disease.', 'الكاربامازيبين والفينيتوين والفينوباربيتال تخفض الألبيندازول — قد يفشل في الكيسات المائية.'],
+    ['Dexamethasone', W, 'Raises albendazole levels.', 'يرفع مستوى الألبيندازول.']
+  ],
   ci:['preg'],
   ask:['preg', 'childAge'] },
 
@@ -18,6 +22,10 @@ export default [
   doses:['40 mg/5 mL syrup', '40 mg', '50 mg tablet'], brand:['Ketrax', 'Ergamisol'],
   notes:{en:'A single dose for roundworm. Longer courses can lower white cells — report fever or a sore throat.',
          ar:'جرعة واحدة لديدان الأسكاريس. الدورات الأطول قد تخفض الكريات البيض — أبلغ عن الحرارة أو التهاب الحلق.'},
+  ix:[
+    ['Warfarin', W, 'Raises the INR.', 'يرفع INR.'],
+    ['Alcohol', W, 'A disulfiram-like reaction is possible.', 'تفاعل شبيه بالديسلفيرام ممكن.']
+  ],
   ci:[{en:'Previous agranulocytosis', ar:'ندرة المحببات السابقة'}],
   ask:['childAge', 'feverBlood'] },
 
@@ -25,6 +33,10 @@ export default [
   doses:['piperazine citrate syrup', 'piperazine adipate tablet', 'with senna (sachet)'], aka:['Piperazine citrate', 'Piperazine adipate'],
   notes:{en:'An older treatment for threadworm and roundworm. Treat the whole family and keep nails short. Not in epilepsy or kidney failure.',
          ar:'علاج أقدم للديدان الدبوسية والأسكاريس. عالج العائلة كلها وقصّ الأظافر. لا يُستعمل في الصرع أو الفشل الكلوي.'},
+  ix:[
+    ['Pyrantel', S, 'Opposing actions on the worm — do not combine.', 'تأثيران متعاكسان على الديدان — لا يُجمعان.'],
+    ['Chlorpromazine', W, 'May increase the risk of fits.', 'قد يزيد خطر النوبات.']
+  ],
   ci:['epilepsy', 'renalSevere'],
   ask:['childAge', 'epilepsy', 'kidney'] },
 
@@ -32,6 +44,9 @@ export default [
   doses:['100 mg', '500 mg', '100 mg/5 mL suspension'], brand:['Vermox'],
   notes:{en:'Pinworm: one 100 mg dose repeated after two weeks, for the whole household, with hand-washing and short nails. Other worms: twice a day for three days.',
          ar:'الدودة الدبوسية: جرعة 100 ملغ تُكرّر بعد أسبوعين، لجميع أفراد البيت، مع غسل اليدين وتقليم الأظافر. الديدان الأخرى: مرتين يومياً لثلاثة أيام.'},
+  ix:[
+    ['Metronidazole', S, 'A dangerous skin reaction (Stevens–Johnson) has been reported — avoid together.', 'سُجّل تفاعل جلدي خطير (ستيفنز جونسون) — يُتجنّب الجمع.']
+  ],
   ci:['preg1', {en:'Infants under 1 year', ar:'الرضّع دون سنة'}],
   ask:['preg', 'childAge'] },
 
@@ -39,6 +54,9 @@ export default [
   doses:['250 mg/5 mL suspension', '125 mg tablet'], brand:['Combantrin'], aka:['Pyrantel pamoate', 'Pyrantel embonate'],
   notes:{en:'A single dose by body weight for pinworm and roundworm; repeat after two weeks for pinworm.',
          ar:'جرعة واحدة حسب الوزن للدودة الدبوسية والأسكارس؛ وتُكرّر بعد أسبوعين للدبوسية.'},
+  ix:[
+    ['Piperazine', S, 'Opposing actions on the worm — do not combine.', 'تأثيران متعاكسان على الديدان — لا يُجمعان.']
+  ],
   ask:['childAge', 'preg'] },
 
 { sci:'Ivermectin', ar:'إيفرمكتين', atc:'P02CF01', cat:'inf.antiparasitic', form:'tablet',
@@ -46,6 +64,9 @@ export default [
   take:['emptyStomach'],
   notes:{en:'Tablets on an empty stomach with water, for scabies (repeated after a week) and some worms. The cream is a different use — for rosacea.',
          ar:'الأقراص على معدة فارغة مع الماء، للجرب (تُكرّر بعد أسبوع) وبعض الديدان. الكريم استعمال مختلف — للوردية.'},
+  ix:[
+    ['Warfarin', W, 'INR rises have been reported.', 'سُجّل ارتفاع INR.']
+  ],
   ci:[{en:'Children under 15 kg (tablets)', ar:'الأطفال دون 15 كغ (الأقراص)'}],
   ask:['childAge', 'preg'] },
 
@@ -64,11 +85,15 @@ export default [
   doses:['500 mg chewable'], brand:['Yomesan'],
   notes:{en:'For tapeworm: chewed thoroughly on an empty stomach and swallowed with a little water; a laxative may follow.',
          ar:'للدودة الشريطية: يُمضغ جيداً على معدة فارغة ويُبلع بقليل من الماء؛ وقد يُتبع بمليّن.'},
+  ix:[
+    ['Alcohol', W, 'Avoid alcohol on the day of treatment.', 'تجنّب الكحول يوم العلاج.']
+  ],
   ask:['childAge'] },
 
 { sci:'Triclabendazole', ar:'تريكلابيندازول', atc:'P02BX04', cat:'inf.antiparasitic', form:'tablet',
   doses:['250 mg'], brand:['Egaten'],
   take:['withFood'],
+  tags:['qtPossible'],
   notes:{en:'For liver fluke (fascioliasis): one or two doses with food. Tummy pain as the flukes die is common.',
          ar:'لدودة الكبد (الفاشيولا): جرعة أو جرعتان مع الطعام. ألم البطن عند موت الديدان شائع.'},
   ask:['rhythm', 'preg'] },
@@ -80,6 +105,9 @@ export default [
   take:['withFood'],
   notes:{en:'For giardia and cryptosporidium diarrhoea: with food for three days. Urine may turn yellow-green.',
          ar:'لإسهال الجيارديا والكريبتوسبوريديوم: مع الطعام لثلاثة أيام. قد يصبح البول أصفر مخضراً.'},
+  ix:[
+    ['Warfarin', W, 'Highly protein-bound — the INR may change.', 'يرتبط بشدة ببروتينات الدم — قد يتغيّر INR.']
+  ],
   ask:['childAge', 'feverBlood'] },
 
 { sci:'Diloxanide', ar:'ديلوكسانيد', atc:'P01AC01', cat:'inf.antiparasitic', form:'tablet',
@@ -90,6 +118,7 @@ export default [
 
 { sci:'Paromomycin', ar:'باروموميسين', atc:'A07AA06', cat:'inf.antiparasitic', form:'capsule',
   doses:['250 mg capsule', '15% ointment'], brand:['Humatin'],
+  tags:['nephrotoxic', 'ototoxic'],
   notes:{en:'By mouth for gut amoebae and cryptosporidium; the ointment treats cutaneous leishmaniasis (the Baghdad boil).',
          ar:'فموياً للأميبا المعوية والكريبتوسبوريديوم؛ والمرهم يعالج الليشمانيا الجلدية (حبة بغداد).'},
   ci:['obstruction'],
@@ -118,6 +147,9 @@ export default [
   take:['withFood'],
   notes:{en:'An oral treatment for leishmaniasis, with food. It causes birth defects — contraception during and for five months after.',
          ar:'علاج فموي لداء الليشمانيات، مع الطعام. يسبّب تشوّهات للجنين — منع الحمل أثناء العلاج وخمسة أشهر بعده.'},
+  ix:[
+    ['#hormonalContraceptive', W, 'Vomiting and diarrhoea can make the pill fail — use a second method.', 'التقيؤ والإسهال قد يُفشلان الحبوب — استعملي وسيلة إضافية.']
+  ],
   ci:['pregTeratogen'],
   ask:['pregTest', 'kidney'] },
 
@@ -133,6 +165,7 @@ export default [
 
 { sci:'Primaquine', ar:'بريماكين', atc:'P01BA03', cat:'inf.antiparasitic', form:'tablet',
   doses:['7.5 mg', '15 mg base'],
+  tags:['qtPossible'],
   notes:{en:'Clears the dormant liver stage of vivax malaria. G6PD is tested first — in deficiency, common in Iraq, it destroys red cells.',
          ar:'يزيل الطور الكامن في الكبد لملاريا فيفاكس. يُفحص G6PD أولاً — ففي حالة العوز، الشائعة في العراق، يحلّ الكريات الحمر.'},
   ci:['g6pd', 'preg'],
@@ -150,6 +183,9 @@ export default [
   doses:['60 mg vial', '50 mg', '200 mg tablet'], brand:['Artesun'],
   notes:{en:'The first-choice injection for severe malaria, in hospital; blood counts are checked weeks later.',
          ar:'الحقنة المفضّلة للملاريا الشديدة، في المستشفى؛ ويُفحص تعداد الدم بعد أسابيع.'},
+  ix:[
+    ['#inducer', W, 'Lowers artesunate levels.', 'يخفض مستوى الأرتيسونات.']
+  ],
   ask:['preg'] },
 
 { sci:'Quinine', ar:'كينين', atc:'P01BC01', cat:'inf.antiparasitic', form:'tablet',

@@ -48,6 +48,9 @@ export default [
   take:['withFood'],
   notes:{en:'An add-on for angina, with meals. It can cause tremor, stiffness or unsteadiness — report these, as they settle when it is stopped.',
          ar:'علاج إضافي للذبحة، مع الوجبات. قد يسبّب رجفة أو تيبّساً أو عدم ثبات — أبلغ عنها، فهي تزول بإيقافه.'},
+  ix:[
+    ['#dopamineBlocker', W, 'Both can cause parkinsonism — tremor and stiffness.', 'كلاهما قد يسبّب أعراض باركنسون — رعاش وتيبّس.']
+  ],
   ci:['parkinson', {en:'Tremor, restless legs or other movement disorders', ar:'الرجفة أو تململ الساقين أو اضطرابات الحركة الأخرى'}, 'renal30'],
   ask:['parkinson', 'kidney', 'falls'] },
 
@@ -102,6 +105,10 @@ export default [
   take:['withFood'],
   notes:{en:'For dangerous heart rhythms (and, as capsules, muscle stiffness in myotonia). With food; nausea, tremor and dizziness are common. Heart tracings are checked.',
          ar:'لاضطرابات نظم القلب الخطيرة (وككبسولات لتيبّس العضلات في الوهن التأتري). مع الطعام؛ الغثيان والرعاش والدوخة شائعة. يُفحص تخطيط القلب.'},
+  ix:[
+    ['Theophylline', S, 'Raises theophylline — toxicity.', 'يرفع الثيوفيلين — تسمّم.'],
+    ['#inducer', W, 'Lowers mexiletine.', 'يخفض الميكسيليتين.']
+  ],
   ci:['heartBlock', 'hfSevere', 'recentMI'],
   ask:['heart', 'liver', 'otherMeds'] },
 
@@ -173,6 +180,9 @@ export default [
   doses:['10 mg/10 mL'], brand:['Primacor'],
   notes:{en:'An intravenous infusion in intensive care for acute heart failure; rhythm and blood pressure are monitored, and the dose is cut in kidney impairment.',
          ar:'تسريب وريدي في العناية المركّزة لقصور القلب الحاد؛ يُراقب النظم والضغط، وتُخفّض الجرعة في القصور الكلوي.'},
+  ix:[
+    ['#nitrate', W, 'More low blood pressure.', 'مزيد من انخفاض الضغط.']
+  ],
   ci:['aorticStenosis', 'hocm'],
   ask:['kidney'] },
 
@@ -180,6 +190,9 @@ export default [
   doses:['12.5 mg/5 mL'], brand:['Simdax'],
   notes:{en:'A hospital infusion for acute heart failure; its effect lasts for days after the infusion ends.',
          ar:'تسريب في المستشفى لقصور القلب الحاد؛ يستمر أثره أياماً بعد انتهاء التسريب.'},
+  ix:[
+    ['#nitrate', W, 'More low blood pressure.', 'مزيد من انخفاض الضغط.']
+  ],
   ci:['hypotension', 'renal30', 'hepSevere'],
   ask:['kidney', 'liver'] },
 
@@ -231,6 +244,9 @@ export default [
   doses:['1 mg vial'], brand:['Glypressin'],
   notes:{en:'Hospital use for bleeding varices in the gullet and for kidney failure in liver disease; pale skin, cramps and a slow pulse are watched for.',
          ar:'للمستشفى لنزف دوالي المريء وللفشل الكلوي المرافق لمرض الكبد؛ يُراقب شحوب الجلد والتقلّصات وبطء النبض.'},
+  ix:[
+    ['#bradycardic', S, 'Severe slowing of the heart.', 'بطء شديد في القلب.']
+  ],
   ci:['preg', 'ihd'],
   ask:['heart', 'preg'] },
 

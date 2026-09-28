@@ -51,6 +51,7 @@ export default [
 
 { sci:'Lomustine', ar:'لوموستين', atc:'L01AD02', cat:'onc.cytotoxic', form:'capsule',
   doses:['10 mg', '40 mg', '100 mg capsule'], brand:['CeeNU', 'Gleostine'], aka:['CCNU'],
+  tags:['immunosuppressant'],
   notes:{en:'A single dose every six weeks for brain tumours — take exactly the prescribed number of capsules once, on an empty stomach at bedtime. Blood counts drop weeks later; report fever or bleeding.',
          ar:'جرعة واحدة كل ستة أسابيع لأورام الدماغ — خذ عدد الكبسولات الموصوف بالضبط مرة واحدة، على معدة فارغة قبل النوم. تنخفض تعداد الدم بعد أسابيع؛ أبلغ عن الحرارة أو النزف.'},
   ci:['pregTeratogen', 'marrow'],
@@ -248,8 +249,13 @@ export default [
 
 { sci:'Bleomycin', ar:'بليومايسين', atc:'L01DC01', cat:'onc.cytotoxic', form:'injection',
   doses:['15,000 IU vial'], brand:['Blenoxane'],
+  tags:['immunosuppressant'],
   notes:{en:'It can scar the lungs — report cough or breathlessness. Tell every anaesthetist, as high oxygen later in life can harm the lungs.',
          ar:'قد يسبّب تليّف الرئة — أبلغ عن السعال أو ضيق النفس. أخبر كل طبيب تخدير، فالأوكسجين العالي لاحقاً قد يؤذي الرئتين.'},
+  ix:[
+    ['Brentuximab vedotin', C, 'Serious lung toxicity — contraindicated.', 'سمّية رئوية خطيرة — ممنوع الجمع.'],
+    ['Cisplatin', W, 'Cisplatin slows bleomycin removal — lung toxicity.', 'السيسبلاتين يبطئ طرح البليومايسين — سمّية رئوية.']
+  ],
   ci:['pregTeratogen', {en:'Lung disease', ar:'مرض رئوي'}],
   ask:['smoke', 'dental', 'feverChemo'] },
 
@@ -337,8 +343,12 @@ export default [
 
 { sci:'Carfilzomib', ar:'كارفيلزوميب', atc:'L01XG02', cat:'onc.cytotoxic', form:'injection',
   doses:['10 mg', '30 mg', '60 mg vial'], brand:['Kyprolis'],
+  tags:['immunosuppressant'],
   notes:{en:'For myeloma by infusion. It can strain the heart — report breathlessness, chest pain or swelling.',
          ar:'للورم النقوي بالتسريب. قد يُجهد القلب — أبلغ عن ضيق النفس أو ألم الصدر أو التورّم.'},
+  ix:[
+    ['#hormonalContraceptive', W, 'Higher clot risk with combined hormonal contraception.', 'خطر جلطات أعلى مع موانع الحمل الهرمونية المركّبة.']
+  ],
   ci:['pregTeratogen'],
   ask:['heart', 'bp', 'feverChemo'] },
 
@@ -352,15 +362,26 @@ export default [
 
 { sci:'Asparaginase', ar:'أسباراجيناز', atc:'L01XX02', cat:'onc.cytotoxic', form:'injection',
   doses:['10,000 IU vial', 'pegaspargase 3,750 IU'], brand:['Oncaspar', 'Erwinase'], aka:['Pegaspargase', 'Recombinant asparaginase'],
+  tags:['immunosuppressant'],
   notes:{en:'For acute lymphoblastic leukaemia. Watched for allergy, pancreatitis (severe tummy pain), clots and high sugar.',
          ar:'للابيضاض اللمفاوي الحاد. يُراقب التحسّس والتهاب البنكرياس (ألم البطن الشديد) والجلطات وارتفاع السكر.'},
+  ix:[
+    ['Vincristine', S, 'More nerve toxicity when given before vincristine.', 'سمّية عصبية أكثر إذا أُعطي قبل الفينكريستين.'],
+    ['Methotrexate', W, 'Timing matters — asparaginase can blunt methotrexate.', 'التوقيت مهم — قد يُضعف الأسباراجيناز الميثوتريكسيت.']
+  ],
   ci:['pancreatitis', 'vte'],
   ask:['pancreatitis', 'diabetes', 'clots'] },
 
 { sci:'Lenalidomide', ar:'ليناليدوميد', atc:'L04AX04', cat:'onc.cytotoxic', form:'capsule',
   doses:['2.5 mg', '5 mg', '10 mg', '15 mg', '25 mg'], brand:['Revlimid'],
+  tags:['immunosuppressant'],
   notes:{en:'A thalidomide relative: it causes birth defects — a pregnancy-prevention programme applies to women and men. Clot prevention is usually given. Never share the capsules.',
          ar:'قريب الثاليدوميد: يسبّب تشوّهات للجنين — يُطبّق برنامج منع الحمل على النساء والرجال. تُعطى عادة وقاية من الجلطات. لا تُعطى الكبسولات لغيرك أبداً.'},
+  ix:[
+    ['Erythropoietin', S, 'Higher clot risk.', 'خطر جلطات أعلى.'],
+    ['#hormonalContraceptive', S, 'Combined hormonal contraception raises the clot risk — use another reliable method.', 'موانع الحمل الهرمونية المركّبة ترفع خطر الجلطات — استعملي وسيلة موثوقة أخرى.'],
+    ['Digoxin', W, 'Raises digoxin levels.', 'يرفع مستوى الديجوكسين.']
+  ],
   ci:['pregTeratogen', 'noPregPlan'],
   ask:['pregTest', 'clots', 'kidney'] },
 
@@ -374,8 +395,14 @@ export default [
 
 { sci:'Pomalidomide', ar:'بوماليدوميد', atc:'L04AX06', cat:'onc.cytotoxic', form:'capsule',
   doses:['1 mg', '2 mg', '3 mg', '4 mg'], brand:['Imnovid', 'Pomalyst'],
+  tags:['immunosuppressant'],
   notes:{en:'For myeloma. It causes birth defects — a pregnancy-prevention programme applies. Clot prevention and blood counts are part of treatment.',
          ar:'للورم النقوي. يسبّب تشوّهات للجنين — يُطبّق برنامج منع الحمل. الوقاية من الجلطات وتعداد الدم جزء من العلاج.'},
+  ix:[
+    ['Erythropoietin', S, 'Higher clot risk.', 'خطر جلطات أعلى.'],
+    ['#hormonalContraceptive', S, 'Combined hormonal contraception raises the clot risk — use another reliable method.', 'موانع الحمل الهرمونية المركّبة ترفع خطر الجلطات — استعملي وسيلة موثوقة أخرى.'],
+    ['Fluvoxamine', W, 'Fluvoxamine and ciprofloxacin raise pomalidomide.', 'الفلوفوكسامين والسيبروفلوكساسين يرفعان البوماليدوميد.']
+  ],
   ci:['pregTeratogen', 'noPregPlan'],
   ask:['pregTest', 'clots', 'smoke'] },
 
@@ -391,6 +418,10 @@ export default [
   doses:['15 mg tablet', '50 mg', '100 mg', '300 mg vial'], brand:['Leucovorin', 'Folinic acid'], aka:['Folinic acid', 'Leucovorin', 'Calcium leucovorin'],
   notes:{en:'Rescue after high-dose methotrexate — the timing is critical and must not be missed. Also used with fluorouracil.',
          ar:'لإنقاذ الخلايا بعد الميثوتريكسيت بجرعة عالية — التوقيت حاسم ولا يجوز تفويته. يُستعمل أيضاً مع الفلورويوراسيل.'},
+  ix:[
+    ['Fluorouracil', S, 'Strengthens fluorouracil — both its effect and its toxicity; the doses are planned together.', 'يقوّي الفلورويوراسيل — أثره وسمّيته؛ تُخطّط الجرعات معاً.'],
+    ['Phenytoin', W, 'May lower phenytoin levels.', 'قد يخفض مستوى الفينيتوين.']
+  ],
   ci:[{en:'Anaemia from vitamin B12 deficiency (untreated)', ar:'فقر دم بعوز فيتامين B12 غير معالج'}],
   ask:['chemoCycle', 'methotrexate'] },
 
@@ -398,12 +429,20 @@ export default [
   doses:['30 MU', '48 MU prefilled syringe'], brand:['Neupogen', 'Zarzio'],
   notes:{en:'Daily injections under the skin after chemotherapy to raise white cells; bone pain is common — paracetamol helps. Keep in the fridge. Report pain in the upper left tummy or shoulder.',
          ar:'حقن يومية تحت الجلد بعد العلاج الكيميائي لرفع الكريات البيض؛ ألم العظام شائع — والباراسيتامول يفيد. يُحفظ في الثلاجة. أبلغ عن ألم أعلى البطن الأيسر أو الكتف.'},
+  ix:[
+    ['Fluorouracil', W, 'Not given within 24 hours before or after chemotherapy.', 'لا يُعطى خلال 24 ساعة قبل العلاج الكيميائي أو بعده.'],
+    ['Lithium', W, 'Lithium adds to the rise in white cells.', 'الليثيوم يزيد ارتفاع الكريات البيض.']
+  ],
   ask:['injectTech', 'cold'] },
 
 { sci:'Pegfilgrastim', ar:'بيغفيلغراستيم', atc:'L03AA13', cat:'onc.support', form:'injection',
   doses:['6 mg prefilled syringe'], brand:['Neulasta'],
   notes:{en:'One injection per chemotherapy cycle, at least a day after the chemotherapy; bone pain is common. Keep in the fridge.',
          ar:'حقنة واحدة لكل دورة علاج كيميائي، بعد العلاج بيوم على الأقل؛ ألم العظام شائع. يُحفظ في الثلاجة.'},
+  ix:[
+    ['Fluorouracil', W, 'Not given within 24 hours before or after chemotherapy.', 'لا يُعطى خلال 24 ساعة قبل العلاج الكيميائي أو بعده.'],
+    ['Lithium', W, 'Lithium adds to the rise in white cells.', 'الليثيوم يزيد ارتفاع الكريات البيض.']
+  ],
   ask:['injectTech', 'cold'] },
 
 { sci:'Rasburicase', ar:'راسبوريكاز', atc:'V03AF07', cat:'onc.support', form:'injection',

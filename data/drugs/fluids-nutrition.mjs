@@ -30,27 +30,41 @@ export default [
   ask:['diabetes'] },
 
 { sci:'Compound sodium lactate', ar:'لاكتات الصوديوم المركّبة', atc:'B05BB01', cat:'nut.fluid', form:'injection',
-  doses:['500 mL', '1000 mL'], aka:['Ringer’s lactate', 'Ringer lactate', 'Ringers lactate', 'Hartmann’s solution', 'Hartmann solution', 'Lactated Ringer’s', 'Lactated Ringer', 'Sodium lactate compound'],
+  doses:['500 mL', '1000 mL'], aka:["Ringer's lactate", 'Ringer lactate', 'Ringers lactate', "Hartmann's solution", 'Hartmann solution', "Lactated Ringer's", 'Lactated Ringer', 'Sodium lactate compound'],
   notes:{en:'A balanced drip for fluid replacement in surgery, burns and dehydration.',
          ar:'تسريب متوازن لتعويض السوائل في الجراحة والحروق والجفاف.'},
+  ix:[
+    ['Ceftriaxone', C, 'The calcium in it forms crystals with ceftriaxone — never in the same line, and not within 48 hours in newborns.', 'الكالسيوم فيه يكوّن بلورات مع السيفترياكسون — لا يُعطيان في الخط نفسه أبداً، ولا خلال 48 ساعة عند حديثي الولادة.']
+  ],
   ask:['kidney', 'heartFailure'] },
 
-{ sci:'Ringer’s solution', ar:'محلول رينغر', atc:'B05BB01', cat:'nut.fluid', form:'injection',
+{ sci:"Ringer's solution", ar:'محلول رينغر', atc:'B05BB01', cat:'nut.fluid', form:'injection',
   doses:['500 mL'], aka:['Ringers solution', 'Ringer solution', 'Ringer injection'],
   notes:{en:'A balanced electrolyte drip for fluid replacement.',
          ar:'تسريب أملاح متوازن لتعويض السوائل.'},
+  ix:[
+    ['Ceftriaxone', C, 'The calcium in it forms crystals with ceftriaxone — never in the same line, and not within 48 hours in newborns.', 'الكالسيوم فيه يكوّن بلورات مع السيفترياكسون — لا يُعطيان في الخط نفسه أبداً، ولا خلال 48 ساعة عند حديثي الولادة.']
+  ],
   ask:['kidney', 'heartFailure'] },
 
 { sci:'Sodium bicarbonate', ar:'بيكربونات الصوديوم', atc:'B05XA02', cat:'nut.fluid', form:'injection',
   doses:['8.4% (1 mmol/mL)', '4.2%', '500 mg tablet'],
   notes:{en:'Intravenous for severe acidosis and some poisonings; tablets correct acidosis in kidney disease. It carries a lot of sodium.',
          ar:'وريدياً للحماض الشديد وبعض حالات التسمّم؛ والأقراص تصحّح الحماض في أمراض الكلى. يحمل كمية كبيرة من الصوديوم.'},
+  ix:[
+    ['Lithium', W, 'Alkaline urine lowers lithium levels.', 'البول القلوي يخفض مستوى الليثيوم.'],
+    ['Aspirin', W, 'Speeds aspirin removal (used deliberately in overdose).', 'يسرّع طرح الأسبرين (ويُستعمل عمداً في الجرعة الزائدة).']
+  ],
   ask:['kidney', 'heartFailure'] },
 
 { sci:'Magnesium sulfate', ar:'كبريتات المغنيسيوم', atc:'B05XA05', cat:'nut.fluid', form:'injection',
   doses:['50% (2 mmol/mL) injection', 'oral Epsom salt'], aka:['Magnesium sulphate', 'Epsom salt'],
   notes:{en:'Intravenous for eclampsia, low magnesium and severe asthma, with reflexes and breathing watched. By mouth it is a laxative.',
          ar:'وريدياً للارتعاج ونقص المغنيسيوم والربو الشديد، مع مراقبة المنعكسات والتنفس. بالفم يعمل مليّناً.'},
+  ix:[
+    ['Nifedipine', S, 'A deep fall in blood pressure and muscle weakness.', 'هبوط عميق في الضغط وضعف عضلي.'],
+    ['Rocuronium', S, 'Magnesium deepens and prolongs the muscle block.', 'المغنيسيوم يعمّق الإحصار العضلي ويطيله.']
+  ],
   ci:['renalSevere', 'heartBlock', 'myasthenia'],
   ask:['kidney', 'myasthenia'] },
 
@@ -116,6 +130,9 @@ export default [
   doses:['10%', '20% infusion'], brand:['Intralipid', 'SMOFlipid'], aka:['Fat emulsion'],
   notes:{en:'Calories and essential fats in intravenous feeding; made from soya, egg and sometimes fish. Blood lipids are checked.',
          ar:'سعرات ودهون أساسية في التغذية الوريدية؛ مصنوع من الصويا والبيض وأحياناً السمك. تُفحص دهون الدم.'},
+  ix:[
+    ['Warfarin', W, 'Soya-based emulsions carry vitamin K — they can lower the INR.', 'المستحلبات المصنوعة من الصويا تحمل فيتامين K — قد تخفض INR.']
+  ],
   ask:['allergy'] },
 
 /* ---------- Metabolic and rare diseases ---------- */
@@ -166,6 +183,10 @@ export default [
   doses:['100 mg soluble tablet', '100 mg and 500 mg powder'], brand:['Kuvan'],
   notes:{en:'For phenylketonuria that responds to it, dissolved in water with breakfast; the diet continues and phenylalanine levels are checked.',
          ar:'لبيلة الفينيل كيتون المستجيبة له، يُذاب في الماء مع الفطور؛ ويستمر النظام الغذائي وتُفحص مستويات الفينيل ألانين.'},
+  ix:[
+    ['Levodopa', W, 'Fits and irritability reported together.', 'سُجّلت نوبات وهياج عند الجمع.'],
+    ['Methotrexate', W, 'Lowers its active levels.', 'يخفض مستوياته الفعّالة.']
+  ],
   ask:['labs'] },
 
 { sci:'Nitisinone', ar:'نيتيسينون', atc:'A16AX04', cat:'nut.metabolic', form:'capsule',
@@ -178,6 +199,10 @@ export default [
   doses:['500 mg tablet', 'granules'], brand:['Ammonaps'],
   notes:{en:'For urea-cycle disorders, with a protein-restricted diet; it contains a lot of sodium.',
          ar:'لاضطرابات دورة اليوريا، مع نظام غذائي مقيّد البروتين؛ يحتوي كثيراً من الصوديوم.'},
+  ix:[
+    ['Sodium valproate', S, 'Valproate raises ammonia — it can bring on a crisis.', 'الفالبروات يرفع الأمونيا — قد يسبّب نوبة.'],
+    ['#corticosteroid', W, 'Steroids break down body protein and raise ammonia.', 'الكورتيزون يفكّك بروتين الجسم ويرفع الأمونيا.']
+  ],
   ask:['labs', 'heartFailure'] }
 
 ];

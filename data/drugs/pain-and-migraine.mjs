@@ -17,6 +17,18 @@ export default [
   ci:['hepSevere'],
   ask:['sameIngredient', 'liver', 'childAge'] },
 
+{ sci:'Caffeine', ar:'كافيين', atc:'N06BC01', cat:'cns.analgesic', form:'tablet',
+  doses:['in painkiller combinations (30–65 mg)', 'with ergotamine', '50 mg tablet'], aka:['Caffeine anhydrous'],
+  notes:{en:'Added to painkillers to make them work a little better; the tablets count towards the day’s coffee and tea. Too much causes palpitations, shakiness and poor sleep — not late in the day.',
+         ar:'يُضاف إلى المسكّنات ليزيد أثرها قليلاً؛ وتُحسب الأقراص مع قهوة اليوم وشايه. الزيادة تسبّب الخفقان والرجفة وسوء النوم — لا يؤخذ في آخر النهار.'},
+  ix:[
+    ['Ciprofloxacin', W, 'Raises caffeine — jitteriness and palpitations.', 'يرفع الكافيين — عصبية وخفقان.'],
+    ['Theophylline', W, 'Adds to theophylline’s side effects.', 'يزيد الآثار الجانبية للثيوفيلين.'],
+    ['Lithium', W, 'Lowers lithium; stopping caffeine suddenly raises it.', 'يخفض الليثيوم؛ والتوقف المفاجئ عن الكافيين يرفعه.']
+  ],
+  ci:['arrhythmia'],
+  ask:['heart', 'sameIngredient', 'preg'] },
+
 { sci:'Metamizole', ar:'ميتاميزول', atc:'N02BB02', cat:'cns.analgesic', form:'tablet',
   doses:['500 mg', '500 mg/mL drops', '1 g/2 mL and 2.5 g/5 mL injection', '300 mg suppository'], brand:['Novalgin', 'Baralgin'], aka:['Dipyrone', 'Metamizole sodium'],
   notes:{en:'A strong painkiller and fever reducer. Rarely it wipes out the white cells — stop and get a blood count at once for fever, sore throat or mouth ulcers. The injection is given slowly, lying down.',
@@ -166,6 +178,7 @@ export default [
 
 { sci:'Pizotifen', ar:'بيزوتيفين', atc:'N02CX01', cat:'cns.migraine', form:'tablet',
   doses:['0.5 mg tablet', '1.5 mg tablet', '0.25 mg/5 mL syrup'], brand:['Sandomigran'], aka:['Pizotyline'],
+  tags:['sedative', 'anticholinergic'],
   notes:{en:'Taken every day to prevent migraine, usually at night — not for an attack. It increases appetite and weight and causes drowsiness.',
          ar:'يؤخذ كل يوم للوقاية من الشقيقة، ليلاً عادة — لا لعلاج النوبة. يزيد الشهية والوزن ويسبّب النعاس.'},
   ci:['angleGlaucoma', 'retention'],

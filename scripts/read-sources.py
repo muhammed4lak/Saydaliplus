@@ -270,7 +270,7 @@ def pick(hits, route):
 # An EDL line that is itself a combination ("A + B") is claimed by combination
 # entries only, and by the named mixtures (Ringer's, ORS, vaccines...).
 CAT = { d['sci']: d['cat'] for d in REF }
-MIXTURES = { 'Oral rehydration salts', 'Ringer’s solution', 'Compound sodium lactate', 'Multivitamins', 'Vitamin B complex',
+MIXTURES = { 'Oral rehydration salts', "Ringer's solution", 'Compound sodium lactate', 'Multivitamins', 'Vitamin B complex',
              'Peritoneal dialysis solution', 'Cardioplegia solution', 'Glucose/Sodium chloride', 'Pulmonary surfactant' }
 # Old Samarra (SDI) and other products the register lists by trade name only,
 # whose contents are plain from the name and the product range.
@@ -300,9 +300,35 @@ def molecules_in(text, route_text=None, combos_only=False, trade=None, fuzzy=Tru
     # the solvent in a kit is not an ingredient
     return [h for h in hits if h not in SOLVENTS] or hits
 SOLVENTS = { 'Water for injections' }
+# The few EDL lines whose text names its ingredients too loosely to match.
+# Mostly combinations the reference holds as their ingredients rather than as
+# a combination entry of their own.
+EDL_BY_CODE = { '09-AG0-001': ['Ferrous sulfate', 'Folic acid'],          # "element iron 45–50 mg + folic 0.5 mg"
+                '02-A00-003': ['Aluminium hydroxide', 'Magnesium hydroxide', 'Simeticone'],
+                '02-D00-002': ['Diphenoxylate'],                            # with atropine
+                '03-G00-016': ['Guaifenesin', 'Chlorphenamine', 'Phenylephrine'],
+                '04-K00-008': ['Levodopa'],                                 # with carbidopa
+                '05-D00-043': ['Artemether'],                               # with lumefantrine
+                '05-D00-044': ['Paromomycin'],                              # with methylbenzethonium, ointment
+                '06-AA0-003': ['Insulin isophane'],                         # 30/70 biphasic
+                '07-DA0-004': ['Ethinylestradiol', 'Levonorgestrel'],
+                '08-H00-022': ['Prothrombin complex concentrate'],
+                '09-B00-022': ['Amino acids', 'Lipid emulsion', 'Glucose'],  # three-chamber nutrition bag
+                '09-B00-023': ['Amino acids'], '09-B00-024': ['Amino acids'], '09-B00-026': ['Amino acids'],
+                '09-B00-025': ['Lipid emulsion'],                           # "energy", 20%
+                '09-CF0-001': ['Magnesium sulfate'],                        # "Mg+2" is a charge, not a second drug
+                '10-AC0-009': ['Infliximab'],                               # "and its approved biosimilar"
+                '11-E00-023': ['Tetracaine'],
+                '13-C00-002': ['Calamine', 'Glycerol', 'Camphor'],
+                '13-D00-044': ['Triamcinolone (topical)', 'Gramicidin', 'Neomycin', 'Nystatin'],
+                '14-B00-038': ['Bupivacaine'],                              # heavy, with glucose
+                '14-B00-015': ['Lidocaine', 'Adrenaline'],
+                '02-M00-001': ['Macrogol'],                                 # with sodium sulfate, bowel preparation
+                '17-000-076': ['Activated charcoal'],                       # with sorbitol
+                '08-I00-002': ['Sodium chloride', 'Potassium chloride'] }
 by_drug = {}
 for it in items:
-    for sci in molecules_in(it['item'], combos_only=True):
+    for sci in EDL_BY_CODE.get(it['code']) or molecules_in(it['item'], combos_only=True):
         by_drug.setdefault(sci, []).append(it['code'])
 json.dump({ 'source': 'NCDS Essential Drugs List, 25 Jul 2023 (list 1188)', 'classes': classes, 'items': items, 'byDrug': by_drug },
           open(os.path.join(ROOT, 'data', 'edl.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
@@ -406,6 +432,8 @@ gens = {}
 for it in items:
     g = generic_of(it['item'])
     if len(g) < 4 or not re.match(r'^[A-Za-z]', g): continue
+    # a unit on a line of its own ("vial") is the list's layout, not a generic
+    if re.fullmatch(r'(?i)(vial|ampoule|tablet|capsule|bottle|syringe|pen|sachet|tube)s?', g): continue
     key = g.lower()
     if key in known or any(key == d.lower() for d in drugs) or norm(key) in known_n: continue
     if any(it['code'] in v for v in by_drug.values()): continue

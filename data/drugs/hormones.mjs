@@ -23,6 +23,11 @@ export default [
   doses:['5 mg', '20 mg'], brand:['Neo-Mercazole'],
   notes:{en:'Rarely it wipes out the white cells: a sore throat, fever or mouth ulcers mean stop and get a blood count the same day. In the first trimester of pregnancy, propylthiouracil is used instead.',
          ar:'نادراً ما يُفني الكريات البيض: التهاب الحلق أو الحرارة أو قروح الفم تستوجب الإيقاف وإجراء تعداد دم في اليوم نفسه. في الثلث الأول من الحمل يُستعمل البروبيل ثيويوراسيل بدلاً منه.'},
+  ix:[
+    ['Warfarin', W, 'As the thyroid settles, the INR can change — check it.', 'مع استقرار الدرقية قد يتغيّر INR — افحصه.'],
+    ['Digoxin', W, 'As the thyroid settles, digoxin levels rise.', 'مع استقرار الدرقية يرتفع مستوى الديجوكسين.'],
+    ['Clozapine', S, 'Both can wipe out white cells — avoid.', 'كلاهما قد يُفني الكريات البيض — يُتجنّب.']
+  ],
   ci:['preg1', {en:'Previous agranulocytosis on carbimazole', ar:'ندرة محبّبات سابقة مع الكاربيمازول'}],
   ask:['infection', 'preg', 'labs'] },
 
@@ -30,6 +35,11 @@ export default [
   doses:['5 mg', '10 mg', '20 mg'], brand:['Thyrozol', 'Tapazole'], aka:['Methimazole'],
   notes:{en:'A sore throat, fever or mouth ulcers mean stop and get a blood count the same day. Not in the first trimester of pregnancy.',
          ar:'التهاب الحلق أو الحرارة أو قروح الفم تستوجب الإيقاف وإجراء تعداد دم في اليوم نفسه. لا يُستعمل في الثلث الأول من الحمل.'},
+  ix:[
+    ['Warfarin', W, 'As the thyroid settles, the INR can change — check it.', 'مع استقرار الدرقية قد يتغيّر INR — افحصه.'],
+    ['Digoxin', W, 'As the thyroid settles, digoxin levels rise.', 'مع استقرار الدرقية يرتفع مستوى الديجوكسين.'],
+    ['Clozapine', S, 'Both can wipe out white cells — avoid.', 'كلاهما قد يُفني الكريات البيض — يُتجنّب.']
+  ],
   ci:['preg1', {en:'Previous agranulocytosis on this drug', ar:'ندرة محبّبات سابقة مع هذا الدواء'}],
   ask:['infection', 'preg', 'labs'] },
 
@@ -37,6 +47,11 @@ export default [
   doses:['50 mg', '100 mg'], brand:['PTU'],
   notes:{en:'Used in early pregnancy and in thyroid storm. It can harm the liver — report nausea, dark urine or yellowing — and a sore throat or fever needs a blood count.',
          ar:'يُستعمل في بداية الحمل وفي عاصفة الدرق. قد يؤذي الكبد — أبلغ عن الغثيان أو غمق البول أو الاصفرار — والتهاب الحلق أو الحرارة يستوجب تعداد دم.'},
+  ix:[
+    ['Warfarin', W, 'As the thyroid settles, the INR can change — check it.', 'مع استقرار الدرقية قد يتغيّر INR — افحصه.'],
+    ['Digoxin', W, 'As the thyroid settles, digoxin levels rise.', 'مع استقرار الدرقية يرتفع مستوى الديجوكسين.'],
+    ['Clozapine', S, 'Both can wipe out white cells — avoid.', 'كلاهما قد يُفني الكريات البيض — يُتجنّب.']
+  ],
   ci:['hepActive'],
   ask:['preg', 'liver', 'infection'] },
 
@@ -124,6 +139,10 @@ export default [
   doses:['5 mg', '10 mg', '12 mg pen'], brand:['Genotropin', 'Norditropin', 'Omnitrope'], aka:['Growth hormone', 'rhGH'],
   notes:{en:'A daily injection in the evening, rotating sites; keep it in the fridge. Report headaches with vision changes, or a limp or hip pain in a child.',
          ar:'حقنة يومية مساءً مع تبديل المواضع؛ تُحفظ في الثلاجة. أبلغ عن الصداع مع تغيّر النظر، أو العرج أو ألم الورك عند الطفل.'},
+  ix:[
+    ['#corticosteroid', W, 'Steroids blunt its growth effect.', 'الكورتيزون يُضعف أثره على النمو.'],
+    ['#antidiabetic', W, 'Raises blood sugar — diabetes treatment may need adjusting.', 'يرفع سكر الدم — قد يلزم تعديل علاج السكري.']
+  ],
   ci:[{en:'Active cancer', ar:'سرطان فعّال'}, {en:'Acute critical illness', ar:'مرض حرج حاد'}],
   ask:['injectTech', 'cold', 'diabetes'] },
 
@@ -138,6 +157,11 @@ export default [
   doses:['0.1 mg', '0.2 mg tablet', '120 microgram melt', '10 microgram/dose nasal spray', '4 microgram/mL injection'], brand:['Minirin', 'DDAVP'],
   notes:{en:'For bedwetting and diabetes insipidus. Limit drinks from an hour before until eight hours after an evening dose: too much fluid dangerously lowers sodium — headache, vomiting, confusion or fits.',
          ar:'للتبوّل الليلي والسكري الكاذب. قلّل الشرب من ساعة قبل الجرعة المسائية حتى ثماني ساعات بعدها: السوائل الكثيرة تخفض الصوديوم خفضاً خطيراً — صداع أو قيء أو تشوّش أو اختلاج.'},
+  ix:[
+    ['#nsaid', S, 'Water retention and low sodium — fits.', 'احتباس الماء وانخفاض الصوديوم — نوبات.'],
+    ['#ssri', S, 'Low sodium risk.', 'خطر انخفاض الصوديوم.'],
+    ['Carbamazepine', S, 'Low sodium risk.', 'خطر انخفاض الصوديوم.']
+  ],
   ci:[{en:'Habitual excessive drinking', ar:'الإفراط المعتاد في الشرب'}, 'hfDecomp', {en:'Low sodium', ar:'نقص الصوديوم'}],
   ask:['childAge', 'heartFailure', 'kidney'] },
 
@@ -189,6 +213,10 @@ export default [
   doses:['1 microgram', '2 microgram capsule', '5 microgram/mL injection'], brand:['Zemplar'],
   notes:{en:'For raised parathyroid hormone in kidney disease; calcium and phosphate are checked.',
          ar:'لارتفاع هرمون الجارات الدرقية في أمراض الكلى؛ يُفحص الكالسيوم والفوسفات.'},
+  ix:[
+    ['Digoxin', W, 'High calcium makes digoxin toxic.', 'ارتفاع الكالسيوم يجعل الديجوكسين ساماً.'],
+    ['#inh3a4', W, 'Ketoconazole and similar raise paricalcitol.', 'الكيتوكونازول وأمثاله يرفعون الباريكالسيتول.']
+  ],
   ci:['hyperCa'],
   ask:['labs', 'kidney'] },
 
@@ -197,6 +225,11 @@ export default [
   take:['withFood'],
   notes:{en:'With food. It lowers calcium — report tingling, cramps or twitching.',
          ar:'مع الطعام. يخفض الكالسيوم — أبلغ عن الوخز أو التشنّجات أو الارتعاش.'},
+  ix:[
+    ['Metoprolol', W, 'Raises metoprolol (and tricyclics).', 'يرفع الميتوبرولول (وثلاثيات الحلقات).'],
+    ['Amitriptyline', W, 'Raises tricyclic levels.', 'يرفع مستوى ثلاثيات الحلقات.'],
+    ['#inh3a4', W, 'Ketoconazole and similar raise cinacalcet.', 'الكيتوكونازول وأمثاله يرفعون السيناكالسيت.']
+  ],
   ci:['hypoCa'],
   ask:['labs', 'epilepsy'] },
 
@@ -204,6 +237,9 @@ export default [
   doses:['50 units/mL', '100 units/mL injection', '200 units nasal spray'], brand:['Miacalcic'], aka:['Salmon calcitonin'],
   notes:{en:'Mostly for high calcium or Paget’s disease in hospital; nausea and flushing are common.',
          ar:'لارتفاع الكالسيوم أو داء باجيت في المستشفى غالباً؛ الغثيان والاحمرار شائعان.'},
+  ix:[
+    ['Lithium', W, 'Lowers lithium levels.', 'يخفض مستوى الليثيوم.']
+  ],
   ci:['hypoCa'],
   ask:['allergy'] },
 
@@ -213,6 +249,10 @@ export default [
   doses:['250 mg/mL mixed esters', '1000 mg/4 mL undecanoate', '1% and 2% gel', '40 mg capsule'], brand:['Sustanon', 'Nebido', 'Androgel', 'Testoviron'],
   notes:{en:'Blood count, PSA and liver tests are checked. The gel passes on by skin contact — cover the area, wash your hands, and keep it from women and children. It stops sperm production.',
          ar:'يُفحص تعداد الدم وPSA ووظائف الكبد. الهلام ينتقل بملامسة الجلد — غطِّ المنطقة واغسل يديك وأبعده عن النساء والأطفال. يوقف إنتاج النطاف.'},
+  ix:[
+    ['Warfarin', S, 'Raises the INR — bleeding.', 'يرفع INR — نزف.'],
+    ['#antidiabetic', W, 'May lower blood sugar.', 'قد يخفض سكر الدم.']
+  ],
   ci:['prostateCancer', 'preg'],
   ask:['whatFor', 'prostate', 'clots'] },
 
@@ -220,6 +260,10 @@ export default [
   doses:['25 mg/mL', '50 mg/mL', '100 mg/mL'], brand:['Deca-Durabolin'],
   notes:{en:'An anabolic steroid with narrow medical uses. It is misused for body-building and harms the liver, heart and fertility — dispense only against a prescription.',
          ar:'ستيرويد ابتنائي لاستعمالات طبية محدودة. يُساء استعماله لبناء العضلات ويؤذي الكبد والقلب والخصوبة — لا يُصرف إلا بوصفة.'},
+  ix:[
+    ['Warfarin', S, 'Raises the INR — bleeding.', 'يرفع INR — نزف.'],
+    ['#antidiabetic', W, 'May lower blood sugar.', 'قد يخفض سكر الدم.']
+  ],
   ci:['prostateCancer', 'preg', 'hepSevere'],
   ask:['whatFor', 'prescription'] },
 
@@ -227,13 +271,24 @@ export default [
   doses:['25 mg'], brand:['Proviron'],
   notes:{en:'An oral androgen for low testosterone; it does not improve fertility. Liver tests and PSA may be checked.',
          ar:'أندروجين فموي لنقص التستوستيرون؛ لا يحسّن الخصوبة. قد تُفحص وظائف الكبد وPSA.'},
+  ix:[
+    ['Warfarin', S, 'Raises the INR — bleeding.', 'يرفع INR — نزف.'],
+    ['#antidiabetic', W, 'May lower blood sugar.', 'قد يخفض سكر الدم.']
+  ],
   ci:['prostateCancer', 'hepSevere'],
   ask:['whatFor', 'prostate'] },
 
 { sci:'Danazol', ar:'دانازول', atc:'G03XA01', cat:'end.androgen', form:'capsule',
   doses:['100 mg', '200 mg'], brand:['Danol'],
+  tags:['inh3a4mod'],
   notes:{en:'It causes birth defects — a non-hormonal contraceptive is needed. Weight gain, acne, oily skin and a deeper voice (which may not reverse) can occur.',
          ar:'يسبّب تشوّهات للجنين — تلزم وسيلة منع حمل غير هرمونية. قد يسبّب زيادة الوزن وحب الشباب ودهنية الجلد وخشونة الصوت (وقد لا تزول).'},
+  ix:[
+    ['Warfarin', S, 'Raises the INR — bleeding.', 'يرفع INR — نزف.'],
+    ['#antidiabetic', W, 'May lower blood sugar.', 'قد يخفض سكر الدم.'],
+    ['Carbamazepine', S, 'Raises carbamazepine to toxic levels.', 'يرفع الكاربامازيبين إلى حدّ السميّة.'],
+    ['Ciclosporin', S, 'Raises ciclosporin — kidney toxicity.', 'يرفع السيكلوسبورين — سمّية كلوية.']
+  ],
   ci:['pregTeratogen', 'vte', 'hepSevere'],
   ask:['pregTest', 'clots'] }
 

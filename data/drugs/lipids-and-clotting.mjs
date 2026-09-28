@@ -294,6 +294,11 @@ export default [
   doses:['50 mg vial'], brand:['Actilyse'], aka:['Recombinant tissue plasminogen activator', 'rt-PA'],
   notes:{en:'Hospital only, for stroke, heart attack or a lung clot within strict time windows. Bleeding is the main danger.',
          ar:'للمستشفى فقط، للسكتة أو الاحتشاء أو خثرة الرئة ضمن نوافذ زمنية صارمة. النزف هو الخطر الأكبر.'},
+  ix:[
+    ['#anticoag', S, 'Bleeding — given only in hospital, with careful timing of the anticoagulant.', 'نزف — يُعطى في المستشفى فقط مع توقيت دقيق لمضاد التخثّر.'],
+    ['#antiplatelet', S, 'Bleeding risk.', 'خطر نزف.'],
+    ['#acei', W, 'Higher risk of swelling of the tongue and throat (angioedema).', 'خطر أعلى لتورم اللسان والحلق (الوذمة الوعائية).']
+  ],
   ci:['bleeding', {en:'Recent stroke, surgery or head injury', ar:'سكتة أو جراحة أو إصابة رأس حديثة'}, 'uncontrolledHtn'],
   ask:['bleeding', 'thinner'] },
 
@@ -301,6 +306,10 @@ export default [
   doses:['50 mg vial'], brand:['Metalyse'],
   notes:{en:'Hospital only — a single injection for a heart attack within hours of onset. Bleeding is the main danger.',
          ar:'للمستشفى فقط — حقنة واحدة للاحتشاء خلال ساعات من بدئه. النزف هو الخطر الأكبر.'},
+  ix:[
+    ['#anticoag', S, 'Bleeding — given only in hospital, with careful timing of the anticoagulant.', 'نزف — يُعطى في المستشفى فقط مع توقيت دقيق لمضاد التخثّر.'],
+    ['#antiplatelet', S, 'Bleeding risk.', 'خطر نزف.']
+  ],
   ci:['bleeding', {en:'Recent stroke, surgery or head injury', ar:'سكتة أو جراحة أو إصابة رأس حديثة'}, 'uncontrolledHtn'],
   ask:['bleeding', 'thinner'] },
 
@@ -308,6 +317,10 @@ export default [
   doses:['1,500,000 units vial'], brand:['Streptase'],
   notes:{en:'Hospital only, for a heart attack. Allergic reactions and low blood pressure are watched for during the infusion; it is not repeated once antibodies have formed.',
          ar:'للمستشفى فقط، للاحتشاء. تُراقب تفاعلات التحسّس وهبوط الضغط أثناء التسريب؛ ولا يُكرّر بعد تكوّن الأضداد.'},
+  ix:[
+    ['#anticoag', S, 'Bleeding — given only in hospital, with careful timing of the anticoagulant.', 'نزف — يُعطى في المستشفى فقط مع توقيت دقيق لمضاد التخثّر.'],
+    ['#antiplatelet', S, 'Bleeding risk.', 'خطر نزف.']
+  ],
   ci:['bleeding', {en:'Streptokinase given between 5 days and 12 months ago', ar:'إعطاء ستربتوكيناز قبل 5 أيام إلى 12 شهراً'}, 'uncontrolledHtn'],
   ask:['bleeding', 'allergy'] }
 

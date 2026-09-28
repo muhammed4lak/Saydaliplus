@@ -139,7 +139,7 @@ export default [
 
 /* ---------- Other herbal ---------- */
 
-{ sci:'St John’s wort', ar:'عشبة سانت جون', atc:'N06AX25', cat:'hrb.other', form:'tablet',
+{ sci:"St John's wort", ar:'عشبة سانت جون', atc:'N06AX25', cat:'hrb.other', form:'tablet',
   doses:['300 mg tablet', 'capsules', 'tea'], brand:['Jarsin', 'Kira'], aka:['Hypericum perforatum', 'Hypericum', 'St Johns wort'],
   tags:['inducer', 'sero'],
   notes:{en:'A herbal antidepressant with many serious interactions: it weakens the pill, warfarin, ciclosporin, HIV and heart medicines, and with antidepressants causes serotonin toxicity. Ask before combining it with anything.',
@@ -208,6 +208,9 @@ export default [
   doses:['capsules', 'with curcumin'], aka:['Boswellia', 'Indian frankincense', 'Frankincense'],
   notes:{en:'Taken for joint pain; it can upset the stomach.',
          ar:'يؤخذ لآلام المفاصل؛ وقد يزعج المعدة.'},
+  ix:[
+    ['#anticoag', W, 'May add to bleeding.', 'قد يزيد النزف.']
+  ],
   ask:['thinner', 'redFlagsGI'] },
 
 { sci:'Aescin', ar:'الإيسين', atc:'C05CX03', cat:'hrb.other', form:'tablet',

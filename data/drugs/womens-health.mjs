@@ -97,6 +97,7 @@ export default [
 
 { sci:'Estriol', ar:'إستريول', atc:'G03CA04', cat:'wom.hormone', form:'cream',
   doses:['0.1% vaginal cream', '0.5 mg pessary'], brand:['Ovestin'],
+  tags:['inducerSensitive'],
   notes:{en:'A vaginal oestrogen for dryness and irritation after the menopause: daily at first, then twice a week. Report any bleeding.',
          ar:'إستروجين مهبلي للجفاف والتهيّج بعد انقطاع الطمث: يومياً في البداية ثم مرتين في الأسبوع. أبلغي عن أي نزف.'},
   ci:['estrogenCancer', 'vaginalBleeding', 'vte'],
@@ -104,6 +105,7 @@ export default [
 
 { sci:'Progesterone', ar:'بروجستيرون', atc:'G03DA04', cat:'wom.hormone', form:'capsule',
   doses:['100 mg', '200 mg capsule (oral or vaginal)', '25 mg/mL and 50 mg/mL injection', '8% vaginal gel', '400 mg pessary'], brand:['Utrogestan', 'Cyclogest', 'Crinone', 'Prolutex'],
+  tags:['inducerSensitive'],
   notes:{en:'Used in IVF, to support early pregnancy, and in HRT. Oral capsules at bedtime (they cause drowsiness); vaginal forms are inserted lying down.',
          ar:'يُستعمل في أطفال الأنابيب ولتثبيت الحمل المبكر وفي العلاج التعويضي. الكبسولات الفموية قبل النوم (تسبّب النعاس)؛ والأشكال المهبلية تُدخل مع الاستلقاء.'},
   ci:['vaginalBleeding', 'hepSevere', 'estrogenCancer'],
@@ -111,6 +113,7 @@ export default [
 
 { sci:'Dydrogesterone', ar:'ديدروجيستيرون', atc:'G03DB01', cat:'wom.hormone', form:'tablet',
   doses:['10 mg', 'with estradiol'], brand:['Duphaston', 'Femoston'],
+  tags:['inducerSensitive'],
   notes:{en:'For irregular or painful periods, endometriosis, threatened miscarriage and in HRT. It does not stop ovulation and is not a contraceptive.',
          ar:'لاضطراب الدورة أو ألمها وبطانة الرحم المهاجرة والإجهاض المنذر وفي العلاج التعويضي. لا يمنع الإباضة وليس مانعاً للحمل.'},
   ci:['vaginalBleeding', 'hepSevere'],
@@ -118,6 +121,7 @@ export default [
 
 { sci:'Norethisterone', ar:'نوريثيستيرون', atc:'G03DC02', cat:'wom.hormone', form:'tablet',
   doses:['5 mg', 'with estradiol (HRT)'], brand:['Primolut N'], aka:['Norethindrone'],
+  tags:['inducerSensitive'],
   notes:{en:'To delay a period or control heavy bleeding: three times a day, starting three days before the period is due. At this dose it is not a contraceptive.',
          ar:'لتأخير الدورة أو ضبط النزف الغزير: ثلاث مرات يومياً، بدءاً قبل موعد الدورة بثلاثة أيام. بهذه الجرعة ليس مانعاً للحمل.'},
   ci:['vte', 'hepActive', 'preg'],
@@ -141,8 +145,12 @@ export default [
 
 { sci:'Tibolone', ar:'تيبولون', atc:'G03CX01', cat:'wom.hormone', form:'tablet',
   doses:['2.5 mg'], brand:['Livial'],
+  tags:['inducerSensitive'],
   notes:{en:'For menopause symptoms, at least a year after the last period. Report vaginal bleeding, calf pain or breast lumps.',
          ar:'لأعراض انقطاع الطمث، بعد سنة على الأقل من آخر دورة. أبلغي عن النزف المهبلي أو ألم الساق أو كتل الثدي.'},
+  ix:[
+    ['Warfarin', W, 'May raise the INR.', 'قد يرفع INR.']
+  ],
   ci:['estrogenCancer', 'vte', 'vaginalBleeding'],
   ask:['clots', 'pmBleeding'] },
 
@@ -202,6 +210,7 @@ export default [
 
 { sci:'Oxytocin', ar:'أوكسيتوسين', atc:'H01BB02', cat:'wom.obstetric', form:'injection',
   doses:['5 units/mL', '10 units/mL'], brand:['Syntocinon', 'Pitocin'],
+  tags:['qtPossible'],
   notes:{en:'Hospital use to start or strengthen labour and to stop bleeding after birth; the drip rate is controlled closely.',
          ar:'للمستشفى لبدء الولادة أو تقويتها ولإيقاف النزف بعد الولادة؛ ويُضبط معدّل التسريب بدقة.'},
   ci:[{en:'Obstructed labour or foetal distress', ar:'تعسّر الولادة الانسدادي أو ضائقة الجنين'}],
@@ -234,6 +243,9 @@ export default [
   doses:['250 microgram/mL injection'], brand:['Hemabate'], aka:['Carboprost trometamol'],
   notes:{en:'A deep muscle injection for heavy bleeding after childbirth when oxytocin has not worked. Diarrhoea, vomiting and fever are common.',
          ar:'حقنة عضلية عميقة للنزف الشديد بعد الولادة حين لا ينفع الأوكسيتوسين. الإسهال والتقيؤ والحرارة شائعة.'},
+  ix:[
+    ['Oxytocin', W, 'Strengthens the effect of oxytocin on the womb.', 'يقوّي أثر الأوكسيتوسين على الرحم.']
+  ],
   ci:['asthma', {en:'Heart, lung, kidney or liver disease', ar:'أمراض القلب أو الرئة أو الكلى أو الكبد'}],
   ask:['asthma', 'heart'] },
 
@@ -241,6 +253,9 @@ export default [
   doses:['10 mg vaginal insert', '3 mg pessary', '1 mg and 2 mg gel'], brand:['Propess', 'Prostin E2'],
   notes:{en:'Placed in hospital to ripen the cervix before induction of labour.',
          ar:'يوضع في المستشفى لتهيئة عنق الرحم قبل تحريض الولادة.'},
+  ix:[
+    ['Oxytocin', S, 'Not within six hours of each other — excessive contractions.', 'لا يُعطيان خلال ست ساعات من بعضهما — تقلّصات مفرطة.']
+  ],
   ci:[{en:'Previous caesarean or major uterine surgery', ar:'قيصرية سابقة أو جراحة رحمية كبيرة'}],
   ask:['asthma'] },
 
@@ -252,6 +267,7 @@ export default [
 
 { sci:'Hydroxyprogesterone caproate', ar:'كابروات هيدروكسي بروجستيرون', atc:'G03DA03', cat:'wom.obstetric', form:'injection',
   doses:['250 mg/mL'], brand:['Proluton Depot', 'Primolut Depot'], aka:['Hydroxyprogesterone', 'Hydroxyprogesterone hexanoate'],
+  tags:['inducerSensitive'],
   notes:{en:'A weekly injection in some pregnancies at risk of preterm birth; the benefit is now doubted and practice varies.',
          ar:'حقنة أسبوعية في بعض حالات الحمل المعرّضة للولادة المبكرة؛ فائدتها صارت موضع شك وتختلف الممارسات.'},
   ci:['vte', 'hepActive'],

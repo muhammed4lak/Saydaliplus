@@ -537,6 +537,9 @@ export default [
   doses:['50 mg'], brand:['Revia', 'Nodict'],
   notes:{en:'It blocks opioids. Taken while still dependent it brings on sudden withdrawal; using opioids to overcome it can cause overdose, especially after stopping. Carry a card.',
          ar:'يحجب الأفيونات. إن أُخذ مع استمرار الاعتماد يسبّب انسحاباً مفاجئاً؛ واستعمال الأفيونات لتجاوزه قد يسبّب جرعة زائدة، خاصة بعد إيقافه. احمل بطاقة تبيّن ذلك.'},
+  ix:[
+    ['#opioid', C, 'Blocks opioid pain relief and can bring on sudden withdrawal — stop naltrexone three days before opioids are needed.', 'يحجب تسكين الأفيونات وقد يسبّب انسحاباً مفاجئاً — يُوقف النالتريكسون قبل الحاجة إلى الأفيونات بثلاثة أيام.']
+  ],
   ci:['hepActive', {en:'Current opioid use or dependence', ar:'استعمال حالي للأفيونات أو اعتماد عليها'}],
   ask:[{en:'Have you taken any opioid — tramadol, codeine, methadone or heroin — in the last 7–10 days?', ar:'هل أخذت أي أفيون — ترامادول أو كودائين أو ميثادون أو هيروين — خلال آخر 7–10 أيام؟'}, 'liver'] },
 
@@ -564,12 +567,18 @@ export default [
   take:['afterFood'],
   notes:{en:'Start one to two weeks before the stop date. Nausea is common — take it after food with a full glass of water. Report mood changes; vivid dreams are common.',
          ar:'ابدأ قبل موعد الإقلاع بأسبوع إلى أسبوعين. الغثيان شائع — خذه بعد الطعام مع كأس ماء كامل. أبلغ عن تغيّرات المزاج؛ والأحلام الواضحة شائعة.'},
+  ix:[
+    ['Alcohol', W, 'Alcohol may affect people more, with unusual behaviour reported — cut down.', 'قد يزيد تأثير الكحول، وسُجّل سلوك غير معتاد — قلّل منه.']
+  ],
   ask:['mood', 'kidney', 'epilepsy'] },
 
 { sci:'Nicotine', ar:'نيكوتين', atc:'N07BA01', cat:'cns.dependence', form:'patch',
   doses:['7 mg', '14 mg', '21 mg/24 h patch', '2 mg and 4 mg gum', 'lozenge'], brand:['Nicorette', 'NiQuitin'],
   notes:{en:'Chew the gum slowly and rest it in the cheek. Put a patch on clean, dry, hairless skin, a new site daily; take it off at night if dreams are vivid.',
          ar:'امضغ العلكة ببطء ثم أرِحها في الخد. ضع اللصقة على جلد نظيف جاف بلا شعر، في موضع جديد كل يوم؛ وانزعها ليلاً إن كانت الأحلام مزعجة.'},
+  ix:[
+    ['Theophylline', W, 'Stopping smoking raises theophylline (and clozapine, olanzapine) levels — doses may need lowering.', 'الإقلاع عن التدخين يرفع مستوى الثيوفيلين (والكلوزابين والأولانزابين) — قد يلزم خفض الجرعات.']
+  ],
   ask:[{en:'How many cigarettes a day do you smoke, and how soon after waking?', ar:'كم سيجارة تدخّن يومياً، وبعد كم من استيقاظك؟'}, 'heart', 'preg'] }
 
 ];
