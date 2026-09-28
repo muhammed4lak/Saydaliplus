@@ -269,6 +269,15 @@ export default [
   doses:['0.1% nasal spray', '0.05% eye drops', 'with fluticasone, nasal spray'], brand:['Allergodil', 'Dymista'],
   notes:{en:'A bitter taste after spraying is common — tilt the head forward, not back. It can cause mild drowsiness.',
          ar:'الطعم المرّ بعد الرشّ شائع — أمل الرأس إلى الأمام لا إلى الخلف. قد يسبّب نعاساً خفيفاً.'},
-  ask:['childAge', 'drive'] }
+  ask:['childAge', 'drive'] },
+
+{ sci:'Mometasone', ar:'موميتازون', atc:'R01AD09', cat:'res.nasal', form:'spray',
+  doses:['50 microgram/dose nasal spray', '200 and 400 microgram inhaler', 'with olopatadine or azelastine, nasal spray'], brand:['Nasonex', 'Asmanex', 'Ryaltris'], aka:['Mometasone furoate'],
+  notes:{en:'A steroid nose spray for hay fever and polyps, once a day; it takes a few days to work fully, so use it every day through the season. Aim away from the middle of the nose; nosebleeds can occur.',
+         ar:'بخاخ أنف كورتيزوني لحساسية الأنف والسلائل، مرة يومياً؛ يحتاج بضعة أيام ليعمل كلياً، فاستعمله كل يوم طوال الموسم. وجّهه بعيداً عن الحاجز الأنفي؛ وقد يحدث رعاف.'},
+  ix:[
+    ['Ritonavir', S, 'Raises steroid levels — Cushing’s syndrome is possible.', 'يرفع مستوى الكورتيزون — متلازمة كوشينغ ممكنة.']
+  ],
+  ask:['whoFor', 'useLength', 'glaucoma'] }
 
 ];

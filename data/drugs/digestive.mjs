@@ -7,6 +7,7 @@ export default [
 /* ---------- Acid, reflux and ulcer ---------- */
 { sci:'Omeprazole', ar:'أوميبرازول', atc:'A02BC01', cat:'gis.acid', form:'capsule',
   doses:['10 mg', '20 mg', '40 mg'], brand:['Losec', 'Prilosec'],
+  tags:['acidReducer'],
   take:['beforeBreakfast'],
   notes:{en:'Thirty minutes before breakfast, on an empty stomach. Long-term use reduces B12 and magnesium absorption.',
          ar:'قبل الفطور بنصف ساعة على معدة فارغة. الاستعمال الطويل يقلّل امتصاص B12 والمغنيسيوم.'},
@@ -19,6 +20,7 @@ export default [
 
 { sci:'Esomeprazole', ar:'إيزوميبرازول', atc:'A02BC05', cat:'gis.acid', form:'capsule',
   doses:['20 mg', '40 mg'], brand:['Nexium'],
+  tags:['acidReducer'],
   take:['beforeBreakfast'],
   notes:{en:'Thirty minutes before food. Swallow whole, or sprinkle the granules on soft food without chewing.',
          ar:'قبل الطعام بنصف ساعة. يُبلع كاملاً أو تُنثر الحبيبات على طعام لين دون مضغ.'},
@@ -30,6 +32,7 @@ export default [
 
 { sci:'Pantoprazole', ar:'بانتوبرازول', atc:'A02BC02', cat:'gis.acid', form:'tablet',
   doses:['20 mg', '40 mg'], brand:['Controloc', 'Protonix'],
+  tags:['acidReducer'],
   take:['beforeBreakfast'],
   notes:{en:'The proton pump inhibitor to use alongside clopidogrel — it does not block its activation.',
          ar:'مثبّط المضخة المفضّل مع كلوبيدوغريل — لا يتداخل مع تفعيله.'},
@@ -38,7 +41,7 @@ export default [
 
 { sci:'Famotidine', ar:'فاموتيدين', atc:'A02BA03', cat:'gis.acid', form:'tablet',
   doses:['20 mg', '40 mg'], brand:['Pepcid'],
-  tags:['qtPossible'],
+  tags:['qtPossible', 'acidReducer'],
   notes:{en:'Works within an hour — faster than a proton pump inhibitor and shorter-lived. Dose reduced in kidney impairment.',
          ar:'يعمل خلال ساعة — أسرع من مثبطات المضخة وأقل استمراراً. تُخفّض الجرعة مع قصور الكلية.'},
   ix:[
@@ -77,6 +80,7 @@ export default [
 
 { sci:'Lansoprazole', ar:'لانسوبرازول', atc:'A02BC03', cat:'gis.acid', form:'capsule',
   doses:['15 mg', '30 mg', '15 mg and 30 mg orodispersible'], brand:['Lanzor', 'Prevacid'],
+  tags:['acidReducer'],
   take:['beforeBreakfast'],
   notes:{en:'Before breakfast, swallowed whole; orodispersible tablets melt on the tongue. For heartburn needing it for more than four weeks, or with warning signs, see a doctor.',
          ar:'قبل الفطور، تُبلع كاملة؛ والأقراص القابلة للذوبان تذوب على اللسان. إن احتجته للحموضة أكثر من أربعة أسابيع، أو ظهرت علامات إنذار، راجع الطبيب.'},
@@ -87,6 +91,7 @@ export default [
 
 { sci:'Rabeprazole', ar:'رابيبرازول', atc:'A02BC04', cat:'gis.acid', form:'tablet',
   doses:['10 mg', '20 mg'], brand:['Pariet', 'Aciphex'],
+  tags:['acidReducer'],
   take:['beforeBreakfast'],
   notes:{en:'Before breakfast, swallowed whole — do not crush or chew. For heartburn needing it for more than four weeks, or with warning signs, see a doctor.',
          ar:'قبل الفطور، تُبلع كاملة — لا تُسحق ولا تُمضغ. إن احتجته للحموضة أكثر من أربعة أسابيع، أو ظهرت علامات إنذار، راجع الطبيب.'},
@@ -94,18 +99,21 @@ export default [
 
 { sci:'Dexlansoprazole', ar:'ديكسلانسوبرازول', atc:'A02BC06', cat:'gis.acid', form:'capsule',
   doses:['30 mg', '60 mg'], brand:['Dexilant'],
+  tags:['acidReducer'],
   notes:{en:'Once a day with or without food; the capsule can be opened onto a spoon of apple sauce. See a doctor about warning signs or long use.',
          ar:'مرة واحدة يومياً مع الطعام أو بدونه؛ يمكن فتح الكبسولة على ملعقة من هريس التفاح. راجع الطبيب عند علامات الإنذار أو الاستعمال الطويل.'},
   ask:['redFlagsGI', 'duration'] },
 
 { sci:'Ranitidine', ar:'رانيتيدين', atc:'A02BA02', cat:'gis.acid', form:'tablet',
   doses:['150 mg', '300 mg', '50 mg/2 mL injection'], brand:['Zantac'],
+  tags:['acidReducer'],
   notes:{en:'Most ranitidine was withdrawn worldwide in 2020 over an impurity (NDMA) — check the batch is currently registered. Famotidine is the usual alternative.',
          ar:'سُحب معظم الرانيتيدين عالمياً عام 2020 بسبب شائبة (NDMA) — تحقّق أن التشغيلة مسجّلة حالياً. الفاموتيدين هو البديل المعتاد.'},
   ask:['redFlagsGI', 'duration', 'kidney'] },
 
 { sci:'Cimetidine', ar:'سيميتيدين', atc:'A02BA01', cat:'gis.acid', form:'tablet',
   doses:['200 mg', '400 mg', '800 mg'], brand:['Tagamet'],
+  tags:['acidReducer'],
   notes:{en:'It interferes with the breakdown of many medicines — tell us everything you take. Famotidine does the same job with fewer interactions.',
          ar:'يعيق تفكيك أدوية كثيرة — أخبرنا بكل ما تأخذه. الفاموتيدين يؤدي العمل نفسه بتداخلات أقل.'},
   ix:[
@@ -240,6 +248,14 @@ export default [
          ar:'للانتفاخ والشبع المبكر: ثلاث مرات يومياً قبل الوجبات.'},
   ci:[{en:'GI bleeding, obstruction or perforation', ar:'نزف أو انسداد أو انثقاب هضمي'}],
   ask:['redFlagsGI', 'duration'] },
+
+{ sci:'Levosulpiride', ar:'ليفوسولبيريد', atc:'N05AL07', cat:'gis.antiemetic', form:'tablet',
+  doses:['25 mg', '50 mg', '25 mg/2 mL injection'], brand:['Levopraid'],
+  tags:['dopamineBlocker', 'qtPossible'], take:['beforeFood'],
+  notes:{en:'For indigestion, bloating and nausea: before meals, for short courses. It raises prolactin — breast changes or missed periods should be reported — and can cause restlessness or stiffness.',
+         ar:'لعسر الهضم والانتفاخ والغثيان: قبل الوجبات، لفترات قصيرة. يرفع هرمون الحليب — يُبلغ عن تغيّرات الثدي أو انقطاع الدورة — وقد يسبّب التململ أو التيبّس.'},
+  ci:['parkinson', 'phaeo', {en:'GI bleeding, obstruction or perforation', ar:'نزف أو انسداد أو انثقاب هضمي'}],
+  ask:['parkinson', 'preg', 'rhythm'] },
 
 /* ---------- Antispasmodics and irritable bowel ---------- */
 { sci:'Mebeverine', ar:'ميبيفيرين', atc:'A03AA04', cat:'gis.spasm', form:'tablet',

@@ -79,6 +79,18 @@ export default [
          ar:'مرة واحدة يومياً في الوقت نفسه. الكبسولات لجهاز الاستنشاق — لا تُبلع أبداً. جفاف الفم شائع؛ أبلغ عن ألم العين أو صعوبة التبوّل.'},
   ask:['inhaler', 'glaucoma', 'prostate'] },
 
+{ sci:'Glycopyrronium', ar:'غليكوبيرونيوم', atc:'R03BB06', cat:'res.bronchodilator', form:'inhaler',
+  doses:['44 microgram capsule (Breezhaler)', 'with indacaterol', 'with formoterol and budesonide', '200 microgram/mL injection', '320 microgram/mL oral solution'], brand:['Seebri', 'Ultibro', 'Trixeo', 'Robinul', 'Sialanar'], aka:['Glycopyrrolate', 'Glycopyrronium bromide'],
+  notes:{en:'For COPD, once a day at the same time; the capsules go in the inhaler — never swallow them. Dry mouth is common; report eye pain or difficulty passing urine. The injection dries secretions during surgery; the oral solution treats drooling in children.',
+         ar:'للانسداد الرئوي المزمن، مرة يومياً في الوقت نفسه؛ الكبسولات لجهاز الاستنشاق — لا تُبلع أبداً. جفاف الفم شائع؛ أبلغ عن ألم العين أو صعوبة التبوّل. الحقنة تجفّف الإفرازات أثناء الجراحة؛ والمحلول الفموي يعالج سيلان اللعاب عند الأطفال.'},
+  ask:['inhaler', 'glaucoma', 'prostate'] },
+
+{ sci:'Umeclidinium', ar:'يوميكليدينيوم', atc:'R03BB07', cat:'res.bronchodilator', form:'inhaler',
+  doses:['55 microgram Ellipta', 'with vilanterol', 'with vilanterol and fluticasone furoate'], brand:['Incruse', 'Anoro', 'Trelegy'], aka:['Umeclidinium bromide'],
+  notes:{en:'For COPD, one inhalation once a day at the same time. Dry mouth is common; report eye pain or difficulty passing urine.',
+         ar:'للانسداد الرئوي المزمن، استنشاقة واحدة يومياً في الوقت نفسه. جفاف الفم شائع؛ أبلغ عن ألم العين أو صعوبة التبوّل.'},
+  ask:['inhaler', 'glaucoma', 'prostate'] },
+
 { sci:'Aminophylline', ar:'أمينوفيلين', atc:'R03DA05', cat:'res.bronchodilator', form:'injection',
   doses:['250 mg/10 mL injection', '100 mg tablet', '225 mg SR tablet'], brand:['Phyllocontin'],
   tags:['xanthine', 'seizure'],

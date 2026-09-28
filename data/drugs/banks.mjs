@@ -326,7 +326,16 @@ export const QUESTIONS = {
   chemoCycle:{en:'When is your next chemotherapy cycle, and when was the last?', ar:'متى دورة العلاج الكيميائي القادمة، ومتى كانت الأخيرة؟'},
   feverChemo:{en:'Do you know to go to hospital at once with a temperature of 38 °C or more?', ar:'هل تعرف أن عليك الذهاب إلى المستشفى فوراً إذا بلغت حرارتك 38 درجة أو أكثر؟'},
   handling:{en:'Do you know how to handle it safely at home (gloves, no crushing, keeping it from others)?', ar:'هل تعرف طريقة التعامل الآمن معه في البيت (قفازات، لا سحق، إبعاده عن الآخرين)؟'},
-  methotrexate:{en:'Do you take methotrexate? (Folic acid then goes on a different day.)', ar:'هل تأخذ الميثوتريكسيت؟ (يُؤخذ حمض الفوليك حينها في يوم مختلف.)'}
+  immune:{en:'Do you have weak immunity, or take steroids, chemotherapy or immunosuppressants?', ar:'هل مناعتك ضعيفة، أو تأخذ الكورتيزون أو العلاج الكيميائي أو مثبطات المناعة؟'},
+  vaccineReaction:{en:'Has any vaccine caused a serious reaction before?', ar:'هل سبّب لك أي لقاح ردّ فعل شديداً من قبل؟'},
+  feverToday:{en:'Is there a fever or an acute illness today?', ar:'هل توجد حرارة أو مرض حاد اليوم؟'},
+  bowelDisease:{en:'Do you have Crohn’s disease or ulcerative colitis?', ar:'هل تعاني من داء كرون أو التهاب القولون التقرّحي؟'},
+  methotrexate:{en:'Do you take methotrexate? (Folic acid then goes on a different day.)', ar:'هل تأخذ الميثوتريكسيت؟ (يُؤخذ حمض الفوليك حينها في يوم مختلف.)'},
+  // anaesthesia, poisoning and diagnostics
+  lastMeal:{en:'When did you last eat or drink?', ar:'متى أكلت أو شربت آخر مرة؟'},
+  anaesthetic:{en:'Have you, or a blood relative, had a problem with an anaesthetic?', ar:'هل واجهت أنت أو أحد أقاربك مشكلة مع التخدير من قبل؟'},
+  whatTaken:{en:'What was taken, how much, and when?', ar:'ما الذي تم تناوله، وكم، ومتى؟'},
+  contrastBefore:{en:'Have you reacted to a contrast dye (for a scan or X-ray) before?', ar:'هل حصل لديك تفاعل مع صبغة الأشعة (للمفراس أو التصوير) من قبل؟'}
 };
 
 /* ---------- Contraindications ----------

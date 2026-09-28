@@ -462,6 +462,34 @@ export default [
   ci:['preg3', 'nsaidAsthma'],
   ask:['allergyNsaid', 'skinSite'] },
 
+{ sci:'Diclofenac (topical)', ar:'ديكلوفيناك (موضعي)', atc:'M02AA15', cat:'msk.topical', form:'gel',
+  doses:['1% gel', '2.32% gel (12-hourly)', '1% emulgel', '140 mg plaster', '4% spray gel'], brand:['Voltaren Emulgel', 'Flector'], aka:['Diclofenac gel', 'Diclofenac diethylamine', 'Diclofenac emulgel'],
+  notes:{en:'Rub gently into the painful joint or muscle three or four times a day, for up to two weeks unless the doctor says longer. Little reaches the blood, so it is the safer choice for local pain. Not on broken skin, and wash your hands after.',
+         ar:'يُدلك بلطف على المفصل أو العضلة المؤلمة ثلاث أو أربع مرات يومياً، لمدة أقصاها أسبوعان ما لم يقل الطبيب غير ذلك. القليل منه يصل إلى الدم، لذا هو الخيار الأأمن للألم الموضعي. لا يوضع على جلد مجروح، واغسل يديك بعده.'},
+  ci:['preg3', 'nsaidAsthma'],
+  ask:['allergyNsaid', 'skinSite', 'preg'] },
+
+{ sci:'Ibuprofen (topical)', ar:'إيبوبروفين (موضعي)', atc:'M02AA13', cat:'msk.topical', form:'gel',
+  doses:['5% gel', '10% gel'], brand:['Ibugel', 'Nurofen gel'], aka:['Ibuprofen gel'],
+  notes:{en:'Rub in up to three times a day for sprains and muscle pain; not on broken skin or near the eyes.',
+         ar:'يُدلك حتى ثلاث مرات يومياً للالتواءات وآلام العضلات؛ لا يوضع على جلد مجروح أو قرب العينين.'},
+  ci:['preg3', 'nsaidAsthma'],
+  ask:['allergyNsaid', 'skinSite'] },
+
+{ sci:'Ketoprofen (topical)', ar:'كيتوبروفين (موضعي)', atc:'M02AA10', cat:'msk.topical', form:'gel',
+  doses:['2.5% gel'], brand:['Fastum', 'Oruvail gel'], aka:['Ketoprofen gel'],
+  notes:{en:'Two or three times a day for up to a week. It can cause a severe sun rash: keep the treated skin covered from the sun, and off sunbeds, during use and for two weeks after.',
+         ar:'مرتين أو ثلاثاً يومياً لمدة أقصاها أسبوع. قد يسبّب طفحاً شديداً مع الشمس: غطِّ الجلد المعالَج عن الشمس وأجهزة التسمير أثناء الاستعمال ولأسبوعين بعده.'},
+  ci:['preg3', 'nsaidAsthma', {en:'Past sun or skin reaction to ketoprofen, fenofibrate or sunscreens', ar:'تفاعل ضوئي أو جلدي سابق مع الكيتوبروفين أو الفينوفايبرات أو واقيات الشمس'}],
+  ask:['sun', 'allergyNsaid', 'skinSite'] },
+
+{ sci:'Piroxicam (topical)', ar:'بيروكسيكام (موضعي)', atc:'M02AA07', cat:'msk.topical', form:'gel',
+  doses:['0.5% gel'], brand:['Feldene gel'], aka:['Piroxicam gel'],
+  notes:{en:'Rub in three or four times a day for local pain; not on broken skin, and avoid strong sun on the area.',
+         ar:'يُدلك ثلاث أو أربع مرات يومياً للألم الموضعي؛ لا يوضع على جلد مجروح، وتجنّب الشمس القوية على المنطقة.'},
+  ci:['preg3', 'nsaidAsthma'],
+  ask:['allergyNsaid', 'skinSite'] },
+
 /* ---------- Joint supplements and injections ---------- */
 
 { sci:'Glucosamine', ar:'غلوكوزامين', atc:'M01AX05', cat:'msk.joint', form:'sachet',

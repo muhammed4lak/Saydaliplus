@@ -13,7 +13,8 @@ export default [
          ar:'ممنوع الكحول أثناء الكورس ولمدة 48 ساعة بعده — تفاعل شبيه بالديسلفيرام. طعم معدني شائع وغير مقلق.'},
   ix:[
     ['Warfarin', S, 'Markedly raises INR.', 'يرفع INR بوضوح.'],
-    ['Lithium', S, 'Raises lithium to toxic levels.', 'يرفع الليثيوم إلى حدّ السميّة.']
+    ['Lithium', S, 'Raises lithium to toxic levels.', 'يرفع الليثيوم إلى حدّ السميّة.'],
+    ['Alcohol', S, 'Flushing, vomiting and palpitations (disulfiram-like) — no alcohol during and for 48 hours after.', 'احمرار وتقيؤ وخفقان (تفاعل شبيه بالديسلفيرام) — لا كحول أثناء العلاج و48 ساعة بعده.']
   ],
   ci:[{en:'High doses in the first trimester', ar:'الثلث الأول من الحمل بالجرعات العالية'}, 'alcohol'],
   ask:['alcohol', 'preg', 'thinner'] },
@@ -143,14 +144,15 @@ export default [
   ci:['marrow', {en:'Neonates (grey baby syndrome) — systemic use', ar:'حديثو الولادة (متلازمة الطفل الرمادي) — الاستعمال الجهازي'}],
   ask:['contactLens', 'eyeRedFlags', 'childAge'] },
 
-{ sci:'Fusidic acid', ar:'حمض الفوسيديك', atc:'J01XC01', cat:'inf.antibacterial', form:'cream',
-  doses:['2% cream', '2% ointment (sodium fusidate)', '1% eye drops', '250 mg tablet'], brand:['Fucidin', 'Fucithalmic'], aka:['Sodium fusidate', 'Fucidic acid'],
-  notes:{en:'The cream three times a day for up to 10 days — longer use breeds resistance. Tablets are for staphylococcal infections and must never be combined with a statin.',
-         ar:'الكريم ثلاث مرات يومياً لمدة لا تتجاوز 10 أيام — الاستعمال الأطول يولّد مقاومة. الأقراص لالتهابات العنقوديات ولا تُجمع أبداً مع ستاتين.'},
+{ sci:'Fusidic acid', ar:'حمض الفوسيديك', atc:'J01XC01', cat:'inf.antibacterial', form:'tablet',
+  doses:['250 mg tablet (sodium fusidate)', '250 mg/5 mL suspension', '500 mg vial'], brand:['Fucidin'], aka:['Sodium fusidate', 'Fucidic acid'],
+  notes:{en:'Tablets and injections are for serious staphylococcal infections, usually with another antibiotic, and must never be combined with a statin. The liver is checked on long courses.',
+         ar:'الأقراص والحقن لالتهابات العنقوديات الخطيرة، مع مضاد حيوي آخر عادة، ولا تُجمع أبداً مع ستاتين. يُفحص الكبد في الدورات الطويلة.'},
   ix:[
-    ['#statin', C, 'Tablets with a statin: rhabdomyolysis, sometimes fatal — stop the statin for the course.', 'الأقراص مع الستاتين: انحلال عضلات قد يكون مميتاً — يُوقف الستاتين طوال الدورة.']
+    ['#statin', C, 'Rhabdomyolysis, sometimes fatal — stop the statin for the course and a week after.', 'انحلال عضلات قد يكون مميتاً — يُوقف الستاتين طوال الدورة وأسبوعاً بعدها.']
   ],
-  ask:['useLength', 'statin'] },
+  ci:['hepSevere'],
+  ask:['statin', 'liver', 'otherMeds'] },
 
 { sci:'Sulfadiazine', ar:'سلفاديازين', atc:'J01EC02', cat:'inf.antibacterial', form:'tablet',
   doses:['500 mg'],
