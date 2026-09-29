@@ -2145,7 +2145,8 @@ has them.
   exchange arrives later (`LATER_PERMISSIONS`); it changes with the catch-up.
 - Checks: app 774 (15 new; 4 older ones updated — the exchange can be granted
   now, the Manager role holds it, and the seed adds near-expiry batches), CRM
-  303 (3 new), unit 159 (4 new); typecheck clean.
+  303 (3 new), unit 159 (4 new); typecheck clean. Mutation-tested on a copy:
+  12 planted faults, all caught on the first run.
 
 ## Unused concepts
 
