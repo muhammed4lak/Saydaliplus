@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0016.3">
+<meta name="version" content="CRM_v0.0017">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -768,7 +768,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0016.3';
+const VERSION = 'CRM_v0.0017';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -1121,7 +1121,12 @@ Object.assign(STRINGS, {
   'bl.single':'One pharmacy','bl.agreed':'Pharmacies agree','bl.conflict':'Conflict','bl.confirmed':'Confirmed',
   'bl.disagree':'Pharmacies disagree','bl.nPh':'{n} pharmacies','bl.confirmedAs':'Confirmed as','bl.claims':'What each pharmacy linked it to',
   'bl.confirm':'Confirm for every pharmacy','bl.confirmedToast':'{barcode} is {name} for every pharmacy now',
-  'bl.conflictNote':'Two pharmacies linked this barcode to different products. Check the box before confirming either.'
+  'bl.conflictNote':'Two pharmacies linked this barcode to different products. Check the box before confirming either.',
+  /* v0.0017 — what an owner shares of their Reports */
+  'sr.title':'Shared by the owner — last 30 days','sr.off':'The owner does not share this pharmacy’s figures.',
+  'sr.none':'Nothing recorded in the last 30 days.','sr.sales':'Sales','sr.n':'Number of sales','sr.shifts':'Shifts',
+  'sr.avg':'Sales per shift — average','sr.med':'Sales per shift — median',
+  'sr.note':'The pharmacy’s totals, shared by its owner from their Reports. Never a person’s figures; the owner can stop sharing at any time.'
 });
 
 /* ==========================================================================
@@ -8510,6 +8515,63 @@ const RULE_EVENTS = [
 ];
 const RULE_OVERRIDES_30D = {"IX:Aspirin|Ibuprofen":[120,41],"DUP:acid":[88,30],"DUP:antihistamine":[64,29],"IX:Clopidogrel|Omeprazole":[35,4],"IX:Paracetamol|Warfarin":[40,5],"IX:Clarithromycin|Simvastatin":[6,0]};
 /* RULES:END */
+/* HISTORY:BEGIN */
+const SHIFT_GRACE_MIN = 60;
+const HISTORY_DAYS = 35;
+const HISTORY_TEAMS = {"P1":[{"email":"rahma@example.com","owner":true,"days":[6,0,1],"start":"16:00","end":"22:00"},{"email":"hassan@example.com","days":[6,0,1,2,3],"start":"08:00","end":"16:00"},{"email":"zahraa@example.com","days":[0,1,2,3,4],"start":"16:00","end":"23:00"},{"email":"omar@example.com","days":[6,1,3],"start":"09:00","end":"15:00"}],"P7":[{"email":"karim@example.com","days":[6,0,1,2,3,4],"start":"08:00","end":"16:00"},{"email":"rusul@example.com","days":[0,1,2,3,4],"start":"16:00","end":"23:00"},{"email":"maryam@example.com","days":[5,6],"start":"10:00","end":"18:00"}],"P8":[{"email":"maryam@example.com","days":[0,1,2,3,4],"start":"08:00","end":"16:00"},{"email":"ali@example.com","days":[6,0,1,2,3],"start":"15:00","end":"23:00"},{"email":"rahma@example.com","days":[4,5],"start":"09:00","end":"15:00"}],"P9":[{"email":"layla@example.com","owner":true,"days":[6,0,1,2,3,4],"start":"09:00","end":"17:00"}]};
+const HISTORY_AUTO = [{"pharmacy":"P1","email":"zahraa@example.com","daysAgo":16},{"pharmacy":"P1","email":"zahraa@example.com","daysAgo":9,"claim":"23:05","approval":{"by":"rahma@example.com","out":"23:05"}},{"pharmacy":"P1","email":"zahraa@example.com","daysAgo":2,"claim":"23:20"}];
+const REPORTS_SHARED = {"P9":false};
+function historyFor(teams, autos, days, nowMs) {
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const rngOf = seed => { let a = seed; return () => { a = (a + 0x6D2B79F5) | 0; let x = Math.imul(a ^ (a >>> 15), 1 | a);
+    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; };
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const at = (day, hhmm, addDays) => { const d = new Date(day); d.setDate(d.getDate() + (addDays || 0));
+    const [h, m] = hhmm.split(':').map(Number); d.setHours(h, m, 0, 0); return d; };
+  const shifts = [], sales = [];
+  const today = new Date(nowMs); today.setHours(0, 0, 0, 0);
+  for (let k = days; k >= 1; k--) {
+    const day = new Date(today); day.setDate(day.getDate() - k);
+    const key = ymd(day);
+    Object.keys(teams).forEach(ph => teams[ph].forEach(p => {
+      if (p.days.indexOf(day.getDay()) < 0) return;
+      const rnd = rngOf(hash(ph + '|' + p.email + '|' + key));
+      const auto = autos.find(a => a.pharmacy === ph && a.email === p.email && a.daysAgo === k);
+      if (!auto && rnd() < 0.1) return;                       // a day off
+      const overnight = p.end <= p.start;
+      const sStart = at(day, p.start), sEnd = at(day, p.end, overnight ? 1 : 0);
+      const inAt = new Date(sStart.getTime() + Math.round(rnd() * 25 - 10) * 6e4);
+      const clean = new Date(sEnd.getTime() + Math.round(rnd() * 30 - 10) * 6e4);
+      const id = 'H-' + ph + '-' + p.email.split('@')[0] + '-' + key;
+      const iso = d => d.toISOString();
+      const shift = { id, pharmacy:ph, email:p.email, in:iso(inAt), out:iso(auto ? sEnd : clean), state:auto ? 'auto' : 'closed',
+        how:'checkin', sched:{ start:p.start, end:p.end }, claim:null, approval:null, past:true };
+      if (auto) {
+        shift.autoAt = iso(new Date(sEnd.getTime() + 60 * 6e4));
+        const next = new Date(day); next.setDate(next.getDate() + 1);
+        if (auto.claim) shift.claim = { out:iso(at(day, auto.claim, auto.claim <= p.start ? 1 : 0)), at:iso(at(next, '15:55', 0)), by:p.email };
+        if (auto.approval) shift.approval = { out:iso(at(day, auto.approval.out, auto.approval.out <= p.start ? 1 : 0)),
+          at:iso(at(next, '18:30', 0)), by:auto.approval.by, verdict:auto.approval.out === auto.claim ? 'accepted' : 'amended' };
+      }
+      shifts.push(shift);
+      /* Sales through the shift — ending before the scheduled end on a shift
+         that closed itself, since the last sale is the evidence of when the
+         person really left. */
+      const until = auto ? new Date(sEnd.getTime() - 25 * 6e4) : clean;
+      const hours = (until - inAt) / 36e5;
+      const n = Math.max(3, Math.round(hours * (1.6 + rnd() * 1.8)));
+      for (let i = 0; i < n; i++) {
+        const t = new Date(inAt.getTime() + ((i + rnd()) / n) * (until - inAt));
+        const r = rnd();
+        sales.push({ id:id + '-' + (i + 1), pharmacy:ph, by:p.email, at:iso(t), shift:id,
+          total:250 * Math.round((1500 + r * r * 38000) / 250), items:1 + Math.floor(rnd() * 3), past:true });
+      }
+    }));
+  }
+  return { shifts, sales };
+}
+/* HISTORY:END */
 
 /* ==========================================================================
    PLANS AND THE BILLING LEDGER (W14)
@@ -10364,7 +10426,9 @@ function recordPage(mod, id) {
       relatedPanel(t('c.orders'), ordersOfPharmacy(id).map(o => ({
         _t:o.id + ' · ' + t('ot.' + o.type),
         _m:orderStatusChip(o.status) + ' ' + esc(orderWhen(o)), id:o.id
-      })), r => 'openRecord(' + attr('orders') + ',' + attr(r.id) + ')');
+      })), r => 'openRecord(' + attr('orders') + ',' + attr(r.id) + ')') +
+      /* v0.0017 — what the owner shares of their Reports, if they do. */
+      sharedPanel(id);
 
   /* ---------- External ---------- */
   } else if (mod === 'companies') {
@@ -11195,7 +11259,10 @@ function sqlTables() {
     })),
     rule_events: DATA.ruleEvents.map((e, i) => ({ seq:i + 1, rule:e.rule, state:e.state, tier:e.tier || null, at:e.at, by:e.by })),
     barcode_links: DATA.barcodeClaims.map(c => ({ barcode:c.barcode, pharmacy_id:c.pharmacy, register_id:c.reg, at:c.at,
-      confirmed:DATA.barcodeConfirmed[c.barcode] && DATA.barcodeConfirmed[c.barcode].reg === c.reg ? 1 : 0 }))
+      confirmed:DATA.barcodeConfirmed[c.barcode] && DATA.barcodeConfirmed[c.barcode].reg === c.reg ? 1 : 0 })),
+    /* v0.0017 — the pharmacy totals owners share, by day: only pharmacies
+       whose owner shares them, and never a person's figures. */
+    pharmacy_reports: sharedDailyRows()
   };
 }
 
@@ -12334,7 +12401,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0016.3.html';
+const PEER_APP = '../demo/saydali-plus_v0.0017.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
@@ -12992,6 +13059,72 @@ function linkPage(rec) {
       }).join('') + '</div></section>',
     side:''
   };
+}
+
+/* ==========================================================================
+   19. WHAT AN OWNER SHARES (v0.0017, W18)
+   An owner's Reports are theirs. What reaches the CRM is the pharmacy's
+   totals — sales, their number, shifts, and per shift the average and the
+   median — and only while the owner has sharing on (on unless turned off,
+   decided 28 Sep 2026). Never a person's figures: nothing here is broken
+   down by who sold. A pharmacy with sharing off has no row at all, in the
+   record or in the report tables.
+
+   The figures are computed from the same history the app embeds (data/
+   history.mjs), over the thirty days before today, so the app and the CRM
+   agree for any pharmacy (checked).
+   ========================================================================== */
+
+const SHARED_HISTORY = historyFor(HISTORY_TEAMS, HISTORY_AUTO, HISTORY_DAYS, Date.now());
+const sharesReports = phId => REPORTS_SHARED[phId] !== false;
+function sharedRange(days) {
+  const to = new Date(); to.setHours(0, 0, 0, 0);
+  const from = new Date(to); from.setDate(from.getDate() - days);
+  return { from:from.toISOString(), to:to.toISOString() };
+}
+const medianOf = xs => { if (!xs.length) return 0; const s = xs.slice().sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+/* The pharmacy's totals for the thirty days before today — or null, when
+   the owner does not share them. */
+function sharedFigures(phId, days) {
+  if (!sharesReports(phId)) return null;
+  const r = sharedRange(days || 30), inR = iso => iso >= r.from && iso < r.to;
+  const shifts = SHARED_HISTORY.shifts.filter(s => s.pharmacy === phId && inR(s.in));
+  const sales = SHARED_HISTORY.sales.filter(s => s.pharmacy === phId && inR(s.at));
+  const per = shifts.map(sh => sales.filter(s => s.shift === sh.id).reduce((a, s) => a + s.total, 0));
+  return { shifts:shifts.length, total:sales.reduce((a, s) => a + s.total, 0), n:sales.length,
+    avgPerShift:per.length ? per.reduce((a, b) => a + b, 0) / per.length : 0, medPerShift:medianOf(per) };
+}
+function sharedPanel(phId) {
+  const f = sharedFigures(phId, 30);
+  return '<section class="panel shared-reports"><div class="panel-h">' + icon('chart') + esc(t('sr.title')) + '</div><div class="panel-b">' +
+    (!f ? '<div class="empty sr-off" style="padding:14px;font-size:12px;">' + esc(t('sr.off')) + '</div>'
+      : !f.shifts && !f.n ? '<div class="empty" style="padding:14px;font-size:12px;">' + esc(t('sr.none')) + '</div>'
+      : fieldRow(t('sr.sales'), '<span class="figure">' + esc(iqd(f.total)) + '</span>') +
+        fieldRow(t('sr.n'), '<span class="figure">' + fmt(f.n) + '</span>') +
+        fieldRow(t('sr.shifts'), '<span class="figure">' + fmt(f.shifts) + '</span>') +
+        fieldRow(t('sr.avg'), '<span class="figure">' + esc(iqd(Math.round(f.avgPerShift))) + '</span>') +
+        fieldRow(t('sr.med'), '<span class="figure">' + esc(iqd(Math.round(f.medPerShift))) + '</span>') +
+        '<p class="sr-note" style="font-size:11.5px;color:var(--ink-faint);margin-top:8px;">' + esc(t('sr.note')) + '</p>') +
+  '</div></section>';
+}
+/* One row per pharmacy and day, for the pharmacies that share — the report
+   table behind any saved report on them. */
+function sharedDailyRows() {
+  const r = sharedRange(30), out = [];
+  Object.keys(HISTORY_TEAMS).filter(sharesReports).forEach(ph => {
+    const by = {};
+    SHARED_HISTORY.sales.filter(s => s.pharmacy === ph && s.at >= r.from && s.at < r.to).forEach(s => {
+      const d = new Date(s.at), k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      const x = by[k] = by[k] || { pharmacy_id:ph, day:k, sales_iqd:0, sales_count:0, shifts:0 };
+      x.sales_iqd += s.total; x.sales_count++;
+    });
+    SHARED_HISTORY.shifts.filter(s => s.pharmacy === ph && s.in >= r.from && s.in < r.to).forEach(s => {
+      const d = new Date(s.in), k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      (by[k] = by[k] || { pharmacy_id:ph, day:k, sales_iqd:0, sales_count:0, shifts:0 }).shifts++;
+    });
+    Object.keys(by).sort().forEach(k => out.push(by[k]));
+  });
+  return out;
 }
 
 /* ==========================================================================

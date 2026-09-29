@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE, CATEGORIES, TAGS, RULES, OUTSIDE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
+import { HISTORY_TEAMS, HISTORY_AUTO, HISTORY_DAYS, REPORTS_SHARED, SHIFT_GRACE_MIN, historyFor } from '../data/history.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -236,6 +237,35 @@ const catalogueBlock = C_BEGIN + '\n' +
   'const REG_PRODUCT_FIELDS = ' + JSON.stringify(REG_PRODUCTS.fields) + ';\n' +
   'const REG_PRODUCT_ROWS = [\n' + REG_PRODUCTS.rows.map(r => '  ' + JSON.stringify(r)).join(',\n') + '\n];\n' +
   'const EDL_GENERICS = [\n' + EDL_GENERICS.map(g => '  ' + JSON.stringify(g)).join(',\n') + '\n];\n' + C_END;
+/* v0.0017 — the attendance history: schedules that parse, people who exist
+   once per pharmacy, and shifts that closed themselves on a day the person
+   works. The generator goes in as source, so both builds run the same one. */
+{
+  const hhmm = /^([01]\d|2[0-3]):[0-5]\d$/;
+  for (const [ph, team] of Object.entries(HISTORY_TEAMS)) {
+    const seen = new Set();
+    for (const p of team) {
+      if (seen.has(p.email)) problems.push(`history ${ph}: ${p.email} twice`);
+      seen.add(p.email);
+      if (!hhmm.test(p.start) || !hhmm.test(p.end)) problems.push(`history ${ph} ${p.email}: bad times`);
+      if (!p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6)) problems.push(`history ${ph} ${p.email}: bad days`);
+    }
+  }
+  for (const a of HISTORY_AUTO) {
+    const p = (HISTORY_TEAMS[a.pharmacy] || []).find(x => x.email === a.email);
+    const day = new Date(); day.setDate(day.getDate() - a.daysAgo);
+    if (!p) problems.push(`history auto: ${a.email} does not work at ${a.pharmacy}`);
+    else if (a.daysAgo < 1 || a.daysAgo > HISTORY_DAYS) problems.push(`history auto: ${a.daysAgo} days ago is outside the history`);
+    if (a.approval && !a.claim) problems.push('history auto: an approval needs a claim first');
+  }
+}
+const historyBlock = '/* HISTORY:BEGIN */\n' +
+  'const SHIFT_GRACE_MIN = ' + SHIFT_GRACE_MIN + ';\n' +
+  'const HISTORY_DAYS = ' + HISTORY_DAYS + ';\n' +
+  'const HISTORY_TEAMS = ' + JSON.stringify(HISTORY_TEAMS) + ';\n' +
+  'const HISTORY_AUTO = ' + JSON.stringify(HISTORY_AUTO) + ';\n' +
+  'const REPORTS_SHARED = ' + JSON.stringify(REPORTS_SHARED) + ';\n' +
+  historyFor.toString() + '\n/* HISTORY:END */';
 if (problems.length) {
   console.error('the Ministry sources did not validate:\n  ' + problems.join('\n  '));
   process.exit(1);
@@ -291,8 +321,11 @@ for (const rel of targets) {
   const ga = out.indexOf(G_BEGIN), gb = out.indexOf(G_END);
   if (ga < 0 || gb < 0) { console.error(`${rel}: no ${G_BEGIN} … ${G_END} markers — nothing written`); process.exit(1); }
   out = out.slice(0, ga) + rulesBlock + out.slice(gb + G_END.length);
+  const ha = out.indexOf('/* HISTORY:BEGIN */'), hb = out.indexOf('/* HISTORY:END */');
+  if (ha < 0 || hb < 0) { console.error(`${rel}: no HISTORY markers — nothing written`); process.exit(1); }
+  out = out.slice(0, ha) + historyBlock + out.slice(hb + '/* HISTORY:END */'.length);
   writeFileSync(path, out);
   console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : '') +
     (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : '') +
-    `, and the rules ledger (${LEDGER.rules.length} ledger rules, ${LEDGER.events.length} events)`);
+    `, and the rules ledger (${LEDGER.rules.length} ledger rules, ${LEDGER.events.length} events), and the attendance history`);
 }

@@ -2046,6 +2046,64 @@ pack's Latin name, which is what a pharmacist reads off the box.
   wording is searched: "pyrogenic", which is only in the name as registered,
   finds Solu-pac).
 
+### v0.0017 as built — attendance, the rota, performance and the owner's Reports
+
+As planned (W18, the v0.0017 entry above) with the decisions of 28 Sep 2026.
+- **Shifts.** A shift is one person's, at one pharmacy: *Check in* / *Check
+  out* on the home of anyone on a team, and on the owner's own home — **the
+  owner has shifts too**. The work checks you in as well: opening the drawer
+  or ringing up a sale opens a shift if none is open, and the timeline says
+  which ("Checked in — rang up a sale").
+- **A shift nobody checked out of** stays open until its scheduled end plus a
+  **60-minute grace period**, then closes itself **at the scheduled end** (12
+  hours on for a day that is not on the rota), marked as such — it never
+  counts as a clean shift. At the next check-in the person is asked when they
+  left, with the last thing they did there beside the question ("Last activity
+  there: a sale of 12,000 IQD, at 22:17"). **The claim and the owner's
+  decision are two facts**: the owner accepts the time or sets another, and
+  the claim stays as it was given. Both for seven days only. A person cannot
+  decide their own; the owner is told on Team and Reports ("Check-out times
+  waiting for you"). **Three in thirty days** is marked on the Team list.
+- **The rota is the owner's:** days and hours per person, on the person's
+  page (the owner's own on theirs). **Every change is on the timeline — the
+  owner's and the person's** — with the schedule before and after. Nobody else
+  can change one.
+- **A team member's page** (from Team, or from Reports): their schedule, then
+  **their shifts one by one** for a day, a week (Saturday to Friday) or a
+  month — hours, sales, number of sales, what happened on each, and the
+  claim and approval where there are — then **their performance**: shifts,
+  hours, sales (IQD), number of sales, and per shift the **average and the
+  median** of both, **beside the pharmacy's average per shift**; then their
+  permissions, as before. The owner has the same page for themselves (the
+  first row on Team).
+- **The owner's Reports** (a new item on the bar and in the sidebar: owner
+  only — not a Manager role, not an owner where they only work): the
+  pharmacy's figures for the period, check-out times waiting, the sales day
+  by day, and **the people, by name**, with shifts and hours only — **no
+  screen ranks anyone by sales (P7)**. The switch **Share these figures with
+  Saydali+**: on by default, the owner's to turn off, on the record.
+- **My activity**: your shift, your schedule, your shifts and **your own
+  figures** — without the pharmacy's average, which is the owner's.
+- **The CRM** shows, on a pharmacy's record, what its owner shares: the last
+  30 days' sales, their number, shifts, and per shift the average and the
+  median — the pharmacy's totals, never a person's; a pharmacy whose owner
+  turned sharing off (Dar Al-Dawa, in the fixture) says so and has no figure
+  anywhere. A new report table, `pharmacy_reports` (pharmacy, day, sales,
+  number, shifts), holds only pharmacies that share.
+- **The history** (`data/history.mjs`): each pharmacy's people and schedules
+  and a generator for five weeks of shifts and sales from them, embedded in
+  both builds so the app and the CRM agree to the dinar (checked). Zahraa has
+  three forgotten check-outs — one approved, one waiting, one too old to
+  claim — and Hassan is on shift now. The sales stand for what the server
+  holds, apart from this device's own.
+- Fixed on the way: Arabic section headings were spaced letter by letter
+  (the monospace eyebrow style), which breaks the joined letters; in Arabic
+  they now use the Arabic font with no spacing.
+- **Not in the codebase yet:** attendance, the rota and the Reports are in the
+  prototypes only; the tables come with the codebase catch-up.
+- Checks: app 758 (24 new), CRM 300 (5 new), unit 155 (7 new, for the
+  history); typecheck clean.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not

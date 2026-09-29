@@ -1465,6 +1465,38 @@ console.log('\nclinical governance and barcode links (v0.0016)');
   await as('owner_admin');
 }
 
+console.log('\nwhat an owner shares of their Reports (v0.0017)');
+{
+  const g = await open();
+  const appFile = join(here, '..', 'demo', newestBuild(join(here, '..', 'demo'), 'saydali-plus_v'));
+  const ap = await b.newPage(); await ap.goto('file://' + appFile); await ap.waitForTimeout(500);
+  /* The thirty days before today, as the app computes them from its own copy of the history. */
+  const appFig = await ap.evaluate(() => ['P1', 'P7', 'P8'].map(ph => {
+    const to = new Date(); to.setHours(0, 0, 0, 0); const from = new Date(to); from.setDate(from.getDate() - 30);
+    const f = perfFigures(ph, null, { from:from.toISOString(), to:to.toISOString(), kind:'month' });
+    return [ph, f.shifts, f.total, f.n, Math.round(f.perShift.avgTotal), Math.round(f.perShift.medTotal)].join(':'); }));
+  const crmFig = await g.evaluate(() => ['P1', 'P7', 'P8'].map(ph => { const f = sharedFigures(ph, 30);
+    return [ph, f.shifts, f.total, f.n, Math.round(f.avgPerShift), Math.round(f.medPerShift)].join(':'); }));
+  await ap.close();
+  ok(`the CRM shows the same thirty days the app's Reports do, pharmacy by pharmacy (${crmFig.join(' | ')})`,
+     appFig.join('|') === crmFig.join('|') && crmFig.every(x => Number(x.split(':')[1]) > 0));
+  ok('a pharmacy\'s record carries what its owner shares: sales, their number, shifts, and per shift the average and the median',
+     await g.evaluate(() => { openRecord('pharmacies', 'P1'); const p = document.querySelector('.shared-reports');
+       const f = sharedFigures('P1', 30);
+       return !!p && /Shared by the owner — last 30 days/.test(p.innerText) && p.innerText.includes(fmt(f.n)) && /median/i.test(p.innerText) && /Never a person’s figures/.test(p.innerText); }));
+  ok('an owner who turned sharing off: the record says so, and there is no figure for that pharmacy anywhere',
+     await g.evaluate(() => { openRecord('pharmacies', 'P9'); const p = document.querySelector('.shared-reports');
+       const rows = sqlTables().pharmacy_reports;
+       return !!p && /does not share/.test(p.innerText) && !p.querySelector('.figure') && sharedFigures('P9', 30) === null &&
+         !rows.some(r => r.pharmacy_id === 'P9') && rows.some(r => r.pharmacy_id === 'P1'); }));
+  ok('NEVER A PERSON\'S FIGURES: the shared report table has pharmacy and day only — no person, no email, no staff column',
+     await g.evaluate(() => { const rows = sqlTables().pharmacy_reports;
+       return rows.length > 0 && rows.every(r => Object.keys(r).join() === 'pharmacy_id,day,sales_iqd,sales_count,shifts') &&
+         !/@|Hassan|Zahraa|Omar|Rahma/.test(sharedPanel('P1')) && !JSON.stringify(rows).includes('@'); }));
+  ok('the shared table can be queried like any report table',
+     await g.evaluate(() => { try { const r = runSQL("SELECT pharmacy_id, SUM(sales_iqd) AS s FROM pharmacy_reports GROUP BY pharmacy_id"); return (r.rows || r).length === 3; } catch (e) { return String(e); } }));
+}
+
 console.log('\nnarrow viewport');
 const m = await open(430, 900);
 await tab(m, 'orders');

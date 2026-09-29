@@ -1354,8 +1354,9 @@ ok('including by a render that finds itself on one',
      found.length === 0);
 }
 await go(dk, 'checkin');
-ok('check-in says it is coming rather than pretending to work',
-   await dk.locator('.soon-tag').count() === 1 && /attendance/i.test(await dk.locator('#app-body').innerText()));
+/* v0.0017: check-in is real; off a team it says when it starts. */
+ok('check-in, for a pharmacist on no team, says it starts when they join one',
+   await dk.locator('.sh-noteam').count() === 1 && /join a pharmacy’s team/i.test(await dk.locator('#app-body').innerText()));
 /* v0.0013.5 (U5): the Helper is inside Point of sale; the home's one job leads there. */
 ok('the Helper is still one tap from the pharmacist’s home — “Check a prescription”, into Point of sale',
    await dk.evaluate(() => { const c = [...document.querySelectorAll('#app-body [onclick]')].find(b => /Check a prescription/.test(b.innerText));
@@ -1371,7 +1372,7 @@ await signIn(dk, 'rahma@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
 ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) the team and their profile',
-   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,profile' &&
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,profile' &&
      pharmacyTabsFor('owner').map(x => x[0]).join() === 'till,stock,drugs'));
 {
   const txt = await dk.locator('#app-body').innerText();
@@ -2101,7 +2102,7 @@ console.log('\nstock and purchasing (v0.0013)');
 
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
   ok('an owner’s bar: home, the pharmacy, the team, their profile',
-     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,profile'));
+     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,profile'));
   ok('the catalogue is one tap inside Stock — and, with Pharmacy one module (v0.0013.4), not a second line in the sidebar',
      await dk.evaluate(() => { goto('stock'); return /Catalogue and prices/.test(document.getElementById('app-body').innerText) &&
        !sidebarGroups()[0].items.some(x => x[0] === 'products') && sidebarGroups()[0].items.some(x => x[0] === 'pharmacy'); }));
@@ -2725,10 +2726,10 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
         await dk.evaluate(([w, d, s]) => { signOut(); signInAs(w); setLang(d); if (w === 'layla@example.com') setPharmacy('P2'); goto(s); }, [who, dir, s]);
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} ${s} (${dir})`);
         const bar = await dk.evaluate(() => [...document.querySelectorAll('#bottom-nav .nav-item')].map(b => b.innerText.trim()).join('|'));
-        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'لوحة التحكم|الصيدلية|الفريق|الحساب' : 'Dashboard|Pharmacy|Team|Profile')) wide.push('bar ' + bar);
+        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'لوحة التحكم|الصيدلية|الفريق|التقارير|الحساب' : 'Dashboard|Pharmacy|Team|Reports|Profile')) wide.push('bar ' + bar);
       }
     }
-    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Team, Profile${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Team, Reports, Profile (v0.0017)${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
 }
@@ -3684,6 +3685,169 @@ console.log('\nevery search result the same shape (v0.0016.3)');
        return rows.length === 2 && /Suspended/.test(rows[0].querySelector('.find-tag-bad').textContent) && /Own item/.test(rows[1].querySelector('.find-tag-own').textContent) &&
          [...rows].every(r => r.lastElementChild.previousElementSibling.classList.contains('find-tag')); }));
   await rp.close();
+}
+
+console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
+{
+  const ap = await dk.context().newPage();
+  ap.on('pageerror', e => errs.push('pageerror (v0.0017): ' + e.message));
+  await ap.goto(darkUrl); await ap.waitForTimeout(500);
+  await ap.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+    window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+    window.fwd = ms => { S.clockShift = (S.clockShift || 0) + ms; }; });
+  const txt = () => ap.evaluate(() => document.getElementById('app-body').innerText);
+
+  ok('the history is there: five weeks of shifts and sales at four pharmacies, the owners\' shifts among them, and Hassan on shift now',
+     await ap.evaluate(() => S.shifts.length > 200 && S.pastSales.length > 2000 && ['P1', 'P7', 'P8', 'P9'].every(ph => S.shifts.some(s => s.pharmacy === ph)) &&
+       S.shifts.some(s => s.email === 'rahma@example.com' && s.pharmacy === 'P1') && S.shifts.some(s => s.email === 'layla@example.com' && s.pharmacy === 'P9') &&
+       !!openShift('P1', 'hassan@example.com')));
+
+  /* Check-in and check-out. */
+  ok('a person on a team checks in from their home, and out again: a clean shift, on the timeline',
+     await ap.evaluate(() => { signOut(); signInAs('omar@example.com'); setLang('en'); goto('checkin');
+       const card = document.querySelector('.sh-card'), off = !!card && /Not checked in/.test(card.innerText);
+       tap('.sh-in'); const sh = openShift('P1'); const on = !!sh && /On shift since/.test(document.querySelector('.sh-card').innerText);
+       fwd(2 * 36e5); tap('.sh-out');
+       const ev = timelineEvents('P1', 'omar@example.com', todayKey()).map(e => e.kind);
+       return off && on && sh.state === 'closed' && sh.how === 'checkin' && ev.includes('checkIn') && ev.includes('checkOut'); }));
+  ok('the work checks you in: opening the drawer, or ringing up a sale, opens a shift if none is',
+     await ap.evaluate(() => { S.clockShift = 0; signOut(); signInAs('zahraa@example.com'); setLang('en'); setPharmacy('P1'); goto('till');
+       const before = !openShift('P1'); S.till = tillReset(); tillAdd('5000000001002'); S.till.given = '100000'; completeSale();
+       const sh = openShift('P1'); closeReceipt();
+       const bySale = before && !!sh && sh.how === 'sale' && /Checked in — rang up a sale/.test(timelineText(S.tillLog.filter(e => e.kind === 'checkIn' && e.shift === sh.id)[0]));
+       checkOut('P1'); signOut(); signInAs('omar@example.com'); setPharmacy('P1');
+       const d = startDrawer('P1', 0, '', false); const sh2 = openShift('P1');
+       return bySale && !!sh2 && sh2.how === 'drawer'; }));
+  ok('the owner has shifts too: Rahma checks in from her own home',
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('dashboard');
+       const had = !!document.querySelector('.sh-card .sh-in'); tap('.sh-in'); const sh = openShift('P1', 'rahma@example.com'); checkOut('P1');
+       return had && !!sh && sh.email === 'rahma@example.com'; }));
+
+  /* Closing itself, the claim, and the approval. */
+  ok('a shift nobody checked out of stays open until the scheduled end plus the grace period, then closes itself — at the scheduled end',
+     await ap.evaluate(() => { signOut(); signInAs('omar@example.com'); setLang('en'); setPharmacy('P1');
+       const o = openShift('P1'); if (o) checkOut('P1');
+       const sh = checkIn('P1'); const end = schedEnd(sh);
+       /* Some work on it, which will be the evidence beside the question. */
+       goto('till'); S.till = tillReset(); tillAdd('5000000001002'); S.till.given = '100000'; completeSale(); closeReceipt();
+       fwd(end.getTime() + SHIFT_GRACE_MIN * 6e4 - nowMs() - 6e4); render(); const still = sh.state === 'open';
+       fwd(2 * 6e4); render();
+       window.__auto = sh.id;
+       return still && sh.state === 'auto' && sh.out === end.toISOString() && S.tillLog.some(e => e.kind === 'autoClosed' && e.shift === sh.id); }));
+  ok('…and it never counts as a clean shift',
+     await ap.evaluate(() => { const sh = S.shifts.find(x => x.id === window.__auto); const p = { from:sh.in, to:new Date(new Date(sh.in).getTime() + 1).toISOString(), kind:'day' };
+       const f = perfFigures('P1', 'omar@example.com', p); return f.auto === 1 && f.clean === 0; }));
+  ok('at the next check-in they are asked when they left, with the last thing they did there beside the question',
+     await ap.evaluate(() => { fwd(10 * 36e5); checkIn('P1'); goto('checkin'); const f = document.querySelector('.sh-claim[data-shift="' + window.__auto + '"]');
+       return !!f && /When did you leave\?/.test(f.innerText) && /Last activity there: a sale of/.test(f.innerText); }));
+  ok('the claim is kept as they gave it',
+     await ap.evaluate(() => { const sh = S.shifts.find(x => x.id === window.__auto); const end = new Date(sh.out);
+       const hhmm = String(end.getHours()).padStart(2, '0') + ':' + String((end.getMinutes() + 7) % 60).padStart(2, '0');
+       setv('claim-' + sh.id, hhmm); sendClaim(sh.id); window.__claim = sh.claim && sh.claim.out;
+       return !!sh.claim && sh.claim.by === 'omar@example.com' && !sh.approval && !document.querySelector('.sh-claim[data-shift="' + sh.id + '"]'); }));
+  ok('a person cannot approve their own claim; the owner decides — and the approval never overwrites the claim',
+     await ap.evaluate(() => { const sh = S.shifts.find(x => x.id === window.__auto); const selfOk = approveShift(sh.id, false);
+       signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('team');
+       const waiting = /Check-out times waiting for you/.test(document.getElementById('app-body').innerText);
+       openShiftOf('omar@example.com', sh.id); const d = document.querySelector('.sh-row-d[data-shift="' + sh.id + '"]');
+       const offered = !!d && !!d.querySelector('.sh-accept');
+       const inAt = new Date(sh.in); const hh = String((inAt.getHours() + 1) % 24).padStart(2, '0') + ':30';
+       setv('amend-' + sh.id, hh); approveShift(sh.id, true);
+       return !selfOk && waiting && offered && sh.claim.out === window.__claim && !!sh.approval && sh.approval.verdict === 'amended' &&
+         sh.approval.out !== sh.claim.out && shiftEnd(sh) === sh.approval.out && sh.state === 'auto'; }));
+  ok('claims and approvals are for seven days only: Zahraa\'s shift from sixteen days ago can be neither',
+     await ap.evaluate(() => { S.clockShift = 0; const old = S.shifts.find(x => x.email === 'zahraa@example.com' && x.state === 'auto' && !x.claim);
+       return !!old && !claimable(old) && !approveShift(old.id, false) && !old.approval; }));
+  ok('shifts that closed themselves three times in thirty days are marked on the Team list',
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.openStaff = null; goto('team');
+       const row = [...document.querySelectorAll('.tm-row')].find(r => /Zahraa/.test(r.innerText)); return !!row && /3 not checked out in 30 days/.test(row.innerText); }));
+
+  /* The rota. */
+  ok('the owner sets someone\'s schedule; the change is on the owner\'s timeline and on theirs, with from and to',
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); const h = S.staff.find(x => x.email === 'hassan@example.com');
+       S.openStaff = h.id; goto('team'); tap('.ro-edit');
+       document.querySelectorAll('.ro-day input').forEach(i => { i.checked = ['6', '0', '1'].includes(i.value); });
+       setv('ro-start', '07:30'); setv('ro-end', '15:30'); tap('.ro-save');
+       const r = rotaOf('P1', 'hassan@example.com'), e = S.tillLog.filter(x => x.kind === 'rotaSet').pop();
+       const owner = timelineEvents('P1', 'rahma@example.com', todayKey()).includes(e), his = timelineEvents('P1', 'hassan@example.com', todayKey()).includes(e);
+       signOut(); signInAs('hassan@example.com'); setLang('en'); goto('activity'); const seen = /Changed Hassan Al-Dulaimi’s schedule from/.test(document.getElementById('app-body').innerText);
+       return r.start === '07:30' && r.end === '15:30' && r.days.join() === '0,1,6' && e.subject === 'hassan@example.com' && e.by === 'rahma@example.com' &&
+         !!e.from && owner && his && seen && /Sat · Sun · Mon — 07:30–15:30/.test(timelineText(e)); }));
+  ok('…nobody but the owner changes a schedule',
+     await ap.evaluate(() => !setRota('P1', 'hassan@example.com', [1], '08:00', '12:00') && rotaOf('P1', 'hassan@example.com').start === '07:30'));
+
+  /* Performance. */
+  ok('a person\'s figures for a week: shifts, hours, sales and their number, and per shift the average and the median — worked out again here from the raw shifts',
+     await ap.evaluate(() => { S.clockShift = 0; S.perf = { kind:'week', anchor:null };
+       const lastWeek = new Date(nowMs() - 7 * 864e5); const p = periodRange('week', dayOf(lastWeek.toISOString()));
+       const f = perfFigures('P1', 'hassan@example.com', p);
+       const shs = S.shifts.filter(s => s.pharmacy === 'P1' && s.email === 'hassan@example.com' && s.in >= p.from && s.in < p.to && s.state !== 'open');
+       const per = shs.map(sh => S.pastSales.filter(x => x.shift === sh.id));
+       const tot = per.map(x => x.reduce((a, s) => a + s.total, 0)).sort((a, b) => a - b), cnt = per.map(x => x.length).sort((a, b) => a - b);
+       const med = xs => xs.length % 2 ? xs[(xs.length - 1) / 2] : (xs[xs.length / 2 - 1] + xs[xs.length / 2]) / 2;
+       const avg = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+       return shs.length >= 3 && f.shifts === shs.length && f.perShift.medTotal === med(tot) && Math.abs(f.perShift.avgTotal - avg(tot)) < 1e-6 &&
+         f.perShift.medN === med(cnt) && f.n === cnt.reduce((a, b) => a + b, 0); }));
+  ok('a week runs Saturday to Friday, a month from the first; the period steps back, and not past today',
+     await ap.evaluate(() => { const w = periodRange('week', '2026-09-30'), m = periodRange('month', '2026-09-30');
+       const today = todayKey(); S.perf = { kind:'week', anchor:null }; stepPerf(1); const noFuture = !S.perf.anchor || S.perf.anchor <= today;
+       stepPerf(-1); const back = S.perf.anchor < today;
+       return new Date(w.from).getDay() === 6 && dayOf(w.from) === '2026-09-26' && dayOf(m.from) === '2026-09-01' && dayOf(m.to) === '2026-10-01' && noFuture && back; }));
+  ok('the owner opens a team member: their schedule, then their shifts one by one, then their figures beside the pharmacy\'s average, then their permissions',
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:null };
+       S.openStaff = S.staff.find(x => x.email === 'zahraa@example.com').id; goto('team');
+       const q = sel => document.querySelector(sel); const order = ['.ro-card', '.sh-list', '.pf-card', '.tm-grantlist'].map(q);
+       const inOrder = order.every(Boolean) && order.every((el, i) => !i || (order[i - 1].compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING));
+       const auto = [...document.querySelectorAll('.sh-row-d[data-state="auto"]')];
+       return inOrder && !!q('.pf-base') && auto.length >= 2 && /Did not check out|waiting|Accepted/.test(auto.map(a => a.innerText).join()); }));
+  ok('the owner\'s own page: their schedule, shifts and figures',
+     await ap.evaluate(() => { S.openStaff = null; goto('team'); tap('.tm-self-row');
+       return S.openStaff === 'OWNER' && !!document.querySelector('.tm-self') && !!document.querySelector('.ro-card') && !!document.querySelector('.sh-list') && !!document.querySelector('.pf-card'); }));
+
+  /* Who sees what (P7). */
+  ok('a team member sees their own figures and shifts in My activity — not the pharmacy\'s average, nobody else\'s, and no Team or Reports',
+     await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); S.perf = { kind:'month', anchor:null }; goto('activity');
+       const b = document.getElementById('app-body').innerText, card = document.querySelector('.pf-card');
+       const f = perfFigures('P1', 'hassan@example.com', perfPeriod());
+       const own = !!card && card.querySelector('.pf-grid').innerText.includes(fmt(f.total)) && !card.querySelector('.pf-base');
+       const nobody = [...document.querySelectorAll('.sh-row-d')].every(d => S.shifts.find(x => x.id === d.dataset.shift).email === 'hassan@example.com');
+       return own && nobody && !/Zahraa|Omar/.test(b) && !screenAllowed('reports') && !screenAllowed('team'); }));
+  ok('the Reports are the owner\'s alone: not a Manager\'s (Maryam at Al-Shifa), not an owner\'s where she only works (Rahma at Al-Hayat)',
+     await ap.evaluate(() => { signOut(); signInAs('maryam@example.com'); setPharmacy('P7'); const mgr = screenAllowed('reports');
+       signOut(); signInAs('rahma@example.com'); setPharmacy('P8'); const work = screenAllowed('reports'); setPharmacy('P1'); const own = screenAllowed('reports');
+       return !mgr && !work && own && navFor('owner').some(x => x[0] === 'reports'); }));
+  ok('NO SCREEN RANKS PEOPLE BY SALES: the Reports list people by name, with shifts and hours only',
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:null }; goto('reports');
+       const rows = [...document.querySelectorAll('.rpt-person')], names = rows.map(r => r.querySelector('.row-title').innerText.trim());
+       const sorted = names.slice().sort((a, b) => a.localeCompare(b, 'en'));
+       return rows.length >= 4 && names.join('|') === sorted.join('|') && rows.every(r => !/IQD|\d{1,3},\d{3}/.test(r.innerText)) && /never in a league table/.test(document.getElementById('app-body').innerText); }));
+  ok('the pharmacy\'s figures: sales, their number, shifts and hours, and per shift the average and the median — with shifts that closed themselves counted apart',
+     await ap.evaluate(() => { const card = document.querySelector('.pf-card'), f = perfFigures('P1', null, perfPeriod());
+       return !!card && card.querySelector('.pf-grid').innerText.includes(fmt(f.total)) && /Median/.test(card.innerText) && f.auto >= 1 && /closed themselves/.test(card.innerText); }));
+  ok('sharing with Saydali+ is on by default and the owner\'s to turn off — on the record; Dar Al-Dawa\'s owner has it off',
+     await ap.evaluate(() => { const on = S.reportsShared.P1 === true && !!document.querySelector('.rpt-share-t').checked && S.reportsShared.P9 === false;
+       setReportsShared('P1', false); const off = S.reportsShared.P1 === false && S.tillLog.some(e => e.kind === 'reportsUnshared' && e.pharmacy === 'P1');
+       setReportsShared('P1', true);
+       signOut(); signInAs('hassan@example.com'); setReportsShared('P1', false); const staff = S.reportsShared.P1 === true;
+       return on && off && staff; }));
+
+  /* Arabic and phones. */
+  const wide = [];
+  await ap.setViewportSize({ width:320, height:700 });
+  for (const dir of ['ar', 'en']) {
+    for (const [who, fn] of [['rahma@example.com', "setPharmacy('P1');goto('reports')"], ['rahma@example.com', "setPharmacy('P1');S.openStaff=S.staff.find(x=>x.email==='zahraa@example.com').id;goto('team')"],
+                             ['hassan@example.com', "goto('activity')"], ['hassan@example.com', "goto('checkin')"]]) {
+      await ap.evaluate(([w, d, f]) => { signOut(); signInAs(w); setLang(d); S.openStaff = null; eval(f); document.querySelectorAll('details').forEach(x => { x.open = true; }); }, [who, dir, fn]);
+      await ap.waitForTimeout(80);
+      if (await ap.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} ${fn.slice(-20)} (${dir})`);
+    }
+  }
+  await ap.setViewportSize({ width:1440, height:900 });
+  ok(`the new screens do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+  ok('in Arabic the section headings are not spaced letter by letter',
+     await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('ar'); goto('activity'); const e = document.querySelector('.section-eyebrow');
+       const r = !!e && getComputedStyle(e).letterSpacing === 'normal' || getComputedStyle(e).letterSpacing === '0px'; setLang('en'); return r; }));
+  await ap.close();
 }
 
 console.log('\nlayout');
