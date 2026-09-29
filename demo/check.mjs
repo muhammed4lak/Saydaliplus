@@ -3755,6 +3755,14 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
        setv('amend-' + sh.id, hh); approveShift(sh.id, true);
        return !selfOk && waiting && offered && sh.claim.out === window.__claim && !!sh.approval && sh.approval.verdict === 'amended' &&
          sh.approval.out !== sh.claim.out && shiftEnd(sh) === sh.approval.out && sh.state === 'auto'; }));
+  ok('an owner cannot approve a claim on their own shift either — there is nobody above them, so it stays a claim',
+     await ap.evaluate(() => { S.clockShift = 0; signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1');
+       const o = openShift('P1'); if (o) checkOut('P1');
+       const sh = checkIn('P1'); fwd(schedEnd(sh).getTime() + (SHIFT_GRACE_MIN + 1) * 6e4 - nowMs()); sweepShifts();
+       const auto = sh.state === 'auto'; const d = new Date(sh.out); d.setMinutes(d.getMinutes() + 5);
+       sh.claim = { out:d.toISOString(), at:nowIso(), by:'rahma@example.com' };
+       const r = approveShift(sh.id, false); S.clockShift = 0;
+       return auto && !r && !sh.approval; }));
   ok('claims and approvals are for seven days only: Zahraa\'s shift from sixteen days ago can be neither',
      await ap.evaluate(() => { S.clockShift = 0; const old = S.shifts.find(x => x.email === 'zahraa@example.com' && x.state === 'auto' && !x.claim);
        return !!old && !claimable(old) && !approveShift(old.id, false) && !old.approval; }));

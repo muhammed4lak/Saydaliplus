@@ -2101,8 +2101,11 @@ As planned (W18, the v0.0017 entry above) with the decisions of 28 Sep 2026.
   they now use the Arabic font with no spacing.
 - **Not in the codebase yet:** attendance, the rota and the Reports are in the
   prototypes only; the tables come with the codebase catch-up.
-- Checks: app 758 (24 new), CRM 300 (5 new), unit 155 (7 new, for the
-  history); typecheck clean.
+- Checks: app 759 (25 new), CRM 300 (5 new), unit 155 (7 new, for the
+  history); typecheck clean. Mutation-tested on a copy: 14 planted faults,
+  all caught — one only after adding a check (an owner cannot approve a claim
+  on their own shift: the first check tried it as a staff member, who is
+  refused for another reason).
 
 ## Unused concepts
 
