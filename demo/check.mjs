@@ -2108,7 +2108,8 @@ console.log('\nstock and purchasing (v0.0013)');
        !sidebarGroups()[0].items.some(x => x[0] === 'products') && sidebarGroups()[0].items.some(x => x[0] === 'pharmacy'); }));
   ok('the home screen says what the shelf needs',
      await dk.evaluate(() => { goto('dashboard'); const t = document.getElementById('app-body').innerText;
-       return /Needs you/i.test(t) && /Expired batches in quarantine: 1/.test(t) && /Expiring within 90 days: 1/.test(t); }));
+       /* v0.0018: the exchange's seed adds near-expiry batches, so the count is read, not assumed. */
+       return /Needs you/i.test(t) && /Expired batches in quarantine: 1/.test(t) && new RegExp('Expiring within 90 days: ' + stockPrompts('P1').near.length).test(t) && stockPrompts('P1').near.length >= 1; }));
 
   /* The two things this version's check was promised to prove. */
   ok('NO STOCK LEVEL IS EVER WRITTEN DIRECTLY: one writer of movements, and no level stored anywhere',
@@ -2359,7 +2360,8 @@ console.log('\nstock and purchasing (v0.0013)');
        .every(k => S.tillLog.some(x => x.kind === k))));
   ok('each pharmacy’s stock is its own',
      await dk.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy('P7'); goto('stock');
-       const clean = stockCodes('P7').length === 0 && /0 drugs counted/.test(document.getElementById('app-body').innerText);
+       /* v0.0018: Al-Shifa holds only the batch it listed on the exchange. */
+       const clean = stockCodes('P7').every(c => EXCHANGE_SEED.some(x => x.pharmacy === 'P7' && x.code === c)) && /0 drugs counted/.test(document.getElementById('app-body').innerText);
        goto('count'); startCount('Front'); countScan('5000000001002'); countExpiry(0, '10/27'); confirmCount();
        return clean && stockOf('P7', '5000000001002').available === 1 && stockOf('P1', '5000000001002').available !== 1 &&
          suppliersOf('P7').length === 1; }));
@@ -3110,10 +3112,12 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        setv('join-code', x.code); joinByCode(); const pending = x.state === 'invited';
        ACCOUNTS['noor@example.com'].verified = true; setv('join-code', x.code); joinByCode();
        return box && bad && pending && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'pharmacist' && x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
-  ok('the near-expiry exchange cannot be granted before it exists (v0.0018)',
+  /* v0.0018: the exchange exists, so the owner can grant it — and take it back. */
+  ok('the near-expiry exchange can be granted now that it exists (v0.0018), and taken back',
      await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render();
        const box = document.querySelector('.tm-grant[data-perm="exchange"] input'); setGrant(S.staff[0].id, 'exchange', true);
-       return !!box && box.disabled && !S.staff[0].grants.includes('exchange'); }));
+       const on = !!box && !box.disabled && S.staff[0].grants.includes('exchange'); setGrant(S.staff[0].id, 'exchange', false);
+       return on && !S.staff[0].grants.includes('exchange'); }));
   ok('ending employment keeps the record, and they can do nothing there any more',
      await dk.evaluate(() => { const x = S.staff[0]; endEmployment(x.id); const kept = x.state === 'ended' && x.end === TODAY_ISO &&
          S.sales.some(s => s.by === 'ahmed@example.com') && S.tillLog.some(e => e.kind === 'staffEnded');
@@ -3152,7 +3156,8 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
      await dk.evaluate(() => { const c = document.querySelector('.tm-roles'); if (!c) return false; c.open = true;
        const txt = c.innerText; return ['Cashier', 'Pharmacist', 'Stock keeper', 'Manager'].every(n => txt.includes(n)) && !!c.querySelector('.tm-role-new'); }));
   ok('the Manager role holds everything that exists today, and not what arrives later',
-     await dk.evaluate(() => { const m = roleById('manager'); return PERMS.filter(p => !PERM_LATER[p]).every(p => m.grants.includes(p)) && !m.grants.includes('exchange'); }));
+     /* v0.0018: the exchange exists now, so the Manager role holds it too. */
+     await dk.evaluate(() => { const m = roleById('manager'); return PERMS.filter(p => !PERM_LATER[p]).every(p => m.grants.includes(p)) && m.grants.includes('exchange') && !Object.keys(PERM_LATER).length; }));
   ok('someone invited holds the Cashier role, shown on the Team list as “Cashier”',
      await dk.evaluate(() => { setv('inv-name', 'Ahmed Al-Kubaisi'); setv('inv-contact', 'ahmed@example.com'); inviteStaff();
        const x = S.staff[0]; S.teamNote = null; render(); return x.role === 'cashier' && !x.grants.length &&
@@ -3856,6 +3861,90 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
      await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('ar'); goto('activity'); const e = document.querySelector('.section-eyebrow');
        const r = !!e && getComputedStyle(e).letterSpacing === 'normal' || getComputedStyle(e).letterSpacing === '0px'; setLang('en'); return r; }));
   await ap.close();
+}
+
+console.log('\nthe near-expiry exchange (v0.0018)');
+{
+  const xp = await dk.context().newPage();
+  xp.on('pageerror', e => errs.push('pageerror (v0.0018): ' + e.message));
+  await xp.goto(darkUrl); await xp.waitForTimeout(500);
+  await xp.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+    window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; }; });
+  await xp.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('exchange'); });
+
+  ok('NOTHING IS LISTED THAT THE OWNER DID NOT CHOOSE: Al-Rahma has batches near expiry and no listing until Rahma makes one',
+     await xp.evaluate(() => exCandidates('P1').length >= 2 && !exListings().some(l => l.pharmacy === 'P1') &&
+       /Your batches within 90 days of expiry/.test(document.getElementById('app-body').textContent)));
+  ok('A CONTROLLED ITEM CANNOT BE LISTED: Lyrica (pregabalin) says so and is refused; so is a precursor (pseudoephedrine)',
+     await xp.evaluate(() => { const ly = exCandidates('P1').find(x => x.b.code === '3000000001448');
+       const row = document.querySelector('.ex-cand[data-batch="' + ly.b.id + '"]');
+       const shown = !!row && /Controlled — cannot be listed/.test(row.innerText) && !row.querySelector('.ex-open');
+       const pre = newBatch('P1', '5000000001026', { expiry:ymOffset(1) }); addMovement({ pharmacy:'P1', code:'5000000001026', batch:pre.id, qty:5, kind:'count', ref:'check' });
+       return shown && exList(ly.b.id, 2, 5000, '') === null && exList(pre.id, 2, 3000, '') === null && !exListings().some(l => l.pharmacy === 'P1'); }));
+  ok('a batch outside the window is not offered and cannot be listed',
+     await xp.evaluate(() => { const far = S.batches.find(b => b.pharmacy === 'P1' && b.code === '5000000001002' && b.kind === 'stock');
+       return !!far && !exCandidates('P1').some(x => x.b.id === far.id) && exList(far.id, 1, 1000, '') === null; }));
+  ok('listing a batch: how many (no more than it holds), a price a box or none, a note — and it is on the record',
+     await xp.evaluate(() => { const aug = exCandidates('P1').find(x => x.b.code === '5000000001071');
+       S.exOpen = aug.b.id; render(); setv('ex-qty-' + aug.b.id, '99'); tap('.ex-go'); const tooMany = !exListings().some(l => l.pharmacy === 'P1') && !!document.querySelector('.ex-form .auth-error');
+       setv('ex-qty-' + aug.b.id, '6'); setv('ex-price-' + aug.b.id, '7000'); setv('ex-note-' + aug.b.id, 'Fridge not needed'); tap('.ex-go');
+       const l = exListings().find(x => x.pharmacy === 'P1'); window.__xl = l && l.id;
+       return tooMany && !!l && l.qty === 6 && l.price === 7000 && L(l.note) === 'Fridge not needed' && l.expiry === aug.b.expiry &&
+         exList(aug.b.id, 5, null, '') === null && S.tillLog.some(e => e.kind === 'exListed' && e.listing === l.id && e.by === 'rahma@example.com'); }));
+  ok('nearby is a distance: Karrada sees Jadriya (4.5 km) and Zayouna (4.6 km), not Mansour (7.1 km) — and never its own',
+     await xp.evaluate(() => { const ids = exNearby('P1').map(l => l.id);
+       return ids.includes('X001') && ids.includes('X002') && !ids.includes('X003') && !ids.includes(window.__xl) && exNearby('P9').every(l => l.id !== 'X003'); }));
+  ok('A LISTING NAMES NO PHARMACY until you ask: “A pharmacy in Jadriya”, not Al-Shifa',
+     await xp.evaluate(() => { render(); const it = document.querySelector('.ex-item[data-listing="X001"]');
+       return !!it && /A pharmacy in Jadriya · 4\.5 km/.test(it.innerText) && !/Al-Shifa/.test(it.innerText) && /8 boxes/.test(it.innerText) && /7,500 IQD a box/.test(it.innerText); }));
+  ok('asking: no more than is left, once, never your own — and then each side is named to the other',
+     await xp.evaluate(() => { const over = exAsk('X001', 'P1', 99), own = exAsk(window.__xl, 'P1', 1);
+       setv('ex-ask-X001', '3'); tap('.ex-item[data-listing="X001"] .ex-ask'); const r = exRequests().find(x => x.listing === 'X001' && x.from === 'P1');
+       const twice = exAsk('X001', 'P1', 1);
+       const it = document.querySelector('.ex-item[data-listing="X001"]');
+       return over === null && own === null && !!r && r.qty === 3 && r.state === 'asked' && twice === null && /Al-Shifa Pharmacy · 4\.5 km/.test(it.innerText); }));
+  ok('Al-Shifa decides; agreeing holds the three for Al-Rahma',
+     await xp.evaluate(() => { signOut(); signInAs('layla@example.com'); setLang('en'); setPharmacy('P7'); goto('exchange');
+       const inc = document.querySelector('.ex-incoming'); const shown = !!inc && /Al-Rahma Pharmacy/.test(inc.innerText);
+       const r = exRequests().find(x => x.listing === 'X001' && x.from === 'P1'); tap('.ex-agree');
+       return shown && r.state === 'agreed' && exLeft(exListing('X001')) === 5; }));
+  ok('HANDED OVER: out of Al-Shifa\'s batch — a movement at its end, and its stock is three less',
+     await xp.evaluate(() => { const l = exListing('X001'), before = stockOf('P7', l.code).available; tap('.ex-hand');
+       const r = exRequests().find(x => x.listing === 'X001' && x.from === 'P1'), mv = S.movements.find(m => m.id === r.outMove);
+       return r.state === 'handed' && !!mv && mv.kind === 'exchangeOut' && mv.qty === -3 && mv.pharmacy === 'P7' && mv.batch === l.batch && stockOf('P7', l.code).available === before - 3; }));
+  ok('RECEIVED: into a batch of the same expiry at Al-Rahma, at the agreed price as its cost — a movement at that end',
+     await xp.evaluate(() => { const l = exListing('X001'), before = stockOf('P1', l.code).available;
+       signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('exchange'); tap('.ex-receive');
+       const r = exRequests().find(x => x.listing === 'X001' && x.from === 'P1'), mv = S.movements.find(m => m.id === r.inMove), b = S.batches.find(x => x.id === r.batch);
+       return r.state === 'received' && !!mv && mv.kind === 'exchangeIn' && mv.qty === 3 && mv.pharmacy === 'P1' && mv.unitCost === 7500 &&
+         b.expiry === l.expiry && stockOf('P1', l.code).available === before + 3; }));
+  ok('NO MONEY PASSES THROUGH SAYDALI+: nothing records a payment, and the screen says to settle between you',
+     await xp.evaluate(() => { const keys = JSON.stringify(S.exchange); return !/paid|payment|wallet|commission|fee/i.test(keys) &&
+       /Saydali\+ takes no payment/.test(document.getElementById('app-body').innerText); }));
+  ok('every step is on each pharmacy\'s own timeline',
+     await xp.evaluate(() => { const k = ph => S.tillLog.filter(e => e.pharmacy === ph && /^ex/.test(e.kind)).map(e => e.kind);
+       return ['exListed', 'exAsked', 'exReceived'].every(x => k('P1').includes(x)) && ['exAgreed', 'exHanded'].every(x => k('P7').includes(x)); }));
+  ok('a listing withdrawn, or past its expiry, is no longer shown',
+     await xp.evaluate(() => { exWithdraw(window.__xl); const gone = !exNearby('P7').some(l => l.id === window.__xl);
+       S.clockShift = 70 * 864e5; const expired = !exNearby('P1').some(l => l.id === 'X002'); S.clockShift = 0;
+       return gone && expired && exNearby('P1').some(l => l.id === 'X002'); }));
+  ok('the owner\'s by default; a team member needs it granted — then they can list and ask',
+     await xp.evaluate(() => { signOut(); signInAs('hassan@example.com'); setPharmacy('P1'); const before = screenAllowed('exchange') || !!exAsk('X002', 'P1', 1);
+       const h = S.staff.find(x => x.email === 'hassan@example.com'); signOut(); signInAs('rahma@example.com'); setGrant(h.id, 'exchange', true);
+       signOut(); signInAs('hassan@example.com'); setPharmacy('P1'); const after = screenAllowed('exchange') && !!exAsk('X002', 'P1', 1);
+       signOut(); signInAs('rahma@example.com'); setGrant(h.id, 'exchange', false);
+       return !before && after; }));
+  const wide = [];
+  await xp.setViewportSize({ width:320, height:700 });
+  for (const dir of ['ar', 'en']) {
+    await xp.evaluate(d => { signOut(); signInAs('rahma@example.com'); setLang(d); setPharmacy('P1'); goto('exchange');
+      const c = exCandidates('P1').find(x => !x.barred && x.qty > x.listed); S.exOpen = c ? c.b.id : null; render(); }, dir);
+    await xp.waitForTimeout(80);
+    if (await xp.evaluate(() => document.body.scrollWidth) > 320) wide.push(dir);
+  }
+  await xp.setViewportSize({ width:1440, height:900 });
+  ok(`the exchange does not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+  await xp.close();
 }
 
 console.log('\nlayout');

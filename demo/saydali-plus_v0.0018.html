@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ — صيدلي+</title>
-<meta name="version" content="App_v0.0017">
+<meta name="version" content="App_v0.0018">
 <!--
   Saydali+ — a single-file working front end.
 
@@ -1207,6 +1207,19 @@
   .rpt-fig{ font-size:13px; font-weight:600; white-space:nowrap; }
   .rpt-n{ font-size:12px; color:var(--ink-soft); white-space:nowrap; min-width:64px; text-align:end; }
   .rpt-share{ gap:12px; }
+  /* v0.0018 — the exchange */
+  .ex-row{ gap:10px; align-items:flex-start; }
+  .ex-acts{ display:flex; flex-wrap:wrap; gap:6px; flex:none; }
+  .ex-item, .ex-cand{ border-bottom:1px solid var(--border); }
+  .ex-item:last-child, .ex-cand:last-child{ border-bottom:0; }
+  .ex-askrow, .ex-asked-note{ padding:0 16px 14px; }
+  .ex-askrow input{ width:84px; border:1.4px solid var(--border); border-radius:10px; padding:8px 10px; font-size:14px; background:var(--card); }
+  .ex-place{ color:var(--indigo); }
+  .ex-note{ font-style:italic; }
+  .ex-form{ padding:0 16px 14px; display:flex; flex-direction:column; gap:8px; }
+  .ex-form label{ display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:var(--ink-soft); }
+  .ex-form input{ width:100%; min-width:0; border:1.4px solid var(--border); border-radius:10px; padding:9px 11px; font-size:14px; background:var(--card); }
+  .ex-barred{ flex:none; white-space:nowrap; }
   .sh-row > .btn-primary, .sh-row > .btn-secondary{ width:auto; flex:none; padding:10px 16px; margin:0; }
   .sh-chip-line{ display:block; margin-top:5px; }
   .sh-approve input[type=time]{ max-width:150px; }
@@ -1917,7 +1930,7 @@ Object.assign(STRINGS.ar, {
   'eg.title':'في قائمة الأدوية الأساسية — بلا معلومات سريرية بعد · {n}','eg.tag':'بلا معلومات','eg.more':'و{n} أخرى — ابحث بالاسم.',
   'eg.noClinical':'لا معلومات سريرية لهذا الدواء بعد: لا جرعات ولا تداخلات. المساعد لا يفحصه. تُضاف بعد مراجعة المسؤول السريري.',
   'eg.registered':'منتجات مسجلة في العراق',
-  'pm.exchange':'تبادل قريب الانتهاء','pm.exchangeS':'','pm.later':'يصل مع الإصدار {v}.','pm.denied':'غير مسموح: {what}. يمكن للمالك منحه.',
+  'pm.exchange':'تبادل قريب الانتهاء','pm.exchangeS':'عرض المخزون قريب الانتهاء على الصيدليات القريبة، وطلب ما تعرضه، وتسليمه أو استلامه.','pm.later':'يصل مع الإصدار {v}.','pm.denied':'غير مسموح: {what}. يمكن للمالك منحه.',
   'tm.staffT':'الموظفون · {n}','tm.noStaff':'لا موظفين بعد. ادعُ أول موظف.','tm.invitedT':'دعوات بانتظار القبول','tm.endedT':'موظفون سابقون',
   'tm.pos.pharmacist':'صيدلاني','tm.pos.assistant':'مساعد صيدلي','tm.since':'منذ {d}','tm.invitedOn':'دُعي في {d}','tm.endedOn':'انتهى في {d}','tm.fromTo':'من {a} إلى {b}',
   'tm.invite':'ادعُ موظفاً','tm.inviteS':'رابط ترسله بواتساب أو رسالة، مع رمز يُكتب إن لم يعمل الرابط.','tm.name':'الاسم','tm.contact':'رقم الهاتف أو البريد',
@@ -1929,6 +1942,62 @@ Object.assign(STRINGS.ar, {
   'tm.youMay':'مسموح لك','tm.notEmployed':'لست موظفاً في صيدلية بعد.','tm.myDay':'يومي','tm.ownOnly':'ترى سجلّك أنت فقط؛ المالك يرى سجلّ الجميع.',
   'tm.invitesYou':'{ph} تدعوك للعمل فيها','tm.invitesYouS':'بصفة {pos}. تبدأ بالبيع؛ يمنحك المالك ما سواه.','tm.accept':'اقبل','tm.haveCode':'لديك رمز دعوة؟','tm.join':'انضم',
   'wk.tab':'{ph} · تعمل فيها','wk.eyebrow':'مكان عملك','wk.since':'منذ {d}','wk.role':'دورك','wk.more':'و{n} غيرها',
+  /* v0.0018 — the near-expiry exchange */
+  'ex.title':'تبادل الأدوية قريبة الانتهاء',
+  'ch.exchange':'تبادل أيّ صيدلية؟',
+  'ex.rules':'اعرض مخزوناً قريب الانتهاء على الصيدليات ضمن {km} كم، وابحث عما تعرضه. لا يُذكر اسم صيدليتك إلا لصيدلية تطلب. لا تُعرض المواد الخاضعة للرقابة ولا السلائف. صيدلي+ لا يستلم أي دفعة: التسوية بينكما.',
+  'ex.incomingT':'طلبات على ما عرضته',
+  'ex.outgoingT':'ما طلبته',
+  'ex.fromWho':'{ph} · {km} كم',
+  'ex.agree':'موافقة',
+  'ex.decline':'رفض',
+  'ex.handOver':'سُلّم',
+  'ex.received':'استُلم',
+  'ex.noMoney':'اتفقا على الدفع بينكما. التسليم يُخرجه من مخزونك؛ و«استُلم» لدى الصيدلية الأخرى يُدخله إلى مخزونها.',
+  'ex.nearT':'قربك — ضمن {km} كم',
+  'ex.named':'{ph} · {km} كم',
+  'ex.anon':'صيدلية في {d} · {km} كم',
+  'ex.itemLine':'{n} علبة · تنتهي {exp} · {price}',
+  'ex.priceAsk':'السعر عند الطلب',
+  'ex.pricePer':'{amt} للعلبة',
+  'ex.ask':'اطلبه',
+  'ex.askBad':'اطلب بين 1 و{n}.',
+  'ex.asked':'طُلب — أصبح كل منكما يعرف الآخر.',
+  'ex.askedNote':'طلبت. اسم الصيدلية ظاهر لك الآن؛ القرار لهم.',
+  'ex.noneNear':'لا شيء معروض ضمن {km} كم حالياً.',
+  'ex.mineT':'ما عرضته',
+  'ex.noMine':'لم تعرض شيئاً.',
+  'ex.withdraw':'سحب',
+  'ex.candT':'دفعاتك التي تنتهي خلال {d} يوماً',
+  'ex.candLine':'{n} في المخزون · تنتهي {exp} · {listed} معروضة',
+  'ex.barred':'خاضع للرقابة — لا يُعرض',
+  'ex.list':'اعرض',
+  'ex.qty':'العلب',
+  'ex.price':'سعر العلبة (د.ع)',
+  'ex.pricePh':'أو اتركه فارغاً',
+  'ex.notePh':'ملاحظة — طريقة الحفظ، علب كاملة فقط…',
+  'ex.listGo':'اعرض في التبادل',
+  'ex.listBad':'اعرض بين 1 و{n} علبة، وسعراً أكبر من صفر إن ذكرته.',
+  'ex.listed':'عُرض. تراه الصيدليات القريبة — دون اسمك.',
+  'ex.anonNote':'ترى الصيدليات القريبة الدواء والانتهاء والكمية والسعر — لا اسم صيدليتك، حتى تطلب إحداها.',
+  'ex.noCand':'لا شيء في المخزون ينتهي خلال {d} يوماً.',
+  'ex.linkSub':'{c} من دفعاتك يمكن عرضها · {n} معروضة قربك',
+  'ex.linkInc':'{n} طلب على ما عرضته',
+  'ex.st.asked':'مطلوب — بالانتظار',
+  'ex.st.agreed':'تمت الموافقة',
+  'ex.st.declined':'مرفوض',
+  'ex.st.handed':'سُلّم',
+  'ex.st.received':'استُلم',
+  'ex.lst.open':'معروض',
+  'ex.lst.closed':'نفد',
+  'ex.lst.withdrawn':'مسحوب',
+  'tk.exListed':'عرض {n} × {name} في تبادل قريب الانتهاء',
+  'tk.exWithdrawn':'سحب {name} من التبادل',
+  'tk.exAsked':'طلب {n} × {name} من التبادل',
+  'tk.exAgreed':'وافق على {n} × {name} مع {ph}',
+  'tk.exDeclined':'رفض طلب {ph} على {name}',
+  'tk.exHanded':'سلّم {n} × {name} إلى {ph} — خرج من المخزون',
+  'tk.exReceived':'استلم {n} × {name} من {ph} — دخل المخزون',
   /* v0.0017 — attendance, the rota, performance and Reports */
   'nav.reports':'التقارير',
   'ch.reports':'تقارير أيّ صيدلية؟',
@@ -2089,7 +2158,7 @@ Object.assign(STRINGS.en, {
   'eg.title':'On the Essential Drugs List — no clinical information yet · {n}','eg.tag':'No clinical info','eg.more':'And {n} more — search by name.',
   'eg.noClinical':'No clinical information for this drug yet: no doses, no interactions. The Helper does not check it. Added after the clinical curator reviews it.',
   'eg.registered':'Registered in Iraq',
-  'pm.exchange':'Near-expiry exchange','pm.exchangeS':'','pm.later':'Arrives with {v}.','pm.denied':'Not allowed: {what}. The owner can grant it.',
+  'pm.exchange':'Near-expiry exchange','pm.exchangeS':'List near-expiry stock for nearby pharmacies, ask for theirs, and hand over or receive it.','pm.later':'Arrives with {v}.','pm.denied':'Not allowed: {what}. The owner can grant it.',
   'tm.staffT':'Staff · {n}','tm.noStaff':'No staff yet. Invite the first.','tm.invitedT':'Invitations waiting','tm.endedT':'Former staff',
   'tm.pos.pharmacist':'Pharmacist','tm.pos.assistant':'Pharmacy assistant','tm.since':'Since {d}','tm.invitedOn':'Invited {d}','tm.endedOn':'Ended {d}','tm.fromTo':'From {a} to {b}',
   'tm.invite':'Invite someone','tm.inviteS':'A link you send on WhatsApp or by text, with a code to type if the link does not work.','tm.name':'Name','tm.contact':'Phone number or email',
@@ -2101,6 +2170,62 @@ Object.assign(STRINGS.en, {
   'tm.youMay':'You may','tm.notEmployed':'You do not work at a pharmacy on Saydali+ yet.','tm.myDay':'My day','tm.ownOnly':'You see your own record; the owner sees everyone’s.',
   'tm.invitesYou':'{ph} invites you to work there','tm.invitesYouS':'As {pos}. You start with selling; the owner grants anything else.','tm.accept':'Accept','tm.haveCode':'Have an invitation code?','tm.join':'Join',
   'wk.tab':'{ph} · works here','wk.eyebrow':'Where you work','wk.since':'since {d}','wk.role':'Your role','wk.more':'+ {n} more',
+  /* v0.0018 — the near-expiry exchange */
+  'ex.title':'Near-expiry exchange',
+  'ch.exchange':'Which pharmacy’s exchange?',
+  'ex.rules':'Offer stock close to its expiry to pharmacies within {km} km, and find theirs. Your pharmacy is named only to a pharmacy that asks. Controlled substances and precursors cannot be listed. Saydali+ takes no payment: you settle between you.',
+  'ex.incomingT':'Asked for your listings',
+  'ex.outgoingT':'What you asked for',
+  'ex.fromWho':'{ph} · {km} km',
+  'ex.agree':'Agree',
+  'ex.decline':'Decline',
+  'ex.handOver':'Handed over',
+  'ex.received':'Received',
+  'ex.noMoney':'Agree the payment between you. Handing it over takes it out of your stock; the other pharmacy’s “Received” puts it into theirs.',
+  'ex.nearT':'Near you — within {km} km',
+  'ex.named':'{ph} · {km} km',
+  'ex.anon':'A pharmacy in {d} · {km} km',
+  'ex.itemLine':'{n} boxes · expires {exp} · {price}',
+  'ex.priceAsk':'price on asking',
+  'ex.pricePer':'{amt} a box',
+  'ex.ask':'Ask for it',
+  'ex.askBad':'Ask for between 1 and {n}.',
+  'ex.asked':'Asked — they can see who you are now, and you them.',
+  'ex.askedNote':'You asked. The pharmacy is named to you now; they decide.',
+  'ex.noneNear':'Nothing listed within {km} km right now.',
+  'ex.mineT':'Your listings',
+  'ex.noMine':'You have listed nothing.',
+  'ex.withdraw':'Withdraw',
+  'ex.candT':'Your batches within {d} days of expiry',
+  'ex.candLine':'{n} in stock · expires {exp} · {listed} listed',
+  'ex.barred':'Controlled — cannot be listed',
+  'ex.list':'List',
+  'ex.qty':'Boxes',
+  'ex.price':'Price a box (IQD)',
+  'ex.pricePh':'Or leave empty',
+  'ex.notePh':'A note — how it has been stored, whole packs only…',
+  'ex.listGo':'List on the exchange',
+  'ex.listBad':'List between 1 and {n} boxes, and a price above zero if you give one.',
+  'ex.listed':'Listed. Pharmacies nearby can see it — not who you are.',
+  'ex.anonNote':'Nearby pharmacies see the product, the expiry, how many and the price — not your pharmacy, until one asks.',
+  'ex.noCand':'Nothing in stock within {d} days of its expiry.',
+  'ex.linkSub':'{c} of your batches could be listed · {n} listed near you',
+  'ex.linkInc':'{n} asked for what you listed',
+  'ex.st.asked':'asked — waiting',
+  'ex.st.agreed':'agreed',
+  'ex.st.declined':'declined',
+  'ex.st.handed':'handed over',
+  'ex.st.received':'received',
+  'ex.lst.open':'listed',
+  'ex.lst.closed':'all gone',
+  'ex.lst.withdrawn':'withdrawn',
+  'tk.exListed':'Listed {n} × {name} on the near-expiry exchange',
+  'tk.exWithdrawn':'Withdrew {name} from the exchange',
+  'tk.exAsked':'Asked for {n} × {name} on the exchange',
+  'tk.exAgreed':'Agreed {n} × {name} with {ph}',
+  'tk.exDeclined':'Declined {ph}’s request for {name}',
+  'tk.exHanded':'Handed {n} × {name} to {ph} — out of stock',
+  'tk.exReceived':'Received {n} × {name} from {ph} — into stock',
   /* v0.0017 — attendance, the rota, performance and Reports */
   'nav.reports':'Reports',
   'ch.reports':'Which pharmacy’s reports?',
@@ -10435,6 +10560,22 @@ const RULE_EVENTS = [
 ];
 const RULE_OVERRIDES_30D = {"IX:Aspirin|Ibuprofen":[120,41],"DUP:acid":[88,30],"DUP:antihistamine":[64,29],"IX:Clopidogrel|Omeprazole":[35,4],"IX:Paracetamol|Warfarin":[40,5],"IX:Clarithromycin|Simvastatin":[6,0]};
 /* RULES:END */
+/* EXCHANGE:BEGIN */
+const EXCHANGE_KM = 6;
+const EXCHANGE_WINDOW_DAYS = 90;
+const PHARMACY_LOC = {"P1":[33.305,44.42],"P2":[33.338,44.399],"P3":[33.29,44.35],"P4":[33.348,44.35],"P5":[33.32,44.43],"P6":[33.315,44.345],"P7":[33.279,44.383],"P8":[33.334,44.455],"P9":[33.316,44.345]};
+const EXCHANGE_SEED = [
+  {"id":"X001","pharmacy":"P7","by":"layla@example.com","code":"5000000001071","months":1,"qty":8,"stock":14,"price":7500,"note":{"en":"Sealed boxes, kept at room temperature.","ar":"علب مغلقة، محفوظة بدرجة حرارة الغرفة."},"daysAgo":3},
+  {"id":"X002","pharmacy":"P8","by":"layla@example.com","code":"5000000001194","months":1,"qty":12,"stock":12,"price":9000,"note":{"en":"Whole packs only.","ar":"علب كاملة فقط."},"daysAgo":1},
+  {"id":"X003","pharmacy":"P9","by":"layla@example.com","code":"5000000001316","months":1,"qty":5,"stock":5,"price":11000,"note":{"en":"","ar":""},"daysAgo":2}
+];
+function distanceKm(a, b) {
+  const R = 6371, rad = x => x * Math.PI / 180;
+  const dLat = rad(b[0] - a[0]), dLng = rad(b[1] - a[1]);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+/* EXCHANGE:END */
 /* HISTORY:BEGIN */
 const SHIFT_GRACE_MIN = 60;
 const HISTORY_DAYS = 35;
@@ -10722,7 +10863,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0017';
+const VERSION = 'App_v0.0018';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -10800,6 +10941,8 @@ function screenAllowed(screen, role) {
   if (STOCK_SCREENS.includes(screen)) return owns || granted('stock');
   if (screen === 'drawer') return owns || granted('sell');
   if (screen === 'team') return owns;
+  /* v0.0018: the owner's by default, or granted. */
+  if (screen === 'exchange') return owns || granted('exchange');
   /* v0.0017: the Reports are the owner's alone — not a Manager role's. */
   if (screen === 'reports') return owns && !!myPharmacies().length;
   if (screen === 'activity') return role === 'pharmacist' || (role === 'owner' && role === S.role && workPharmacies().length > 0);
@@ -10951,6 +11094,8 @@ const S = {
   staff: [], openStaff: null, teamDay: null, teamPerson: null, teamNote: null,
   /* v0.0017 — shifts, the history the server holds, the rota, the owner's
      sharing switch, and the period the figures are read for. */
+  /* v0.0018 — the near-expiry exchange: listings, and requests for them. */
+  exchange: { listings:[], requests:[] }, exOpen: null, exErr: null,
   shifts: [], pastSales: [], rota: {}, reportsShared: {}, perf: { kind:'week', anchor:null }, rotaEdit: null, claimErr: null, openShift: null,
   customRoles: [], roleDraft: null,
   /* v0.0016 — each pharmacy's own patients (P8), warnings quieted for them,
@@ -12360,7 +12505,7 @@ function pharmacyBoard() {
 }
 
 /* The screens that show one pharmacy at a time, with the tab strip. */
-const PHARMACY_SCOPED = ['till', 'drawer', 'team', 'activity', 'reports', 'stock', 'count', 'import', 'orders', 'suppliers', 'register', 'labels'];
+const PHARMACY_SCOPED = ['till', 'drawer', 'team', 'activity', 'reports', 'exchange', 'stock', 'count', 'import', 'orders', 'suppliers', 'register', 'labels'];
 function setPharmacy(id) {
   /* A cart belongs to the pharmacy it was rung up in. Switching tabs does not
      carry it to another pharmacy's till; it is set aside, and that is recorded. */
@@ -12809,6 +12954,8 @@ function staffHome(tabs) {
     myInvitesCard() +
     bannerFor('home') +
     linkCard('till', t('hm.checkRx'), t('hm.checkRxS'), "goto('till')") +
+    /* v0.0018: for someone the owner granted the exchange. */
+    exchangeLink(currentPharmacy()) +
     (currentPharmacy() && worksAt(currentPharmacy().id) ? '' :
       '<div class="card card-pad sh-noteam"><div class="sh-row"><span class="soon-ico">' + icon('clock') + '</span><div style="flex:1;min-width:0;">' +
       '<p class="sh-state">' + esc(t('sh.checkIn')) + '</p><p class="sh-sub">' + esc(t('sh.noTeam')) + '</p></div></div></div>') +
@@ -15157,6 +15304,231 @@ function seedAttendance() {
   log('checkIn', sh.in, sh.email, sh, { how:'checkin' });
 }
 
+/* ==========================================================================
+   v0.0018 — THE NEAR-EXPIRY EXCHANGE (W22)
+
+   A pharmacy's batches inside the near-expiry window can be offered to
+   pharmacies nearby — listed per batch, by choice, never automatically.
+   Owners by default; the owner can grant it (v0.0015).
+
+   - Nearby is a distance (EXCHANGE_KM), not a district.
+   - A listing says what, how many, the expiry month and a price per box. It
+     names the pharmacy only to a pharmacy that asks: a near-expiry list says
+     something about a pharmacy's stock and sales.
+   - Controlled substances and precursors are never listed: moving them
+     between pharmacies is a regulated transfer with its own register.
+   - No money passes through Saydali+. The two pharmacies settle between
+     themselves; what the platform records is the stock moving — out of one
+     pharmacy when it is handed over, into the other when it is received,
+     each a movement at its own end.
+   ========================================================================== */
+
+let EX_SEQ = 0;
+const exListings = () => (S.exchange || {}).listings || [];
+const exRequests = () => (S.exchange || {}).requests || [];
+const exListing = id => exListings().find(x => x.id === id) || null;
+const exKm = (a, b) => PHARMACY_LOC[a] && PHARMACY_LOC[b] ? distanceKm(PHARMACY_LOC[a], PHARMACY_LOC[b]) : Infinity;
+const kmFmt = km => km < 1 ? '< 1' : String(Math.round(km * 10) / 10);
+/* Controlled or a precursor: never on the exchange. */
+const exBarred = code => controlsOf(productByCode(code)).length > 0;
+const inExchangeWindow = ym => !!ym && !isExpired(ym) && expiryEnd(ym) - nowMs() <= EXCHANGE_WINDOW_DAYS * 864e5;
+/* What of a listing is still to be had: less what was agreed or handed over. */
+const exTaken = l => exRequests().filter(r => r.listing === l.id && ['agreed', 'handed', 'received'].includes(r.state)).reduce((n, r) => n + r.qty, 0);
+const exLeft = l => Math.max(0, l.qty - exTaken(l));
+/* What of a batch is already on offer, so it is not offered twice. */
+const exListedOf = batchId => exListings().filter(l => l.batch === batchId && l.state === 'open').reduce((n, l) => n + exLeft(l), 0);
+
+function exLog(kind, phId, detail) {
+  S.tillLog.push(Object.assign({ kind, at:nowIso(), by:S.email, pharmacy:phId, drawer:null, device:S.device }, detail || {}));
+}
+
+/* The pharmacy's batches that could go on the exchange. */
+function exCandidates(phId) {
+  return S.batches.filter(b => b.pharmacy === phId && b.kind === 'stock' && inExchangeWindow(b.expiry))
+    .map(b => ({ b, qty:batchQty(b.id), listed:exListedOf(b.id), barred:exBarred(b.code) }))
+    .filter(x => x.qty > 0)
+    .sort((x, y) => expiryEnd(x.b.expiry) - expiryEnd(y.b.expiry));
+}
+function exList(batchId, qty, price, note) {
+  const b = S.batches.find(x => x.id === batchId);
+  if (!b || !can('exchange', b.pharmacy)) return null;
+  if (exBarred(b.code) || b.kind !== 'stock' || !inExchangeWindow(b.expiry)) return null;
+  qty = Math.round(Number(qty)); price = price === '' || price == null ? null : Math.round(Number(price));
+  if (!(qty > 0) || qty > batchQty(b.id) - exListedOf(b.id) || (price != null && !(price > 0))) return null;
+  const l = { id:'X' + String(EX_SEQ = Math.max(EX_SEQ, exListings().length) + 1).padStart(3, '0'), pharmacy:b.pharmacy, batch:b.id, code:b.code,
+    expiry:b.expiry, qty, price, note:note ? { en:note, ar:note } : { en:'', ar:'' }, at:nowIso(), by:S.email, state:'open' };
+  S.exchange.listings.push(l);
+  exLog('exListed', b.pharmacy, { listing:l.id, code:b.code, qty, price });
+  return l;
+}
+function exListForm(batchId) {
+  const q = (document.getElementById('ex-qty-' + batchId) || {}).value;
+  const p = ((document.getElementById('ex-price-' + batchId) || {}).value || '').trim();
+  const n = ((document.getElementById('ex-note-' + batchId) || {}).value || '').trim();
+  const l = exList(batchId, q, p, n);
+  if (!l) { S.exErr = batchId; render(); return; }
+  S.exErr = null; S.exOpen = null; toast(t('ex.listed')); render();
+}
+function exWithdraw(id) {
+  const l = exListing(id);
+  if (!l || l.state !== 'open' || !can('exchange', l.pharmacy)) return false;
+  l.state = 'withdrawn';
+  exRequests().filter(r => r.listing === id && r.state === 'asked').forEach(r => { r.state = 'declined'; });
+  exLog('exWithdrawn', l.pharmacy, { listing:id, code:l.code });
+  render(); return true;
+}
+
+/* What a pharmacy sees of the others: open, unexpired, nearby, never its own. */
+function exNearby(phId) {
+  return exListings().filter(l => l.state === 'open' && l.pharmacy !== phId && !isExpired(l.expiry) && exLeft(l) > 0 &&
+      exKm(phId, l.pharmacy) <= EXCHANGE_KM)
+    .sort((a, b) => exKm(phId, a.pharmacy) - exKm(phId, b.pharmacy) || expiryEnd(a.expiry) - expiryEnd(b.expiry));
+}
+/* The pharmacy is named to a pharmacy that has asked, and not before. */
+const exAsked = (l, phId) => exRequests().some(r => r.listing === l.id && r.from === phId);
+function exAsk(listingId, phId, qty) {
+  const l = exListing(listingId);
+  phId = phId || (currentPharmacy() || {}).id;
+  if (!l || !phId || !can('exchange', phId) || l.state !== 'open' || l.pharmacy === phId || exKm(phId, l.pharmacy) > EXCHANGE_KM) return null;
+  qty = Math.round(Number(qty));
+  if (!(qty > 0) || qty > exLeft(l) || exRequests().some(r => r.listing === l.id && r.from === phId && ['asked', 'agreed', 'handed'].includes(r.state))) return null;
+  const r = { id:'XR' + String(exRequests().length + 1).padStart(3, '0'), listing:l.id, from:phId, by:S.email, qty, at:nowIso(), state:'asked' };
+  S.exchange.requests.push(r);
+  exLog('exAsked', phId, { request:r.id, listing:l.id, code:l.code, qty, to:l.pharmacy });
+  return r;
+}
+function exAskForm(listingId) {
+  const r = exAsk(listingId, null, (document.getElementById('ex-ask-' + listingId) || {}).value);
+  if (!r) { S.exErr = listingId; render(); return; }
+  S.exErr = null; toast(t('ex.asked')); render();
+}
+/* The side that listed decides. */
+function exDecide(reqId, agree) {
+  const r = exRequests().find(x => x.id === reqId), l = r && exListing(r.listing);
+  if (!r || !l || r.state !== 'asked' || !can('exchange', l.pharmacy)) return false;
+  if (agree && r.qty > exLeft(l)) return false;
+  r.state = agree ? 'agreed' : 'declined'; r.decidedAt = nowIso(); r.decidedBy = S.email;
+  exLog(agree ? 'exAgreed' : 'exDeclined', l.pharmacy, { request:r.id, listing:l.id, code:l.code, qty:r.qty, with:r.from });
+  render(); return true;
+}
+/* Handed over: out of the listing pharmacy's batch — a movement at its end. */
+function exHandOver(reqId) {
+  const r = exRequests().find(x => x.id === reqId), l = r && exListing(r.listing);
+  if (!r || !l || r.state !== 'agreed' || !can('exchange', l.pharmacy)) return false;
+  const mv = addMovement({ pharmacy:l.pharmacy, code:l.code, batch:l.batch, qty:-r.qty, kind:'exchangeOut', ref:r.id, to:r.from });
+  r.state = 'handed'; r.handedAt = nowIso(); r.outMove = mv.id;
+  if (exLeft(l) === 0 && !exRequests().some(x => x.listing === l.id && ['asked', 'agreed'].includes(x.state))) l.state = 'closed';
+  exLog('exHanded', l.pharmacy, { request:r.id, listing:l.id, code:l.code, qty:r.qty, with:r.from });
+  render(); return true;
+}
+/* Received: into a batch of the same expiry at the receiving pharmacy, at the
+   agreed price as its cost — a movement at that end. */
+function exReceive(reqId) {
+  const r = exRequests().find(x => x.id === reqId), l = r && exListing(r.listing);
+  if (!r || !l || r.state !== 'handed' || !can('exchange', r.from)) return false;
+  const b = newBatch(r.from, l.code, { expiry:l.expiry });
+  const mv = addMovement({ pharmacy:r.from, code:l.code, batch:b.id, qty:r.qty, kind:'exchangeIn', ref:r.id, from:l.pharmacy, unitCost:l.price });
+  r.state = 'received'; r.receivedAt = nowIso(); r.inMove = mv.id; r.batch = b.id;
+  exLog('exReceived', r.from, { request:r.id, listing:l.id, code:l.code, qty:r.qty, with:l.pharmacy });
+  render(); return true;
+}
+
+/* ---------- The screen ---------- */
+
+const exPrice = l => l.price == null ? t('ex.priceAsk') : t('ex.pricePer', { amt:iqd(l.price) });
+function exReqState(r) { return t('ex.st.' + r.state); }
+function screenExchange() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'exchange');
+  const cands = exCandidates(ph.id), mine = exListings().filter(l => l.pharmacy === ph.id && l.state !== 'withdrawn');
+  const incoming = exRequests().filter(r => { const l = exListing(r.listing); return l && l.pharmacy === ph.id && ['asked', 'agreed'].includes(r.state); });
+  const outgoing = exRequests().filter(r => r.from === ph.id && ['asked', 'agreed', 'handed'].includes(r.state));
+  const near = exNearby(ph.id);
+  const row = (title, sub, right) => '<div class="row ex-row"><span class="row-body"><span class="row-title" style="display:block;">' + title + '</span>' +
+    '<span class="row-sub" style="display:block;">' + sub + '</span></span>' + (right || '') + '</div>';
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="banner banner-indigo ex-rules">' + icon('clipboard') + '<p>' + esc(t('ex.rules', { km:EXCHANGE_KM })) + '</p></div>' +
+
+    (incoming.length ? '<p class="section-eyebrow">' + esc(t('ex.incomingT')) + '</p><div class="card ex-incoming">' + incoming.map(r => {
+      const l = exListing(r.listing), who = PHARMACIES[r.from];
+      return row(esc(productName(l.code)) + ' × ' + fmt(r.qty), esc(t('ex.fromWho', { ph:who ? L(who.name) : r.from, km:kmFmt(exKm(ph.id, r.from)) })) + ' · ' + esc(exReqState(r)),
+        '<span class="ex-acts">' + (r.state === 'asked'
+          ? '<button class="btn-small ex-agree" onclick="exDecide(' + attr(r.id) + ', true)">' + esc(t('ex.agree')) + '</button><button class="btn-ghost ex-decline" onclick="exDecide(' + attr(r.id) + ', false)">' + esc(t('ex.decline')) + '</button>'
+          : '<button class="btn-small ex-hand" onclick="exHandOver(' + attr(r.id) + ')">' + esc(t('ex.handOver')) + '</button>') + '</span>');
+    }).join('') + '</div><p class="inline-note">' + esc(t('ex.noMoney')) + '</p>' : '') +
+
+    (outgoing.length ? '<p class="section-eyebrow">' + esc(t('ex.outgoingT')) + '</p><div class="card ex-outgoing">' + outgoing.map(r => {
+      const l = exListing(r.listing), who = PHARMACIES[l.pharmacy];
+      return row(esc(productName(l.code)) + ' × ' + fmt(r.qty), esc(t('ex.fromWho', { ph:who ? L(who.name) : l.pharmacy, km:kmFmt(exKm(ph.id, l.pharmacy)) })) + ' · ' + esc(exReqState(r)) + ' · ' + esc(exPrice(l)),
+        r.state === 'handed' ? '<span class="ex-acts"><button class="btn-small ex-receive" onclick="exReceive(' + attr(r.id) + ')">' + esc(t('ex.received')) + '</button></span>' : '');
+    }).join('') + '</div>' : '') +
+
+    '<p class="section-eyebrow">' + esc(t('ex.nearT', { km:EXCHANGE_KM })) + '</p>' +
+    (near.length ? '<div class="card ex-near">' + near.map(l => {
+      const asked = exAsked(l, ph.id), who = PHARMACIES[l.pharmacy], km = kmFmt(exKm(ph.id, l.pharmacy));
+      const place = asked && who ? t('ex.named', { ph:L(who.name), km }) : t('ex.anon', { d:who ? L(who.district) : '—', km });
+      return '<div class="ex-item" data-listing="' + l.id + '">' + row('<bdi>' + esc(productName(l.code)) + '</bdi>',
+          esc(t('ex.itemLine', { n:fmt(exLeft(l)), exp:fmtExpiry(l.expiry), price:exPrice(l) })) + '<br><span class="ex-place">' + esc(place) + '</span>' +
+          (L(l.note) ? '<br><span class="ex-note">' + esc(L(l.note)) + '</span>' : '')) +
+        (asked ? '<p class="inline-note ex-asked-note">' + esc(t('ex.askedNote')) + '</p>'
+          : '<div class="till-inline ex-askrow"><input id="ex-ask-' + l.id + '" type="number" inputmode="numeric" min="1" max="' + exLeft(l) + '" value="' + exLeft(l) + '" dir="ltr">' +
+            '<button class="btn-small ex-ask" onclick="exAskForm(' + attr(l.id) + ')">' + esc(t('ex.ask')) + '</button></div>' +
+            (S.exErr === l.id ? '<p class="auth-error">' + esc(t('ex.askBad', { n:exLeft(l) })) + '</p>' : '')) + '</div>';
+    }).join('') + '</div>' : '<div class="card card-pad till-empty ex-none">' + esc(t('ex.noneNear', { km:EXCHANGE_KM })) + '</div>') +
+
+    '<p class="section-eyebrow">' + esc(t('ex.mineT')) + '</p>' +
+    (mine.length ? '<div class="card ex-mine">' + mine.map(l => row('<bdi>' + esc(productName(l.code)) + '</bdi>',
+        esc(t('ex.itemLine', { n:fmt(exLeft(l)), exp:fmtExpiry(l.expiry), price:exPrice(l) })) + ' · ' + esc(t('ex.lst.' + l.state)),
+        l.state === 'open' ? '<button class="btn-ghost ex-withdraw" onclick="exWithdraw(' + attr(l.id) + ')">' + esc(t('ex.withdraw')) + '</button>' : '')).join('') + '</div>'
+      : '<div class="card card-pad till-empty">' + esc(t('ex.noMine')) + '</div>') +
+
+    '<p class="section-eyebrow">' + esc(t('ex.candT', { d:EXCHANGE_WINDOW_DAYS })) + '</p>' +
+    (cands.length ? '<div class="card ex-cands">' + cands.map(x => {
+      const free = x.qty - x.listed, open = S.exOpen === x.b.id;
+      return '<div class="ex-cand" data-batch="' + x.b.id + '">' + row('<bdi>' + esc(productName(x.b.code)) + '</bdi>',
+          esc(t('ex.candLine', { n:fmt(x.qty), exp:fmtExpiry(x.b.expiry), listed:fmt(x.listed) })),
+          x.barred ? '<span class="badge badge-alert ex-barred">' + esc(t('ex.barred')) + '</span>'
+            : free > 0 && !open ? '<button class="btn-small ex-open" onclick="S.exOpen=' + attr(x.b.id) + ';S.exErr=null;render()">' + esc(t('ex.list')) + '</button>' : '') +
+        (open ? '<div class="ex-form"><div class="own-grid">' +
+            '<label>' + esc(t('ex.qty')) + '<input id="ex-qty-' + x.b.id + '" type="number" inputmode="numeric" min="1" max="' + free + '" value="' + free + '" dir="ltr"></label>' +
+            '<label>' + esc(t('ex.price')) + '<input id="ex-price-' + x.b.id + '" type="number" inputmode="numeric" min="0" placeholder="' + esc(t('ex.pricePh')) + '" dir="ltr"></label></div>' +
+            '<input id="ex-note-' + x.b.id + '" placeholder="' + esc(t('ex.notePh')) + '">' +
+            (S.exErr === x.b.id ? '<p class="auth-error">' + esc(t('ex.listBad', { n:free })) + '</p>' : '') +
+            '<div class="till-inline"><button class="btn-primary ex-go" onclick="exListForm(' + attr(x.b.id) + ')">' + esc(t('ex.listGo')) + '</button>' +
+            '<button class="btn-ghost" onclick="S.exOpen=null;render()">' + esc(t('common.cancel')) + '</button></div>' +
+            '<p class="inline-note">' + esc(t('ex.anonNote')) + '</p></div>' : '') + '</div>';
+    }).join('') + '</div>' : '<div class="card card-pad till-empty ex-nocand">' + esc(t('ex.noCand', { d:EXCHANGE_WINDOW_DAYS })) + '</div>') +
+    '</div></div>';
+}
+/* On the Stock screen and a staff home: the way in, with what is waiting. */
+function exchangeLink(ph) {
+  if (!ph || !can('exchange', ph.id)) return '';
+  const cand = exCandidates(ph.id).filter(x => !x.barred && x.qty > x.listed).length;
+  const inc = exRequests().filter(r => { const l = exListing(r.listing); return l && l.pharmacy === ph.id && r.state === 'asked'; }).length;
+  const near = exNearby(ph.id).length;
+  return linkCard('hourglass', t('ex.title'), inc ? t('ex.linkInc', { n:inc }) : t('ex.linkSub', { c:cand, n:near }), "goto('exchange')");
+}
+
+/* ---------- The seed ---------- */
+
+function seedExchange() {
+  S.exchange = { listings:[], requests:[] };
+  EXCHANGE_SEED.forEach(x => {
+    const exp = ymOffset(x.months);
+    const b = newBatch(x.pharmacy, x.code, { expiry:exp });
+    addMovement({ pharmacy:x.pharmacy, code:x.code, batch:b.id, qty:x.stock, kind:'count', ref:'seed', by:x.by });
+    S.exchange.listings.push({ id:x.id, pharmacy:x.pharmacy, batch:b.id, code:x.code, expiry:exp, qty:x.qty, price:x.price, note:x.note,
+      at:new Date(nowMs() - x.daysAgo * 864e5).toISOString(), by:x.by, state:'open' });
+  });
+  EX_SEQ = S.exchange.listings.length;
+  /* At Al-Rahma: two batches near expiry Rahma could list, and a controlled
+     one she cannot. */
+  [['5000000001071', 10], ['3000000001448', 4]].forEach(([code, qty]) => {
+    const b = newBatch('P1', code, { expiry:ymOffset(1) });
+    addMovement({ pharmacy:'P1', code, batch:b.id, qty, kind:'count', ref:'seed', by:'rahma@example.com' });
+  });
+}
+
 function seedStock() {
   const keepMail = S.email;
   S.email = 'rahma@example.com'; S.clockShift = -3 * 864e5;
@@ -15848,7 +16220,7 @@ function closeOrder() {
 function stockChooser(tabs, next) {
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
     /* v0.0016.1: the question names the module it was asked from. */
-    '<p class="section-eyebrow">' + esc(t(next === 'team' ? 'ch.team' : next === 'drawer' ? 'ch.drawer' : next === 'reports' ? 'ch.reports' : 'st.choose')) + '</p><div class="card">' +
+    '<p class="section-eyebrow">' + esc(t(next === 'team' ? 'ch.team' : next === 'drawer' ? 'ch.drawer' : next === 'reports' ? 'ch.reports' : next === 'exchange' ? 'ch.exchange' : 'st.choose')) + '</p><div class="card">' +
     myPharmacies().map(p => '<button class="row" style="width:100%;text-align:start;" onclick="setPharmacy(' + attr(p.id) + ')">' +
       '<span class="row-body"><span class="row-title" style="display:block;">' + esc(L(p.name)) + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(L(p.district)) + '</span></span>' +
@@ -15919,6 +16291,8 @@ function screenStock() {
 
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
     barcodeSettingCard() +
+    /* v0.0018: the exchange, from the stock it is made of. */
+    exchangeLink(ph) +
     '<div class="st-summary card card-pad"><p class="st-big">' + esc(t('st.drugsCounted', { n:countedCodes.size })) + '</p>' +
       (importedCodes.size ? '<p class="st-small">' + esc(t('st.drugsImported', { n:importedCodes.size })) + '</p>' : '') +
       (shelves.length ? '<div class="st-shelves">' + shelves.map(([s, v]) =>
@@ -17015,7 +17389,8 @@ function screenLabels() {
 const PERMS = ['sell', 'voids', 'discounts', 'prices', 'stock', 'writeoffs', 'cashVariance', 'receipt', 'market', 'ownItems', 'patients', 'exchange'];
 const DEFAULT_GRANTS = ['sell'];
 /* Grantable only once the feature exists. */
-const PERM_LATER = { exchange:'v0.0018' };
+/* v0.0018: the exchange exists, so it can be granted; nothing waits now. */
+const PERM_LATER = {};
 
 const ownsPharmacy = (phId, mail) => ownedIds(ACCOUNTS[mail || S.email]).includes(phId);
 const staffOf = phId => (S.staff || []).filter(x => x.pharmacy === phId);
@@ -17174,6 +17549,14 @@ function timelineText(e) {
     case 'rotaSet': return e.from ? t('tk.rotaSet', { who:e.name, from:rotaText(e.from), to:rotaText(e.to) }) : t('tk.rotaSetNew', { who:e.name, to:rotaText(e.to) });
     case 'reportsShared': return t('tk.reportsShared');
     case 'reportsUnshared': return t('tk.reportsUnshared');
+    /* v0.0018 */
+    case 'exListed': return t('tk.exListed', { name:productName(e.code), n:e.qty });
+    case 'exWithdrawn': return t('tk.exWithdrawn', { name:productName(e.code) });
+    case 'exAsked': return t('tk.exAsked', { name:productName(e.code), n:e.qty });
+    case 'exAgreed': return t('tk.exAgreed', { name:productName(e.code), n:e.qty, ph:PHARMACIES[e.with] ? L(PHARMACIES[e.with].name) : e.with });
+    case 'exDeclined': return t('tk.exDeclined', { name:productName(e.code), ph:PHARMACIES[e.with] ? L(PHARMACIES[e.with].name) : e.with });
+    case 'exHanded': return t('tk.exHanded', { name:productName(e.code), n:e.qty, ph:PHARMACIES[e.with] ? L(PHARMACIES[e.with].name) : e.with });
+    case 'exReceived': return t('tk.exReceived', { name:productName(e.code), n:e.qty, ph:PHARMACIES[e.with] ? L(PHARMACIES[e.with].name) : e.with });
     default: { const k = 'tk.' + e.kind, s = t(k); return s === k ? (t('au.' + e.kind) === 'au.' + e.kind ? e.kind : t('au.' + e.kind)) : s; }
   }
 }
@@ -18695,6 +19078,7 @@ const SCREENS = {
   team:          { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); },
                    title:()=>{ const ph = currentPharmacy(), x = S.openStaff && ph && staffOf(ph.id).find(y => y.id === S.openStaff); return x ? staffName(x) : t('nav.team'); }, body:screenTeam },
   activity:      { eyebrow:()=>currentName(), title:()=>t('nav.activity'), body:screenActivity },
+  exchange:      { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('ex.title'), body:screenExchange },
   reports:       { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('nav.reports'), body:screenReports },
   labels:        { eyebrow:()=>t('nav.stock'), title:()=>t('shl.titleShort'), body:screenLabels },
   import:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.importSheet'), body:screenImport },
@@ -18865,6 +19249,7 @@ function sidebarGroups() {
 function ownerGroups() {
   const groups = [
     { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],['products','barcode','nav.products'],
+                                 ['exchange','hourglass','ex.title'],
                                  ['team','users','nav.team'],['reports','chart','nav.reports'],
                                  ['post','plus','nav.post'],
                                  ['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
@@ -19336,7 +19721,7 @@ function toggleTakesShifts(){
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why demo/check.mjs
    asserts the file named here exists on disk. Bump the CRM, change this line. */
-const PEER_CRM = '../crm/saydali-crm_v0.0017.html';
+const PEER_CRM = '../crm/saydali-crm_v0.0018.html';
 function openCrm(){ window.open(PEER_CRM, '_blank', 'noopener'); }
 function setAuth(s){ authScreen = s; authError = null; render(); }
 function chooseRole(r){ signupRole = r; authScreen = 'signup'; render(); }
@@ -19682,6 +20067,7 @@ restoreLogos();
 seedStock();
 seedTeams();
 seedAttendance();
+seedExchange();
 render();
 </script>
 </body>

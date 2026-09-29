@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#2D2A6E">
 <title>Saydali+ CRM</title>
-<meta name="version" content="CRM_v0.0017">
+<meta name="version" content="CRM_v0.0018">
 <!--
   Saydali+ CRM — the operator's side of the marketplace, in one file.
   Open it in a browser: no server, no build.
@@ -768,7 +768,7 @@
    and a drug really has an Arabic name. Those are fields, not translations.
    ========================================================================== */
 
-const VERSION = 'CRM_v0.0017';
+const VERSION = 'CRM_v0.0018';
 
 const STRINGS = {
   'suite':'CRM','openApp':'App',
@@ -8515,6 +8515,22 @@ const RULE_EVENTS = [
 ];
 const RULE_OVERRIDES_30D = {"IX:Aspirin|Ibuprofen":[120,41],"DUP:acid":[88,30],"DUP:antihistamine":[64,29],"IX:Clopidogrel|Omeprazole":[35,4],"IX:Paracetamol|Warfarin":[40,5],"IX:Clarithromycin|Simvastatin":[6,0]};
 /* RULES:END */
+/* EXCHANGE:BEGIN */
+const EXCHANGE_KM = 6;
+const EXCHANGE_WINDOW_DAYS = 90;
+const PHARMACY_LOC = {"P1":[33.305,44.42],"P2":[33.338,44.399],"P3":[33.29,44.35],"P4":[33.348,44.35],"P5":[33.32,44.43],"P6":[33.315,44.345],"P7":[33.279,44.383],"P8":[33.334,44.455],"P9":[33.316,44.345]};
+const EXCHANGE_SEED = [
+  {"id":"X001","pharmacy":"P7","by":"layla@example.com","code":"5000000001071","months":1,"qty":8,"stock":14,"price":7500,"note":{"en":"Sealed boxes, kept at room temperature.","ar":"علب مغلقة، محفوظة بدرجة حرارة الغرفة."},"daysAgo":3},
+  {"id":"X002","pharmacy":"P8","by":"layla@example.com","code":"5000000001194","months":1,"qty":12,"stock":12,"price":9000,"note":{"en":"Whole packs only.","ar":"علب كاملة فقط."},"daysAgo":1},
+  {"id":"X003","pharmacy":"P9","by":"layla@example.com","code":"5000000001316","months":1,"qty":5,"stock":5,"price":11000,"note":{"en":"","ar":""},"daysAgo":2}
+];
+function distanceKm(a, b) {
+  const R = 6371, rad = x => x * Math.PI / 180;
+  const dLat = rad(b[0] - a[0]), dLng = rad(b[1] - a[1]);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+/* EXCHANGE:END */
 /* HISTORY:BEGIN */
 const SHIFT_GRACE_MIN = 60;
 const HISTORY_DAYS = 35;
@@ -11262,7 +11278,10 @@ function sqlTables() {
       confirmed:DATA.barcodeConfirmed[c.barcode] && DATA.barcodeConfirmed[c.barcode].reg === c.reg ? 1 : 0 })),
     /* v0.0017 — the pharmacy totals owners share, by day: only pharmacies
        whose owner shares them, and never a person's figures. */
-    pharmacy_reports: sharedDailyRows()
+    pharmacy_reports: sharedDailyRows(),
+    /* v0.0018 — the near-expiry exchange's listings. No payments: none pass
+       through the platform. */
+    exchange_listings: exchangeRows()
   };
 }
 
@@ -12401,7 +12420,7 @@ function closeRecord() { S.record = null; hideTip(); render(); }
 /* The sibling build. Files carry their version in the name, so this is the one
    thing a version bump can silently break — which is why crm/check.mjs asserts
    the file named here exists on disk. Bump the app, change this line. */
-const PEER_APP = '../demo/saydali-plus_v0.0017.html';
+const PEER_APP = '../demo/saydali-plus_v0.0018.html';
 function openApp(asEmail) {
   const url = PEER_APP + (asEmail ? '#as=' + encodeURIComponent(asEmail) : '');
   window.open(url, '_blank', 'noopener');
@@ -13125,6 +13144,25 @@ function sharedDailyRows() {
     Object.keys(by).sort().forEach(k => out.push(by[k]));
   });
   return out;
+}
+
+/* ==========================================================================
+   20. THE NEAR-EXPIRY EXCHANGE (v0.0018, W22)
+   What pharmacies listed, as a report table. The platform matches; it takes
+   no payment and records none — the two pharmacies settle between
+   themselves, and the stock moving is recorded in their own records. So the
+   table holds listings (what, how many, when it expires, the asking price),
+   and nothing about who paid whom.
+   ========================================================================== */
+
+function exchangeRows() {
+  const ym = k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + k); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+  return EXCHANGE_SEED.map(x => {
+    const p = PRODUCTS.find(q => q.barcode === x.code);
+    const on = new Date(); on.setDate(on.getDate() - x.daysAgo);
+    return { listing_id:x.id, pharmacy_id:x.pharmacy, product_code:x.code, product:p ? p.name.en : x.code, expiry:ym(x.months),
+      qty:x.qty, price_iqd:x.price, listed_on:on.toISOString().slice(0, 10) };
+  });
 }
 
 /* ==========================================================================

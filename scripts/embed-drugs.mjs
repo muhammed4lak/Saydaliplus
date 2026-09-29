@@ -20,6 +20,7 @@ import { dirname, join } from 'node:path';
 import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE, CATEGORIES, TAGS, RULES, OUTSIDE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
 import { HISTORY_TEAMS, HISTORY_AUTO, HISTORY_DAYS, REPORTS_SHARED, SHIFT_GRACE_MIN, historyFor } from '../data/history.mjs';
+import { EXCHANGE_KM, EXCHANGE_WINDOW_DAYS, PHARMACY_LOC, EXCHANGE_SEED, distanceKm } from '../data/exchange.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -259,6 +260,28 @@ const catalogueBlock = C_BEGIN + '\n' +
     if (a.approval && !a.claim) problems.push('history auto: an approval needs a claim first');
   }
 }
+/* v0.0018 — the exchange's seed listings: products that exist, pharmacies
+   with a place, and never a controlled substance or a precursor. */
+{
+  const controlled = new Set(CONTROLLED.substances.map(c => c.name.toLowerCase()));
+  const ids = new Set();
+  for (const x of EXCHANGE_SEED) {
+    const p = PRODUCTS.find(q => q.barcode === x.code);
+    if (ids.has(x.id)) problems.push(`exchange ${x.id}: id twice`);
+    ids.add(x.id);
+    if (!p) problems.push(`exchange ${x.id}: no product ${x.code}`);
+    else if (p.molecules.some(m => controlled.has(m.sci.toLowerCase()))) problems.push(`exchange ${x.id}: ${p.name.en} is controlled or a precursor — it cannot be listed`);
+    if (!PHARMACY_LOC[x.pharmacy]) problems.push(`exchange ${x.id}: no place for ${x.pharmacy}`);
+    if (!(x.qty > 0 && x.qty <= x.stock)) problems.push(`exchange ${x.id}: listed more than it holds`);
+    if (!(x.months >= 0 && x.months <= 2)) problems.push(`exchange ${x.id}: not near its expiry`);
+  }
+}
+const exchangeBlock = '/* EXCHANGE:BEGIN */\n' +
+  'const EXCHANGE_KM = ' + EXCHANGE_KM + ';\n' +
+  'const EXCHANGE_WINDOW_DAYS = ' + EXCHANGE_WINDOW_DAYS + ';\n' +
+  'const PHARMACY_LOC = ' + JSON.stringify(PHARMACY_LOC) + ';\n' +
+  'const EXCHANGE_SEED = [\n' + EXCHANGE_SEED.map(x => '  ' + JSON.stringify(x)).join(',\n') + '\n];\n' +
+  distanceKm.toString() + '\n/* EXCHANGE:END */';
 const historyBlock = '/* HISTORY:BEGIN */\n' +
   'const SHIFT_GRACE_MIN = ' + SHIFT_GRACE_MIN + ';\n' +
   'const HISTORY_DAYS = ' + HISTORY_DAYS + ';\n' +
@@ -324,8 +347,11 @@ for (const rel of targets) {
   const ha = out.indexOf('/* HISTORY:BEGIN */'), hb = out.indexOf('/* HISTORY:END */');
   if (ha < 0 || hb < 0) { console.error(`${rel}: no HISTORY markers — nothing written`); process.exit(1); }
   out = out.slice(0, ha) + historyBlock + out.slice(hb + '/* HISTORY:END */'.length);
+  const xa = out.indexOf('/* EXCHANGE:BEGIN */'), xb = out.indexOf('/* EXCHANGE:END */');
+  if (xa < 0 || xb < 0) { console.error(`${rel}: no EXCHANGE markers — nothing written`); process.exit(1); }
+  out = out.slice(0, xa) + exchangeBlock + out.slice(xb + '/* EXCHANGE:END */'.length);
   writeFileSync(path, out);
   console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : '') +
     (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : '') +
-    `, and the rules ledger (${LEDGER.rules.length} ledger rules, ${LEDGER.events.length} events), and the attendance history`);
+    `, and the rules ledger (${LEDGER.rules.length} ledger rules, ${LEDGER.events.length} events), the attendance history and the exchange`);
 }

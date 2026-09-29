@@ -19,7 +19,7 @@ npm run dev
 ```
 
 ```bash
-npm test          # 155 unit tests — the business rules, the drug reference and the attendance history
+npm test          # 159 unit tests — the business rules, the drug reference, the attendance history and the exchange
 npm run typecheck
 npm run build
 npm run drugs         # re-embed data/drugs.mjs into both single-file builds
@@ -628,8 +628,8 @@ npm run test:e2e       # Playwright, against the seeded database
   email, logbook transitions, reliability, AI response parsing, Arabic script, who may do what at a pharmacy).
 - 190 policy assertions run against a real Postgres as real users (`supabase/tests/run.sh`), 60 of them on
   owners, teams and roles (migration 0015).
-- 759 behavioural assertions driving the app build in a real browser
-  (`npm run check:app`), and 300 driving the CRM (`npm run check:crm`).
+- 774 behavioural assertions driving the app build in a real browser
+  (`npm run check:app`), and 303 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the
   document gate on verification, the handoff gate, and the overnight fee

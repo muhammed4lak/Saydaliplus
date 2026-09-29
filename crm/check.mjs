@@ -1497,6 +1497,20 @@ console.log('\nwhat an owner shares of their Reports (v0.0017)');
      await g.evaluate(() => { try { const r = runSQL("SELECT pharmacy_id, SUM(sales_iqd) AS s FROM pharmacy_reports GROUP BY pharmacy_id"); return (r.rows || r).length === 3; } catch (e) { return String(e); } }));
 }
 
+console.log('\nthe near-expiry exchange (v0.0018)');
+{
+  const g = await open();
+  ok('the listings are a report table — what, how many, the expiry and the asking price',
+     await g.evaluate(() => { const rows = sqlTables().exchange_listings; return rows.length === 3 && rows.every(r => r.qty > 0 && /^\d{4}-\d{2}$/.test(r.expiry)); }));
+  ok('NO MONEY PASSES THROUGH SAYDALI+: no table holds a payment, a buyer or a settlement',
+     await g.evaluate(() => { const tb = sqlTables(); return Object.keys(tb.exchange_listings[0]).join() === 'listing_id,pharmacy_id,product_code,product,expiry,qty,price_iqd,listed_on' &&
+       !Object.keys(tb).some(k => /exchange_(payment|request|settle)/.test(k)); }));
+  ok('no listed product is a controlled substance or a precursor',
+     await g.evaluate(names => sqlTables().exchange_listings.every(r => { const p = PRODUCTS.find(q => q.barcode === r.product_code);
+       return p && !p.molecules.some(m => names.includes(m.sci.toLowerCase())); }),
+       JSON.parse(readFileSync(join(here, '..', 'data', 'controlled.json'), 'utf8')).substances.map(c => c.name.toLowerCase())));
+}
+
 console.log('\nnarrow viewport');
 const m = await open(430, 900);
 await tab(m, 'orders');

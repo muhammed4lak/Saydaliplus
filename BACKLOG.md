@@ -2107,6 +2107,46 @@ As planned (W18, the v0.0017 entry above) with the decisions of 28 Sep 2026.
   on their own shift: the first check tried it as a staff member, who is
   refused for another reason).
 
+### v0.0018 as built — the near-expiry exchange (W22)
+
+As planned, with the open points of W22 settled as the v0.0018 entry above
+has them.
+- **What can be listed:** a pharmacy's own batches within **90 days** of
+  expiry (the app's near-expiry window) — per batch, by the owner's choice,
+  never automatically: how many boxes (never more than the batch holds, less
+  what is already on offer), a price a box or none ("price on asking"), and a
+  note. **Controlled substances and precursors cannot be listed** — the batch
+  says so and the listing is refused (Lyrica, pregabalin, at Al-Rahma).
+- **Who sees it: pharmacies within 6 km**, by distance from a district's
+  rough centre, not by district (`data/exchange.mjs`) — Karrada sees Jadriya
+  (4.5 km) and Zayouna (4.6 km), not Mansour (7.1 km). Never your own; not
+  once withdrawn, all taken, or past its expiry. **A listing names no
+  pharmacy** ("A pharmacy in Jadriya · 4.5 km") until you ask; then each side
+  is named to the other.
+- **The steps:** *Ask for it* (how many) → the listing pharmacy *Agrees* or
+  *Declines* → *Handed over*, which takes it **out of their batch as a stock
+  movement** (`exchangeOut`) → the other pharmacy's *Received*, which puts it
+  **into a new batch of the same expiry as a stock movement** (`exchangeIn`,
+  the agreed price as its cost). Every step is on each pharmacy's own
+  timeline.
+- **No money passes through Saydali+**: nothing records a payment; the screen
+  says to settle between you.
+- **Who:** the owner by default; grantable to a team member ("Near-expiry
+  exchange" is no longer "arrives later"), and in the Manager role. The way in
+  is on the Stock screen and in the sidebar, and on a staff home for someone
+  granted it.
+- **The CRM:** the listings as a report table (`exchange_listings`: what, how
+  many, the expiry, the asking price) — no table of payments, buyers or
+  settlements.
+- **Seeded:** Layla lists Augmentin at Al-Shifa, Lipitor at Al-Hayat and
+  Nexium at Dar Al-Dawa; Al-Rahma has Augmentin and Lyrica near expiry to list
+  (and refuse).
+- **Not in the codebase yet:** the permission list there still says the
+  exchange arrives later (`LATER_PERMISSIONS`); it changes with the catch-up.
+- Checks: app 774 (15 new; 4 older ones updated — the exchange can be granted
+  now, the Manager role holds it, and the seed adds near-expiry batches), CRM
+  303 (3 new), unit 159 (4 new); typecheck clean.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
