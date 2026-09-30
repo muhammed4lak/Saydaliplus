@@ -2148,6 +2148,33 @@ has them.
   303 (3 new), unit 159 (4 new); typecheck clean. Mutation-tested on a copy:
   12 planted faults, all caught on the first run.
 
+### After v0.0018 — answered 30 Sep 2026
+
+- **The choices made in v0.0017 and v0.0018 stand:** a 60-minute grace
+  period (12 hours on a day not on the rota); staff see their own figures,
+  not the pharmacy's average; weeks run Saturday to Friday; the CRM gets the
+  last 30 days' pharmacy totals; nearby is 6 km from a district's centre; the
+  listing window is 90 days; the codebase's permission list changes with the
+  catch-up.
+- **Saydali+ must be able to remove a bad listing** — v0.0018 left the CRM
+  read-only. Recorded as A1 below.
+- **Reminders wait until after v0.0019.**
+
+### v0.0018.1 — reported 30 Sep 2026: the CRM takes a bad listing down
+
+**Not built.** **A1. A listing Saydali+ can remove.** In the CRM, a new
+*Exchange* module lists every listing (pharmacy, product, expiry, how many,
+price, state) with *Take down*: a reason is required (from a short list —
+controlled or regulated, wrong product or expiry, suspected counterfeit or
+unsafe, other — plus words), and the take-down is on the record with who and
+when. In the app the listing leaves every nearby pharmacy's list at once; the
+listing pharmacy sees it as *Removed by Saydali+* with the reason. A request
+already agreed is cancelled with the same reason; stock already handed over
+stays where it is (the movements happened). *Needs deciding* with v0.0019's
+decisions: which CRM roles can take down (proposed: owner admin and admin,
+not employees), and whether a removed listing can be listed again after
+correction (proposed: yes, as a new listing).
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -2166,9 +2193,12 @@ rediscovered as new or lost when circumstances change.
 
 ## Reminders
 
-- **After v0.0017 — the phone app and the stores.** *(Brought back with
-  v0.0014's notes; **delayed to after v0.0017** on 28 Sep 2026 — every
-  reminder waits until then.)* Meanwhile: keep the hardware test on its own
+- **After v0.0019 — the phone app and the stores.** *(Brought back with
+  v0.0014's notes; delayed to after v0.0017 on 28 Sep 2026, brought back
+  with v0.0018's notes, and **delayed again to after v0.0019** on 30 Sep
+  2026 — every reminder waits until then. The steps from here to the stores
+  were set out on 30 Sep 2026; see "From the prototypes to the stores" under
+  the open decisions.)* Meanwhile: keep the hardware test on its own
   track (the printer and a wedge scanner can be tested from the web build);
   no pharmacy runs its till on a prototype. Raised 26 Sep 2026: when
   to move to React for Google Play and the App Store. The recommendation given,
@@ -2181,7 +2211,7 @@ rediscovered as new or lost when circumstances change.
   five owner conversations done; the prototypes' checks become the real app's
   acceptance tests. Needed for the stores: a Google Play developer account, an
   Apple developer account, a privacy policy covering patient data, and the
-  name (W9). **Bring this back to the user with v0.0017's notes.**
+  name (W9). **Bring this back to the user with v0.0019's notes.**
 
 ## The non-code track
 
