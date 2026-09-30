@@ -2268,6 +2268,46 @@ the owner's alone, with a reason. See "Before v0.0012" above.
 
 # Part 1 — Work
 
+### From the prototypes to the stores (set out 30 Sep 2026)
+
+The two HTML files are the specification — every screen, rule and check —
+not the product. What ships is the Next.js + Supabase codebase for the web
+and the CRM, and a React Native (Expo) app for Android and iPhone, sharing
+the business rules (`src/lib`) and the database.
+
+1. **Freeze the prototype** at a version and treat its checks as the
+   acceptance tests.
+2. **The codebase catch-up (the decided "c"):** Supabase tables and access
+   rules for everything built since the marketplace — catalogue and register,
+   Point of sale, drawer, stock, rules ledger, patients, teams, shifts,
+   Reports, the exchange — each with its database checks, as migration 0015
+   was done. The Anthropic key stays on the server.
+3. **The offline model for real:** a local database on the phone that syncs
+   (the v0.0014 rules), because Point of sale must work without a connection.
+4. **The phone app (Expo):** the screens ported, Arabic first, right to left;
+   camera scanning; Bluetooth receipt printing (after the hardware test
+   picks the printer); push notifications for what the owner must see.
+5. **The web and the CRM** on the same database, the CRM for the platform
+   team only.
+6. **Hardening:** security review and a penetration test, backups, error
+   monitoring, in-app account deletion (both stores require it).
+7. **Accounts and paperwork (non-code):** a registered business; a Google
+   Play developer account and an Apple developer account (as an
+   organisation — Apple needs a D-U-N-S number); the app's name (W9); a
+   privacy policy and terms covering patient data; a support address.
+8. **Store listings:** icon, screenshots in Arabic and English, descriptions,
+   the privacy declarations (Play's Data safety form, Apple's privacy
+   labels), why the camera and Bluetooth are needed, and demo accounts for
+   the reviewers — health-adjacent apps get a closer review.
+9. **Testing with real pharmacies:** internal testing (Play's testing tracks,
+   Apple's TestFlight) with the five pilot pharmacies, on their own devices
+   and printers.
+10. **Release:** a staged rollout; fixes to the app's code shipped as
+    over-the-air updates where the stores allow, new store builds otherwise.
+11. **Paying for it (v0.0020):** the price first; how pharmacies pay (an
+    invoice outside the app is the usual way for business software — the
+    stores' rules on in-app subscriptions to be checked before launch).
+
 ## W1. Model a pharmacy owner as a pharmacist *linked to* a pharmacy
 
 **Built — App_v0.0003 / CRM_v0.0003.** The app's `ACCOUNTS` carries `type` and
