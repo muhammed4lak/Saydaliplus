@@ -1339,7 +1339,8 @@ ok('and the CV is one tap away on Profile',
    await dk.evaluate(() => profileLinks().some(x => x[0] === 'cv')));
 ok('and they land on check-in', await dk.evaluate(() => S.screen === 'checkin'));
 ok('every marketplace screen is unreachable, not merely unlinked',
-   await dk.evaluate(() => ['browse', 'listing', 'shifts', 'handoff', 'earnings', 'applicants', 'incidents']
+   /* v0.0019: incidents are inside a pharmacy now, not the market's (A3). */
+   await dk.evaluate(() => ['browse', 'listing', 'shifts', 'handoff', 'earnings', 'applicants']
      .every(x => { goto(x); return S.screen !== x; })));
 ok('including by a render that finds itself on one',
    await dk.evaluate(() => { S.screen = 'earnings'; render(); return S.screen === 'checkin'; }));
@@ -1362,8 +1363,9 @@ ok('the Helper is still one tap from the pharmacist’s home — “Check a pres
    await dk.evaluate(() => { const c = [...document.querySelectorAll('#app-body [onclick]')].find(b => /Check a prescription/.test(b.innerText));
      return !!c && /goto\('till'\)/.test(c.getAttribute('onclick')) && !document.querySelector('.check-card'); }));
 await go(dk, 'tasks');
-ok('so do tasks, with what they will do', await dk.locator('.soon-tag').count() === 1
-   && await dk.locator('.soon-list li').count() === 3);
+/* v0.0019: tasks are real; off a team they say when they start. */
+ok('tasks, for a pharmacist on no team, say they start when they join one',
+   /Tasks start when you join a pharmacy’s team/.test(await dk.locator('#app-body').innerText()));
 ok('the relief shift a pharmacist recorded dispensing against is gone with the market',
    await dk.evaluate(() => dispensePharmacy() === null));
 
@@ -1390,7 +1392,7 @@ ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) t
 }
 ok('nothing in the sidebar leads to the market',
    await dk.evaluate(() => ![...document.querySelectorAll('#side-nav [onclick]')]
-     .some(el => /'(browse|shifts|earnings|applicants|incidents)'/.test(el.getAttribute('onclick')))));
+     .some(el => /'(browse|shifts|earnings|applicants)'/.test(el.getAttribute('onclick')))));
 await go(dk, 'post');
 ok('the post form offers a placement and nothing else',
    await dk.evaluate(() => S.postType === 'internship') && await dk.locator('.segmented').count() === 0);
@@ -3945,6 +3947,218 @@ console.log('\nthe near-expiry exchange (v0.0018)');
   await xp.setViewportSize({ width:1440, height:900 });
   ok(`the exchange does not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
   await xp.close();
+}
+
+console.log('\ntasks, incidents, late and absent, P7, the away card, reminders and take-downs (v0.0019)');
+{
+  const tp = await dk.context().newPage();
+  tp.on('pageerror', e => errs.push('pageerror (v0.0019): ' + e.message));
+  const fresh = async () => {
+    await tp.goto(darkUrl); await tp.waitForTimeout(500);
+    await tp.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+      window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+      window.fwd = ms => { S.clockShift = (S.clockShift || 0) + ms; };
+      /* Today, at a time of day — so a due time has or has not passed whenever the suite runs. */
+      window.clockAt = hhmm => { S.clockShift = 0; S.clockShift = atOn(todayKey(), hhmm).getTime() - Date.now(); };
+      window.as = (mail, ph) => { signOut(); signInAs(mail); setLang('en'); if (ph) setPharmacy(ph); };
+      window.T = id => S.tasks.find(x => x.id === id); });
+  };
+  await fresh();
+
+  /* Tasks. */
+  ok('the seeded tasks: the fridge twice a day with a reading of 2–8 °C, the near-expiry shelf, and Omar\'s weekly count — with a week behind them',
+     await tp.evaluate(() => S.tasks.length === 4 && T('T001').to === 'desk' && T('T001').reading.min === 2 && T('T001').reading.max === 8 &&
+       T('T004').to === 'omar@example.com' && T('T004').repeat === 'weekly' && S.taskDone.length >= 18 &&
+       S.taskDone.some(d => d.task === 'T001' && d.out && d.value === 9.1)));
+  ok('A MISSED TASK IS KEPT AS MISSED: yesterday morning\'s fridge check is on the record as missed, read from the ticks, never stored',
+     await tp.evaluate(() => { clockAt('10:00'); const y = shiftDay(todayKey(), -1);
+       return taskState(T('T001'), y) === 'missed' && taskState(T('T002'), y) === 'done' && !S.tasks.some(x => 'state' in x); }));
+  ok('before its time a task is due; after it, missed; ticked after it, done late — never on time',
+     await tp.evaluate(() => { as('hassan@example.com', 'P1'); clockAt('08:30'); const before = taskState(T('T001'), todayKey());
+       clockAt('10:00'); const after = taskState(T('T001'), todayKey()); const d = tickTask('T001', todayKey(), '5');
+       return before === 'due' && after === 'missed' && !!d && d.late && taskState(T('T001'), todayKey()) === 'late'; }));
+  ok('…and only until the end of that day: yesterday\'s missed check cannot be ticked today',
+     await tp.evaluate(() => tickTask('T001', shiftDay(todayKey(), -1), '5') === null));
+  ok('A DESK TASK IS DONE WHEN ANY ONE OF THEM TICKS IT: Hassan ticked the morning fridge, and Zahraa cannot tick it again',
+     await tp.evaluate(() => { as('zahraa@example.com', 'P1'); return taskMine(T('T001')) && tickTask('T001', todayKey(), '5') === null; }));
+  ok('a task given by name is that person\'s: Omar\'s count is his, not Zahraa\'s',
+     await tp.evaluate(() => !taskMine(T('T004'), 'zahraa@example.com') && taskMine(T('T004'), 'omar@example.com')));
+  ok('A READING OUT OF RANGE TELLS THE OWNER AT ONCE: 9.4 °C in the fridge is kept, and Rahma — only Rahma — is told',
+     await tp.evaluate(() => { as('hassan@example.com', 'P1'); clockAt('13:00'); const empty = tickTask('T003', todayKey(), '') ;
+       clockAt('20:00'); const none = tickTask('T002', todayKey(), ''); const d = tickTask('T002', todayKey(), '9,4');
+       const n = S.notifs.find(x => x.key === 'n.readingOut'); const hassanSees = n.only();
+       as('rahma@example.com', 'P1'); const rahmaSees = n.only();
+       return !!empty && none === null && !!d && d.out && d.value === 9.4 && !d.late && !!n && !hassanSees && rahmaSees; }));
+  ok('TICKS NEVER COUNT IN THE PERFORMANCE FIGURES: Hassan\'s figures are the same with and without his ticks',
+     await tp.evaluate(() => { const p = perfPeriod(); const a = JSON.stringify(perfFigures('P1', 'hassan@example.com', p));
+       const keep = S.taskDone; S.taskDone = S.taskDone.filter(d => d.by !== 'hassan@example.com');
+       const b = JSON.stringify(perfFigures('P1', 'hassan@example.com', p)); S.taskDone = keep; return a === b; }));
+  ok('the owner gives a task to the whole desk or to someone by name — once, daily, on chosen days, weekly or monthly',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1');
+       const a = addTask('P1', { title:'Wipe the counter', to:'desk', repeat:'weekdays', days:[0, 3], due:'18:00' });
+       const b = addTask('P1', { title:'Order sheet', to:'zahraa@example.com', repeat:'monthly', due:'11:00' });
+       const c = addTask('P1', { title:'Unpack the delivery', to:'desk', repeat:'once', due:'15:00' });
+       return !!a && !!b && !!c && occursOn(a, [...Array(7)].map((_, k) => shiftDay(todayKey(), k)).find(d => dowOf(d) === 3)) &&
+         !occursOn(a, [...Array(7)].map((_, k) => shiftDay(todayKey(), k)).find(d => dowOf(d) === 1)) &&
+         occursOn(c, todayKey()) && !occursOn(c, shiftDay(todayKey(), 1)) && S.tillLog.some(e => e.kind === 'taskAdded' && e.task === a.id); }));
+  ok('…and not to someone off the team, not on chosen days with none chosen, and not a reading whose range is backwards',
+     await tp.evaluate(() => !addTask('P1', { title:'x', to:'ahmed@example.com', repeat:'daily', due:'10:00' }) &&
+       !addTask('P1', { title:'x', to:'desk', repeat:'weekdays', days:[], due:'10:00' }) &&
+       !addTask('P1', { title:'x', to:'desk', repeat:'daily', due:'10:00', reading:{ unit:'°C', min:8, max:2 } }) &&
+       !addTask('P1', { title:'', to:'desk', repeat:'daily', due:'10:00' }) && !addTask('P1', { title:'x', to:'desk', repeat:'daily', due:'25:00' })));
+  ok('ASSIGNING TASKS IS A GRANT: Hassan cannot until Rahma gives him "Assign tasks"',
+     await tp.evaluate(() => { const h = S.staff.find(x => x.email === 'hassan@example.com' && x.pharmacy === 'P1');
+       as('hassan@example.com', 'P1'); const before = addTask('P1', { title:'x', to:'desk', repeat:'daily', due:'10:00' });
+       as('rahma@example.com', 'P1'); setGrant(h.id, 'tasks', true);
+       as('hassan@example.com', 'P1'); const after = addTask('P1', { title:'Dust the shelves', to:'desk', repeat:'daily', due:'10:00' });
+       as('rahma@example.com', 'P1'); setGrant(h.id, 'tasks', false);
+       return PERMS.includes('tasks') && !before && !!after; }));
+  ok('the owner\'s Tasks screen puts what was missed first',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); clockAt('13:00'); S.taskDone = S.taskDone.filter(d => !(d.task === 'T003' && d.day === todayKey()));
+       goto('tasks'); const states = todaysTasks('P1').map(i => i.state);
+       return states[0] === 'missed' && states.indexOf('missed') < states.indexOf('due') && /Fridge temperature/.test(document.getElementById('app-body').innerText); }));
+
+  /* Incidents. */
+  await fresh();
+  ok('INCIDENTS NEVER REACH THE PERSON THEY ARE ABOUT: Omar sees nothing of Hassan\'s report about him; Hassan sees only his own',
+     await tp.evaluate(() => { as('omar@example.com', 'P1'); const omar = incidentsSeen('P1').map(x => x.id);
+       as('hassan@example.com', 'P1'); goto('incidents'); const hassan = incidentsSeen('P1').map(x => x.id);
+       const body = document.getElementById('app-body').innerText;
+       return !omar.includes('IN001') && hassan.join() === 'IN001' && !body.includes(L(S.incidents.find(x => x.id === 'IN002').text)); }));
+  ok('never about the owner, never about yourself, never about someone off the team, never empty — and never anonymous',
+     await tp.evaluate(() => { as('zahraa@example.com', 'P1');
+       const refused = [reportIncident('P1', 'conduct', 'rahma@example.com', 'x'), reportIncident('P1', 'conduct', 'zahraa@example.com', 'x'),
+         reportIncident('P1', 'conduct', 'ahmed@example.com', 'x'), reportIncident('P1', 'conduct', 'omar@example.com', '  '), reportIncident('P1', 'gossip', null, 'x')];
+       const x = reportIncident('P1', 'stock', 'omar@example.com', 'Three boxes of Augmentin missing after the evening count.');
+       window.__inc = x && x.id;
+       return refused.every(r => r === null) && !!x && x.by === 'zahraa@example.com' && x.state === 'open'; }));
+  ok('the timeline says a report was made, and names no one it was about; the owner is told',
+     await tp.evaluate(() => { const e = S.tillLog.find(k => k.kind === 'incidentReported' && k.incident === window.__inc);
+       const n = S.notifs.find(k => k.key === 'n.incident'); return !!e && !('about' in e) && !JSON.stringify(e).includes('omar') && !!n && !n.only(); }));
+  ok('ONLY THE OWNER HANDLES ONE: Hassan cannot acknowledge or close it',
+     await tp.evaluate(() => { as('hassan@example.com', 'P1'); return !incAck(window.__inc) && !incClose(window.__inc); }));
+  ok('the owner sees every report, acknowledges it, keeps a private note, writes back, and closes it',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); goto('incidents'); const all = incidentsSeen('P1').length === incidentsAt('P1').length;
+       const id = window.__inc; const ack = incAck(id);
+       setv('in-note-' + id, 'Check the delivery note from Tuesday.'); const note = incNote(id);
+       setv('in-reply-' + id, 'Thank you — I am looking into it.'); const reply = incReply(id);
+       const x = S.incidents.find(k => k.id === id); const close = incClose(id);
+       return all && ack && note && reply && close && x.state === 'closed' && x.notes.length === 1 && x.reply.text === 'Thank you — I am looking into it.'; }));
+  ok('the reporter sees the note written back to them, never the private one',
+     await tp.evaluate(() => { as('zahraa@example.com', 'P1'); goto('incidents'); const b = document.getElementById('app-body').innerText;
+       return /Thank you — I am looking into it\./.test(b) && !/Check the delivery note/.test(b) && /closed/i.test(b); }));
+  ok('the owner does not report to themselves: no report form on Rahma\'s Incidents',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); goto('incidents'); return !document.querySelector('.in-form') && !!document.querySelector('.in-item'); }));
+
+  /* Late, absent, excused. */
+  await fresh();
+  ok('LATE IS MORE THAN 15 MINUTES, ABSENT IS NO CHECK-IN WITHIN THE HOUR: Omar was 35 minutes late the shift before last and absent at his last; Zahraa 22 minutes late',
+     await tp.evaluate(() => { window.days = mail => attendanceIn('P1', mail, { from:shiftDay(todayKey(), -14) + 'T00:00:00', to:todayKey() + 'T00:00:00' }).reverse();
+       const o = days('omar@example.com'), z = days('zahraa@example.com');
+       window.__absent = o[0].day;
+       return o[0].state === 'absent' && !o[0].shift && o[1].state === 'late' && o[1].minutes === 35 && z[3].state === 'late' && z[3].minutes === 22 &&
+         o.filter(a => a.state === 'late' || a.state === 'absent').length === 2; }));
+  ok('a check-in is recorded whenever it comes: 70 minutes after the start it is a shift, and the day is still an absence',
+     await tp.evaluate(() => { as('omar@example.com', 'P1'); const o = openShift('P1'); if (o) checkOut('P1');
+       S.rota.P1['omar@example.com'] = { days:[0, 1, 2, 3, 4, 5, 6], start:'09:00', end:'17:00' };
+       S.shifts = S.shifts.filter(s => !(s.email === 'omar@example.com' && dayOf(s.in) === todayKey()));
+       clockAt('09:10'); const due = attendanceOn('P1', 'omar@example.com', todayKey()).state;
+       clockAt('10:10'); const sh = checkIn('P1'); const a = attendanceOn('P1', 'omar@example.com', todayKey());
+       clockAt('09:20'); S.shifts = S.shifts.filter(s => s !== sh); const late = checkIn('P1'); const l = attendanceOn('P1', 'omar@example.com', todayKey());
+       return due === 'due' && !!sh && a.state === 'absent' && a.minutes === 70 && l.state === 'late' && l.minutes === 20; }));
+  ok('a day off the owner gave is leave, not an absence',
+     await tp.evaluate(() => S.leave.some(x => { const a = attendanceOn(x.pharmacy, x.email, x.day); return a && a.state === 'leave'; })));
+  ok('THE OWNER CAN EXCUSE ONE, ON THE RECORD — and no one else can',
+     await tp.evaluate(() => { const y = window.__absent;
+       as('hassan@example.com', 'P1'); const h = excuseAttendance('P1', 'omar@example.com', y);
+       as('rahma@example.com', 'P1'); const r = excuseAttendance('P1', 'omar@example.com', y, 'Hospital appointment');
+       const a = attendanceOn('P1', 'omar@example.com', y);
+       return !h && r && a.state === 'excused' && a.was === 'absent' && S.tillLog.some(e => e.kind === 'attExcused' && e.subject === 'omar@example.com' && e.day === y); }));
+  ok('the person\'s page lists the late and absent days, each with Excuse, for the owner',
+     await tp.evaluate(() => { S.perf = { kind:'week', anchor:todayKey() }; const rec = S.staff.find(x => x.email === 'omar@example.com' && x.pharmacy === 'P1' && x.state === 'active');
+       S.openStaff = rec.id; goto('team'); const rows = [...document.querySelectorAll('.att-row')];
+       return rows.some(r => r.dataset.att === 'late' && r.querySelector('.att-excuse')) && rows.some(r => r.dataset.att === 'excused' && !r.querySelector('.att-excuse')); }));
+
+  /* P7. */
+  ok('P7 — A QUESTION, NEVER A RANKING: Zahraa\'s share of sales with an antibiotic is well above the pharmacy\'s, and Rahma is asked about it on Zahraa\'s page',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); S.perf = { kind:'month', anchor:todayKey() }; const p = perfPeriod();
+       const z = p7Flags('P1', 'zahraa@example.com', p).find(x => x.k === 'abx'), h = p7Flags('P1', 'hassan@example.com', p).find(x => x.k === 'abx');
+       const rec = S.staff.find(x => x.email === 'zahraa@example.com' && x.pharmacy === 'P1' && x.state === 'active'); S.openStaff = rec.id; goto('team');
+       const q = document.querySelector('.p7-q[data-class="abx"]');
+       return z.flag && !h.flag && z.n >= 30 && !!q && /\?/.test(q.textContent) && !/rank|top|best|worst|#\d/i.test(document.querySelector('.p7-card').textContent); }));
+  ok('…only the owner sees it, and not below 30 sales',
+     await tp.evaluate(() => { const p = perfPeriod(); as('hassan@example.com', 'P1');
+       const hidden = p7Html('P1', 'zahraa@example.com') === '';
+       const few = { from:new Date(nowMs() - 864e5).toISOString(), to:new Date(nowMs()).toISOString() };
+       const f = p7Flags('P1', 'zahraa@example.com', few).find(x => x.k === 'abx');
+       return hidden && (f.n >= 30 || !f.flag); }));
+
+  /* The away card. */
+  await fresh();
+  ok('THE OWNER\'S HOME OPENS ON WHAT HAPPENED WHILE THEY WERE AWAY: sales today, tasks done, and the missed ones listed first',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); clockAt('13:00'); S.taskDone = S.taskDone.filter(d => d.day !== todayKey()); goto('dashboard');
+       const c = document.querySelector('.aw-card'); if (!c) return false;
+       const kids = [...c.children].map(e => e.className); const miss = [...c.querySelectorAll('.aw-miss')].map(e => e.dataset.task);
+       const first = document.querySelector('#app-body .aw-card') === document.querySelector('#app-body .card');
+       return c.querySelectorAll('.aw-tile').length === 3 && miss.includes('T001') && miss.includes('T003') && !miss.includes('T002') &&
+         kids.indexOf('aw-missed') > kids.indexOf('aw-tiles') && (kids.indexOf('aw-alsos') < 0 || kids.indexOf('aw-missed') < kids.indexOf('aw-alsos')) && first; }));
+  ok('everything else as a line: a reading out of range and an open report since then; Seen starts it again from now',
+     await tp.evaluate(() => { as('hassan@example.com', 'P1'); clockAt('13:30'); tickTask('T003', todayKey()); clockAt('21:10'); tickTask('T002', todayKey(), '11');
+       reportIncident('P1', 'conduct', 'omar@example.com', 'Raised his voice at a customer.');
+       as('rahma@example.com', 'P1'); goto('dashboard'); const c = document.querySelector('.aw-card').innerText;
+       const lines = /Readings outside the safe range: 1/.test(c) && /New incident reports: 1/.test(c);
+       tap('.aw-seen'); const after = document.querySelector('.aw-card'); const calm = !after.querySelector('.aw-bad');
+       return lines && calm && !!S.awaySince.P1; }));
+  ok('late and absent people today, as lines that open their page',
+     await tp.evaluate(() => { S.rota.P1['omar@example.com'] = { days:[0, 1, 2, 3, 4, 5, 6], start:'09:00', end:'17:00' };
+       S.shifts = S.shifts.filter(s => !(s.email === 'omar@example.com' && dayOf(s.in) === todayKey())); clockAt('11:00'); goto('dashboard');
+       const b = document.querySelector('.aw-att'); if (!b) return false; b.click();
+       return S.route === 'team' || !!S.openStaff; }));
+  ok('only the owner has it: Hassan\'s home has no away card',
+     await tp.evaluate(() => { as('hassan@example.com', 'P1'); goto('dashboard'); return !document.querySelector('.aw-card'); }));
+
+  /* v0.0017.1: the check-out reminders. */
+  await fresh();
+  ok('A SHIFT NEVER CLOSES ITSELF WITHOUT WARNING: at the scheduled end, and again 15 minutes before it would close',
+     await tp.evaluate(() => { as('omar@example.com', 'P1'); const o = openShift('P1'); if (o) checkOut('P1');
+       const sh = checkIn('P1'); const end = schedEnd(sh).getTime();
+       fwd(end - nowMs() - 6e4); render(); const none = shiftReminders(sh).length === 0;
+       fwd(2 * 6e4); render(); goto('checkin'); const ended = shiftReminders(sh).map(r => r.k).join() === 'ended' && !!document.querySelector('.sh-rem[data-rem="ended"]') &&
+         S.notifs.some(n => n.id === 'rem-ended-' + sh.id && n.only());
+       fwd(SHIFT_GRACE_MIN * 6e4 - 16 * 6e4); render(); const closing = shiftReminders(sh).map(r => r.k).join() === 'ended,closing' && !!document.querySelector('.sh-rem[data-rem="closing"]') &&
+         S.notifs.some(n => n.id === 'rem-closing-' + sh.id);
+       render(); const once = S.notifs.filter(n => n.id === 'rem-closing-' + sh.id).length === 1;
+       as('rahma@example.com', 'P1'); const notHers = !S.notifs.find(n => n.id === 'rem-ended-' + sh.id).only();
+       return none && ended && closing && once && notHers; }));
+
+  /* v0.0018.1: a listing Saydali+ took down. */
+  await fresh();
+  ok('A LISTING SAYDALI+ TOOK DOWN: the listing pharmacy sees it removed, and why',
+     await tp.evaluate(() => { as('layla@example.com', 'P8'); goto('exchange'); const x = exListing('X004');
+       const b = document.getElementById('app-body').innerText;
+       return x.state === 'removed' && /Removed by Saydali\+ — .*: The expiry listed does not match the pack/.test(b); }));
+  ok('…and it is gone from every other list; a request not yet handed over is cancelled, and the asker sees that',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); const r = exAsk('X002', 'P1', 2);
+       const bad = exTakeDown('X002', 'rude', 'x') || exTakeDown('X002', 'unsafe', '  ');
+       const done = exTakeDown('X002', 'unsafe', 'Boxes reported as tampered with.', 'u2');
+       goto('exchange'); const b = document.getElementById('app-body').innerText;
+       return !!r && !bad && done && r.state === 'cancelled' && !exNearby('P1').some(l => l.id === 'X002') && /cancel/i.test(b) &&
+         S.tillLog.some(e => e.kind === 'exRemoved' && e.listing === 'X002'); }));
+
+  /* Narrow. */
+  const wide = [];
+  await tp.setViewportSize({ width:320, height:700 });
+  for (const dir of ['ar', 'en']) for (const [who, scr] of [['rahma@example.com', 'dashboard'], ['rahma@example.com', 'tasks'], ['rahma@example.com', 'incidents'],
+      ['hassan@example.com', 'tasks'], ['hassan@example.com', 'incidents'], ['rahma@example.com', 'team']]) {
+    await tp.evaluate(([d, w, s]) => { as(w, 'P1'); setLang(d); clockAt('13:00'); if (s === 'team') { S.perf = { kind:'month', anchor:todayKey() };
+      S.openStaff = S.staff.find(x => x.email === 'zahraa@example.com' && x.pharmacy === 'P1' && x.state === 'active').id; }
+      goto(s); document.querySelectorAll('details').forEach(x => x.open = true); }, [dir, who, scr]);
+    await tp.waitForTimeout(60);
+    if (await tp.evaluate(() => document.body.scrollWidth) > 320) wide.push(dir + ' ' + who.split('@')[0] + ' ' + scr);
+  }
+  await tp.setViewportSize({ width:1440, height:900 });
+  ok(`tasks, incidents, the away card and a person's page do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+  await tp.close();
 }
 
 console.log('\nlayout');

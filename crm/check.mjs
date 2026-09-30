@@ -17,6 +17,9 @@ import { fileURLToPath } from 'node:url';
 import PRODUCT_DATA from '../data/products.mjs';
 import DRUG_DATA, { DUPLICATE_RULES, TAGS as DRUG_TAGS_DATA, RULES as CLASS_RULES_DATA } from '../data/drugs.mjs';
 import { dirname, join } from 'node:path';
+import { EXCHANGE_SEED } from '../data/exchange.mjs';
+import { INCIDENT_SEED } from '../data/incidents.mjs';
+const EXCHANGE_SEED_N = EXCHANGE_SEED.length;
 
 /* v0.0016.2 — the rules the reference carries, counted here from the data
    file rather than by the build: a pair of drugs, a drug and a class, a class
@@ -90,7 +93,7 @@ ok('the file states the build its name claims',
 
 console.log('\nshell');
 ok('lands on Home', await p.evaluate(() => S.tab) === 'home');
-ok('fifteen tabs: home, the thirteen modules (Rules and Barcode links since v0.0016), and reports', await p.locator('.tab').count() === 15);
+ok('sixteen tabs: home, the fourteen modules (Rules and Barcode links since v0.0016, Exchange since v0.0018.1), and reports', await p.locator('.tab').count() === 16);
 ok('the document is English, left to right', await p.evaluate(() =>
    document.documentElement.lang === 'en' && document.documentElement.dir === 'ltr'));
 ok('there is no language toggle left to press',
@@ -1501,14 +1504,44 @@ console.log('\nthe near-expiry exchange (v0.0018)');
 {
   const g = await open();
   ok('the listings are a report table — what, how many, the expiry and the asking price',
-     await g.evaluate(() => { const rows = sqlTables().exchange_listings; return rows.length === 3 && rows.every(r => r.qty > 0 && /^\d{4}-\d{2}$/.test(r.expiry)); }));
+     await g.evaluate(n => { const rows = sqlTables().exchange_listings; return rows.length === n && rows.every(r => r.qty > 0 && /^\d{4}-\d{2}$/.test(r.expiry)); }, EXCHANGE_SEED_N));
   ok('NO MONEY PASSES THROUGH SAYDALI+: no table holds a payment, a buyer or a settlement',
-     await g.evaluate(() => { const tb = sqlTables(); return Object.keys(tb.exchange_listings[0]).join() === 'listing_id,pharmacy_id,product_code,product,expiry,qty,price_iqd,listed_on' &&
+     await g.evaluate(() => { const tb = sqlTables(); return Object.keys(tb.exchange_listings[0]).join() === 'listing_id,pharmacy_id,product_code,product,expiry,qty,price_iqd,listed_on,state' &&
        !Object.keys(tb).some(k => /exchange_(payment|request|settle)/.test(k)); }));
   ok('no listed product is a controlled substance or a precursor',
      await g.evaluate(names => sqlTables().exchange_listings.every(r => { const p = PRODUCTS.find(q => q.barcode === r.product_code);
        return p && !p.molecules.some(m => names.includes(m.sci.toLowerCase())); }),
        JSON.parse(readFileSync(join(here, '..', 'data', 'controlled.json'), 'utf8')).substances.map(c => c.name.toLowerCase())));
+}
+
+console.log('\nSaydali+ takes a bad listing down; incidents as a number (v0.0018.1, v0.0019)');
+{
+  const g = await open();
+  await g.evaluate(() => { window.setv = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; }; });
+  const as = async role => g.evaluate(r => signInAs(STAFF.find(s => s.role === r).id), role);
+  ok('an Exchange module lists every listing, with the one Saydali+ already took down and why',
+     await g.evaluate(() => { goTab('exchange'); const x = DATA.exchange.find(l => l.id === 'X004');
+       return DATA.exchange.length === 4 && x.state === 'removed' && x.removed.reason === 'wrong' && /Taken down/.test(document.getElementById('main').innerText); }));
+  await as('employee');
+  ok('an employee cannot take a listing down, and is not offered to',
+     await g.evaluate(() => { openRecord('exchange', 'X001'); const offered = !!document.querySelector('.ex-takedown');
+       const r = takeDownListing('X001'); return !offered && !r && DATA.exchange.find(l => l.id === 'X001').state === 'open'; }));
+  await as('admin');
+  ok('an admin takes one down only with a reason and words, and it is on the record with who and when',
+     await g.evaluate(() => { openRecord('exchange', 'X001'); const offered = !!document.querySelector('.ex-takedown');
+       const blank = document.getElementById('ex-reason').value === ''; setv('ex-words', 'Tampered boxes'); const noReason = takeDownListing('X001');
+       setv('ex-reason', 'unsafe'); setv('ex-words', ''); const noWhy = takeDownListing('X001');
+       setv('ex-reason', 'unsafe'); setv('ex-words', 'Boxes reported as tampered with'); const r = takeDownListing('X001');
+       const x = DATA.exchange.find(l => l.id === 'X001');
+       return offered && blank && !noReason && !noWhy && r && x.state === 'removed' && x.removed.reason === 'unsafe' && x.removed.by === ME && !!x.removed.at && sqlTables().exchange_listings.find(l => l.listing_id === 'X001').state === 'removed'; }));
+  await as('owner_admin');
+  ok('the owner admin can take one down too',
+     await g.evaluate(() => { openRecord('exchange', 'X002'); return !!document.querySelector('.ex-takedown'); }));
+  ok('INCIDENTS: THE CRM HOLDS ONLY HOW MANY — a number on the pharmacy, a table of counts, and nothing of what they were',
+     await g.evaluate(() => { openRecord('pharmacies', 'P1'); const n = document.querySelector('.in-count');
+       const tb = sqlTables().pharmacy_incidents;
+       return !!n && n.innerText.trim() === '2' && tb.every(r => Object.keys(r).join() === 'pharmacy_id,incidents') && tb.find(r => r.pharmacy_id === 'P1').incidents === 2; }) &&
+     INCIDENT_SEED.every(x => !readFileSync(file, 'utf8').includes(x.text.en) && !readFileSync(file, 'utf8').includes(x.text.ar) && !readFileSync(file, 'utf8').includes(x.id)));
 }
 
 console.log('\nnarrow viewport');

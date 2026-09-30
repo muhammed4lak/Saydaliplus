@@ -19,8 +19,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import DRUGS, { FORM_KEYS, DUPLICATE_RULES, TAKE, CATEGORIES, TAGS, RULES, OUTSIDE } from '../data/drugs.mjs';
 import PRODUCTS, { MAPPING_STATES } from '../data/products.mjs';
-import { HISTORY_TEAMS, HISTORY_AUTO, HISTORY_DAYS, REPORTS_SHARED, SHIFT_GRACE_MIN, historyFor } from '../data/history.mjs';
-import { EXCHANGE_KM, EXCHANGE_WINDOW_DAYS, PHARMACY_LOC, EXCHANGE_SEED, distanceKm } from '../data/exchange.mjs';
+import { HISTORY_TEAMS, HISTORY_AUTO, HISTORY_DAYS, REPORTS_SHARED, SHIFT_GRACE_MIN, HISTORY_LATE, HISTORY_ABSENT, HISTORY_ABX, HISTORY_CTL, historyFor } from '../data/history.mjs';
+import { INCIDENT_KINDS, INCIDENT_SEED, incidentCounts } from '../data/incidents.mjs';
+import { EXCHANGE_KM, EXCHANGE_WINDOW_DAYS, PHARMACY_LOC, EXCHANGE_SEED, TAKEDOWN_REASONS, distanceKm } from '../data/exchange.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -252,6 +253,15 @@ const catalogueBlock = C_BEGIN + '\n' +
       if (!p.days.length || p.days.some(d => !Number.isInteger(d) || d < 0 || d > 6)) problems.push(`history ${ph} ${p.email}: bad days`);
     }
   }
+  for (const a of HISTORY_LATE.concat(HISTORY_ABSENT)) {
+    if (!(HISTORY_TEAMS[a.pharmacy] || []).some(x => x.email === a.email)) problems.push(`history late/absent: ${a.email} does not work at ${a.pharmacy}`);
+    if (!Number.isInteger(a.shiftsAgo) || a.shiftsAgo < 1 || a.shiftsAgo > 4) problems.push(`history late/absent: ${a.email} — shiftsAgo must be 1 to 4, inside the history whatever the rota`);
+  }
+  for (const x of INCIDENT_SEED) {
+    if (!INCIDENT_KINDS.includes(x.kind)) problems.push(`incident ${x.id}: unknown kind ${x.kind}`);
+    if (!x.text || !x.text.en || !x.text.ar) problems.push(`incident ${x.id}: text needs both languages`);
+    if (x.about && x.about === x.by) problems.push(`incident ${x.id}: about the person who reported it`);
+  }
   for (const a of HISTORY_AUTO) {
     const p = (HISTORY_TEAMS[a.pharmacy] || []).find(x => x.email === a.email);
     const day = new Date(); day.setDate(day.getDate() - a.daysAgo);
@@ -274,12 +284,14 @@ const catalogueBlock = C_BEGIN + '\n' +
     if (!PHARMACY_LOC[x.pharmacy]) problems.push(`exchange ${x.id}: no place for ${x.pharmacy}`);
     if (!(x.qty > 0 && x.qty <= x.stock)) problems.push(`exchange ${x.id}: listed more than it holds`);
     if (!(x.months >= 0 && x.months <= 2)) problems.push(`exchange ${x.id}: not near its expiry`);
+    if (x.removed && (!TAKEDOWN_REASONS.includes(x.removed.reason) || !x.removed.words)) problems.push(`exchange ${x.id}: a take-down needs a reason and words`);
   }
 }
 const exchangeBlock = '/* EXCHANGE:BEGIN */\n' +
   'const EXCHANGE_KM = ' + EXCHANGE_KM + ';\n' +
   'const EXCHANGE_WINDOW_DAYS = ' + EXCHANGE_WINDOW_DAYS + ';\n' +
   'const PHARMACY_LOC = ' + JSON.stringify(PHARMACY_LOC) + ';\n' +
+  'const TAKEDOWN_REASONS = ' + JSON.stringify(TAKEDOWN_REASONS) + ';\n' +
   'const EXCHANGE_SEED = [\n' + EXCHANGE_SEED.map(x => '  ' + JSON.stringify(x)).join(',\n') + '\n];\n' +
   distanceKm.toString() + '\n/* EXCHANGE:END */';
 const historyBlock = '/* HISTORY:BEGIN */\n' +
@@ -288,6 +300,9 @@ const historyBlock = '/* HISTORY:BEGIN */\n' +
   'const HISTORY_TEAMS = ' + JSON.stringify(HISTORY_TEAMS) + ';\n' +
   'const HISTORY_AUTO = ' + JSON.stringify(HISTORY_AUTO) + ';\n' +
   'const REPORTS_SHARED = ' + JSON.stringify(REPORTS_SHARED) + ';\n' +
+  /* v0.0019 — late and absent days, and what share of sales carried an
+     antibiotic or a controlled substance. */
+  'const HISTORY_EXTRA = ' + JSON.stringify({ late:HISTORY_LATE, absent:HISTORY_ABSENT, abx:HISTORY_ABX, ctl:HISTORY_CTL }) + ';\n' +
   historyFor.toString() + '\n/* HISTORY:END */';
 if (problems.length) {
   console.error('the Ministry sources did not validate:\n  ' + problems.join('\n  '));
@@ -350,6 +365,16 @@ for (const rel of targets) {
   const xa = out.indexOf('/* EXCHANGE:BEGIN */'), xb = out.indexOf('/* EXCHANGE:END */');
   if (xa < 0 || xb < 0) { console.error(`${rel}: no EXCHANGE markers — nothing written`); process.exit(1); }
   out = out.slice(0, xa) + exchangeBlock + out.slice(xb + '/* EXCHANGE:END */'.length);
+  /* v0.0019 — incidents: the app gets the pharmacies' own record, the CRM
+     only how many there are at each (decided 30 Sep 2026). */
+  const ia = out.indexOf('/* INCIDENTS:BEGIN */'), ib = out.indexOf('/* INCIDENTS:END */');
+  if (ia < 0 || ib < 0) { console.error(`${rel}: no INCIDENTS markers — nothing written`); process.exit(1); }
+  const crm = /saydali-crm_/.test(rel);
+  const incBlock = '/* INCIDENTS:BEGIN */\n' + (crm
+    ? 'const INCIDENT_COUNTS = ' + JSON.stringify(incidentCounts(INCIDENT_SEED)) + ';\n'
+    : 'const INCIDENT_KINDS = ' + JSON.stringify(INCIDENT_KINDS) + ';\n' +
+      'const INCIDENT_SEED = [\n' + INCIDENT_SEED.map(x => '  ' + JSON.stringify(x)).join(',\n') + '\n];\n') + '/* INCIDENTS:END */';
+  out = out.slice(0, ia) + incBlock + out.slice(ib + '/* INCIDENTS:END */'.length);
   writeFileSync(path, out);
   console.log(`${rel}: ${DRUGS.length} drugs and ${PRODUCTS.length} products embedded` + (ra >= 0 ? `, and the register (${REGISTER.length} rows)` : '') +
     (ca >= 0 ? `, and the catalogue (${REG_PRODUCTS.rows.length} registered products, ${EDL_GENERICS.length} EDL generics)` : '') +

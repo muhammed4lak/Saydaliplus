@@ -37,8 +37,16 @@ export const EXCHANGE_SEED = [
   { id:'X002', pharmacy:'P8', by:'layla@example.com', code:'5000000001194', months:1, qty:12, stock:12, price:9000,
     note:{ en:'Whole packs only.', ar:'علب كاملة فقط.' }, daysAgo:1 },
   { id:'X003', pharmacy:'P9', by:'layla@example.com', code:'5000000001316', months:1, qty:5, stock:5, price:11000,
-    note:{ en:'', ar:'' }, daysAgo:2 }
+    note:{ en:'', ar:'' }, daysAgo:2 },
+  /* v0.0018.1 — one Saydali+ took down: the expiry on the listing did not
+     match the pack. */
+  { id:'X004', pharmacy:'P8', by:'layla@example.com', code:'4000000001164', months:1, qty:6, stock:6, price:6000,
+    note:{ en:'', ar:'' }, daysAgo:5,
+    removed:{ reason:'wrong', words:'The expiry listed does not match the pack in the photo sent to us.', by:'u2', daysAgo:4 } }
 ];
+
+/* Why Saydali+ may take a listing down (v0.0018.1). */
+export const TAKEDOWN_REASONS = ['regulated', 'wrong', 'unsafe', 'other'];
 
 /* Straight-line distance in kilometres. Self-contained, so it can be
    embedded as source. */

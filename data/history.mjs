@@ -26,7 +26,7 @@ export const HISTORY_TEAMS = {
   P1: [
     { email:'rahma@example.com',  owner:true, days:[6, 0, 1],       start:'16:00', end:'22:00' },
     { email:'hassan@example.com', days:[6, 0, 1, 2, 3],             start:'08:00', end:'16:00' },
-    { email:'zahraa@example.com', days:[0, 1, 2, 3, 4],             start:'16:00', end:'23:00' },
+    { email:'zahraa@example.com', days:[0, 1, 2, 3, 4],             start:'16:00', end:'23:00', abx:0.34 },
     { email:'omar@example.com',   days:[6, 1, 3],                   start:'09:00', end:'15:00' }
   ],
   P7: [
@@ -53,13 +53,33 @@ export const HISTORY_AUTO = [
   { pharmacy:'P1', email:'zahraa@example.com', daysAgo:2, claim:'23:20' }
 ];
 
+/* v0.0019 — a check-in more than 15 minutes after the start is late; none
+   within the hour is an absence. These days are late or absent on purpose;
+   every other day off in the history is leave the owner gave. `shiftsAgo`
+   counts the person's scheduled days back from yesterday (1 is their last
+   one), so the day is always one they were due in, whatever today is. */
+export const HISTORY_LATE = [
+  { pharmacy:'P1', email:'omar@example.com', shiftsAgo:2, minutes:35 },
+  { pharmacy:'P1', email:'zahraa@example.com', shiftsAgo:4, minutes:22 }
+];
+export const HISTORY_ABSENT = [
+  { pharmacy:'P1', email:'omar@example.com', shiftsAgo:1 }
+];
+/* The share of a person's sales with an antibiotic (J01) in them, unless
+   given per person (Zahraa's is high, to show P7's question), and with a
+   controlled substance. */
+export const HISTORY_ABX = 0.14;
+export const HISTORY_CTL = 0.03;
+
 /* Whether the owner shares the pharmacy's Reports with Saydali+ — on unless
    turned off (decided 28 Sep 2026). Dar Al-Dawa's owner turned it off. */
 export const REPORTS_SHARED = { P9:false };
 
 /* The history itself: every shift and every sale in it. Self-contained, so it
    can be embedded as source. */
-export function historyFor(teams, autos, days, nowMs) {
+export function historyFor(teams, autos, days, nowMs, extra) {
+  extra = extra || {};
+  const lates = extra.late || [], absents = extra.absent || [];
   const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
   const rngOf = seed => { let a = seed; return () => { a = (a + 0x6D2B79F5) | 0; let x = Math.imul(a ^ (a >>> 15), 1 | a);
     x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; };
@@ -67,7 +87,7 @@ export function historyFor(teams, autos, days, nowMs) {
   const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
   const at = (day, hhmm, addDays) => { const d = new Date(day); d.setDate(d.getDate() + (addDays || 0));
     const [h, m] = hhmm.split(':').map(Number); d.setHours(h, m, 0, 0); return d; };
-  const shifts = [], sales = [];
+  const shifts = [], sales = [], off = [];
   const today = new Date(nowMs); today.setHours(0, 0, 0, 0);
   for (let k = days; k >= 1; k--) {
     const day = new Date(today); day.setDate(day.getDate() - k);
@@ -76,10 +96,18 @@ export function historyFor(teams, autos, days, nowMs) {
       if (p.days.indexOf(day.getDay()) < 0) return;
       const rnd = rngOf(hash(ph + '|' + p.email + '|' + key));
       const auto = autos.find(a => a.pharmacy === ph && a.email === p.email && a.daysAgo === k);
-      if (!auto && rnd() < 0.1) return;                       // a day off
+      let nth = 0;
+      for (let j = 1; j <= k; j++) { const d = new Date(today); d.setDate(d.getDate() - j); if (p.days.indexOf(d.getDay()) >= 0) nth++; }
+      const late = lates.find(a => a.pharmacy === ph && a.email === p.email && a.shiftsAgo === nth);
+      const absent = absents.find(a => a.pharmacy === ph && a.email === p.email && a.shiftsAgo === nth);
+      const dayOff = rnd() < 0.1;
+      /* A day off is leave the owner gave; an absence is not. */
+      if (absent) return;
+      if (!auto && !late && dayOff) { off.push({ pharmacy:ph, email:p.email, day:key }); return; }
       const overnight = p.end <= p.start;
       const sStart = at(day, p.start), sEnd = at(day, p.end, overnight ? 1 : 0);
-      const inAt = new Date(sStart.getTime() + Math.round(rnd() * 25 - 10) * 6e4);
+      const jitter = Math.round(rnd() * 25 - 10);
+      const inAt = new Date(sStart.getTime() + (late ? late.minutes : jitter) * 6e4);
       const clean = new Date(sEnd.getTime() + Math.round(rnd() * 30 - 10) * 6e4);
       const id = 'H-' + ph + '-' + p.email.split('@')[0] + '-' + key;
       const iso = d => d.toISOString();
@@ -99,13 +127,18 @@ export function historyFor(teams, autos, days, nowMs) {
       const until = auto ? new Date(sEnd.getTime() - 25 * 6e4) : clean;
       const hours = (until - inAt) / 36e5;
       const n = Math.max(3, Math.round(hours * (1.6 + rnd() * 1.8)));
+      /* What kind of medicine went out — its own stream, so adding it moved no
+         other figure. */
+      const kind = rngOf(hash('kind|' + ph + '|' + p.email + '|' + key));
+      const abx = p.abx != null ? p.abx : (extra.abx != null ? extra.abx : 0.14), ctl = extra.ctl != null ? extra.ctl : 0.03;
       for (let i = 0; i < n; i++) {
         const t = new Date(inAt.getTime() + ((i + rnd()) / n) * (until - inAt));
         const r = rnd();
         sales.push({ id:id + '-' + (i + 1), pharmacy:ph, by:p.email, at:iso(t), shift:id,
-          total:250 * Math.round((1500 + r * r * 38000) / 250), items:1 + Math.floor(rnd() * 3), past:true });
+          total:250 * Math.round((1500 + r * r * 38000) / 250), items:1 + Math.floor(rnd() * 3), past:true,
+          abx:kind() < abx, ctl:kind() < ctl });
       }
     }));
   }
-  return { shifts, sales };
+  return { shifts, sales, off };
 }

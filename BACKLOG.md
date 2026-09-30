@@ -2163,7 +2163,7 @@ has them.
 
 ### v0.0018.1 — reported 30 Sep 2026: the CRM takes a bad listing down
 
-**Not built.** **A1. A listing Saydali+ can remove.** In the CRM, a new
+**Built with v0.0019** (see below). **A1. A listing Saydali+ can remove.** In the CRM, a new
 *Exchange* module lists every listing (pharmacy, product, expiry, how many,
 price, state) with *Take down*: a reason is required (from a short list —
 controlled or regulated, wrong product or expiry, suspected counterfeit or
@@ -2248,6 +2248,114 @@ correction (proposed: yes, as a new listing).
 - **"Done late": yes** — a missed task can be ticked until the end of the
   day, kept as late, never as on time.
 
+### v0.0019 as built — tasks, incidents, and the absent owner's day (W18; P7), with v0.0017.1 and v0.0018.1
+
+**Tasks.** A *Tasks* screen for the owner and for pharmacists on a team.
+- The owner gives them, and anyone granted **Assign tasks** (a new
+  permission, in the Manager role): to **the whole desk** or to **someone by
+  name**; once, daily, chosen weekdays, weekly or monthly; with a due time and
+  a start day.
+- A task can **ask for a reading with a safe range** (the fridge: 2–8 °C). A
+  reading outside it is kept and **tells the owner at once** (the bell; a push
+  in the phone app later).
+- A task not ticked by its due time is **missed** — read from the ticks,
+  never stored, not carried over. It can be ticked **until the end of that
+  day**, and is then kept as *done late*, never as on time.
+- A desk task is done when any one of them ticks it. A task given by name is
+  that person's alone.
+- **Ticks never count in the performance figures.** They show on the
+  timeline, the Tasks screen and the owner's home.
+- **Seeded at Al-Rahma:** the fridge at 09:00 and 21:00, and the near-expiry
+  shelf at 12:00 (all for the desk); Omar's weekly count of Shelf 1. There is
+  a week of ticks behind them: the last morning fridge check was missed, and
+  one reading three days back was 9.1 °C.
+
+**Incidents.** Anyone on the team reports one to the owner, from their
+home or the *Incidents* screen.
+- **Kinds:** conduct, cash, stock or suspected theft, dispensing error or
+  patient safety, other. A report can be linked to a sale.
+- **Never about the owner, never about yourself, never about someone off the
+  team, never anonymous.** The person it is about does not see it. The
+  timeline entry says a report was made and names no one else.
+- **Who sees what:** the owner sees every report. A reporter sees only their
+  own, with its state and any note the owner wrote back.
+- **What the owner does:** acknowledges it, keeps private notes, may write
+  one note back to the reporter, and closes it.
+- **The CRM holds only how many there are at each pharmacy.** The pharmacy
+  record shows the count, and the `pharmacy_incidents` table has two columns:
+  the pharmacy and the number. The build carries nothing more: no text, no
+  names, no ids.
+
+**Late and absent.**
+- Every check-in is recorded, whenever it comes.
+- **Late** is more than 15 minutes after the scheduled start. **Absent** is
+  no check-in within the hour, and stays absent even if they check in
+  afterwards.
+- A day off the owner gave is **leave**, not an absence.
+- The owner **excuses** either one, on the record (`attExcused`). Nobody else
+  can, and never for themselves.
+- On a person's page: their late and absent days in the period, each with
+  *Excuse*.
+- Seeded: Omar was absent at his last shift and 35 minutes late the one
+  before; Zahraa was 22 minutes late four shifts back. These are counted in
+  scheduled shifts, not calendar days, so the seeded days are always working
+  days, whatever day it is.
+
+**P7 — a question, never a ranking.**
+- On a person's page, for the owner only: if their share of sales with an
+  antibiotic (J01) or a controlled substance is at least **1.5 times the
+  pharmacy's own share**, over **at least 30 sales**, it is shown as a
+  question, with the reasons it might be innocent.
+- Seeded: Zahraa's antibiotics are 35% against 22% for the pharmacy.
+- The district comparison waits for five pharmacies there that share.
+
+**While you were away (mock-up A).** At the top of the owner's home:
+- the sales today, tasks done out of those due, and the number missed;
+- **the missed tasks listed first**;
+- then one line each: who is late or absent today (opens their page),
+  readings out of range, new incident reports, drawers waiting, sales that
+  went ahead on a Stop, and refused actions.
+- *Seen* starts it again from now. Only the owner has the card.
+
+**v0.0017.1 — check-out reminders.**
+- An open shift warns **at the scheduled end** ("Your shift ended at 15:00 —
+  check out?").
+- It warns **again 15 minutes before it would close itself** ("Your shift
+  closes itself at 16:00 if you do not check out.").
+- Both appear on the person's home and in the bell, each once, and only for
+  that person. The phone app will add a push.
+
+**v0.0018.1 — Saydali+ takes a bad listing down.**
+- A new CRM *Exchange* module lists every listing, with its state.
+- **Admins and owner admins** can *Take down*; employees are neither offered
+  it nor allowed.
+- It needs a reason chosen from the list (controlled or regulated, wrong
+  product or expiry, suspected counterfeit or unsafe, other) and words. It
+  is kept with who and when. `exchange_listings` gains `state`.
+- In the app, the listing leaves every list at once, and requests not yet
+  handed over are cancelled. The listing pharmacy sees *Removed by Saydali+ —
+  the reason: the words*, and the pharmacy that asked sees its request
+  cancelled.
+- Seeded: Concor 5 mg at Al-Hayat, taken down because the listed expiry did
+  not match the pack.
+- A corrected listing is listed again as a new one.
+
+**Left over.**
+- The forgotten check-outs seeded in v0.0017 (`HISTORY_AUTO`) still count
+  calendar days. On some weekdays one can fall on a day off and drop out. It
+  should move to scheduled shifts the way late and absent now do.
+- Seeded task titles are English (as Rahma typed them). A title shows as it
+  was written.
+- Tasks, incidents, late/absent, excuses, the take-down and the incident
+  counts are **not in the codebase yet**. They come with the catch-up.
+- Instant alerts are in the bell only; push waits for the phone app.
+
+Checks: app 808 (34 new; 3 older ones updated — incidents are now
+reachable with the marketplace off, and the Tasks placeholder changed), CRM
+308 (5 new; 3 older ones updated for the 16th tab, the removed listing and
+the `state` column), unit 164 (5 new); typecheck clean. Mutation-tested on
+a copy: results to follow.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
@@ -2269,7 +2377,7 @@ rediscovered as new or lost when circumstances change.
 - **After v0.0019 — the phone app and the stores.** *(Brought back with
   v0.0014's notes; delayed to after v0.0017 on 28 Sep 2026, brought back
   with v0.0018's notes, and **delayed again to after v0.0019** on 30 Sep
-  2026 — every reminder waits until then. The steps from here to the stores
+  2026 — every reminder waits until then; **brought back with v0.0019's notes**. The steps from here to the stores
   were set out on 30 Sep 2026; see "From the prototypes to the stores" under
   the open decisions.)* Meanwhile: keep the hardware test on its own
   track (the printer and a wedge scanner can be tested from the web build);
