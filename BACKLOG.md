@@ -2150,12 +2150,13 @@ has them.
 
 ### After v0.0018 — answered 30 Sep 2026
 
-- **The choices made in v0.0017 and v0.0018 stand:** a 60-minute grace
-  period (12 hours on a day not on the rota); staff see their own figures,
-  not the pharmacy's average; weeks run Saturday to Friday; the CRM gets the
-  last 30 days' pharmacy totals; nearby is 6 km from a district's centre; the
-  listing window is 90 days; the codebase's permission list changes with the
-  catch-up.
+- **The choices made in v0.0018 stand** (corrected 30 Sep 2026 — the
+  agreement was for v0.0018's only): nearby is 6 km from a district's
+  centre; the listing window is 90 days; the codebase's permission list
+  changes with the catch-up. **v0.0017's four are still open:** a 60-minute
+  grace period (12 hours on a day not on the rota); staff see their own
+  figures, not the pharmacy's average; weeks run Saturday to Friday; the CRM
+  gets the last 30 days' pharmacy totals.
 - **Saydali+ must be able to remove a bad listing** — v0.0018 left the CRM
   read-only. Recorded as A1 below.
 - **Reminders wait until after v0.0019.**
@@ -2174,6 +2175,52 @@ stays where it is (the movements happened). *Needs deciding* with v0.0019's
 decisions: which CRM roles can take down (proposed: owner admin and admin,
 not employees), and whether a removed listing can be listed again after
 correction (proposed: yes, as a new listing).
+
+### v0.0019 — decided 30 Sep 2026
+
+**Tasks**
+1. The owner gives tasks, and anyone granted **Assign tasks** (a new
+   permission, in the Manager role).
+2. A task goes to **a person by name, or to "the whole desk"** — everyone on
+   shift sees it, and it is done when any one of them ticks it.
+3. Once, daily, chosen weekdays, weekly or monthly, with a due time.
+4. *Asked to explain* — a task that asks for a reading (the fridge
+   temperature, with its safe range; out of range tells the owner at once).
+5. A task not done by its due time is **missed**: on the record, shown to the
+   owner, not carried over — **mock-up first** (shown 30 Sep 2026: A, missed
+   tasks on their own on the away-home; B, one list for the day; and the
+   staff view; plus whether "done late" is allowed).
+6. *Asked to explain* — whether ticks count in the performance figures.
+
+**Incidents**
+7. Kinds: conduct, cash, stock or suspected theft, dispensing error or patient
+   safety, other.
+8. A report can be linked to a sale.
+9. The owner acknowledges, keeps private notes, and closes — and **may write a
+   note to the person who reported it**, which they see (optional). The
+   reporter otherwise sees only received / closed.
+10. **The CRM holds only the number of incidents at each pharmacy** — nothing
+    about what they are, who, or when beyond the count.
+
+**The away-home**
+11. Since the owner last looked (or today): simple and presentable.
+12. **Every check-in is recorded, whenever it happens. No check-in within one
+    hour of the scheduled start is an absence** — kept even if they check in
+    later — and **the owner can override an absence** (on the record). No
+    separate "late" mark (read this way; to be confirmed).
+13. In the phone app, an instant alert for a new incident, a reading out of
+    range, a Stop gone ahead with, and a drawer difference over the owner's
+    amount.
+
+**Sales per pharmacist (P7)**
+14. Against the pharmacy's own average now; the district's once at least five
+    pharmacies in it share (the minimum N of five). *Asked why this is in.*
+15. A flag at 1.5 times the pharmacy's share, over at least 30 sales, worded
+    as a question.
+
+**v0.0018.1**
+16. Owner admin and admin take listings down, not employees — for now.
+17. A removed listing can be listed again after correction, as a new listing.
 
 ## Unused concepts
 
