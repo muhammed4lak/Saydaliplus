@@ -3981,8 +3981,12 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
      await tp.evaluate(() => tickTask('T001', shiftDay(todayKey(), -1), '5') === null));
   ok('A DESK TASK IS DONE WHEN ANY ONE OF THEM TICKS IT: Hassan ticked the morning fridge, and Zahraa cannot tick it again',
      await tp.evaluate(() => { as('zahraa@example.com', 'P1'); return taskMine(T('T001')) && tickTask('T001', todayKey(), '5') === null; }));
-  ok('a task given by name is that person\'s: Omar\'s count is his, not Zahraa\'s',
-     await tp.evaluate(() => !taskMine(T('T004'), 'zahraa@example.com') && taskMine(T('T004'), 'omar@example.com')));
+  ok('a task given by name is that person\'s: Omar\'s count is his, not Zahraa\'s — she cannot tick it, he can',
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); clockAt('13:00'); const x = addTask('P1', { title:'Count the fridge', to:'omar@example.com', repeat:'once', due:'23:00' });
+       as('zahraa@example.com', 'P1'); const hers = tickTask(x.id, todayKey());
+       as('ahmed@example.com'); const outsider = tickTask('T003', todayKey());
+       as('omar@example.com', 'P1'); const his = tickTask(x.id, todayKey());
+       return !taskMine(T('T004'), 'zahraa@example.com') && taskMine(T('T004'), 'omar@example.com') && hers === null && outsider === null && !!his && !his.late; }));
   ok('A READING OUT OF RANGE TELLS THE OWNER AT ONCE: 9.4 °C in the fridge is kept, and Rahma — only Rahma — is told',
      await tp.evaluate(() => { as('hassan@example.com', 'P1'); clockAt('13:00'); const empty = tickTask('T003', todayKey(), '') ;
        clockAt('20:00'); const none = tickTask('T002', todayKey(), ''); const d = tickTask('T002', todayKey(), '9,4');
@@ -4032,6 +4036,10 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
        const x = reportIncident('P1', 'stock', 'omar@example.com', 'Three boxes of Augmentin missing after the evening count.');
        window.__inc = x && x.id;
        return refused.every(r => r === null) && !!x && x.by === 'zahraa@example.com' && x.state === 'open'; }));
+  ok('NEVER ABOUT THE OWNER — even when the owner is on the team\'s list, working a shift',
+     await tp.evaluate(() => { const rec = { id:'SX-owner', pharmacy:'P1', email:'rahma@example.com', state:'active', role:'pharmacist' };
+       S.staff.push(rec); as('zahraa@example.com', 'P1'); const r = reportIncident('P1', 'conduct', 'rahma@example.com', 'x');
+       S.staff = S.staff.filter(x => x !== rec); return r === null; }));
   ok('the timeline says a report was made, and names no one it was about; the owner is told',
      await tp.evaluate(() => { const e = S.tillLog.find(k => k.kind === 'incidentReported' && k.incident === window.__inc);
        const n = S.notifs.find(k => k.key === 'n.incident'); return !!e && !('about' in e) && !JSON.stringify(e).includes('omar') && !!n && !n.only(); }));

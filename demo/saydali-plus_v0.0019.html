@@ -15316,13 +15316,14 @@ const shiftEnd = sh => sh.state === 'open' ? null : (sh.approval ? sh.approval.o
 const workedHours = sh => { const e = shiftEnd(sh); return e ? Math.max(0, (new Date(e) - new Date(sh.in)) / 36e5) : 0; };
 const withinDays = (iso, n) => nowMs() - new Date(iso).getTime() <= n * 864e5;
 /* The last thing the person did there during the shift — the evidence shown
-   beside the claim. */
+   beside the claim. A sale is read from the sale itself, never from its
+   timeline entry, which can be stamped a millisecond later. */
 function lastActivity(sh) {
   const until = sh.autoAt || sh.out || nowIso();
   const sale = allSales().filter(s => s.pharmacy === sh.pharmacy && s.by === sh.email && s.at >= sh.in && s.at <= until)
     .reduce((w, s) => !w || s.at > w.at ? s : w, null);
   const ev = S.tillLog.filter(e => e.pharmacy === sh.pharmacy && e.by === sh.email && e.at >= sh.in && e.at <= until &&
-    !['checkIn', 'checkOut', 'autoClosed', 'shiftClaim', 'shiftApproved'].includes(e.kind)).reduce((w, e) => !w || e.at > w.at ? e : w, null);
+    !['checkIn', 'checkOut', 'autoClosed', 'shiftClaim', 'shiftApproved', 'sale'].includes(e.kind)).reduce((w, e) => !w || e.at > w.at ? e : w, null);
   if (sale && (!ev || sale.at >= ev.at)) return { at:sale.at, text:t('sh.lastSale', { amt:iqd(sale.total) }) };
   return ev ? { at:ev.at, text:timelineText(ev) } : null;
 }

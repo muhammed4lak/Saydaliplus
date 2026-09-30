@@ -1525,7 +1525,10 @@ console.log('\nSaydali+ takes a bad listing down; incidents as a number (v0.0018
   await as('employee');
   ok('an employee cannot take a listing down, and is not offered to',
      await g.evaluate(() => { openRecord('exchange', 'X001'); const offered = !!document.querySelector('.ex-takedown');
-       const r = takeDownListing('X001'); return !offered && !r && DATA.exchange.find(l => l.id === 'X001').state === 'open'; }));
+       const sel = document.createElement('select'); sel.id = 'ex-reason'; sel.innerHTML = '<option value="unsafe">unsafe</option>';
+       const inp = document.createElement('input'); inp.id = 'ex-words'; inp.value = 'Tampered boxes'; document.body.append(sel, inp);
+       const r = takeDownListing('X001'); sel.remove(); inp.remove();
+       return !offered && !r && DATA.exchange.find(l => l.id === 'X001').state === 'open'; }));
   await as('admin');
   ok('an admin takes one down only with a reason and words, and it is on the record with who and when',
      await g.evaluate(() => { openRecord('exchange', 'X001'); const offered = !!document.querySelector('.ex-takedown');
