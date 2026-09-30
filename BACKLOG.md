@@ -2222,6 +2222,32 @@ correction (proposed: yes, as a new listing).
 16. Owner admin and admin take listings down, not employees — for now.
 17. A removed listing can be listed again after correction, as a new listing.
 
+### v0.0019 — the rest answered 30 Sep 2026
+
+- **v0.0017's four choices stand**, with one change to the first:
+  1. The grace period (60 minutes; 12 hours on a day not on the rota) stays,
+     **but always with reminders**: at the scheduled end, "Your shift ended
+     at 16:00 — check out?", and again before the grace period runs out,
+     "Your shift closes itself at 17:00". On the person's home and in the
+     bell; a push notification in the phone app. *(v0.0017.1, built with
+     v0.0019.)*
+  2. Staff see their own figures, not the pharmacy's average.
+  3. Weeks run Saturday to Friday.
+  4. The CRM gets the last 30 days' pharmacy totals when sharing is on.
+- **4. Readings: yes** — a task can ask for a number with a safe range; out
+  of range tells the owner at once.
+- **6. Ticks do not count** in the performance figures; they show on the
+  timeline and the owner's home only.
+- **14. The P7 flags: as proposed.**
+- **12. A "late" mark as well:** a check-in more than 15 minutes after the
+  scheduled start is late; no check-in within one hour is an absence (kept
+  even if they check in afterwards); the owner can override either, on the
+  record.
+- **5. Mock-up A:** the away-home shows missed tasks on their own, first,
+  and everything else as numbers.
+- **"Done late": yes** — a missed task can be ticked until the end of the
+  day, kept as late, never as on time.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
