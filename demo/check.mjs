@@ -3990,8 +3990,8 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
   ok('A READING OUT OF RANGE TELLS THE OWNER AT ONCE: 9.4 °C in the fridge is kept, and Rahma — only Rahma — is told',
      await tp.evaluate(() => { as('hassan@example.com', 'P1'); clockAt('13:00'); const empty = tickTask('T003', todayKey(), '') ;
        clockAt('20:00'); const none = tickTask('T002', todayKey(), ''); const d = tickTask('T002', todayKey(), '9,4');
-       const n = S.notifs.find(x => x.key === 'n.readingOut'); const hassanSees = n.only();
-       as('rahma@example.com', 'P1'); const rahmaSees = n.only();
+       const n = S.notifs.find(x => x.key === 'n.readingOut'); const hassanSees = !n || n.only();
+       as('rahma@example.com', 'P1'); const rahmaSees = !!n && n.only();
        return !!empty && none === null && !!d && d.out && d.value === 9.4 && !d.late && !!n && !hassanSees && rahmaSees; }));
   ok('TICKS NEVER COUNT IN THE PERFORMANCE FIGURES: Hassan\'s figures are the same with and without his ticks',
      await tp.evaluate(() => { const p = perfPeriod(); const a = JSON.stringify(perfFigures('P1', 'hassan@example.com', p));

@@ -2350,11 +2350,24 @@ home or the *Incidents* screen.
   counts are **not in the codebase yet**. They come with the catch-up.
 - Instant alerts are in the bell only; push waits for the phone app.
 
-Checks: app 808 (34 new; 3 older ones updated — incidents are now
+Checks: app 810 (36 new; 3 older ones updated — incidents are now
 reachable with the marketplace off, and the Tasks placeholder changed), CRM
 308 (5 new; 3 older ones updated for the 16th tab, the removed listing and
 the `state` column), unit 164 (5 new); typecheck clean. Mutation-tested on
-a copy: results to follow.
+a copy: 17 planted faults. 13 were caught on the first run. Four got
+through, and each was a gap in the checks:
+- a report about the owner, which was only ever tried as someone off the team;
+- ticking someone else's task;
+- the CRM employee's attempt, which was refused for the missing reason and
+  not for the role;
+- the reading alert, which was caught only by a crash.
+
+All four are caught now.
+
+The run also turned up a v0.0017 race. The claim form's last activity
+compared a sale with its own timeline entry, and the entry could be stamped
+a millisecond later, which changed the evidence's wording. A sale is now
+read only from the sale itself.
 
 ## Unused concepts
 
