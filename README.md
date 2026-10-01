@@ -628,7 +628,7 @@ npm run test:e2e       # Playwright, against the seeded database
   email, logbook transitions, reliability, AI response parsing, Arabic script, who may do what at a pharmacy).
 - 190 policy assertions run against a real Postgres as real users (`supabase/tests/run.sh`), 60 of them on
   owners, teams and roles (migration 0015).
-- 838 behavioural assertions driving the app build in a real browser
+- 839 behavioural assertions driving the app build in a real browser
   (`npm run check:app`), and 308 driving the CRM (`npm run check:crm`).
 - `npm run typecheck` and `npm run build` clean.
 - Playwright specs covering the Arabic default, the queued application, the

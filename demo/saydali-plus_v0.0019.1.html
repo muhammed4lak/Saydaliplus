@@ -13269,7 +13269,7 @@ function needsYou(ph) {
   /* v0.0014 (D5): a controlled substance sold on two devices while offline
      goes to the very top; any other such product follows the stock rows. */
   const conflicts = S.offlineConflicts.filter(c => c.pharmacy === ph.id && !c.resolved);
-  conflicts.filter(c => c.controlled).forEach(c => row('bad', 'alert', t('off.conflictT', { name:productName(c.code) }), t('off.conflictS', { sales:c.sales.join(', ') }), "goto('drawer')"));
+  conflicts.filter(c => c.controlled).forEach(c => { row('bad', 'alert', t('off.conflictT', { name:productName(c.code) }), t('off.conflictS', { sales:c.sales.join(', ') }), "goto('drawer')"); rows[rows.length - 1].top = true; });
   const waiting = drawersOf(ph.id).filter(d => d.state === 'waiting');
   if (waiting.length) row('warn', 'wallet', t('dr.waitingN', { n:waiting.length }), waiting.map(d => d.id + ' · ' + signed(d.variance)).join(' · '), "goto('drawer')");
   if (ph.verification === 'pending') row('warn', 'hourglass', t('hm.pending'), t('hm.pendingS'), "goto('profile')");
@@ -16581,14 +16581,15 @@ function needsAll(ph) {
   a.att.filter(x => x.a.state === 'absent').forEach(x => add('now', 'clock', t('aw.att.absent', { who:personName(x.m) }), t('ny.dueAt', { t:x.a.sched.start }), 'openAtt(' + attr(x.m) + ')'));
   if (a.inc.length) add('now', 'alert', t('aw.inc', { n:a.inc.length }), t('ny.incS'), "goto('incidents')");
   if (a.stops.length) add('now', 'alert', t('aw.stops', { n:a.stops.length }), '', "goto('teamlog')");
-  needsYou(ph).forEach(r => add(r.tone === 'bad' ? 'now' : r.tone === 'warn' ? 'today' : 'calm', r.ic, r.title, r.sub, r.go));
+  needsYou(ph).forEach(r => { add(r.tone === 'bad' ? 'now' : r.tone === 'warn' ? 'today' : 'calm', r.ic, r.title, r.sub, r.go); out[out.length - 1].top = !!r.top; });
   a.missed.forEach(it => add('today', 'check', t('ny.missed', { title:it.task.title }), t('tk2.dueAt', { t:it.task.due }) + ' · ' + taskWho(it.task), "goto('tasks')"));
   a.att.filter(x => x.a.state === 'late').forEach(x => add('today', 'clock', t('aw.att.late', { who:personName(x.m), m:x.a.minutes }), '', 'openAtt(' + attr(x.m) + ')'));
   const w = waitingApproval(ph.id);
   if (w.length) add('today', 'clock', t('ny.claims', { n:w.length }), t('ny.claimsS', { who:personName(w[0].email), day:dayLabel(w[0].in) }), "goto('attendance')");
   if (a.denied.length) add('calm', 'lock', t('aw.denied', { n:a.denied.length }), '', "goto('teamlog')");
   const rank = { now:0, today:1, calm:2 };
-  return out.map((x, i) => Object.assign(x, { i })).sort((p, q) => rank[p.lv] - rank[q.lv] || p.i - q.i);
+  /* A controlled substance sold twice offline is always first (v0.0014, D5). */
+  return out.map((x, i) => Object.assign(x, { i })).sort((p, q) => rank[p.lv] - rank[q.lv] || (q.top ? 1 : 0) - (p.top ? 1 : 0) || p.i - q.i);
 }
 function needsAllHtml(ph) {
   const items = needsAll(ph), a = awaySince(ph.id), today = startOfDay(todayKey()).toISOString();

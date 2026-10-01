@@ -4262,10 +4262,20 @@ console.log('\na simpler app for the owner: five places, tabs inside, one list, 
      await sp.evaluate(() => { const n = needsAll(PHARMACIES.P1).filter(x => x.lv !== 'calm').length; goto('stock');
        const bar = document.querySelector('#bottom-nav [data-nav="dashboard"] .nav-count'), side = document.querySelector('#side-nav [data-nav="dashboard"] .side-nav-count');
        goto('dashboard'); return n > 0 && !!bar && bar.innerText === String(n) && !!side && side.innerText === String(n); }));
-  ok('a drawer waiting for sign-off is Today; a controlled substance sold twice offline is Act now, at the very top',
-     await sp.evaluate(() => { const rows = needsAll(PHARMACIES.P1); S.offlineConflicts.push({ id:'XC1', pharmacy:'P1', code:'7600000001040', controlled:true, resolved:false, sales:['a', 'b'] });
-       const first = needsAll(PHARMACIES.P1)[0]; S.offlineConflicts = [];
-       return first.lv === 'now' && /Sold on two devices offline/.test(first.title) && rows.every(r => ['now', 'today', 'calm'].includes(r.lv)); }));
+  ok('a drawer waiting for sign-off is Today, listed after the expired stock that is Act now — whatever order they were found in',
+     await sp.evaluate(() => { S.drawers.push({ id:'DX9', pharmacy:'P1', state:'waiting', variance:-7000, opened:nowIso(), handovers:[], by:'hassan@example.com' }); goto('dashboard');
+       const items = [...document.querySelectorAll('.ny-item')], lv = items.map(i => ({ now:0, today:1, calm:2 })[i.dataset.lv]);
+       const dr = items.findIndex(i => /Drawers waiting for your sign-off/.test(i.innerText)), ex = items.findIndex(i => /Expired batches in quarantine/.test(i.innerText));
+       S.drawers = S.drawers.filter(d => d.id !== 'DX9'); render();
+       return dr > ex && ex >= 0 && items[dr].dataset.lv === 'today' && lv.every((x, i) => !i || lv[i - 1] <= x); }));
+  ok('a controlled substance sold twice offline is Act now, at the very top — above someone absent today',
+     await sp.evaluate(() => { const rows = needsAll(PHARMACIES.P1);
+       S.rota.P1['omar@example.com'] = { days:[0, 1, 2, 3, 4, 5, 6], start:'09:00', end:'17:00' };
+       S.shifts = S.shifts.filter(s => !(s.email === 'omar@example.com' && dayOf(s.in) === todayKey())); clockAt('11:00');
+       S.offlineConflicts.push({ id:'XC1', pharmacy:'P1', code:'7600000001040', controlled:true, resolved:false, sales:['a', 'b'] }); goto('dashboard');
+       const items = [...document.querySelectorAll('.ny-item')], absent = items.some(i => /Omar Faisal has not checked in/.test(i.innerText));
+       const first = items[0]; S.offlineConflicts = []; S.clockShift = 0; render();
+       return absent && /Sold on two devices offline/.test(first.innerText) && first.dataset.lv === 'now' && rows.every(r => ['now', 'today', 'calm'].includes(r.lv)); }));
 
   /* The announcement. */
   ok('THE SAYDALI+ CARD IS COMPACT, UNDER THE TILL: labelled, one sentence, and a ×',

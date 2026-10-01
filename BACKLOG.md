@@ -2521,10 +2521,16 @@ counted from today.
 - Staff (not owners) keep their own bar: Check-in, Tasks, Pharmacy, Profile.
 - Not in the codebase yet; it comes with the catch-up.
 
-Checks: app 838 (28 new; 24 older ones updated for the new home, the tabs,
+Checks: app 839 (29 new; 24 older ones updated for the new home, the tabs,
 the Log tab and the bar, and 3 anchored a week back so the 1st of a month
 still has history in them). CRM 308 (its link now opens the v0.0019.1 build).
-Unit 164. Typecheck clean. Mutation-tested on a copy: MUT191.
+Unit 164. Typecheck clean. Mutation-tested on a copy: 17 planted faults, and 16 were caught on the
+first run. The one that got through (the list unsorted) showed a real slip:
+the list is drawn group by group, so the order inside Act now followed the
+order things were found in, and **a controlled substance sold twice offline
+was no longer at the very top** once someone was absent (v0.0014, D5). It is
+first again, and a check now proves it with an absence on the list. All 17
+are caught.
 
 ## Unused concepts
 
