@@ -2369,6 +2369,60 @@ compared a sale with its own timeline entry, and the entry could be stamped
 a millisecond later, which changed the evidence's wording. A sale is now
 read only from the sale itself.
 
+### v0.0019.1 — reported 1 Oct 2026: attendance in Reports, and a simpler owner's app
+
+**Not built — mock-ups first.**
+
+**A1. The attendance schedule in Reports.** The owner sees the weekly and
+monthly attendance in the Reports tab: who was due when, and whether they came
+on time, late, were absent, on leave, or were excused. Today it lives only on
+each person's page.
+
+**A2. The owner's app got cluttered.** Simpler and easier to use: someone who
+opens it must not get lost between options. The user suggested tabs inside
+the modules and different outline colours for the most important sections.
+What the screens show today (1 Oct 2026):
+- **The home has two lists of what needs the owner:** *While you were away*
+  and *Needs you*, one after the other. Sales today shows twice (a tile and the
+  big figure). The home is seven blocks: the away card, sales, two buttons,
+  check-in, Needs you, and the Saydali+ card.
+- **The sidebar is 14 flat entries** with no grouping, and **"Reports" appears
+  twice**: the incidents entry is labelled "Reports" in English
+  (`nav.incidents`). The Arabic reads البلاغات, so it is an English-only slip.
+- **Team stacks nine sections:** check-out claims, Tasks, Incidents, staff,
+  invitations, Invite, Roles, day by day, and former staff. Check-out claims
+  also appear in Reports.
+- **Pharmacy already has tabs** (Point of sale, Stock, Drugs). That is the
+  pattern to extend.
+
+**Mock-ups shown 1 Oct 2026, awaiting a choice:**
+- **The home: one list of what needs you.**
+  - *Option A, recommended:* today's figures, *Open point of sale*, and one
+    *Needs you* list grouped as **Act now** (red outline), **Today** (amber
+    outline) and *when you have a minute* (no colour).
+  - *Option B:* tabs on the home (Today · To do · Day by day), with only
+    *Act now* items on the first tab.
+  - In both, your own check-in moves to the header, and the Saydali+ cards
+    move to More.
+- **Five places with tabs inside:**
+  - Home.
+  - Pharmacy: Point of sale · Stock · Drugs · **Exchange**.
+  - Team: **People · Tasks · Incidents · Log**. Invitations, roles and former
+    staff become quiet rows.
+  - Reports: **Sales · Attendance · People**.
+  - More: post a shift, trainees, consumption, billing, notifications,
+    profile and CV, what's new.
+- **The sidebar** becomes the same four places, then More and You in a quieter
+  colour. This drops the duplicate English "Reports".
+- **Reports > Attendance (A1):** a week grid (people × days; a tick, minutes
+  late, Absent, leave, or the start time still to come; excuse from a cell) and
+  a month view (one strip of days per person, with the counts and hours
+  written beside it).
+- **What the colours mean** is fixed everywhere:
+  - *Act now:* patient safety, money, or a person missing.
+  - *Today:* waiting on a decision or due today.
+  - Nothing else is coloured.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
