@@ -2395,7 +2395,7 @@ What the screens show today (1 Oct 2026):
 - **Pharmacy already has tabs** (Point of sale, Stock, Drugs). That is the
   pattern to extend.
 
-**Mock-ups shown 1 Oct 2026, awaiting a choice:**
+**Mock-ups shown 1 Oct 2026.** *Answered 1 Oct 2026: **Option A**; the three outline levels stand for now ("we'll see"); this is **v0.0019.1**, before v0.0020. Open: whether the Saydali+ announcement cards leave the home for More > What's new (explained again).*
 - **The home: one list of what needs you.**
   - *Option A, recommended:* today's figures, *Open point of sale*, and one
     *Needs you* list grouped as **Act now** (red outline), **Today** (amber
