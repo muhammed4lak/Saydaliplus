@@ -2395,7 +2395,7 @@ What the screens show today (1 Oct 2026):
 - **Pharmacy already has tabs** (Point of sale, Stock, Drugs). That is the
   pattern to extend.
 
-**Mock-ups shown 1 Oct 2026.** *Answered 1 Oct 2026: **Option A**; the three outline levels stand for now ("we'll see"); this is **v0.0019.1**, before v0.0020. **The Saydali+ announcement card stays on the home, smaller and higher:** a compact card (its tag, a title and one sentence; about two-thirds of today's height, not a one-line strip) under *Open point of sale*, above *Needs you*. It opens the full news when tapped and is gone for good once closed (×). Answered 1 Oct 2026.*
+**Mock-ups shown 1 Oct 2026.** *Answered 1 Oct 2026: **Option A**; the three outline levels stand for now ("we'll see"); this is **v0.0019.1**, before v0.0020. **The Saydali+ announcement card stays on the home, smaller and higher:** a compact card (its tag, a title and one sentence; about two-thirds of today's height, not a one-line strip) under *Open point of sale*, above *Needs you*. It opens the full news when tapped. **Closing it (×) shrinks it to the slim one-line strip** (the tag, the title cut to one line, and ×) in the same place; closing the strip hides that item for good (assumed, 1 Oct 2026). A newer item from Saydali+ arrives as the compact card again. Answered 1 Oct 2026.*
 - **The home: one list of what needs you.**
   - *Option A, recommended:* today's figures, *Open point of sale*, and one
     *Needs you* list grouped as **Act now** (red outline), **Today** (amber
