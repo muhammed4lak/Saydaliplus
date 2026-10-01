@@ -1373,9 +1373,9 @@ await signOut(dk);
 await signIn(dk, 'rahma@example.com');
 await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
-ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) the team and their profile',
-   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,profile' &&
-     pharmacyTabsFor('owner').map(x => x[0]).join() === 'till,stock,drugs'));
+ok('an owner’s bar is five places: Home, Pharmacy (point of sale, stock, drugs, the exchange), Team, Reports and More (v0.0019.1)',
+   await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,more' &&
+     pharmacyTabsFor('owner').map(x => x[0]).join() === 'till,stock,drugs,exchange'));
 {
   const txt = await dk.locator('#app-body').innerText();
   ok('their home stops prompting about applicants and unfilled shifts',
@@ -1388,7 +1388,9 @@ ok('an owner’s bar is their home, the pharmacy (point of sale, stock, drugs) t
   ok('the catalogue is no longer a card on the home; it is one tap inside Stock',
      !/products in the catalogue/i.test(txt) &&
      await dk.evaluate(() => { goto('stock'); const r = /Catalogue and prices/.test(document.getElementById('app-body').innerText); goto('dashboard'); return r; }));
-  ok('and still leads to the trainee waiting on a decision', /Zainab/.test(txt));
+  ok('and still leads to the trainee waiting on a decision — folded under “when you have a minute” (v0.0019.1)',
+     !/Zainab/.test(txt) && await dk.evaluate(() => { const more = document.querySelector('.ny-more'); if (!more) return false; more.click();
+       const r = /Zainab/.test(document.getElementById('app-body').innerText); S.calmOpen = false; render(); return r; }));
 }
 ok('nothing in the sidebar leads to the market',
    await dk.evaluate(() => ![...document.querySelectorAll('#side-nav [onclick]')]
@@ -2103,8 +2105,8 @@ console.log('\nstock and purchasing (v0.0013)');
   ]);
 
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
-  ok('an owner’s bar: home, the pharmacy, the team, their profile',
-     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,profile'));
+  ok('an owner’s bar: Home, Pharmacy, Team, Reports, More',
+     await dk.evaluate(() => navFor('owner').map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,more'));
   ok('the catalogue is one tap inside Stock — and, with Pharmacy one module (v0.0013.4), not a second line in the sidebar',
      await dk.evaluate(() => { goto('stock'); return /Catalogue and prices/.test(document.getElementById('app-body').innerText) &&
        !sidebarGroups()[0].items.some(x => x[0] === 'products') && sidebarGroups()[0].items.some(x => x[0] === 'pharmacy'); }));
@@ -2463,30 +2465,29 @@ console.log('\nthe till and the Helper as one (v0.0013.1)');
 console.log('\nthe simpler home, and the Ministry sources (v0.0013.2)');
 {
   await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('dashboard'); });
+  /* v0.0019.1: the headline sits in today's strip, beside the tasks and who is on shift. */
   ok('H1 — one headline figure: today’s sales, the sum of today’s sales at this pharmacy',
-     await dk.evaluate(() => document.querySelectorAll('#app-body .hm-fig').length === 1 &&
-       Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === salesToday('P1').total));
-  ok('…the change is against yesterday, named, with an arrow as well as a colour',
-     await dk.evaluate(() => { const d = document.querySelector('.hm-delta').innerText;
-       return salesToday('P1').n ? /[▲▼] \d+%/.test(d) && /vs yesterday by now · \d+ sales/.test(d) : /No sales yet · yesterday by now/.test(d); }));
-  ok('…and a week’s line, muted: six days solid, today dashed to a hollow point, “Today so far” (v0.0013.5, U4)',
-     await dk.evaluate(() => { const svg = document.querySelector('.hm-spark'); const paths = svg ? svg.querySelectorAll('path') : [];
-       return !!svg && paths.length === 2 && svg.querySelectorAll('circle').length === 1 &&
-         (paths[0].getAttribute('d').match(/[ML]/g) || []).length === 6 && paths[1].getAttribute('stroke-dasharray') &&
-         svg.querySelector('circle').getAttribute('fill') === '#fff' &&
-         document.querySelectorAll('.hm-days span').length === 7 && /Today so far/.test(document.querySelector('.hm-days').innerText); }));
+     await dk.evaluate(() => document.querySelectorAll('#app-body .td-strip').length === 1 &&
+       Number(document.querySelector('.td-strip .td-cell:first-child .td-fig').firstChild.textContent.replace(/,/g, '')) === salesToday('P1').total));
+  ok('…the change is against yesterday by now, with an arrow as well as a colour',
+     await dk.evaluate(() => { const d = document.querySelector('.td-strip .td-cell:first-child .td-s').innerText;
+       return salesToday('P1').n ? /[▲▼] \d+% on yesterday by now/.test(d) || /\d+ sales/.test(d) : /No sales yet/.test(d); }));
+  ok('…and the week’s line left the home for Reports, where the days are (v0.0019.1)',
+     await dk.evaluate(() => { const gone = !document.querySelector('#app-body .hm-spark'); goto('reports');
+       const there = !!document.querySelector('.rpt-days'); goto('dashboard'); return gone && there; }));
   ok('a sale moves the figure',
      await dk.evaluate(() => { const before = salesToday('P1').total; goto('till'); S.till = tillReset(); tillScan('4000000001065'); confirmCash(); closeReceipt();
-       goto('dashboard'); return Number(document.querySelector('.hm-fig').firstChild.textContent.replace(/,/g, '')) === before + S.sales[0].total &&
-         /vs yesterday/.test(document.querySelector('.hm-delta').innerText); }));
-  ok('H2 — two actions: open the till, count a shelf',
+       goto('dashboard'); return Number(document.querySelector('.td-strip .td-cell:first-child .td-fig').firstChild.textContent.replace(/,/g, '')) === before + S.sales[0].total &&
+         /on yesterday by now|\d+ sales/.test(document.querySelector('.td-strip .td-cell:first-child .td-s').innerText); }));
+  ok('H2 — one action: open the till (counting a shelf is one tap inside Stock, v0.0019.1)',
      await dk.evaluate(() => { document.querySelector('.hm-till').click(); const a = S.screen === 'till'; goto('dashboard');
-       document.querySelector('.hm-count').click(); const b = S.screen === 'count'; goto('dashboard'); return a && b; }));
+       const noCount = !document.querySelector('.hm-count'); goto('stock'); const inStock = /Count a shelf/i.test(document.getElementById('app-body').innerText);
+       goto('dashboard'); return a && noCount && inStock; }));
   ok('H3 — one list of what needs the owner, its count in its heading, each row leading somewhere',
-     await dk.evaluate(() => { const rows = document.querySelectorAll('.hm-needs .hm-row');
-       return rows.length === needsYou(PHARMACIES.P1).length && rows.length >= 3 &&
-         new RegExp('Needs you · ' + rows.length, 'i').test(document.querySelector('.hm-needs-t').innerText) &&
-         [...rows].every(r => /goto\(/.test(r.getAttribute('onclick'))); }));
+     await dk.evaluate(() => { const rows = document.querySelectorAll('.ny .ny-item'), all = needsAll(PHARMACIES.P1);
+       return rows.length === all.filter(x => x.lv !== 'calm').length && rows.length >= 3 &&
+         document.querySelector('.ny-title em').textContent === String(all.length) &&
+         [...rows].every(r => /goto\(|openAtt\(/.test(r.getAttribute('onclick'))); }));
   ok('…instead of the stack of cards: no catalogue card, no separate Helper card, no till card',
      await dk.evaluate(() => !document.querySelector('#app-body .check-card') && !/products in the catalogue/i.test(document.getElementById('app-body').innerText) &&
        document.querySelectorAll('#app-body .link-card, #app-body .soon-card').length === 0));
@@ -2507,7 +2508,7 @@ console.log('\nthe simpler home, and the Ministry sources (v0.0013.2)');
      await dk.evaluate(() => { const r = [...document.querySelectorAll('.hm-ph')].find(x => /Dar Al-Dawa/.test(x.innerText));
        return !!r && /No responsible pharmacist/i.test(r.innerText) && /can’t sell/.test(r.innerText); }));
   ok('…and a row opens that pharmacy’s own home',
-     await dk.evaluate(() => { document.querySelectorAll('.hm-ph')[1].click(); return !!currentPharmacy() && !!document.querySelector('.hm-actions'); }));
+     await dk.evaluate(() => { document.querySelectorAll('.hm-ph')[1].click(); return !!currentPharmacy() && !!document.querySelector('.hm-till-one'); }));
   ok('a pharmacy with no responsible pharmacist has no till button to press',
      await dk.evaluate(() => { setPharmacy('P9'); goto('dashboard'); const r = document.querySelector('.hm-till').disabled; setPharmacy(null); return r; }));
   {
@@ -2683,10 +2684,10 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
   ok('the owner’s sidebar has one Pharmacy line where Till, Stock and Drugs were',
      await dk.evaluate(() => { const ids = [...document.querySelectorAll('#side-nav [onclick]')].map(b => b.getAttribute('onclick'));
        return ids.filter(x => /'pharmacy'/.test(x)).length === 1 && !ids.some(x => /'(till|stock|drugs)'/.test(x)); }));
-  ok('Pharmacy opens on Point of sale, with a tab each for Point of sale, Stock and Drugs, under the module’s name',
+  ok('Pharmacy opens on Point of sale, with a tab each for Point of sale, Stock, Drugs and the Exchange (v0.0019.1), under the module’s name',
      await dk.evaluate(() => { [...document.querySelectorAll('#side-nav [onclick]')].find(b => /'pharmacy'/.test(b.getAttribute('onclick'))).click();
        const tabs = [...document.querySelectorAll('.mod-tab')];
-       return S.screen === 'till' && tabs.map(b => b.innerText.trim()).join('|') === 'Point of sale|Stock|Drugs' &&
+       return S.screen === 'till' && tabs.map(b => b.innerText.trim()).join('|') === 'Point of sale|Stock|Drugs|Exchange' &&
          tabs[0].classList.contains('on') && /Pharmacy/.test(document.getElementById('app-header').innerText) &&
          /Al-Rahma/i.test(document.getElementById('app-header').innerText); }));
   ok('a tab moves within the module, and the Pharmacy line stays lit',
@@ -2729,11 +2730,11 @@ console.log('\none Pharmacy module; the till is Point of sale (v0.0013.4)');
       for (const [who, s] of [['rahma@example.com', 'till'], ['rahma@example.com', 'stock'], ['layla@example.com', 'drugs'], ['ahmed@example.com', 'till']]) {
         await dk.evaluate(([w, d, s]) => { signOut(); signInAs(w); setLang(d); if (w === 'layla@example.com') setPharmacy('P2'); goto(s); }, [who, dir, s]);
         if (await dk.evaluate(() => document.body.scrollWidth) > 320) wide.push(`${who} ${s} (${dir})`);
-        const bar = await dk.evaluate(() => [...document.querySelectorAll('#bottom-nav .nav-item')].map(b => b.innerText.trim()).join('|'));
-        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'لوحة التحكم|الصيدلية|الفريق|التقارير|الحساب' : 'Dashboard|Pharmacy|Team|Reports|Profile')) wide.push('bar ' + bar);
+        const bar = await dk.evaluate(() => [...document.querySelectorAll('#bottom-nav .nav-item span')].map(b => b.innerText.trim()).join('|'));
+        if (who === 'rahma@example.com' && bar !== (dir === 'ar' ? 'الرئيسية|الصيدلية|الفريق|التقارير|المزيد' : 'Home|Pharmacy|Team|Reports|More')) wide.push('bar ' + bar);
       }
     }
-    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Team, Reports, Profile (v0.0017)${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+    ok(`the module’s tabs fit at 320px, and the owner’s bar is Home, Pharmacy, Team, Reports, More (v0.0019.1)${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
     await dk.setViewportSize({ width: 1440, height: 900 });
   }
 }
@@ -2788,8 +2789,8 @@ console.log('\nthe UI review (v0.0013.5)');
      await dk.evaluate(() => { goto('stock'); document.dispatchEvent(new KeyboardEvent('keydown', { key:'F2', bubbles:true })); return !S.modal; }));
   ok('U4 — no sales yet reads against yesterday by now, not yesterday’s whole day',
      await dk.evaluate(() => { S.sales = S.sales.filter(x => x.pharmacy !== 'P1'); goto('dashboard');
-       const y = salesHistory('P1')[5].total; return /No sales yet · yesterday by now/.test(document.querySelector('.hm-delta').innerText) &&
-         document.querySelector('.hm-delta').innerText.includes(fmt(byNow(y))); }));
+       const y = salesHistory('P1')[5].total, d = document.querySelector('.td-strip .td-cell:first-child .td-s').innerText;
+       return /No sales yet · yesterday by now/.test(d) && d.includes(fmt(byNow(y))); }));
   ok('U9 — the announcement is one slim, bold, pressable card, still labelled; a press goes where it says, and is counted',
      await dk.evaluate(() => { const b = document.querySelector('.hm-ann button.banner-slot.announce');
        const ok1 = !!b && /From Saydali\+/i.test(b.querySelector('.banner-tag').innerText) && b.getBoundingClientRect().height < 130 && !!b.querySelector('.banner-go');
@@ -2918,7 +2919,7 @@ console.log('\ncash, and the offline model (v0.0014)');
        S.drawerStep = { drawer:d.id, kind:'close', counted:7000 }; render();
        S.role = 'pharmacist'; setv('dr-note', 'found in the till roll'); finishCount(); S.role = 'owner';
        const waiting = d.state === 'waiting' && !d.signedBy;
-       goto('dashboard'); const home = /Drawers waiting for your sign-off: 1/.test(document.querySelector('.hm-needs').innerText);
+       goto('dashboard'); const home = /Drawers waiting for your sign-off: 1/.test(document.querySelector('.ny').innerText);
        goto('drawer'); tap('.dr-signbtn');
        return waiting && home && d.state === 'closed' && d.signedBy === 'rahma@example.com'; }));
   ok('…and the amount is the owner’s, per pharmacy',
@@ -2969,7 +2970,7 @@ console.log('\ncash, and the offline model (v0.0014)');
        const x = S.offlineConflicts.find(k => k.code === c && !k.resolved);
        return one && aSees && bSees && bNo && level === -1 && !!x && x.sales.includes(saleA.id) && x.sales.includes(saleB.id) && x.controlled; }));
   ok('…a controlled substance so flagged goes to the very top of the owner’s home, and to the drawer screen',
-     await dk.evaluate(() => { goto('dashboard'); const first = document.querySelector('.hm-needs .hm-row');
+     await dk.evaluate(() => { goto('dashboard'); const first = document.querySelector('.ny .ny-item');
        goto('drawer'); const banner = !!document.querySelector('.dr-conflict');
        return /Sold on two devices offline/.test(first.innerText) && banner; }));
   ok('…until the owner has checked the shelf',
@@ -3040,7 +3041,7 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
          !!wa && decodeURIComponent(wa.getAttribute('href')).includes(x.code) && !!document.querySelector('.tm-sms') &&
          x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
   ok('…and the invitation is on the day’s record',
-     await dk.evaluate(() => { S.teamNote = null; render(); return [...document.querySelectorAll('.tl-ev')].some(e => /Invited Ahmed/.test(e.innerText)); }));
+     await dk.evaluate(() => { S.teamNote = null; render(); return (re => { const k = S.screen; goto('teamlog'); const r = [...document.querySelectorAll('.tl-ev')].some(e => re.test(e.innerText)); goto(k); return r; })(/Invited Ahmed/); }));
   ok('the pharmacist sees it on their home and accepts; they now work there, since today',
      await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('checkin');
        const card = document.querySelector('.tm-myinv'); const shown = !!card && /Al-Rahma Pharmacy invites you/.test(card.innerText);
@@ -3092,8 +3093,8 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        const own = evs.length > 0 && evs.every(e => { const k = e.dataset.kind; return true; }) &&
          timelineEvents('P1', 'ahmed@example.com', todayKey()).length === evs.length && !/Granted Ahmed/.test(document.getElementById('app-body').innerText);
        return link && own && /You may/.test(document.getElementById('app-body').innerText) && /Voids and refunds/.test(document.getElementById('app-body').innerText); }));
-  ok('the owner reads everyone’s day, with who did each thing — and can narrow it to one person',
-     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = null; render();
+  ok('the owner reads everyone’s day in Team > Log (v0.0019.1), with who did each thing — and can narrow it to one person',
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.openStaff = null; goto('teamlog');
        const all = [...document.querySelectorAll('.tl-ev')].map(e => e.innerText).join('\n');
        const both = /Rahma/.test(all) && /Ahmed/.test(all) && /Refused: Discounts/.test(all);
        setTeamPerson('ahmed@example.com'); const one = [...document.querySelectorAll('.tl-ev')];
@@ -3163,7 +3164,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
   ok('someone invited holds the Cashier role, shown on the Team list as “Cashier”',
      await dk.evaluate(() => { setv('inv-name', 'Ahmed Al-Kubaisi'); setv('inv-contact', 'ahmed@example.com'); inviteStaff();
        const x = S.staff[0]; S.teamNote = null; render(); return x.role === 'cashier' && !x.grants.length &&
-         /Cashier/.test(document.querySelector('.tm-row .tm-grants').innerText); }));
+         /Cashier/.test(document.querySelector('.tm-row .tm-grants').textContent); }));
   await dk.evaluate(() => { const code = S.staff[0].code; signOut(); signInAs('ahmed@example.com'); setLang('en'); acceptInvite(code);
     signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render(); });
   ok('on the person’s page: a role picker, and what the role gives is ticked, locked, and says it comes from the role',
@@ -3175,7 +3176,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
        const g = effectiveGrants(x).join();
        signOut(); signInAs('ahmed@example.com'); const may = can('voids', 'P1') && can('discounts', 'P1') && !can('prices', 'P1');
        signOut(); signInAs('rahma@example.com'); setLang('en'); S.openStaff = null; goto('team');
-       return g === 'sell,voids,discounts,ownItems,patients' && may && [...document.querySelectorAll('.tl-ev')].some(e => /Gave Ahmed Al-Kubaisi the Pharmacist role/.test(e.innerText)); }));
+       return g === 'sell,voids,discounts,ownItems,patients' && may && (re => { const k = S.screen; goto('teamlog'); const r = [...document.querySelectorAll('.tl-ev')].some(e => re.test(e.innerText)); goto(k); return r; })(/Gave Ahmed Al-Kubaisi the Pharmacist role/); }));
   ok('a role’s own permission cannot be taken away one person at a time — change the role instead',
      await dk.evaluate(() => { const x = S.staff[0]; setGrant(x.id, 'voids', false); setGrant(x.id, 'voids', true);
        return effectiveGrants(x).includes('voids') && !x.grants.includes('voids'); }));
@@ -3195,7 +3196,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
   ok('editing a role changes it for everyone who holds it, and says how many',
      await dk.evaluate(() => { const r = S.customRoles[0], x = S.staff[0]; setRole(x.id, r.id); const before = effectiveGrants(x).includes('stock');
        editRole(r.id); setc('role-p-stock', true); saveRole();
-       return !before && effectiveGrants(x).includes('stock') && [...document.querySelectorAll('.tl-ev')].some(e => /Edited the Night pharmacist role \(held by 1\)/.test(e.innerText)); }));
+       return !before && effectiveGrants(x).includes('stock') && (re => { const k = S.screen; goto('teamlog'); const r = [...document.querySelectorAll('.tl-ev')].some(e => re.test(e.innerText)); goto(k); return r; })(/Edited the Night pharmacist role \(held by 1\)/); }));
   ok('a ready-made role cannot be edited, only copied',
      await dk.evaluate(() => { editRole('manager'); const d = S.roleDraft; const ok1 = d.id === null && d.name === 'Copy of Manager';
        S.roleDraft = null; render(); return ok1 && roleById('manager').grants.length === PERMS.filter(p => !PERM_LATER[p]).length; }));
@@ -3203,7 +3204,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
      await dk.evaluate(() => { const r = S.customRoles[0]; deleteRole(r.id); return S.customRoles.includes(r) && /Staff hold this role/.test(document.getElementById('app-body').innerText); }));
   ok('…once nobody holds it, it can, and that is on the record',
      await dk.evaluate(() => { const r = S.customRoles[0]; setRole(S.staff[0].id, 'cashier'); deleteRole(r.id);
-       return !S.customRoles.length && [...document.querySelectorAll('.tl-ev')].some(e => /Deleted the Night pharmacist role/.test(e.innerText)); }));
+       return !S.customRoles.length && (re => { const k = S.screen; goto('teamlog'); const r = [...document.querySelectorAll('.tl-ev')].some(e => re.test(e.innerText)); goto(k); return r; })(/Deleted the Night pharmacist role/); }));
   ok('an owner’s roles are theirs, at all of their pharmacies, and nobody else’s',
      await dk.evaluate(() => { S.customRoles.push({ id:'CR9', owner:'layla@example.com', name:'Branch lead', grants:['sell', 'stock'] });
        const r = !!roleById('CR9', 'P7') && !!roleById('CR9', 'P9') && !roleById('CR9', 'P1') && !rolesFor('rahma@example.com').some(x => x.id === 'CR9');
@@ -3316,12 +3317,12 @@ console.log('\nthe seeded teams, and the view of someone on a team (v0.0015.2)')
        return m.includes('hassan@example.com') && m.includes('maryam@example.com') && !m.includes('zahraa@example.com') && !m.includes('karim@example.com'); }));
   ok('Al-Rahma’s Team: three staff with their roles, an invitation waiting, and someone who left',
      await tp.evaluate(() => { signInAs('rahma@example.com'); setLang('en'); goto('team'); const txt = document.getElementById('app-body').innerText;
-       const rows = [...document.querySelectorAll('.tm-row')].map(r => r.innerText);
+       const rows = [...document.querySelectorAll('.tm-row')].map(r => r.textContent);
        return /Staff · 3/i.test(txt) && rows.some(r => /Hassan Al-Dulaimi/.test(r) && /Pharmacist \+ Prices/.test(r)) &&
          rows.some(r => /Zahraa Ali/.test(r) && /Cashier/.test(r)) && rows.some(r => /Omar Faisal/.test(r) && /Stock keeper/.test(r)) &&
          rows.some(r => /Mustafa Naji/.test(r) && /Invited/.test(r)) && rows.some(r => /Duaa Salim/.test(r) && /Ended 2026-06-30/.test(r)); }));
   ok('…and today’s record has something in it: Hassan’s no-sale, Zahraa’s refused discount',
-     await tp.evaluate(() => { const ev = [...document.querySelectorAll('.tl-ev')].map(e => e.innerText).join('\n');
+     await tp.evaluate(() => { goto('teamlog'); const ev = [...document.querySelectorAll('.tl-ev')].map(e => e.innerText).join('\n'); goto('team');
        return /No sale — Change for the pharmacy next door/.test(ev) && /Hassan Al-Dulaimi/.test(ev) && /Refused: Discounts/.test(ev) && /Zahraa Ali/.test(ev); }));
   ok('a staff page left open does not follow anyone into another owner’s Team',
      await tp.evaluate(() => { S.openStaff = 'E001'; render(); const hassan = /Hassan Al-Dulaimi/.test(document.querySelector('.header-title').innerText);
@@ -3754,8 +3755,8 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
        return !!sh.claim && sh.claim.by === 'omar@example.com' && !sh.approval && !document.querySelector('.sh-claim[data-shift="' + sh.id + '"]'); }));
   ok('a person cannot approve their own claim; the owner decides — and the approval never overwrites the claim',
      await ap.evaluate(() => { const sh = S.shifts.find(x => x.id === window.__auto); const selfOk = approveShift(sh.id, false);
-       signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('team');
-       const waiting = /Check-out times waiting for you/.test(document.getElementById('app-body').innerText);
+       signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); goto('attendance');
+       const waiting = /Check-out times waiting for you/.test(document.getElementById('app-body').innerText); goto('team');
        openShiftOf('omar@example.com', sh.id); const d = document.querySelector('.sh-row-d[data-shift="' + sh.id + '"]');
        const offered = !!d && !!d.querySelector('.sh-accept');
        const inAt = new Date(sh.in); const hh = String((inAt.getHours() + 1) % 24).padStart(2, '0') + ':30';
@@ -3809,7 +3810,7 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
        stepPerf(-1); const back = S.perf.anchor < today;
        return new Date(w.from).getDay() === 6 && dayOf(w.from) === '2026-09-26' && dayOf(m.from) === '2026-09-01' && dayOf(m.to) === '2026-10-01' && noFuture && back; }));
   ok('the owner opens a team member: their schedule, then their shifts one by one, then their figures beside the pharmacy\'s average, then their permissions',
-     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:null };
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) };
        S.openStaff = S.staff.find(x => x.email === 'zahraa@example.com').id; goto('team');
        const q = sel => document.querySelector(sel); const order = ['.ro-card', '.sh-list', '.pf-card', '.tm-grantlist'].map(q);
        const inOrder = order.every(Boolean) && order.every((el, i) => !i || (order[i - 1].compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING));
@@ -3831,11 +3832,12 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
      await ap.evaluate(() => { signOut(); signInAs('maryam@example.com'); setPharmacy('P7'); const mgr = screenAllowed('reports');
        signOut(); signInAs('rahma@example.com'); setPharmacy('P8'); const work = screenAllowed('reports'); setPharmacy('P1'); const own = screenAllowed('reports');
        return !mgr && !work && own && navFor('owner').some(x => x[0] === 'reports'); }));
-  ok('NO SCREEN RANKS PEOPLE BY SALES: the Reports list people by name, with shifts and hours only',
-     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:null }; goto('reports');
+  ok('NO SCREEN RANKS PEOPLE BY SALES: Reports > People lists them by name, with shifts and hours only',
+     await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; goto('rpeople');
        const rows = [...document.querySelectorAll('.rpt-person')], names = rows.map(r => r.querySelector('.row-title').innerText.trim());
        const sorted = names.slice().sort((a, b) => a.localeCompare(b, 'en'));
-       return rows.length >= 4 && names.join('|') === sorted.join('|') && rows.every(r => !/IQD|\d{1,3},\d{3}/.test(r.innerText)) && /never in a league table/.test(document.getElementById('app-body').innerText); }));
+       const r = rows.length >= 4 && names.join('|') === sorted.join('|') && rows.every(r => !/IQD|\d{1,3},\d{3}/.test(r.innerText)) && /never in a league table/.test(document.getElementById('app-body').innerText);
+       goto('reports'); return r && !document.querySelector('.rpt-person'); }));
   ok('the pharmacy\'s figures: sales, their number, shifts and hours, and per shift the average and the median — with shifts that closed themselves counted apart',
      await ap.evaluate(() => { const card = document.querySelector('.pf-card'), f = perfFigures('P1', null, perfPeriod());
        return !!card && card.querySelector('.pf-grid').innerText.includes(fmt(f.total)) && /Median/.test(card.innerText) && f.auto >= 1 && /closed themselves/.test(card.innerText); }));
@@ -4089,7 +4091,7 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
 
   /* P7. */
   ok('P7 — A QUESTION, NEVER A RANKING: Zahraa\'s share of sales with an antibiotic is well above the pharmacy\'s, and Rahma is asked about it on Zahraa\'s page',
-     await tp.evaluate(() => { as('rahma@example.com', 'P1'); S.perf = { kind:'month', anchor:todayKey() }; const p = perfPeriod();
+     await tp.evaluate(() => { as('rahma@example.com', 'P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; const p = perfPeriod();
        const z = p7Flags('P1', 'zahraa@example.com', p).find(x => x.k === 'abx'), h = p7Flags('P1', 'hassan@example.com', p).find(x => x.k === 'abx');
        const rec = S.staff.find(x => x.email === 'zahraa@example.com' && x.pharmacy === 'P1' && x.state === 'active'); S.openStaff = rec.id; goto('team');
        const q = document.querySelector('.p7-q[data-class="abx"]');
@@ -4103,27 +4105,30 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
 
   /* The away card. */
   await fresh();
-  ok('THE OWNER\'S HOME OPENS ON WHAT HAPPENED WHILE THEY WERE AWAY: sales today, tasks done, and the missed ones listed first',
+  ok('THE OWNER\'S HOME LEADS WITH WHAT NEEDS THEM (mock-up A; one list since v0.0019.1): today\'s figures, tasks done, and the missed ones under Today',
      await tp.evaluate(() => { as('rahma@example.com', 'P1'); clockAt('13:00'); S.taskDone = S.taskDone.filter(d => d.day !== todayKey()); goto('dashboard');
-       const c = document.querySelector('.aw-card'); if (!c) return false;
-       const kids = [...c.children].map(e => e.className); const miss = [...c.querySelectorAll('.aw-miss')].map(e => e.dataset.task);
-       const first = document.querySelector('#app-body .aw-card') === document.querySelector('#app-body .card');
-       return c.querySelectorAll('.aw-tile').length === 3 && miss.includes('T001') && miss.includes('T003') && !miss.includes('T002') &&
-         kids.indexOf('aw-missed') > kids.indexOf('aw-tiles') && (kids.indexOf('aw-alsos') < 0 || kids.indexOf('aw-missed') < kids.indexOf('aw-alsos')) && first; }));
-  ok('everything else as a line: a reading out of range and an open report since then; Seen starts it again from now',
+       const strip = document.querySelector('.td-strip'), ny = document.querySelector('.ny'); if (!strip || !ny) return false;
+       const tasks = strip.querySelectorAll('.td-cell')[1].innerText;
+       const items = [...ny.querySelectorAll('.ny-item')], today = items.filter(i => i.dataset.lv === 'today').map(i => i.innerText);
+       const rank = { now:0, today:1, calm:2 }, lv = items.map(i => rank[i.dataset.lv]);
+       return strip.querySelectorAll('.td-cell').length === 3 && /0\/3/.test(tasks) && /2 missed/.test(tasks) &&
+         today.some(x => /Missed: Fridge temperature — morning/.test(x)) && today.some(x => /Missed: Check the near-expiry shelf/.test(x)) &&
+         !items.some(i => /Fridge temperature — evening/.test(i.innerText)) && lv.every((x, i) => !i || lv[i - 1] <= x) &&
+         (strip.compareDocumentPosition(ny) & Node.DOCUMENT_POSITION_FOLLOWING) && !document.querySelector('.aw-card'); }));
+  ok('a reading out of range and a new report are Act now; Seen clears what happened, and keeps what still needs doing',
      await tp.evaluate(() => { as('hassan@example.com', 'P1'); clockAt('13:30'); tickTask('T003', todayKey()); clockAt('21:10'); tickTask('T002', todayKey(), '11');
        reportIncident('P1', 'conduct', 'omar@example.com', 'Raised his voice at a customer.');
-       as('rahma@example.com', 'P1'); goto('dashboard'); const c = document.querySelector('.aw-card').innerText;
-       const lines = /Readings outside the safe range: 1/.test(c) && /New incident reports: 1/.test(c);
-       tap('.aw-seen'); const after = document.querySelector('.aw-card'); const calm = !after.querySelector('.aw-bad');
-       return lines && calm && !!S.awaySince.P1; }));
-  ok('late and absent people today, as lines that open their page',
+       as('rahma@example.com', 'P1'); goto('dashboard'); const now = () => [...document.querySelectorAll('.ny-item[data-lv="now"]')].map(i => i.innerText).join('\n');
+       const before = now(); const lines = /Fridge temperature — evening: 11 °C/.test(before) && /Safe range 2–8 °C/.test(before) && /New incident reports: 1/.test(before);
+       tap('.ny-seen'); const after = now();
+       return lines && !/evening: 11/.test(after) && !/New incident reports/.test(after) && /Expired batches in quarantine/.test(after) && !!S.awaySince.P1; }));
+  ok('someone absent today is Act now, and opens their page',
      await tp.evaluate(() => { S.rota.P1['omar@example.com'] = { days:[0, 1, 2, 3, 4, 5, 6], start:'09:00', end:'17:00' };
        S.shifts = S.shifts.filter(s => !(s.email === 'omar@example.com' && dayOf(s.in) === todayKey())); clockAt('11:00'); goto('dashboard');
-       const b = document.querySelector('.aw-att'); if (!b) return false; b.click();
-       return S.route === 'team' || !!S.openStaff; }));
-  ok('only the owner has it: Hassan\'s home has no away card',
-     await tp.evaluate(() => { as('hassan@example.com', 'P1'); goto('dashboard'); return !document.querySelector('.aw-card'); }));
+       const b = [...document.querySelectorAll('.ny-item[data-lv="now"]')].find(i => /Omar Faisal has not checked in — absent/.test(i.innerText)); if (!b) return false; b.click();
+       return S.screen === 'team' && !!S.openStaff; }));
+  ok('only the owner has it: Hassan\'s home has no Needs you list',
+     await tp.evaluate(() => { as('hassan@example.com', 'P1'); goto('dashboard'); return !document.querySelector('.ny') && !document.querySelector('.td-strip'); }));
 
   /* v0.0017.1: the check-out reminders. */
   await fresh();
@@ -4167,6 +4172,183 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
   await tp.setViewportSize({ width:1440, height:900 });
   ok(`tasks, incidents, the away card and a person's page do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
   await tp.close();
+}
+
+console.log('\na simpler app for the owner: five places, tabs inside, one list, attendance in Reports (v0.0019.1)');
+{
+  const sp = await dk.context().newPage();
+  sp.on('pageerror', e => errs.push('pageerror (v0.0019.1): ' + e.message));
+  const fresh = async () => {
+    await sp.goto(darkUrl); await sp.waitForTimeout(500);
+    await sp.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+      window.clockAt = hhmm => { S.clockShift = 0; S.clockShift = atOn(todayKey(), hhmm).getTime() - Date.now(); };
+      window.as = (mail, ph) => { signOut(); signInAs(mail); setLang('en'); if (ph) setPharmacy(ph); };
+      window.body = () => document.getElementById('app-body').innerText;
+      window.tabs = () => [...document.querySelectorAll('.mod-tab')].map(b => b.dataset.tab).join(); });
+  };
+  await fresh();
+
+  /* Five places. */
+  ok('THE SIDEBAR IS FOUR PLACES, THEN MORE, THEN YOU: Home, Pharmacy, Team, Reports — Tasks, Incidents and the Exchange are inside them now',
+     await sp.evaluate(() => { as('rahma@example.com', 'P1'); goto('dashboard');
+       const heads = [...document.querySelectorAll('#side-nav .side-group')].map(e => e.innerText.trim().toLowerCase());
+       const ids = [...document.querySelectorAll('#side-nav .side-nav-item')].map(b => b.dataset.nav);
+       return heads.join('|') === 'my pharmacy|more|you' && ids.slice(0, 4).join() === 'dashboard,pharmacy,team,reports' &&
+         ['trainees', 'consumption', 'billing', 'cv', 'notifications', 'profile'].every(x => ids.includes(x)) &&
+         !ids.some(x => ['tasks', 'incidents', 'exchange', 'till', 'stock', 'drugs'].includes(x)); }));
+  ok('…and “Reports” is there once: the incidents entry says Incidents in English (it said Reports)',
+     await sp.evaluate(() => { const labels = [...document.querySelectorAll('#side-nav .side-nav-item span:first-of-type')].map(e => e.innerText.trim());
+       return labels.filter(x => x === 'Reports').length === 1 && t('nav.incidents') === 'Incidents'; }));
+  ok('the phone bar is the same four, and More — which holds what is not on the bar, nothing twice',
+     await sp.evaluate(() => { const bar = [...document.querySelectorAll('#bottom-nav .nav-item')].map(b => b.dataset.nav);
+       goto('more'); const rows = [...document.querySelectorAll('#app-body .row')].map(r => r.getAttribute('onclick'));
+       return bar.join() === 'dashboard,pharmacy,team,reports,more' && rows.some(r => /\bbilling\b/.test(r)) && rows.some(r => /\bprofile\b/.test(r)) &&
+         !rows.some(r => /\b(dashboard|team|reports|till|stock|drugs)\b/.test(r)); }));
+
+  /* Tabs inside. */
+  ok('TEAM HAS TABS — People, Tasks, Incidents, Log — under one header, and Team stays lit in each',
+     await sp.evaluate(() => ['team', 'tasks', 'incidents', 'teamlog'].every(s => { goto(s);
+       return tabs() === 'team,tasks,incidents,teamlog' && document.querySelector('.mod-tab.on').dataset.tab === s &&
+         document.querySelector('.header-title').innerText === 'Team' && document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'team'; })));
+  ok('…a tab counts only what needs the owner: missed tasks in amber, open incidents in red',
+     await sp.evaluate(() => { clockAt('13:00'); S.taskDone = S.taskDone.filter(d => d.day !== todayKey()); goto('team');
+       const c = id => document.querySelector('.mod-tab[data-tab="' + id + '"] .mod-count');
+       const missed = todaysTasks('P1').filter(i => i.state === 'missed').length, open = incidentsAt('P1').filter(x => x.state === 'open').length;
+       return !!c('tasks') && c('tasks').classList.contains('today') && c('tasks').innerText === String(missed) &&
+         !!c('incidents') && c('incidents').classList.contains('now') && c('incidents').innerText === String(open) && !c('team') && !c('teamlog'); }));
+  ok('People: who is in now, and where each person is today; Tasks, Incidents and the day by day are not repeated on it',
+     await sp.evaluate(() => { goto('team'); const b = body(), chips = [...document.querySelectorAll('.tm-row .tm-chip')].map(c => c.innerText);
+       return /On shift now:/.test(b) && /Hassan since/.test(b) && chips.includes('On shift') && !document.querySelector('.tm-links') &&
+         !document.querySelector('#app-body .tl-ev') && !/Check-out times waiting/.test(b); }));
+  ok('…invitations and former staff fold away, and open',
+     await sp.evaluate(() => { const inv = document.querySelector('.tm-invited'), fmr = document.querySelector('.tm-former');
+       if (!inv || !fmr || inv.open || fmr.open) return false; inv.open = true; fmr.open = true;
+       return /Mustafa Naji/.test(inv.innerText) && /Duaa Salim/.test(fmr.innerText); }));
+  ok('a person\'s page has no tabs — it is a page of the People tab, with its way back',
+     await sp.evaluate(() => { S.openStaff = S.staff.find(x => x.email === 'omar@example.com' && x.state === 'active').id; render();
+       const r = !document.querySelector('.mod-tabs') && /Omar Faisal/.test(document.querySelector('.header-title').innerText); S.openStaff = null; render(); return r; }));
+  ok('REPORTS HAS TABS — Sales, Attendance, People; the people and the check-outs to approve are each in one place',
+     await sp.evaluate(() => { goto('reports'); const sales = tabs() === 'reports,attendance,rpeople' && !document.querySelector('.rpt-person') && !document.querySelector('.sh-waiting') && !!document.querySelector('.rpt-share');
+       goto('rpeople'); const people = document.querySelectorAll('.rpt-person').length >= 4;
+       goto('attendance'); const att = !!document.querySelector('.sh-waiting') && document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'reports';
+       return sales && people && att; }));
+  ok('THE EXCHANGE IS A PHARMACY TAB, beside the stock it trades; a pharmacist sees it only once granted',
+     await sp.evaluate(() => { goto('exchange'); const owner = tabs() === 'till,stock,drugs,exchange' && document.querySelector('.mod-tab.on').dataset.tab === 'exchange' &&
+         document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'pharmacy';
+       const h = S.staff.find(x => x.email === 'hassan@example.com' && x.pharmacy === 'P1');
+       as('hassan@example.com', 'P1'); goto('till'); const before = !tabs().includes('exchange');
+       as('rahma@example.com', 'P1'); setGrant(h.id, 'exchange', true); as('hassan@example.com', 'P1'); goto('till'); const after = tabs().includes('exchange');
+       as('rahma@example.com', 'P1'); setGrant(h.id, 'exchange', false); return owner && before && after; }));
+  ok('an owner of several, on All: Team and Reports ask which pharmacy first, without tabs over the question',
+     await sp.evaluate(() => { as('layla@example.com'); setPharmacy(null); goto('team'); const a = !document.querySelector('.mod-tabs') && /Which pharmacy/i.test(body());
+       goto('attendance'); const b = !document.querySelector('.mod-tabs'); setPharmacy('P7'); const c = S.screen === 'attendance' && !!document.querySelector('.mod-tabs');
+       return a && b && c; }));
+
+  /* The home. */
+  await fresh();
+  ok('THE HOME IS FOUR THINGS, IN THIS ORDER: your shift, today at a glance, the till, then one list of what needs you',
+     await sp.evaluate(() => { as('rahma@example.com', 'P1'); goto('dashboard');
+       const order = ['.sh-card.compact', '.td-strip', '.hm-till-one', '.home-ann', '.ny'].map(s => document.querySelector('#app-body ' + s));
+       const inOrder = order.every(Boolean) && order.every((el, i) => !i || (order[i - 1].compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING));
+       return inOrder && !document.querySelector('.hm-count') && !document.querySelector('.hm-spark') && !document.querySelector('.hm-needs') && !document.querySelector('.aw-card'); }));
+  ok('Act now in red, Today in amber, each group named; the rest folded under “when you have a minute”',
+     await sp.evaluate(() => { const g = [...document.querySelectorAll('.ny-grp')].map(e => e.className + ':' + e.innerText.trim());
+       const now = [...document.querySelectorAll('.ny-item.now')], today = [...document.querySelectorAll('.ny-item.today')];
+       const cs = el => getComputedStyle(el).borderTopColor;
+       return g.some(x => /now/.test(x) && /Act now/.test(x)) && g.some(x => /today/.test(x) && /Today/.test(x)) &&
+         now.some(i => /Expired batches in quarantine/.test(i.innerText)) && today.some(i => /Expiring within 90 days/.test(i.innerText)) &&
+         now.every(i => cs(i) === cs(now[0])) && cs(now[0]) !== cs(today[0]) && !document.querySelector('.ny-item.calm') && /\d+ more when you have a minute/.test(document.querySelector('.ny-more').innerText); }));
+  ok('the Home button counts what needs you now or today — the same number, wherever you are',
+     await sp.evaluate(() => { const n = needsAll(PHARMACIES.P1).filter(x => x.lv !== 'calm').length; goto('stock');
+       const bar = document.querySelector('#bottom-nav [data-nav="dashboard"] .nav-count'), side = document.querySelector('#side-nav [data-nav="dashboard"] .side-nav-count');
+       goto('dashboard'); return n > 0 && !!bar && bar.innerText === String(n) && !!side && side.innerText === String(n); }));
+  ok('a drawer waiting for sign-off is Today; a controlled substance sold twice offline is Act now, at the very top',
+     await sp.evaluate(() => { const rows = needsAll(PHARMACIES.P1); S.offlineConflicts.push({ id:'XC1', pharmacy:'P1', code:'7600000001040', controlled:true, resolved:false, sales:['a', 'b'] });
+       const first = needsAll(PHARMACIES.P1)[0]; S.offlineConflicts = [];
+       return first.lv === 'now' && /Sold on two devices offline/.test(first.title) && rows.every(r => ['now', 'today', 'calm'].includes(r.lv)); }));
+
+  /* The announcement. */
+  ok('THE SAYDALI+ CARD IS COMPACT, UNDER THE TILL: labelled, one sentence, and a ×',
+     await sp.evaluate(() => { const a = document.querySelector('.home-ann'); if (!a) return false; const h = a.getBoundingClientRect().height;
+       return !a.classList.contains('slim') && /From Saydali\+/i.test(a.innerText) && !!a.querySelector('.banner-s') && !!a.querySelector('.ann-x') && h < 120 && h > 60; }));
+  ok('× MAKES IT SLIM, FOR GOOD: one line, no ×, still there — after leaving the home and signing in again',
+     await sp.evaluate(() => { tap('.ann-x'); const a = document.querySelector('.home-ann');
+       const slim = !!a && a.classList.contains('slim') && !a.querySelector('.ann-x') && !a.querySelector('.banner-s') && a.getBoundingClientRect().height < 56;
+       goto('stock'); as('rahma@example.com', 'P1'); goto('dashboard'); const b = document.querySelector('.home-ann');
+       return slim && !!b && b.classList.contains('slim') && !b.querySelector('.ann-x'); }));
+  ok('IT IS THERE UNTIL IT IS OPENED: opening it goes where it says, is counted, and it leaves the home',
+     await sp.evaluate(() => { const n = S.bannerTaps['A1|' + TODAY_ISO] || 0; tap('.home-ann .ann-open');
+       const went = S.screen === 'till' && S.bannerTaps['A1|' + TODAY_ISO] === n + 1; goto('dashboard');
+       return went && !document.querySelector('.home-ann') && annState('A1') === 'opened'; }));
+  ok('…and the next one from Saydali+ arrives compact; it is per person — Layla still has hers',
+     await sp.evaluate(() => { LISTINGS.push({ id:'A9', kind:'announcement', company:null, state:'live', surface:'home', go:null,
+         title:{ en:'Tasks are here', ar:'المهام هنا' }, body:{ en:'Give the desk its daily checks.', ar:'أعطِ الدوام فحوصه اليومية.' } }); render();
+       const a = document.querySelector('.home-ann'); const next = !!a && a.dataset.ann === 'A9' && !a.classList.contains('slim');
+       tap('.home-ann .ann-open'); const gone = !document.querySelector('.home-ann') && S.screen === 'dashboard';
+       LISTINGS.splice(LISTINGS.findIndex(x => x.id === 'A9'), 1);
+       as('layla@example.com', 'P7'); goto('dashboard'); const layla = !!document.querySelector('.home-ann') && annState('A1') === 'new';
+       return next && gone && layla; }));
+
+  /* Reports > Attendance (A1). */
+  await fresh();
+  ok('ATTENDANCE, THE WEEK: a row a person, a cell a day — on time, minutes late, absent, leave, or the start still to come',
+     await sp.evaluate(() => { as('rahma@example.com', 'P1'); goto('attendance');
+       const p = attPeriod(), cells = [...document.querySelectorAll('.at-week tbody tr')].flatMap(tr => [...tr.querySelectorAll('td .at-c')].map(c => [tr.dataset.mail, c]));
+       const days = [...document.querySelectorAll('.at-week thead th')].length - 1;
+       const match = cells.every(([m, c]) => { const d = c.dataset.day; if (!d) return c.dataset.att === 'none';
+         const a = attendanceOn('P1', m, d); return !!a && a.state === c.dataset.att && (a.state !== 'late' || c.innerText === a.minutes + 'm'); });
+       const omar = cells.filter(([m]) => m === 'omar@example.com').map(([, c]) => c.dataset.att);
+       return days === 7 && match && omar.includes('late') && omar.includes('absent') && document.querySelectorAll('.at-week tbody tr').length === attPeople('P1').length &&
+         !!document.querySelector('.at-week th.tdy'); }));
+  ok('…the colours are never alone: a legend, minutes written in the cell, and each cell says what it is to a screen reader',
+     await sp.evaluate(() => { const lg = document.querySelector('.at-legend').innerText; const late = document.querySelector('.at-c.late');
+       return ['On time', 'Late', 'Absent', 'Excused', 'Leave', 'To come'].every(x => lg.includes(x)) && !!late && /\d+m/.test(late.innerText) &&
+         /late/i.test(late.getAttribute('aria-label')); }));
+  ok('…the counts for the week are written above it',
+     await sp.evaluate(() => { const p = attPeriod(), all = attPeople('P1').flatMap(m => attendanceIn('P1', m, p));
+       const n = k => all.filter(a => a.state === k).length, s = k => document.querySelector('.at-sum [data-k="' + k + '"]').innerText;
+       return s('absent') === n('absent') + ' absent' && s('late') === n('late') + ' late' && s('leave') === n('leave') + ' on leave'; }));
+  ok('AN ABSENCE OR A LATE DAY IS DECIDED FROM HERE: Excuse, on the record, and the cell says Excused',
+     await sp.evaluate(() => { const row = [...document.querySelectorAll('.at-decide')].find(r => r.dataset.mail === 'omar@example.com'); if (!row) return false;
+       const day = row.dataset.day; row.querySelector('.att-excuse').click();
+       const cell = document.querySelector('.at-week tr[data-mail="omar@example.com"] .at-c[data-day="' + day + '"]');
+       return attendanceOn('P1', 'omar@example.com', day).state === 'excused' && !!cell && cell.dataset.att === 'excused' &&
+         S.tillLog.some(e => e.kind === 'attExcused' && e.day === day) && ![...document.querySelectorAll('.at-decide')].some(r => r.dataset.day === day && r.dataset.mail === 'omar@example.com'); }));
+  ok('a cell opens that person\'s page at that week',
+     await sp.evaluate(() => { const c = document.querySelector('.at-week tr[data-mail="zahraa@example.com"] button.at-c'); const d = c.dataset.day; c.click();
+       const r = S.screen === 'team' && S.openStaff === S.staff.find(x => x.email === 'zahraa@example.com' && x.state === 'active').id && S.perf.anchor === d;
+       S.openStaff = null; return r; }));
+  ok('ATTENDANCE, THE MONTH: a strip of the month\'s days a person, the counts and the hours written beside it',
+     await sp.evaluate(() => { goto('attendance'); attView('month'); attMove(-1);
+       const p = attPeriod(), n = Math.round((new Date(p.to) - new Date(p.from)) / 864e5);
+       const rows = [...document.querySelectorAll('.at-mrow')];
+       const z = rows.find(r => r.dataset.mail === 'zahraa@example.com'), list = attendanceIn('P1', 'zahraa@example.com', p);
+       const shifts = shiftsAt('P1', 'zahraa@example.com').filter(s => s.in >= p.from && s.in < p.to).length;
+       return rows.length === attPeople('P1').length && rows.every(r => r.querySelectorAll('.at-strip i').length === n) && !!z &&
+         z.querySelectorAll('.at-strip i.ok').length === list.filter(a => a.state === 'ok').length &&
+         new RegExp(list.filter(a => a.state === 'ok').length + ' on time').test(z.innerText) && new RegExp(shifts + ' days · ').test(z.innerText); }));
+  ok('…back and forward a month at a time, never into the future',
+     await sp.evaluate(() => { const a = attPeriod().from; attMove(1); const b = attPeriod().from; const dis = document.querySelector('.at-next').disabled; attMove(1);
+       return b > a && dis && attPeriod().from === b; }));
+  ok('ATTENDANCE IS THE OWNER\'S: not a Manager\'s, not where the owner only works, and the tab counts the absences waiting',
+     await sp.evaluate(() => { as('rahma@example.com', 'P1'); goto('attendance'); const c = document.querySelector('.mod-tab[data-tab="attendance"] .mod-count');
+       const n = attWaiting('P1').length + waitingApproval('P1').length;
+       as('maryam@example.com', 'P7'); const mgr = screenAllowed('attendance'); as('rahma@example.com', 'P8'); const work = screenAllowed('attendance');
+       return !!c && c.innerText === String(n) && !mgr && !work; }));
+  ok('the seeded count\'s expiries are counted from this month, whatever the day (on the 1st–3rd they slipped a month)',
+     await sp.evaluate(() => S.batches.some(b => b.code === '5000000001002' && b.expiry === ymOffset(14)) && S.batches.some(b => b.code === '5000000001033' && b.expiry === ymOffset(2))));
+
+  /* Narrow, both directions. */
+  const wide = [];
+  await sp.setViewportSize({ width:320, height:700 });
+  for (const dir of ['ar', 'en']) for (const [scr, extra] of [['dashboard'], ['team'], ['tasks'], ['teamlog'], ['reports'], ['attendance', 'week'], ['attendance', 'month'], ['rpeople'], ['exchange'], ['more']]) {
+    await sp.evaluate(([d, s, x]) => { as('rahma@example.com', 'P1'); setLang(d); if (x) S.attView = x; goto(s); }, [dir, scr, extra]);
+    await sp.waitForTimeout(40);
+    if (await sp.evaluate(() => document.body.scrollWidth) > 320) wide.push(dir + ' ' + scr + (extra ? ' ' + extra : ''));
+  }
+  await sp.setViewportSize({ width:1440, height:900 });
+  ok(`the home, the tabs and Attendance (week and month) do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+  await sp.close();
 }
 
 console.log('\nlayout');

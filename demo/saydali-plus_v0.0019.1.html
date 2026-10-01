@@ -1160,6 +1160,148 @@
   .mod-tab .ico{ width:17px; height:17px; flex:none; }
   .mod-tab.on{ color:var(--indigo); border-color:var(--indigo); }
   @media (max-width:380px){ .mod-tab .ico{ display:none; } .mod-tab{ font-size:13.5px; } }
+
+  /* ==========================================================================
+     v0.0019.1 — a simpler app for the owner
+     Two outline colours with fixed meanings: red, act now (patient safety,
+     money, a person missing); amber, today (waiting on a decision, or due
+     today). Each group is also named — colour is never the only signal.
+     ========================================================================== */
+  .mod-tabs{ overflow-x:auto; scrollbar-width:none; }
+  .mod-tabs::-webkit-scrollbar{ display:none; }
+  .mod-tab{ flex:1 0 auto; }
+  .mod-count{ font-family:var(--font-mono); font-size:10.5px; font-weight:600; min-width:18px; height:18px; line-height:18px; padding:0 5px;
+    border-radius:9px; text-align:center; flex:none; }
+  .mod-count.now{ background:var(--clay); color:#fff; }
+  .mod-count.today{ background:var(--amber-tint); color:#7A4E10; }
+  .nav-count{ position:absolute; top:0; inset-inline-start:calc(50% + 5px); min-width:17px; height:17px; line-height:17px; padding:0 4px; border-radius:9px;
+    background:var(--clay); color:#fff; font-family:var(--font-mono); font-size:10px; font-weight:600; text-align:center; }
+  .side-nav-count.now{ background:#E07A6F; color:#2B0C08; }
+  /* The owner's shift, compact at the top of the home. */
+  .sh-card.compact{ padding:10px 12px; }
+  .sh-card.compact .sh-state{ font-size:14px; }
+  .sh-card.compact .sh-row .btn-primary, .sh-card.compact .sh-row .btn-secondary{ padding:8px 14px; font-size:13.5px; }
+  /* Today, at a glance. */
+  .td-strip{ display:grid; grid-template-columns:1.3fr 1fr 1fr; padding:0; }
+  .td-cell{ display:flex; flex-direction:column; gap:2px; padding:12px 12px 11px; min-width:0; }
+  .td-cell + .td-cell{ border-inline-start:1px solid var(--border); }
+  .td-fig{ font-size:19px; font-weight:600; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; }
+  .td-fig small{ font-size:11px; font-weight:500; color:var(--ink-faint); margin-inline-start:3px; font-family:var(--font-body); }
+  .td-l{ font-size:12.5px; color:var(--ink-soft); }
+  .td-s{ font-size:11.5px; color:var(--ink-faint); line-height:1.35; }
+  .td-s.bad{ color:var(--clay); } .td-s.ok{ color:var(--palm); }
+  .td-s .hm-up, .td-s .hm-down{ font-weight:600; }
+  @media (max-width:400px){ .td-strip{ grid-template-columns:1fr 1fr; } .td-cell:first-child{ grid-column:1 / -1; border-bottom:1px solid var(--border); }
+    .td-cell:nth-child(2){ border-inline-start:none; } }
+  .hm-till-one{ width:100%; display:flex; align-items:center; justify-content:center; gap:9px; min-height:50px; font-size:15.5px; }
+  .hm-till-one[disabled]{ opacity:.45; }
+  .hm-till-one .ico{ width:19px; height:19px; }
+  /* The announcement: compact; slim once closed. */
+  .home-ann{ position:relative; }
+  .home-ann .banner-slot{ padding:12px 14px; border-radius:16px; }
+  .home-ann:not(.slim) .banner-slot{ padding-inline-end:52px; }
+  .home-ann .banner-t{ font-size:16px; }
+  .home-ann .banner-s{ -webkit-line-clamp:2; }
+  .home-ann .banner-go{ width:34px; height:34px; }
+  .home-ann .banner-go svg{ width:16px; height:16px; }
+  .home-ann .ann-x{ position:absolute; top:9px; inset-inline-end:9px; width:28px; height:28px; border-radius:9px; display:grid; place-items:center;
+    background:rgba(255,255,255,.14); color:#fff; z-index:2; }
+  .home-ann .ann-x:hover{ background:rgba(255,255,255,.24); }
+  .home-ann .ann-x .ico{ width:14px; height:14px; }
+  .home-ann:not(.slim) .banner-go{ position:absolute; bottom:12px; inset-inline-end:12px; }
+  .home-ann.slim .banner-slot{ padding:8px 10px 8px 12px; border-radius:13px; gap:10px; }
+  .home-ann.slim .banner-body{ display:flex; align-items:center; gap:9px; min-width:0; }
+  .home-ann.slim .banner-tag{ margin:0; flex:none; padding:2px 7px; font-size:9.5px; }
+  .home-ann.slim .banner-t{ font-size:13.5px; font-family:var(--font-body); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  html[dir="rtl"] .home-ann.slim .banner-t{ font-family:var(--font-ar); }
+  .home-ann.slim .banner-go{ width:26px; height:26px; box-shadow:none; }
+  .home-ann.slim .banner-go svg{ width:13px; height:13px; }
+  /* Needs you: one list, in three groups. */
+  .ny-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin:6px 2px 4px; }
+  .ny-title{ font-family:var(--font-display); font-size:18px; font-weight:600; }
+  html[dir="rtl"] .ny-title{ font-family:var(--font-ar); }
+  .ny-title em{ font-style:normal; font-weight:500; color:var(--ink-faint); margin-inline-start:4px; font-family:var(--font-mono); font-size:15px; }
+  .ny-since{ font-size:12px; color:var(--ink-faint); margin-top:1px; }
+  .ny-seen{ padding:6px 12px; font-size:13px; }
+  .ny-none{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; font-size:14px; color:var(--ink-soft); }
+  .ny-grp{ display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin:12px 2px 7px; }
+  .ny-grp i{ width:9px; height:9px; border-radius:3px; background:#C9C6DA; display:block; }
+  .ny-grp.now{ color:var(--clay); } .ny-grp.now i{ background:var(--clay); }
+  .ny-grp.today{ color:#7A4E10; } .ny-grp.today i{ background:var(--amber); }
+  .ny-item{ display:flex; align-items:center; gap:11px; width:100%; text-align:start; background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:10px 12px; margin-bottom:8px; }
+  button.ny-item:hover{ box-shadow:0 2px 10px rgba(25,23,53,.08); }
+  .ny-item.now{ border:1.5px solid var(--clay); }
+  .ny-item.today{ border:1.5px solid #D9AE68; }
+  .ny-ic{ width:34px; height:34px; border-radius:10px; display:grid; place-items:center; flex:none; background:var(--mist); color:var(--ink-soft); }
+  .ny-ic .ico{ width:17px; height:17px; }
+  .ny-item.now .ny-ic{ background:var(--clay-tint); color:var(--clay); }
+  .ny-item.today .ny-ic{ background:var(--amber-tint); color:#7A4E10; }
+  .ny-t{ flex:1; min-width:0; }
+  .ny-t b{ display:block; font-size:14.5px; font-weight:500; line-height:1.3; }
+  .ny-t span{ display:block; font-size:12.5px; color:var(--ink-faint); margin-top:2px; line-height:1.35; }
+  .ny-fold{ display:flex; align-items:center; justify-content:space-between; width:100%; background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:12px 14px; font-size:14px; color:var(--ink-soft); }
+  /* Team: who is in now, and where each person is today. */
+  .tm-onnow{ display:flex; align-items:center; gap:10px; background:var(--palm-tint); border-radius:13px; padding:10px 13px; font-size:13.5px; line-height:1.4; }
+  .tm-onnow.none{ background:var(--card); border:1px solid var(--border); }
+  .tm-chip{ flex:none; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap; margin-inline-start:6px; }
+  .tm-chip.on{ background:var(--palm-tint); color:var(--palm); }
+  .tm-chip.bad{ background:var(--clay-tint); color:var(--clay); }
+  .tm-chip.off{ background:var(--mist); color:var(--ink-soft); }
+  .tm-fold summary{ display:flex; align-items:center; gap:8px; padding:14px 16px; font-weight:600; cursor:pointer; list-style:none; }
+  .tm-fold summary::-webkit-details-marker{ display:none; }
+  .tm-fold summary span{ font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); font-weight:500; }
+  .tm-fold[open] summary{ border-bottom:1px solid var(--border); }
+  .tm-invite > summary, .tm-roles > summary{ list-style:none; cursor:pointer; font-weight:600; font-size:15px; display:flex; align-items:center; }
+  .tm-invite > summary::-webkit-details-marker, .tm-roles > summary::-webkit-details-marker{ display:none; }
+  .tm-invite:not([open]), .tm-roles:not([open]){ padding:0; }
+  .tm-invite:not([open]) > summary, .tm-roles:not([open]) > summary{ padding:14px 16px; }
+  /* Reports > Attendance */
+  .at-sum{ display:flex; flex-wrap:wrap; gap:7px; }
+  .at-sum span{ font-size:12.5px; font-weight:600; padding:5px 11px; border-radius:999px; background:var(--card); border:1px solid var(--border); color:var(--ink-soft); }
+  .at-sum span.bad{ border-color:var(--clay); color:var(--clay); }
+  .at-sum span.warn{ border-color:#D9AE68; color:#7A4E10; }
+  .at-week{ padding:8px 6px; overflow:hidden; }
+  .at-week table{ width:100%; border-collapse:separate; border-spacing:3px 4px; table-layout:fixed; }
+  .at-week th{ font-size:10.5px; font-weight:600; color:var(--ink-faint); text-align:center; padding:4px 0; line-height:1.15; vertical-align:middle; }
+  .at-week th span{ display:block; font-family:var(--font-mono); font-weight:500; font-size:10px; }
+  .at-week th.tdy{ color:var(--indigo); background:var(--indigo-tint); border-radius:7px; }
+  .at-week .at-who{ width:23%; text-align:start; padding-inline-start:4px; font-size:12px; line-height:1.2; overflow:hidden; }
+  .at-week .at-who b{ display:block; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .at-week .at-who span{ display:block; font-family:var(--font-mono); font-size:10px; color:var(--ink-faint); }
+  .at-c{ width:100%; height:32px; border-radius:7px; display:grid; place-items:center; font-family:var(--font-mono); font-size:10px; font-weight:600;
+    letter-spacing:-.03em; overflow:hidden; padding:0; }
+  .at-c .ico{ width:13px; height:13px; stroke-width:2.4; }
+  .at-c.ok{ background:var(--palm-tint); color:var(--palm); }
+  .at-c.late{ background:var(--amber-tint); color:#7A4E10; }
+  .at-c.absent{ background:var(--clay); color:#fff; }
+  .at-c.excused{ background:var(--card); color:var(--ink-soft); border:1.5px solid var(--palm); }
+  .at-c.leave{ background:repeating-linear-gradient(135deg,#E6E4F0 0 4px,#F5F4FA 4px 8px); color:var(--ink-soft); }
+  .at-c.due{ border:1.5px dashed #C3C0D6; color:var(--ink-faint); background:transparent; }
+  .at-c.none{ background:transparent; }
+  button.at-c:focus-visible{ outline:2px solid var(--indigo); outline-offset:1px; }
+  .at-legend{ display:flex; flex-wrap:wrap; gap:7px 13px; font-size:12px; color:var(--ink-soft); }
+  .at-legend span{ display:flex; align-items:center; gap:6px; }
+  .at-legend .at-c{ width:15px; height:15px; border-radius:4px; display:inline-block; }
+  .at-legend .at-c.ok{ border:1px solid #B9D0B2; }
+  .at-month{ padding:2px 14px; }
+  .at-mrow{ display:block; width:100%; text-align:start; padding:12px 0; }
+  .at-mrow + .at-mrow{ border-top:1px solid var(--border); }
+  .at-mtop{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:7px; }
+  .at-mtop b{ font-size:14px; font-weight:600; }
+  .at-mtop .figure{ font-size:11.5px; color:var(--ink-faint); white-space:nowrap; }
+  .at-strip{ display:grid; gap:2px; margin-bottom:6px; }
+  .at-strip i{ height:14px; border-radius:2px; display:block; background:#F0EFF6; }
+  .at-strip i.ok{ background:#B9D0B2; } .at-strip i.late{ background:var(--amber); } .at-strip i.absent{ background:var(--clay); }
+  .at-strip i.excused{ background:#fff; box-shadow:inset 0 0 0 1.5px var(--palm); }
+  .at-strip i.leave{ background:repeating-linear-gradient(135deg,#CFCCDF 0 2px,#F2F1F7 2px 4px); }
+  .at-strip i.due{ background:transparent; box-shadow:inset 0 0 0 1px #C3C0D6; }
+  .at-cnt{ display:flex; flex-wrap:wrap; gap:4px 11px; font-size:12px; color:var(--ink-soft); }
+  .at-cnt em{ font-style:normal; font-weight:600; font-family:var(--font-mono); }
+  .at-cnt .late{ color:#7A4E10; } .at-cnt .absent{ color:var(--clay); }
+  .at-decide{ margin-bottom:8px; }
+  .at-decide .att-excuse{ flex:none; padding:6px 12px; font-size:13px; }
   /* v0.0013.3 — search, own items, barcodes */
   /* v0.0016.3 — every result row the same shape and height. */
   .find-row .row-body{ min-width:0; flex:1; }
@@ -1490,6 +1632,7 @@
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-till" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5 11h14v8H5z"/><path d="M7 11V5h10v6"/><path d="M9 8h6M8 15h2M12 15h4"/></g></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></g></symbol>
   <symbol id="i-store" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9.5 5.5 5h13L20 9.5"/><path d="M4 9.5c0 1.4 1.1 2.5 2.7 2.5s2.6-1.1 2.6-2.5c0 1.4 1.1 2.5 2.7 2.5s2.7-1.1 2.7-2.5c0 1.4 1.1 2.5 2.6 2.5S20 10.9 20 9.5"/><path d="M5.5 12v7h13v-7"/><path d="M10 19v-4h4v4"/><path d="M12 13.2v1M11.5 13.7h1"/></g></symbol>
 </defs></svg>
 
@@ -3314,7 +3457,7 @@ Object.assign(STRINGS.en, {
   'acc.rahma':'Rahma Al-Jubouri','acc.pharmacyRahma':'Al-Rahma Pharmacy','acc.rahmaTag':'Owner, Al-Rahma Pharmacy',
   'acc.zainab':'Zainab Al-Tamimi','acc.zainabTag':'Student',
   'acc.admin':'Platform reviewer','acc.adminTag':'Admin',
-  'nav.notifications':'Notifications','nav.incidents':'Reports','nav.more':'More',
+  'nav.notifications':'Notifications','nav.incidents':'Incidents','nav.more':'More',
   'nav.drugs':'Drugs','common.clear':'Clear',
   'common.remove':'Remove','nav.consumption':'Consumption',
   'dx.tabReference':'Reference','dc.tabCheck':'Dispensing Helper',
@@ -11191,7 +11334,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0019';
+const VERSION = 'App_v0.0019.1';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -11268,11 +11411,11 @@ function screenAllowed(screen, role) {
   const granted = p => (role === 'pharmacist' || role === 'owner') && role === S.role && can(p);
   if (STOCK_SCREENS.includes(screen)) return owns || granted('stock');
   if (screen === 'drawer') return owns || granted('sell');
-  if (screen === 'team') return owns;
+  if (screen === 'team' || screen === 'teamlog') return owns;
   /* v0.0018: the owner's by default, or granted. */
   if (screen === 'exchange') return owns || granted('exchange');
   /* v0.0017: the Reports are the owner's alone — not a Manager role's. */
-  if (screen === 'reports') return owns && !!myPharmacies().length;
+  if (screen === 'reports' || screen === 'attendance' || screen === 'rpeople') return owns && !!myPharmacies().length;
   if (screen === 'activity') return role === 'pharmacist' || (role === 'owner' && role === S.role && workPharmacies().length > 0);
   /* v0.0019: tasks for anyone at a pharmacy; incidents inside a pharmacy
      while the marketplace is off. */
@@ -11431,6 +11574,8 @@ const S = {
   /* v0.0019 — tasks and their ticks, incidents, leave the owner gave,
      excused days, and when the owner last looked at each pharmacy. */
   tasks: [], taskDone: [], incidents: [], leave: [], attExcused: {}, awaySince: {},
+  /* v0.0019.1 */
+  annState: {}, calmOpen: false, attView: 'week', attAnchor: null,
   taskErr: null, taskFormOpen: false, taskFormErr: false, taskRepeat: 'daily', taskReading: false, incErr: false,
   shifts: [], pastSales: [], rota: {}, reportsShared: {}, perf: { kind:'week', anchor:null }, rotaEdit: null, claimErr: null, openShift: null,
   customRoles: [], roleDraft: null,
@@ -12841,7 +12986,7 @@ function pharmacyBoard() {
 }
 
 /* The screens that show one pharmacy at a time, with the tab strip. */
-const PHARMACY_SCOPED = ['till', 'drawer', 'team', 'activity', 'reports', 'exchange', 'tasks', 'incidents', 'stock', 'count', 'import', 'orders', 'suppliers', 'register', 'labels'];
+const PHARMACY_SCOPED = ['till', 'drawer', 'team', 'teamlog', 'activity', 'reports', 'attendance', 'rpeople', 'exchange', 'tasks', 'incidents', 'stock', 'count', 'import', 'orders', 'suppliers', 'register', 'labels'];
 function setPharmacy(id) {
   /* A cart belongs to the pharmacy it was rung up in. Switching tabs does not
      carry it to another pharmacy's till; it is set aside, and that is recorded. */
@@ -13159,9 +13304,12 @@ function needsList(rows) {
 }
 /* The platform's announcement, as a quiet line. Still the same slot — it is
    counted and labelled exactly as before (W15). */
-const annLine = () => { const b = bannerFor('home'); return b ? '<div class="hm-ann">' + b + '</div>' : ''; };
+/* v0.0019.1: compact, slim once closed, there until opened. */
+const annLine = () => { const b = homeBanner(); return b ? '<div class="hm-ann">' + b + '</div>' : ''; };
 
 function homeOne(lead) {
+  /* v0.0019.1: the owner's home is mock-up A. */
+  if (ownerModules()) return homeOneV191(lead);
   const ph = currentPharmacy();
   const week = salesWeek(ph.id), today = week[6], yesterday = week[5];
   const canTill = ph.verification === 'verified' && !!ph.responsible;
@@ -15366,19 +15514,19 @@ const waitingApproval = phId => shiftsAt(phId).filter(sh => sh.state === 'auto' 
 const autoIn30 = (phId, mail) => shiftsAt(phId, mail).filter(sh => sh.state === 'auto' && withinDays(sh.in, 30)).length;
 
 /* On a home: whether you are on shift, and a claim if one is due. */
-function shiftCard(ph) {
+function shiftCard(ph, compact) {
   if (!ph || !worksAt(ph.id)) return '';
   sweepShifts();
   const sh = openShift(ph.id), r = schedFor(ph.id, S.email, nowIso());
   const due = myClaimsDue(ph.id);
-  return '<div class="card card-pad sh-card">' +
+  return '<div class="card card-pad sh-card' + (compact ? ' compact' : '') + '">' +
     '<div class="sh-row"><span class="wk-dot' + (sh ? ' open' : '') + '"></span><div style="flex:1;min-width:0;">' +
       '<p class="sh-state">' + esc(sh ? t('sh.onSince', { t:hm(sh.in) }) : t('sh.off')) + '</p>' +
       '<p class="sh-sub">' + esc(sh && sh.sched ? t('sh.until', { t:sh.sched.end }) : r ? t('sh.today', { a:r.start, b:r.end }) : t('sh.notToday')) + '</p></div>' +
       (sh ? '<button class="btn-secondary sh-out" onclick="tapCheckOut()">' + esc(t('sh.checkOut')) + '</button>'
           : '<button class="btn-primary sh-in" onclick="tapCheckIn()">' + esc(t('sh.checkIn')) + '</button>') + '</div>' +
     (sh ? shiftReminders(sh).map(r => '<div class="banner banner-amber sh-rem" data-rem="' + r.k + '">' + icon('clock') + '<p>' + esc(r.text) + '</p></div>').join('')
-        : '<p class="inline-note">' + esc(t('sh.autoNote')) + '</p>') +
+        : compact ? '' : '<p class="inline-note">' + esc(t('sh.autoNote')) + '</p>') +
     due.map(x => claimForm(x)).join('') +
     '</div>';
 }
@@ -15605,8 +15753,10 @@ function screenReports() {
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
     periodBar() +
     '<p class="section-eyebrow">' + esc(t('rpt.pharmacyT')) + '</p>' + perfHtml(ph.id, null) +
-    approvalsCard(ph) +
+    (ownerModules() ? '' : approvalsCard(ph)) +
     byDayRows(ph.id, p) +
+    /* v0.0019.1: the people are their own tab. */
+    (ownerModules() ? '' :
     '<p class="section-eyebrow">' + esc(t('rpt.peopleT')) + '</p>' +
     '<div class="card rpt-people">' + people.map(x => {
       const f = perfFigures(ph.id, x.mail, p), a = autoIn30(ph.id, x.mail);
@@ -15615,7 +15765,7 @@ function screenReports() {
         '<span class="row-sub" style="display:block;">' + esc(t('rpt.personLine', { n:fmt(f.shifts), h:hoursFmt(f.hours) })) + '</span></span>' +
         (a >= REPEAT_AUTO ? '<span class="badge badge-alert">' + esc(t('sh.repeatAuto', { n:a })) + '</span>' : '') + icon('chevron', 'more-chevron') + '</button>';
     }).join('') + '</div>' +
-    '<p class="inline-note">' + esc(t('rpt.p7')) + '</p>' +
+    '<p class="inline-note">' + esc(t('rpt.p7')) + '</p>') +
     '<label class="card card-pad row rpt-share"><span class="row-body"><span class="row-title" style="display:block;">' + esc(t('rpt.shareT')) + '</span>' +
       '<span class="row-sub" style="display:block;">' + esc(t(shared ? 'rpt.shareOn' : 'rpt.shareOff')) + '</span></span>' +
       '<input type="checkbox" class="bc-toggle rpt-share-t" ' + (shared ? 'checked ' : '') + 'onchange="setReportsShared(' + attr(ph.id) + ', this.checked)"></label>' +
@@ -16353,13 +16503,374 @@ function seedV19() {
   INC_SEQ = S.incidents.length;
 }
 
+/* ==========================================================================
+   v0.0019.1 — A SIMPLER APP FOR THE OWNER (reported 1 Oct 2026)
+
+   The owner opened the app and got lost between the options: two lists of
+   what needs them on the home, fourteen flat entries in the sidebar, nine
+   sections stacked on Team. Decided 1 Oct 2026 (mock-up A):
+
+   - Five places, the same on the phone and the computer: Home, Pharmacy,
+     Team, Reports, More. Inside each module, tabs — the pattern Pharmacy
+     already had. Team: People · Tasks · Incidents · Log. Reports: Sales ·
+     Attendance · People. Pharmacy gains Exchange.
+   - The home: today's figures, the till, and ONE list of what needs the
+     owner, in three groups — Act now (red outline: patient safety, money, a
+     person missing), Today (amber: waiting on a decision, or due today), and
+     the rest, folded away. The colour is never the only signal: each group
+     is named.
+   - The announcement from Saydali+ stays on the home, as a compact card under
+     the till button. Closing it makes it a slim line, for good; it is there
+     until it is opened.
+   - Reports > Attendance: the week as a grid of people and days, and the
+     month as a strip of days per person, with the counts written out.
+   ========================================================================== */
+
+/* ---------- The modules' tabs ---------- */
+
+const TEAM_TABS = [['team','users','tm.people'],['tasks','check','nav.tasks'],['incidents','alert','i.title'],['teamlog','clock','tm.log']];
+const REPORT_TABS = [['reports','chart','rp.sales'],['attendance','calendar','rp.att'],['rpeople','users','rp.people']];
+const ownerModules = () => S.role === 'owner' && !FLAGS.marketplace;
+function moduleOf(screen) {
+  if (!ownerModules()) return null;
+  if (TEAM_TABS.some(x => x[0] === screen)) return 'team';
+  if (REPORT_TABS.some(x => x[0] === screen)) return 'reports';
+  return null;
+}
+const moduleTabsOf = m => (m === 'team' ? TEAM_TABS : REPORT_TABS).filter(x => screenAllowed(x[0]));
+/* A count on a tab only when something there needs the owner — in the same
+   two colours as the home's groups. */
+function tabCount(id) {
+  const ph = currentPharmacy();
+  if (!ph || !(S.role === 'owner' && ownsPharmacy(ph.id))) return null;
+  if (id === 'tasks') { const n = todaysTasks(ph.id).filter(it => it.state === 'missed').length; return n ? { n, lv:'today' } : null; }
+  if (id === 'incidents') { const n = incidentsAt(ph.id).filter(x => x.state === 'open').length; return n ? { n, lv:'now' } : null; }
+  if (id === 'attendance') { const n = attWaiting(ph.id).length + waitingApproval(ph.id).length; return n ? { n, lv:'today' } : null; }
+  return null;
+}
+const countHtml = c => c ? '<b class="mod-count ' + c.lv + '">' + c.n + '</b>' : '';
+function moduleTabsHtml(m) {
+  const tabs = moduleTabsOf(m);
+  if (tabs.length < 2) return '';
+  return '<div class="constrain"><div class="mod-tabs" role="tablist">' + tabs.map(([id, ic, key]) =>
+    '<button class="mod-tab' + (S.screen === id ? ' on' : '') + '" role="tab" aria-selected="' + (S.screen === id) + '" data-tab="' + id + '" ' +
+      'onclick="S.openStaff=null;goto(' + attr(id) + ')">' + icon(ic) + '<span>' + esc(t(key)) + '</span>' + countHtml(tabCount(id)) + '</button>').join('') + '</div></div>';
+}
+/* What the bar and the sidebar count: on Home, what needs you now or today;
+   on Team, the reports still open. */
+function navCount(id) {
+  if (!ownerModules()) return null;
+  const ph = currentPharmacy();
+  if (!ph || !ownsPharmacy(ph.id)) return null;
+  if (id === 'dashboard') { const n = needsAll(ph).filter(x => x.lv !== 'calm').length; return n ? { n, lv:'now' } : null; }
+  if (id === 'team') { const n = incidentsAt(ph.id).filter(x => x.state === 'open').length; return n ? { n, lv:'now' } : null; }
+  return null;
+}
+
+/* ---------- One list of what needs the owner ---------- */
+
+/* Everything at one pharmacy that needs the owner, in three groups. What is
+   a state (expired stock, a drawer waiting) stays until it is dealt with;
+   what is an event (a reading, a report, a Stop gone ahead with) stays until
+   the owner says Seen. */
+function needsAll(ph) {
+  const out = [], add = (lv, ic, title, sub, go) => out.push({ lv, ic, title, sub:sub || '', go });
+  const a = awayData(ph);
+  a.outs.forEach(d => { const x = (S.tasks || []).find(k => k.id === d.task); if (!x || !x.reading) return;
+    add('now', 'alert', t('ny.reading', { title:x.title, v:d.value + ' ' + x.reading.unit }), t('ny.readingS', { min:x.reading.min, max:x.reading.max, unit:x.reading.unit, who:personName(d.by), t:hm(d.at) }), "goto('tasks')"); });
+  a.att.filter(x => x.a.state === 'absent').forEach(x => add('now', 'clock', t('aw.att.absent', { who:personName(x.m) }), t('ny.dueAt', { t:x.a.sched.start }), 'openAtt(' + attr(x.m) + ')'));
+  if (a.inc.length) add('now', 'alert', t('aw.inc', { n:a.inc.length }), t('ny.incS'), "goto('incidents')");
+  if (a.stops.length) add('now', 'alert', t('aw.stops', { n:a.stops.length }), '', "goto('teamlog')");
+  needsYou(ph).forEach(r => add(r.tone === 'bad' ? 'now' : r.tone === 'warn' ? 'today' : 'calm', r.ic, r.title, r.sub, r.go));
+  a.missed.forEach(it => add('today', 'check', t('ny.missed', { title:it.task.title }), t('tk2.dueAt', { t:it.task.due }) + ' · ' + taskWho(it.task), "goto('tasks')"));
+  a.att.filter(x => x.a.state === 'late').forEach(x => add('today', 'clock', t('aw.att.late', { who:personName(x.m), m:x.a.minutes }), '', 'openAtt(' + attr(x.m) + ')'));
+  const w = waitingApproval(ph.id);
+  if (w.length) add('today', 'clock', t('ny.claims', { n:w.length }), t('ny.claimsS', { who:personName(w[0].email), day:dayLabel(w[0].in) }), "goto('attendance')");
+  if (a.denied.length) add('calm', 'lock', t('aw.denied', { n:a.denied.length }), '', "goto('teamlog')");
+  const rank = { now:0, today:1, calm:2 };
+  return out.map((x, i) => Object.assign(x, { i })).sort((p, q) => rank[p.lv] - rank[q.lv] || p.i - q.i);
+}
+function needsAllHtml(ph) {
+  const items = needsAll(ph), a = awaySince(ph.id), today = startOfDay(todayKey()).toISOString();
+  const item = x => '<button class="ny-item ' + x.lv + '" data-lv="' + x.lv + '" onclick="' + x.go + '"><span class="ny-ic">' + icon(x.ic) + '</span>' +
+    '<span class="ny-t"><b>' + esc(x.title) + '</b>' + (x.sub ? '<span>' + esc(x.sub) + '</span>' : '') + '</span>' + icon('chevron', 'more-chevron') + '</button>';
+  const grp = lv => { const l = items.filter(x => x.lv === lv); return l.length ? '<p class="ny-grp ' + lv + '"><i></i>' + esc(t('ny.' + lv)) + '</p>' + l.map(item).join('') : ''; };
+  const calm = items.filter(x => x.lv === 'calm');
+  return '<section class="ny" aria-label="' + esc(t('ny.title')) + '"><div class="ny-head"><div><h2 class="ny-title">' + esc(t('ny.title')) + (items.length ? ' <em>' + items.length + '</em>' : '') + '</h2>' +
+      '<p class="ny-since">' + esc(a <= today ? t('aw.sinceToday') : t('aw.since', { t:hm(a) })) + '</p></div>' +
+      '<button class="btn-ghost ny-seen aw-seen" onclick="awaySeen(' + attr(ph.id) + ')">' + esc(t('aw.seen')) + '</button></div>' +
+    (!items.length ? '<p class="ny-none">' + esc(t('hm.needsNone')) + '</p>' : '') +
+    grp('now') + grp('today') +
+    (calm.length ? (S.calmOpen ? grp('calm') + '<button class="ny-fold" onclick="S.calmOpen=false;render()">' + esc(t('ny.less')) + '</button>'
+      : '<button class="ny-fold ny-more" onclick="S.calmOpen=true;render()">' + esc(t('ny.more', { n:calm.length })) + icon('chevron', 'more-chevron') + '</button>') : '') +
+  '</section>';
+}
+
+/* ---------- Today, at a glance ---------- */
+
+function todayStrip(ph) {
+  const week = salesWeek(ph.id), today = week[6], y = week[5], ybn = byNow(y.total);
+  const pct = today.n && ybn ? Math.round((today.total - ybn) / ybn * 100) : null;
+  const tasks = todaysTasks(ph.id), done = tasks.filter(it => it.state === 'done' || it.state === 'late').length, missed = tasks.filter(it => it.state === 'missed').length;
+  const open = (S.shifts || []).filter(s => s.pharmacy === ph.id && s.state === 'open');
+  const due = scheduledPeople(ph.id).filter(m => attendanceOn(ph.id, m, todayKey()) && m !== S.email);
+  const people = new Set(due.concat(open.map(s => s.email)));
+  const cell = (fig, label, sub, cls) => '<div class="td-cell"><span class="td-fig figure">' + fig + '</span><span class="td-l">' + esc(label) + '</span>' +
+    '<span class="td-s' + (cls ? ' ' + cls : '') + '">' + sub + '</span></div>';
+  return '<div class="card td-strip">' +
+    cell(esc(fmt(today.total)) + '<small>' + esc(t('common.iqd')) + '</small>', t('hm.salesToday'),
+      pct == null ? esc(today.n ? t('td.n', { n:today.n }) : t('hm.noneYet', { y:iqd(ybn) })) : '<span class="' + (pct >= 0 ? 'hm-up' : 'hm-down') + '">' + (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%</span> ' + esc(t('td.vsY')), '') +
+    cell(tasks.length ? done + '/' + tasks.length : '—', t('td.tasks'), esc(tasks.length ? (missed ? t('td.missed', { n:missed }) : t('td.noneMissed')) : t('td.noTasks')), missed ? 'bad' : '') +
+    cell(open.length + '/' + Math.max(people.size, open.length), t('td.on'),
+      esc(open.length ? t('td.since', { who:firstName(personName(open[0].email)), t:hm(open[0].in) }) : t('td.nobody')), open.length ? 'ok' : '') +
+  '</div>';
+}
+
+/* The owner's home (mock-up A). */
+function homeOneV191(lead) {
+  const ph = currentPharmacy();
+  const canTill = ph.verification === 'verified' && !!ph.responsible;
+  return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack home2 home3">' +
+    shiftCard(ph, true) +
+    todayStrip(ph) +
+    '<button class="btn-primary hm-till hm-till-one"' + (canTill ? '' : ' disabled') + ' onclick="goto(\'till\')">' + icon('till') + esc(t('hm.openTill')) + '</button>' +
+    annLine() +
+    needsAllHtml(ph) +
+    '</div></div>';
+}
+
+/* ---------- The announcement: compact, slim once closed, gone once opened ---------- */
+
+const annKey = id => S.email + '|' + id;
+const annState = id => (S.annState || {})[annKey(id)] || 'new';
+function annOpen(id) {
+  const b = LISTINGS.find(x => x.id === id);
+  if (!b) return;
+  S.annState[annKey(id)] = 'opened';
+  const key = id + '|' + TODAY_ISO;
+  S.bannerTaps[key] = (S.bannerTaps[key] || 0) + 1;
+  if (b.go && screenAllowed(b.go)) goto(b.go); else render();
+}
+function annClose(id) { if (annState(id) === 'new') S.annState[annKey(id)] = 'slim'; render(); }
+function homeBanner() {
+  const b = LISTINGS.find(x => x.state === 'live' && x.surface === 'home' && annState(x.id) !== 'opened' &&
+    (x.kind === 'announcement' || (x.kind === 'banner' && FLAGS.partners)));
+  if (!b) return '';
+  countImpression(b.id);
+  const paid = b.kind === 'banner', slim = annState(b.id) === 'slim';
+  const tag = paid ? (disclosure(b) || '<span class="banner-tag">' + esc(t('ad.paid')) + '</span>') : '<span class="banner-tag">' + icon('sparkle') + esc(t('ad.fromUs')) + '</span>';
+  return '<div class="home-ann' + (slim ? ' slim' : '') + '" data-ann="' + esc(b.id) + '">' +
+    '<button class="banner-slot ' + (paid ? 'paid' : 'announce') + ' ann-open" onclick="annOpen(' + attr(b.id) + ')">' +
+      '<svg class="header-pattern" aria-hidden="true"><rect width="100%" height="100%" fill="url(#starTile)"/></svg>' +
+      '<span class="banner-body">' + tag + '<span class="banner-t">' + esc(L(b.title)) + '</span>' +
+        (slim ? '' : '<span class="banner-s">' + esc(L(b.body)) + '</span>') + '</span>' +
+      '<span class="banner-go" aria-hidden="true">' + icon('back') + '</span></button>' +
+    (slim ? '' : '<button class="ann-x" onclick="annClose(' + attr(b.id) + ')" aria-label="' + esc(t('ann.close')) + '">' + icon('x') + '</button>') +
+  '</div>';
+}
+
+/* ---------- Team: People and Log ---------- */
+
+/* Where each person is today, beside their name. */
+function todayChip(phId, mail) {
+  if (openShift(phId, mail)) return '<span class="tm-chip on">' + esc(t('tm.st.on')) + '</span>';
+  const a = attendanceOn(phId, mail, todayKey());
+  if (!a) return '<span class="tm-chip off">' + esc(t('tm.st.off')) + '</span>';
+  if (a.state === 'absent') return '<span class="tm-chip bad">' + esc(t('tm.st.absent')) + '</span>';
+  if (a.state === 'leave') return '<span class="tm-chip off">' + esc(t('tm.st.leave')) + '</span>';
+  if (a.state === 'due') return '<span class="tm-chip off">' + esc(t('tm.st.due', { t:a.sched.start })) + '</span>';
+  return '<span class="tm-chip off">' + esc(t('tm.st.done')) + '</span>';
+}
+function onNowStrip(phId) {
+  const open = (S.shifts || []).filter(s => s.pharmacy === phId && s.state === 'open');
+  const due = scheduledPeople(phId).filter(m => !openShift(phId, m)).map(m => ({ m, a:attendanceOn(phId, m, todayKey()) })).filter(x => x.a && x.a.state === 'due');
+  const parts = open.map(s => t('td.since', { who:firstName(personName(s.email)), t:hm(s.in) })).concat(due.map(x => t('tm.dueAt', { who:firstName(personName(x.m)), t:x.a.sched.start })));
+  return '<div class="tm-onnow' + (open.length ? '' : ' none') + '"><span class="wk-dot' + (open.length ? ' open' : '') + '"></span><span><b>' + esc(t('tm.onNow')) + '</b> ' +
+    esc(parts.length ? parts.join(' · ') : t('tm.onNowNone')) + '</span></div>';
+}
+function screenTeamLog() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'team');
+  const day = S.teamDay || todayKey(), list = staffOf(ph.id);
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="tl-bar">' + dayPicker(day, 'setTeamDay') +
+      '<select class="tl-person" onchange="setTeamPerson(this.value)"><option value="">' + esc(t('tm.everyone')) + '</option>' +
+        [...new Set([S.email].concat(list.filter(x => x.email).map(x => x.email)))].map(m => '<option value="' + esc(m) + '"' + (S.teamPerson === m ? ' selected' : '') + '>' + esc(personName(m)) + '</option>').join('') + '</select></div>' +
+    timelineHtml(ph.id, S.teamPerson, day) +
+    '<p class="inline-note">' + esc(t('tm.privacy')) + '</p>' +
+    '</div></div>';
+}
+
+/* ---------- Reports: People ---------- */
+
+function screenReportPeople() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'reports');
+  sweepShifts();
+  const p = perfPeriod();
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' + periodBar() +
+    '<div class="card rpt-people">' + reportPeople(ph.id).map(x => {
+      const f = perfFigures(ph.id, x.mail, p), a = autoIn30(ph.id, x.mail);
+      return '<button class="row rpt-person" data-mail="' + esc(x.mail) + '" style="width:100%;text-align:start;" onclick="openPersonFromReports(' + attr(x.mail) + ')">' +
+        '<span class="avatar tm-av">' + esc(initialsOf(x.name)) + '</span><span class="row-body"><span class="row-title" style="display:block;">' + esc(x.name) + '</span>' +
+        '<span class="row-sub" style="display:block;">' + esc(t('rpt.personLine', { n:fmt(f.shifts), h:hoursFmt(f.hours) })) + '</span></span>' +
+        (a >= REPEAT_AUTO ? '<span class="badge badge-alert">' + esc(t('sh.repeatAuto', { n:a })) + '</span>' : '') + icon('chevron', 'more-chevron') + '</button>';
+    }).join('') + '</div>' +
+    '<p class="inline-note">' + esc(t('rpt.p7')) + '</p>' +
+    '</div></div>';
+}
+
+/* ---------- Reports: Attendance (A1) ---------- */
+
+/* Who is on the attendance: everyone with a schedule here and everyone on
+   the team, the owner too — by name, never by anything they did (P7). */
+function attPeople(phId) {
+  const m = new Set(scheduledPeople(phId));
+  staffOf(phId).filter(x => x.state === 'active' && x.email).forEach(x => m.add(x.email));
+  return [...m].sort((a, b) => personName(a).localeCompare(personName(b), lang === 'ar' ? 'ar' : 'en'));
+}
+/* Days in the last week, someone else's, late or absent and not excused —
+   each a decision only the owner can make. */
+function attWaiting(phId) {
+  const p = { from:startOfDay(shiftDay(todayKey(), -7)).toISOString(), to:startOfDay(todayKey()).toISOString() };
+  return attPeople(phId).filter(m => m !== S.email).flatMap(m => attendanceIn(phId, m, p).filter(a => a.state === 'absent').map(a => Object.assign({ m }, a)));
+}
+const attPeriod = () => periodRange(S.attView || 'week', S.attAnchor || todayKey());
+function attMove(k) {
+  const view = S.attView || 'week', a = startOfDay(S.attAnchor || todayKey());
+  if (view === 'week') a.setDate(a.getDate() + 7 * k); else { a.setDate(15); a.setMonth(a.getMonth() + k); }
+  const next = dayOf(a.toISOString());
+  if (k > 0 && periodRange(view, next).from > nowIso()) return;
+  S.attAnchor = next; render();
+}
+function attView(v) { S.attView = v; S.attAnchor = todayKey(); render(); }
+function attOpen(mail, day) {
+  const ph = currentPharmacy(); if (!ph) return;
+  S.perf = { kind:'week', anchor:day };
+  if (mail === S.email) { S.openStaff = 'OWNER'; goto('team'); return; }
+  const rec = staffOf(ph.id).find(x => x.email === mail && x.state === 'active');
+  if (rec) { S.openStaff = rec.id; goto('team'); }
+}
+const WD_SHORT = { en:['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ar:['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'] };
+function attCell(phId, mail, day) {
+  const a = attendanceOn(phId, mail, day);
+  const go = 'attOpen(' + attr(mail) + ',' + attr(day) + ')';
+  if (!a) return '<td><span class="at-c none" data-att="none"></span></td>';
+  const label = t('at.cell.' + a.state, { m:a.minutes, t:a.sched.start });
+  const inner = a.state === 'ok' ? icon('check') : esc(label);
+  return '<td><button class="at-c ' + a.state + '" data-att="' + a.state + '" data-day="' + day + '" onclick="' + go + '" aria-label="' +
+    esc(personName(mail) + ', ' + dayLabel(day + 'T12:00:00') + ': ' + t('at.' + a.state, { m:a.minutes })) + '">' + inner + '</button></td>';
+}
+function attWeek(phId, people, p) {
+  const days = [];
+  for (let d = dayOf(p.from); d < dayOf(p.to); d = shiftDay(d, 1)) days.push(d);
+  return '<div class="card at-week"><table><thead><tr><th class="at-who"></th>' + days.map(d =>
+      '<th class="' + (d === todayKey() ? 'tdy' : '') + '">' + esc(WD_SHORT[lang][dowOf(d)]) + '<span>' + startOfDay(d).getDate() + '</span></th>').join('') + '</tr></thead><tbody>' +
+    people.map(m => { const r = rotaOf(phId, m);
+      return '<tr data-mail="' + esc(m) + '"><td class="at-who"><b>' + esc(firstName(personName(m))) + '</b>' + (r ? '<span>' + esc(r.start + '–' + r.end) + '</span>' : '') + '</td>' +
+        days.map(d => attCell(phId, m, d)).join('') + '</tr>'; }).join('') +
+  '</tbody></table></div>';
+}
+function attMonth(phId, people, p) {
+  const days = [];
+  for (let d = dayOf(p.from); d < dayOf(p.to); d = shiftDay(d, 1)) days.push(d);
+  return '<div class="card at-month">' + people.map(m => {
+    const list = attendanceIn(phId, m, p), by = {};
+    list.forEach(a => { by[a.day] = a.state; });
+    const n = k => list.filter(a => a.state === k).length;
+    const sh = shiftsAt(phId, m).filter(s => s.in >= p.from && s.in < p.to);
+    const hrs = sh.reduce((a, s) => a + workedHours(s), 0);
+    return '<button class="at-mrow" data-mail="' + esc(m) + '" onclick="attOpen(' + attr(m) + ',' + attr(dayOf(p.from)) + ')">' +
+      '<span class="at-mtop"><b>' + esc(personName(m)) + '</b><span class="figure">' + esc(t('at.daysHours', { d:sh.length, h:hoursFmt(hrs) })) + '</span></span>' +
+      '<span class="at-strip" style="grid-template-columns:repeat(' + days.length + ',1fr)">' + days.map(d => '<i class="' + (by[d] || 'none') + '" title="' + esc(d) + '"></i>').join('') + '</span>' +
+      '<span class="at-cnt">' + ['ok', 'late', 'absent', 'excused', 'leave'].filter(k => n(k)).map(k => '<span class="' + k + '"><em>' + n(k) + '</em> ' + esc(t('at.cnt.' + k)) + '</span>').join('') +
+        (list.length ? '' : '<span>' + esc(t('at.noneDue')) + '</span>') + '</span></button>';
+  }).join('') + '</div>';
+}
+function screenAttendance() {
+  const ph = currentPharmacy(), tabs = pharmacyTabs();
+  if (!ph) return stockChooser(tabs, 'reports');
+  sweepShifts();
+  const view = S.attView || 'week', p = attPeriod(), people = attPeople(ph.id);
+  const all = people.map(m => ({ m, list:attendanceIn(ph.id, m, p) }));
+  const cnt = k => all.reduce((a, x) => a + x.list.filter(d => d.state === k).length, 0);
+  const owner = S.role === 'owner' && ownsPharmacy(ph.id);
+  const decide = all.filter(x => x.m !== S.email).flatMap(x => x.list.filter(a => a.state === 'absent' || a.state === 'late').map(a => Object.assign({ m:x.m }, a)));
+  const sw = (k, cls) => '<span><i class="at-c ' + cls + '"></i>' + esc(t('at.lg.' + k)) + '</span>';
+  return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="pf-bar at-bar"><div class="segmented at-kind" role="tablist">' + ['week', 'month'].map(v => '<button class="' + (view === v ? 'active' : '') + '" role="tab" aria-selected="' + (view === v) + '" data-view="' + v + '" onclick="attView(' + attr(v) + ')">' + esc(t('at.view.' + v)) + '</button>').join('') + '</div>' +
+      '<div class="tl-days"><button class="btn-secondary tl-prev at-prev" onclick="attMove(-1)" aria-label="' + esc(t('pf.prev')) + '">' + icon('back') + '</button>' +
+      '<span class="tl-day at-label">' + esc(periodLabel(p)) + '</span>' +
+      '<button class="btn-secondary tl-next at-next" ' + (p.to > nowIso() ? 'disabled ' : '') + 'onclick="attMove(1)" aria-label="' + esc(t('pf.next')) + '">' + icon('back') + '</button></div></div>' +
+    '<div class="at-sum">' + [['absent', 'bad'], ['late', 'warn'], ['excused', ''], ['leave', '']].map(([k, c]) => '<span class="' + c + '" data-k="' + k + '">' + esc(t('at.sum.' + k, { n:cnt(k) })) + '</span>').join('') + '</div>' +
+    (people.length ? (view === 'week' ? attWeek(ph.id, people, p) : attMonth(ph.id, people, p)) : '<div class="card card-pad till-empty">' + esc(t('at.nobody')) + '</div>') +
+    '<div class="at-legend">' + sw('ok', 'ok') + sw('late', 'late') + sw('absent', 'absent') + sw('excused', 'excused') + sw('leave', 'leave') + sw('due', 'due') + '</div>' +
+    (owner ? approvalsCard(ph) : '') +
+    (owner && decide.length ? '<p class="section-eyebrow">' + esc(t('at.decideT')) + '</p>' + decide.sort((a, b) => a.day < b.day ? 1 : -1).map(a =>
+      '<div class="ny-item today at-decide" data-day="' + a.day + '" data-mail="' + esc(a.m) + '"><span class="ny-ic">' + icon('clock') + '</span>' +
+        '<span class="ny-t"><b>' + esc(t('at.decide.' + a.state, { who:personName(a.m), day:dayLabel(a.day + 'T12:00:00'), m:a.minutes })) + '</b>' +
+        '<span>' + esc(t('at.sched', { a:a.sched.start, b:a.sched.end }) + (a.shift ? ' · ' + t('at.in', { t:hm(a.shift.in) }) : '')) + '</span></span>' +
+        '<button class="btn-ghost att-excuse" onclick="excuseAttendance(' + attr(ph.id) + ',' + attr(a.m) + ',' + attr(a.day) + ')">' + esc(t('at.excuse')) + '</button></div>').join('') : '') +
+    '</div></div>';
+}
+
+/* ---------- Strings ---------- */
+
+Object.assign(STRINGS.en, {
+  'nav.home':'Home', 'grp.more':'More', 'grp.you':'You',
+  'tm.people':'People', 'tm.log':'Log', 'rp.sales':'Sales', 'rp.att':'Attendance', 'rp.people':'People', 'ex.tab':'Exchange',
+  'ny.title':'Needs you', 'ny.now':'Act now', 'ny.today':'Today', 'ny.calm':'When you have a minute',
+  'ny.more':'{n} more when you have a minute', 'ny.less':'Show less',
+  'ny.reading':'{title}: {v}', 'ny.readingS':'Safe range {min}–{max} {unit} · {who}, {t}',
+  'ny.dueAt':'Due at {t}', 'ny.incS':'Open them to acknowledge', 'ny.missed':'Missed: {title}',
+  'ny.claims':'Check-out times to approve: {n}', 'ny.claimsS':'{who} · {day}',
+  'td.tasks':'Tasks done', 'td.on':'On shift', 'td.noTasks':'No tasks today', 'td.missed':'{n} missed', 'td.noneMissed':'None missed',
+  'td.nobody':'Nobody yet', 'td.since':'{who} since {t}', 'td.vsY':'on yesterday by now', 'td.noSales':'No sales yet', 'td.n':'{n} sales',
+  'ann.close':'Close',
+  'tm.onNow':'On shift now:', 'tm.onNowNone':'nobody', 'tm.dueAt':'{who} due {t}',
+  'tm.st.on':'On shift', 'tm.st.absent':'Absent', 'tm.st.due':'Due {t}', 'tm.st.off':'Off today', 'tm.st.leave':'On leave', 'tm.st.done':'Worked today',
+  'tm.invitesRow':'Invitations waiting', 'tm.formerRow':'Former staff',
+  'at.view.week':'Week', 'at.view.month':'Month',
+  'at.sum.absent':'{n} absent', 'at.sum.late':'{n} late', 'at.sum.excused':'{n} excused', 'at.sum.leave':'{n} on leave',
+  'at.cell.ok':'', 'at.cell.late':'{m}m', 'at.cell.absent':'Abs', 'at.cell.leave':'Off', 'at.cell.excused':'Exc', 'at.cell.due':'{t}',
+  'at.lg.ok':'On time', 'at.lg.late':'Late', 'at.lg.absent':'Absent', 'at.lg.excused':'Excused', 'at.lg.leave':'Leave', 'at.lg.due':'To come',
+  'at.cnt.ok':'on time', 'at.cnt.late':'late', 'at.cnt.absent':'absent', 'at.cnt.excused':'excused', 'at.cnt.leave':'leave',
+  'at.daysHours':'{d} days · {h} h', 'at.noneDue':'Not on the rota this month', 'at.nobody':'Nobody has a schedule here yet.',
+  'at.decideT':'Waiting for your decision', 'at.decide.absent':'{who} absent, {day}', 'at.decide.late':'{who} {m} min late, {day}'
+});
+Object.assign(STRINGS.ar, {
+  'nav.home':'الرئيسية', 'grp.more':'المزيد', 'grp.you':'أنت',
+  'tm.people':'الأشخاص', 'tm.log':'السجل', 'rp.sales':'المبيعات', 'rp.att':'الحضور', 'rp.people':'الأشخاص', 'ex.tab':'التبادل',
+  'ny.title':'بانتظارك', 'ny.now':'تصرّف الآن', 'ny.today':'اليوم', 'ny.calm':'حين يتسع وقتك',
+  'ny.more':'{n} أخرى حين يتسع وقتك', 'ny.less':'عرض أقل',
+  'ny.reading':'{title}: {v}', 'ny.readingS':'النطاق الآمن {min}–{max} {unit} · {who}، {t}',
+  'ny.dueAt':'موعده {t}', 'ny.incS':'افتحها للإقرار بها', 'ny.missed':'فائتة: {title}',
+  'ny.claims':'أوقات انصراف بانتظار موافقتك: {n}', 'ny.claimsS':'{who} · {day}',
+  'td.tasks':'مهام منجزة', 'td.on':'في الدوام', 'td.noTasks':'لا مهام اليوم', 'td.missed':'{n} فائتة', 'td.noneMissed':'لا شيء فائت',
+  'td.nobody':'لا أحد بعد', 'td.since':'{who} منذ {t}', 'td.vsY':'عن أمس في مثل هذا الوقت', 'td.noSales':'لا مبيعات بعد', 'td.n':'{n} عملية بيع',
+  'ann.close':'إغلاق',
+  'tm.onNow':'في الدوام الآن:', 'tm.onNowNone':'لا أحد', 'tm.dueAt':'{who} يبدأ {t}',
+  'tm.st.on':'في الدوام', 'tm.st.absent':'غائب', 'tm.st.due':'يبدأ {t}', 'tm.st.off':'ليس اليوم', 'tm.st.leave':'في إجازة', 'tm.st.done':'عمل اليوم',
+  'tm.invitesRow':'دعوات بانتظار القبول', 'tm.formerRow':'موظفون سابقون',
+  'at.view.week':'أسبوع', 'at.view.month':'شهر',
+  'at.sum.absent':'{n} غياب', 'at.sum.late':'{n} تأخير', 'at.sum.excused':'{n} معذور', 'at.sum.leave':'{n} إجازة',
+  'at.cell.ok':'', 'at.cell.late':'{m}د', 'at.cell.absent':'غ', 'at.cell.leave':'إج', 'at.cell.excused':'عذر', 'at.cell.due':'{t}',
+  'at.lg.ok':'في الموعد', 'at.lg.late':'متأخر', 'at.lg.absent':'غائب', 'at.lg.excused':'معذور', 'at.lg.leave':'إجازة', 'at.lg.due':'قادم',
+  'at.cnt.ok':'في الموعد', 'at.cnt.late':'تأخير', 'at.cnt.absent':'غياب', 'at.cnt.excused':'معذور', 'at.cnt.leave':'إجازة',
+  'at.daysHours':'{d} يوماً · {h} س', 'at.noneDue':'ليس على الجدول هذا الشهر', 'at.nobody':'لا أحد لديه جدول هنا بعد.',
+  'at.decideT':'بانتظار قرارك', 'at.decide.absent':'{who} غائب، {day}', 'at.decide.late':'{who} متأخر {m} دقيقة، {day}'
+});
+
 function seedStock() {
   const keepMail = S.email;
+  /* v0.0019.1: the expiries are counted from this month, before the clock is
+     set back to the count three days ago — on the first three days of a month
+     they used to land a month early. */
+  const items = [{ code:'5000000001002', expiry:ymOffset(14), qty:12 }, { code:'5000000001033', expiry:ymOffset(2), qty:6 },
+           { code:'7600000001040', expiry:ymOffset(-1), qty:3 }, { code:'3000000001455', expiry:ymOffset(10), qty:10 }];
   S.email = 'rahma@example.com'; S.clockShift = -3 * 864e5;
   S.shelves.P1 = ['Shelf 1 — painkillers', 'Fridge'];
-  const sess = { id:'C001', pharmacy:'P1', shelf:'Shelf 1 — painkillers', state:'open', startedAt:nowIso(), startedBy:S.email,
-    items:[{ code:'5000000001002', expiry:ymOffset(14), qty:12 }, { code:'5000000001033', expiry:ymOffset(2), qty:6 },
-           { code:'7600000001040', expiry:ymOffset(-1), qty:3 }, { code:'3000000001455', expiry:ymOffset(10), qty:10 }] };
+  const sess = { id:'C001', pharmacy:'P1', shelf:'Shelf 1 — painkillers', state:'open', startedAt:nowIso(), startedBy:S.email, items };
   S.countSessions.push(sess);
   commitCount(sess);
   S.clockShift = 0; S.email = keepMail;
@@ -18419,7 +18930,7 @@ function screenTeam() {
   if (S.openStaff === 'OWNER') return ownerSelfPage(ph);
   if (S.openStaff) return staffPage(ph, staffOf(ph.id).find(x => x.id === S.openStaff));
   const list = staffOf(ph.id), active = list.filter(x => x.state === 'active'), invited = list.filter(x => x.state === 'invited'), ended = list.filter(x => x.state === 'ended');
-  const day = S.teamDay || todayKey();
+  const day = S.teamDay || todayKey(), v191 = ownerModules();
   const note = S.teamNote;
   const justInvited = note && note.kind === 'invited' && list.find(x => x.id === note.id);
   const row = x => '<button class="row tm-row" style="width:100%;text-align:start;" onclick="S.openStaff=' + attr(x.id) + ';S.teamNote=null;render();window.scrollTo(0,0)">' +
@@ -18430,6 +18941,7 @@ function screenTeam() {
     '<span class="row-sub tm-grants" style="display:block;">' + esc(roleLabel(x)) + '</span>' +
     /* v0.0017: repeated shifts nobody checked out of are worth the owner's eye. */
     (x.email && x.state === 'active' && autoIn30(ph.id, x.email) >= REPEAT_AUTO ? '<span class="tm-autos">' + esc(t('sh.repeatAuto', { n:autoIn30(ph.id, x.email) })) + '</span>' : '') + '</span>' +
+    (v191 && x.email && x.state === 'active' ? todayChip(ph.id, x.email) : '') +
     icon('chevron', 'more-chevron') + '</button>';
   const selfRow = '<button class="row tm-self-row" style="width:100%;text-align:start;" onclick="S.openStaff=\'OWNER\';S.teamNote=null;render();window.scrollTo(0,0)">' +
     '<span class="avatar tm-av">' + esc(initialsOf(personName(S.email))) + '</span>' +
@@ -18438,14 +18950,16 @@ function screenTeam() {
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
     (note && note.kind !== 'invited' ? '<div class="banner banner-amber">' + icon('alert') + '<p>' + esc(t('tm.note.' + note.kind)) + '</p></div>' : '') +
     (justInvited ? inviteCard(justInvited) : '') +
-    approvalsCard(ph) +
-    /* v0.0019: tasks and incidents, from the Team. */
+    /* v0.0019.1: tasks, incidents and the log are tabs now; check-out times
+       to approve are on the home and in Reports > Attendance. */
+    (v191 ? onNowStrip(ph.id) : approvalsCard(ph) +
     '<div class="tm-links">' + linkCard('check', t('nav.tasks'), t('tk2.teamLink', { n:todaysTasks(ph.id).filter(it => it.state === 'missed').length, all:todaysTasks(ph.id).length }), "goto('tasks')") +
-      linkCard('alert', t('i.title'), t('in.teamLink', { n:incidentsAt(ph.id).filter(x => x.state === 'open').length }), "goto('incidents')") + '</div>' +
+      linkCard('alert', t('i.title'), t('in.teamLink', { n:incidentsAt(ph.id).filter(x => x.state === 'open').length }), "goto('incidents')") + '</div>') +
     '<p class="section-eyebrow">' + esc(t('tm.staffT', { n:active.length })) + '</p>' +
     '<div class="card tm-selfcard">' + selfRow + '</div>' +
     (active.length ? '<div class="card">' + active.map(row).join('') + '</div>' : '<div class="card card-pad till-empty">' + esc(t('tm.noStaff')) + '</div>') +
-    (invited.length && !justInvited ? '<p class="section-eyebrow">' + esc(t('tm.invitedT')) + '</p><div class="card">' + invited.map(row).join('') + '</div>' : '') +
+    (invited.length && !justInvited ? (v191 ? '<details class="card tm-fold tm-invited"><summary>' + esc(t('tm.invitesRow')) + ' <span>' + invited.length + '</span></summary>' + invited.map(row).join('') + '</details>'
+      : '<p class="section-eyebrow">' + esc(t('tm.invitedT')) + '</p><div class="card">' + invited.map(row).join('') + '</div>') : '') +
     '<details class="card card-pad tm-invite"' + (active.length ? '' : ' open') + '><summary>' + esc(t('tm.invite')) + '</summary>' +
       '<p class="inline-note" style="margin:8px 0;">' + esc(t('tm.inviteS')) + '</p>' +
       '<div class="own-grid"><input id="inv-name" placeholder="' + esc(t('tm.name')) + '">' +
@@ -18454,12 +18968,14 @@ function screenTeam() {
       '<p class="inline-note">' + esc(t('tm.defaultS')) + '</p>' +
       '<button class="btn-primary tm-invite-go" onclick="inviteStaff()">' + esc(t('tm.inviteGo')) + '</button></details>' +
     rolesCard() +
-    '<p class="section-eyebrow">' + esc(t('tm.timelineT')) + '</p>' +
+    /* v0.0019.1: the day by day is the Log tab; former staff fold away. */
+    (v191 ? (ended.length ? '<details class="card tm-fold tm-former"><summary>' + esc(t('tm.formerRow')) + ' <span>' + ended.length + '</span></summary>' + ended.map(row).join('') + '</details>' : '')
+    : '<p class="section-eyebrow">' + esc(t('tm.timelineT')) + '</p>' +
     '<div class="tl-bar">' + dayPicker(day, 'setTeamDay') +
       '<select class="tl-person" onchange="setTeamPerson(this.value)"><option value="">' + esc(t('tm.everyone')) + '</option>' +
         [...new Set([S.email].concat(list.filter(x => x.email).map(x => x.email)))].map(m => '<option value="' + esc(m) + '"' + (S.teamPerson === m ? ' selected' : '') + '>' + esc(personName(m)) + '</option>').join('') + '</select></div>' +
     timelineHtml(ph.id, S.teamPerson, day) +
-    (ended.length ? '<p class="section-eyebrow">' + esc(t('tm.endedT')) + '</p><div class="card">' + ended.map(row).join('') + '</div>' : '') +
+    (ended.length ? '<p class="section-eyebrow">' + esc(t('tm.endedT')) + '</p><div class="card">' + ended.map(row).join('') + '</div>' : '')) +
     '<p class="inline-note">' + esc(t('tm.privacy')) + '</p>' +
     '</div></div>';
 }
@@ -19914,6 +20430,10 @@ const SCREENS = {
   activity:      { eyebrow:()=>currentName(), title:()=>t('nav.activity'), body:screenActivity },
   exchange:      { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('ex.title'), body:screenExchange },
   reports:       { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('nav.reports'), body:screenReports },
+  /* v0.0019.1: tabs of their modules. */
+  attendance:    { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('rp.att'), body:screenAttendance },
+  rpeople:       { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('rp.people'), body:screenReportPeople },
+  teamlog:       { eyebrow:()=>{ const p = currentPharmacy(); return p ? L(p.name) : currentName(); }, title:()=>t('tm.log'), body:screenTeamLog },
   labels:        { eyebrow:()=>t('nav.stock'), title:()=>t('shl.titleShort'), body:screenLabels },
   import:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.importSheet'), body:screenImport },
   orders:        { eyebrow:()=>t('nav.stock'), title:()=>t('st.orders'), body:screenOrders },
@@ -20010,8 +20530,9 @@ const NAV_DARK = {
      minutes, the trainee once a month, and the dashboard links there. */
   /* v0.0013: Stock takes the catalogue's slot. The catalogue and its prices
      are one tap inside it, and in the sidebar. */
-  owner:      [['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],
-               ['drugs','pill','nav.drugs'],['team','users','nav.team'],['reports','chart','nav.reports'],['profile','user','nav.profile']]
+  /* v0.0019.1: five places — Home, Pharmacy, Team, Reports, More. */
+  owner:      [['dashboard','home','nav.home'],['till','till','nav.till'],['stock','barcode','nav.stock'],
+               ['drugs','pill','nav.drugs'],['team','users','nav.team'],['reports','chart','nav.reports'],['more','grid','nav.more']]
 };
 
 function navFor(role) {
@@ -20032,11 +20553,13 @@ function navFor(role) {
    their role may open: an employed pharmacist has Point of sale (check only)
    and Drugs until permissions (v0.0015) grant Stock.
    ========================================================================== */
-const PHARMACY_TABS = [['till','till','nav.till'],['stock','barcode','nav.stock'],['drugs','pill','nav.drugs']];
+const PHARMACY_TABS = [['till','till','nav.till'],['stock','barcode','nav.stock'],['drugs','pill','nav.drugs'],
+  /* v0.0019.1: the exchange beside the stock it trades. */
+  ['exchange','hourglass','ex.tab']];
 const pharmacyModule = role => { role = role || S.role; return !FLAGS.marketplace && (role === 'owner' || role === 'pharmacist'); };
 const pharmacyTabsFor = role => PHARMACY_TABS.filter(x => screenAllowed(x[0], role || S.role));
 /* Every screen that lives inside the module, so its button stays lit there. */
-const inPharmacy = s => pharmacyModule() && ['till','stock','drugs','drug','products','product','drawer'].concat(STOCK_SCREENS).includes(s);
+const inPharmacy = s => pharmacyModule() && ['till','stock','drugs','drug','products','product','drawer','exchange'].concat(STOCK_SCREENS).includes(s);
 /* Where the module's first tab and the others were, one Pharmacy item. */
 function collapsePharmacy(groups, role) {
   const ids = PHARMACY_TABS.map(x => x[0]);
@@ -20081,6 +20604,14 @@ function sidebarGroups() {
    owner is CHARGED whether or not they ever earn anything, and hiding what
    somebody owes is not a simplification. */
 function ownerGroups() {
+  /* v0.0019.1: the four places, then what is used now and then, then you. */
+  if (!FLAGS.marketplace) return [
+    { key:'grp.pharmacy', items:[['dashboard','home','nav.home'],['till','till','nav.till'],['stock','barcode','nav.stock'],['products','barcode','nav.products'],
+                                 ['exchange','hourglass','ex.tab'],['drugs','pill','nav.drugs'],['team','users','nav.team'],['reports','chart','nav.reports']] },
+    { key:'grp.more', items:[['post','plus','nav.post'],['applicants','users','nav.applicants'],['trainees','cap','nav.trainees'],
+                             ['consumption','chart','nav.consumption'],['billing','wallet','nav.billing']] },
+    { key:'grp.you', items:[['cv','clipboard','nav.cv'],['notifications','bell','nav.notifications'],['profile','user','nav.profile']] }
+  ];
   const groups = [
     { key:'grp.pharmacy', items:[['dashboard','home','nav.dashboard'],['till','till','nav.till'],['stock','barcode','nav.stock'],['products','barcode','nav.products'],
                                  ['exchange','hourglass','ex.title'],['tasks','check','nav.tasks'],
@@ -20116,6 +20647,8 @@ function ownerGroups() {
    the pharmacist has one now because the bar ran out of slots before the screens
    ran out, which is exactly the situation More exists for. */
 function moreGroups() {
+  /* v0.0019.1: the four places are on the bar; More holds the rest. */
+  if (S.role === 'owner' && !FLAGS.marketplace) return ownerGroups().slice(1).map(g => ({ key:g.key, items:g.items.filter(it => screenAllowed(it[0])) })).filter(g => g.items.length);
   if (S.role === 'owner') return ownerGroups();
   if (S.role === 'student') {
     return [{ key:'grp.account', items:[['notifications','bell','nav.notifications'],
@@ -20212,11 +20745,16 @@ function render() {
   let body = screen.body();
   if (tabbed) { const tabs = moduleTabs(), open = (body.match(/^<div class="screen-body[^"]*">/) || [])[0];
     body = open ? open + tabs + body.slice(open.length) : tabs + body; }
+  /* v0.0019.1: Team and Reports carry their tabs too — not on a person's page. */
+  const mod = !tabbed && moduleOf(S.screen), modTabs = mod && !S.openStaff && currentPharmacy() ? moduleTabsHtml(mod) : '';
+  if (modTabs) { const open = (body.match(/^<div class="screen-body[^"]*">/) || [])[0];
+    body = open ? open + modTabs + body.slice(open.length) : modTabs + body; }
   /* v0.0013.5 (U1): the Pharmacy tabs carry the brand and the pharmacy's
      name; a home greets by first name; everything else keeps its own. */
   const greet = (S.screen === 'dashboard' || S.screen === 'checkin') && screen.eyebrow() === greeting();
   const head = tabbed ? headerHtml('', currentPharmacy() ? L(currentPharmacy().name) : t('nav.pharmacy'), { brand:true })
     : greet ? headerHtml('', greeting() + (lang === 'ar' ? '، ' : ', ') + firstName(currentName()), { brand:true })
+    : modTabs ? headerHtml(currentPharmacy() ? L(currentPharmacy().name) : currentName(), t('nav.' + mod))
     : headerHtml(screen.eyebrow(), screen.title(), { back:headerBack() });
   document.getElementById('app-header').innerHTML = head;
   document.getElementById('app-body').innerHTML = verificationBanner() + body;
@@ -20227,14 +20765,16 @@ function render() {
     /* With the market on, the pharmacist's catalogue link waits for the till. */
     .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
 
+  const lit = id => S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) || (!!moduleOf(S.screen) && moduleOf(S.screen) === id);
   document.getElementById('bottom-nav').innerHTML = nav.map(([id, ic, key]) =>
-    '<button class="nav-item' + (S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
-    icon(ic) + '<span>' + esc(t(key)) + '</span></button>').join('');
+    '<button class="nav-item' + (lit(id) ? ' active' : '') + '" data-nav="' + id + '" onclick="goto(\'' + id + '\')">' +
+    icon(ic) + '<span>' + esc(t(key)) + '</span>' + (navCount(id) ? '<b class="nav-count">' + navCount(id).n + '</b>' : '') + '</button>').join('');
 
   const sideItem = ([id, ic, key]) =>
-    '<button class="side-nav-item' + (S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) ? ' active' : '') + '" onclick="goto(\'' + id + '\')">' +
+    '<button class="side-nav-item' + (lit(id) ? ' active' : '') + '" data-nav="' + id + '" onclick="goto(\'' + id + '\')">' +
     icon(ic) + '<span>' + esc(t(key)) + '</span>' +
     (id === 'notifications' && unread ? '<span class="side-nav-count">' + unread + '</span>' : '') +
+    (navCount(id) ? '<span class="side-nav-count now">' + navCount(id).n + '</span>' : '') +
     '</button>';
 
   /* The owner's sidebar is grouped under headings. Two jobs in one flat list is

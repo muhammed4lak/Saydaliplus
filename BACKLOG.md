@@ -2371,7 +2371,7 @@ read only from the sale itself.
 
 ### v0.0019.1 — reported 1 Oct 2026: attendance in Reports, and a simpler owner's app
 
-**Not built — mock-ups first.**
+**Built (see v0.0019.1 as built).**
 
 **A1. The attendance schedule in Reports.** The owner sees the weekly and
 monthly attendance in the Reports tab: who was due when, and whether they came
@@ -2422,6 +2422,109 @@ What the screens show today (1 Oct 2026):
   - *Act now:* patient safety, money, or a person missing.
   - *Today:* waiting on a decision or due today.
   - Nothing else is coloured.
+
+### v0.0019.1 as built — a simpler app for the owner, and attendance in Reports
+
+**Five places, the same on the phone and the computer:** Home, Pharmacy,
+Team, Reports, More.
+- **Tabs inside each module** (the pattern Pharmacy already had):
+  - Pharmacy: Point of sale · Stock · Drugs · **Exchange**.
+  - Team: **People · Tasks · Incidents · Log**.
+  - Reports: **Sales · Attendance · People**.
+- A tab shows a count only when something there needs the owner: missed tasks
+  in amber, open incidents in red, and on Attendance the absences waiting and
+  the check-out times to approve.
+- A person's page has no tabs. The module's name is the header on every tab,
+  and its button stays lit.
+- On *All* (an owner of several), Team and Reports first ask which pharmacy,
+  with no tabs over the question.
+- **The sidebar has four places, then More, then You.** Tasks, Incidents and
+  the Exchange are no longer separate entries.
+- **The English incidents entry said "Reports"**, so "Reports" appeared twice.
+  It now says Incidents.
+- **The phone bar's fifth button is More** (it was Profile). More lists only
+  what is not on the bar.
+- **Home and Team carry counts on the bar and in the sidebar:** what needs you
+  now or today, and the open incidents.
+
+**The home (mock-up A).** In this order:
+1. Your own shift, compact.
+2. Today at a glance: sales against yesterday by now, tasks done and missed,
+   and who is on shift.
+3. *Open point of sale*.
+4. The Saydali+ card.
+5. **One *Needs you* list.**
+
+The away card and the old *Needs you* are merged into that one list. The
+groups:
+- **Act now (red outline):** readings out of range, someone absent today, new
+  incident reports, Stops gone ahead with, expired stock, an offline
+  controlled-substance conflict.
+- **Today (amber):** missed tasks, someone late, check-out times and drawers to
+  approve, stock near expiry or to count.
+- **The rest** folds under *"N more when you have a minute"*.
+
+How the list behaves:
+- Each group is named, so colour is never the only signal.
+- *Seen* clears what happened (readings, reports, Stops, refusals). What still
+  needs doing (stock, drawers, approvals) stays.
+- The week's line and *Count a shelf* left the home. The days are in
+  Reports > Sales, and counting is in Stock.
+
+**The Saydali+ card:**
+- It is compact under the till button: its tag, a title and one sentence.
+- × shrinks it to a slim one-line strip, for good, with no ×.
+- It stays until it is opened. Opening it goes where it says and is counted.
+- The state is per person. A newer announcement arrives as the compact card.
+
+**Team > People:**
+- *On shift now* (who, since when, and who is due).
+- Each person's place today: On shift, Absent, Due 16:00, On leave or Off
+  today.
+- Invitations, invite, roles and former staff fold away.
+- The day by day is the Log tab.
+- Check-out times to approve are on the home and in Reports > Attendance,
+  not on Team.
+
+**Reports > Attendance (A1):**
+- **The week** is a grid, a row a person and a cell a day. Each cell shows a
+  tick for on time, the minutes late, Absent, Excused, Leave (hatched), or the
+  start time still to come. A day off the rota is empty.
+- Each cell tells a screen reader what it is, and a legend sits under the
+  grid.
+- Tapping a cell opens that person at that week.
+- The counts for the period are written above the grid. The check-out times
+  waiting sit below it, then *Waiting for your decision*: each absence or late
+  day with **Excuse**, on the record.
+- **The month** shows a strip of days per person, with the counts and the
+  days and hours worked written beside it.
+- The view moves back and forward a week or a month at a time, never into the
+  future. It belongs to the owner, as the rest of Reports does.
+
+**Reports > Sales** keeps the period, the pharmacy's figures, the days and the
+sharing switch. **Reports > People** lists people by name, never by sales
+(P7).
+
+**Fixed on the way:** the stock seed backdates the opening count three days,
+and it worked out the expiry months on that shifted clock. On the 1st to 3rd
+of a month every seeded expiry slipped a month, so "the till sells
+first-expiring first" failed on 1 Oct (in v0.0019 as well). The months are now
+counted from today.
+
+**Left over:**
+- The design detector flags the incumbent look: the Space Grotesk face, the
+  announcement's sheen and glow, and its radial halo. They are kept, because
+  this was a refinement, not a redesign. It also flags the hatched *Leave*
+  cell, which is kept on purpose: the pattern is what tells leave apart
+  without colour.
+- Seeded task titles are still English, as typed.
+- Staff (not owners) keep their own bar: Check-in, Tasks, Pharmacy, Profile.
+- Not in the codebase yet; it comes with the catch-up.
+
+Checks: app 838 (28 new; 24 older ones updated for the new home, the tabs,
+the Log tab and the bar, and 3 anchored a week back so the 1st of a month
+still has history in them). CRM 308 (its link now opens the v0.0019.1 build).
+Unit 164. Typecheck clean. Mutation-tested on a copy: MUT191.
 
 ## Unused concepts
 
