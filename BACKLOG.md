@@ -2411,7 +2411,7 @@ What the screens show today (1 Oct 2026):
     staff become quiet rows.
   - Reports: **Sales · Attendance · People**.
   - More: post a shift, trainees, consumption, billing, notifications,
-    profile and CV, what's new.
+    profile and CV.
 - **The sidebar** becomes the same four places, then More and You in a quieter
   colour. This drops the duplicate English "Reports".
 - **Reports > Attendance (A1):** a week grid (people × days; a tick, minutes
