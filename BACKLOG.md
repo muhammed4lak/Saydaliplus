@@ -2534,7 +2534,7 @@ are caught.
 
 ### v0.0019.2 — reported 3 Oct 2026: too many words
 
-**Not built — mock-ups first.** The prototype reads as too much text,
+**Built (see v0.0019.2 as built).** The prototype reads as too much text,
 especially the figures for team members. Measured on 3 Oct 2026, a team
 member's page (Zahraa, September) is **620 words, 382 of them explanation**,
 in one scroll about 3,500 px tall:
@@ -2614,6 +2614,84 @@ with v0.0019.1:
   absences and readings too. The Saydali+ card sits at the bottom there.
 - **Zainab, a student,** is shown "Point of sale is here", an announcement
   for pharmacies.
+
+### v0.0019.2 as built — fewer words, and the staff side in line
+
+**A team member's page in three tabs** (the owner's view), opening on
+Overview:
+- **Overview:** four numbers (shifts, hours, sales short, number of sales);
+  *a shift, on average* as two bars, theirs and the pharmacy's, with one line
+  ("4% below · 16 sales a shift, pharmacy 17"); the period's attendance as a
+  strip with its counts as chips, and the late and absent days with
+  **Excuse**; the P7 question in one line; the schedule.
+- **Shifts:** one line a shift (day, in–out with any chip, number of sales,
+  the amount short). Open a line for what happened on it and, for the owner,
+  to decide a claim. The latest eight, then *Show all*. A check-out time to
+  approve opens on Shifts, at that shift, even when it is older than eight.
+- **Permissions:** the role, then one line and a switch each. What a
+  permission does is behind its ⓘ, and the role's own say "role".
+- **Words:** Zahraa's September went from 620 words in one scroll to about
+  95, 90 and 70 across the three tabs.
+- **The owner's own page** is Overview and Shifts. **My activity** is the same
+  page with one's own numbers (Overview, Shifts, My day), never the
+  pharmacy's bar. What they may do is behind an ⓘ beside their role.
+
+**Money:**
+- **Short where it is a headline:** 4.7M, 271K, 99.5K; in Arabic 4.7 مليون,
+  271 ألف, in Western numerals. Used on the home strip, a person's tiles and
+  bars, shift lines and Layla's pharmacy rows.
+- **Full where it is checked against cash or paper:** Reports > Sales, the
+  days, the drawer, the till and receipts.
+
+**Explanations behind an ⓘ**, one tap away, never deleted:
+- why a tick never counts (Tasks);
+- who sees a report (Incidents);
+- that the record is the pharmacy's alone (the Log);
+- "never in a league table" (Reports > People);
+- what sharing sends (Reports > Sales);
+- the exchange's rules, with a one-line summary left in place;
+- the licence note (Layla's All);
+- the comparison and the P7 note (a person's page).
+
+**The staff side, in line with the owner's:**
+- **The bar is Home · Pharmacy · My work · More.** My work is a module with
+  tabs: Tasks · Incidents · My activity, under the pharmacy's name.
+- **Counts:** My work counts their missed tasks in amber; Home counts only
+  what My work does not.
+- **Off a team, the bar is Home · Pharmacy · More:** no empty Tasks or
+  Incidents.
+- **More** holds Products, add a pharmacy, My CV, Notifications and Profile,
+  and Profile does not repeat it. The sidebar is grouped the same way.
+- **The staff home:** where they work (opening My activity), their shift
+  (compact), their day (their tasks done and missed, the drawer, their sales
+  today), the till button ("Check a prescription" if they cannot sell), the
+  compact Saydali+ card, and one *Needs you* list:
+  - *Act now:* a shift about to close itself.
+  - *Today:* a check-out time to give, missed tasks, a shift past its end.
+  - *Calm:* the owner wrote back on a report.
+- **One switch:** a pharmacy switch is the same row of chips everywhere,
+  including Maryam's home, Tasks, Incidents and My activity. Tasks says which
+  pharmacy a new task is for.
+- **An owner where she only works** (Rahma at Al-Hayat) has the staff bar
+  there, with My work lit.
+- **"Point of sale is here" reaches only someone who can sell:** not a
+  student, not a pharmacist on no team, not the reviewer.
+- **Layla on All:** each pharmacy counts what needs her the way its own home
+  does; the card sits under the totals; the money is short.
+
+**The period bar** (Day · Week · Month and the dates) is one compact line.
+
+**Left over:**
+- Drugs (about 450 words), Products (about 750) and My CV (about 340) are long
+  by nature: a reference, a catalogue, a CV.
+- My CV's own wording is next if it still reads long.
+- The staff home's Saydali+ card follows the owner's rules (compact, slim
+  once closed, there until opened).
+
+Checks: app 861 (22 new; about 40 older ones updated for the tabs, the staff
+bar, the staff home and the ⓘ, and the attendance ones anchored to the actual
+late and absent days, now that a new week has begun). CRM 308. Unit 164.
+Typecheck clean. Mutation-tested on a copy: MUT192.
 
 ## Unused concepts
 

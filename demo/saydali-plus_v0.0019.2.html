@@ -1253,6 +1253,65 @@
   .tm-fold summary::-webkit-details-marker{ display:none; }
   .tm-fold summary span{ font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); font-weight:500; }
   .tm-fold[open] summary{ border-bottom:1px solid var(--border); }
+
+  /* ==========================================================================
+     v0.0019.2 — fewer words: ⓘ, a person in tabs, short money
+     ========================================================================== */
+  .tip{ display:inline-block; position:relative; vertical-align:middle; }
+  .tip > summary{ list-style:none; cursor:pointer; width:22px; height:22px; border-radius:50%; border:1.5px solid #C3C0D6; color:var(--ink-faint);
+    display:grid; place-items:center; font:italic 700 12px/1 var(--font-display); }
+  .tip > summary::-webkit-details-marker{ display:none; }
+  .tip[open] > summary{ background:var(--indigo); border-color:var(--indigo); color:#fff; }
+  .tip > p{ position:absolute; z-index:20; top:28px; inset-inline-end:-6px; width:min(280px, 78vw); background:var(--indigo-dark); color:#fff;
+    font-size:12.5px; line-height:1.5; padding:10px 12px; border-radius:11px; box-shadow:0 10px 24px rgba(25,23,53,.3); font-style:normal; font-weight:400; text-align:start; }
+  .ps-h{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:2px 2px 8px; font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .ps-h .section-eyebrow{ margin:0; }
+  .card .ps-h{ margin:0 0 9px; }
+  .ps-ident{ display:flex; align-items:center; gap:12px; width:100%; text-align:start; }
+  .ps-ident .avatar{ width:44px; height:44px; border-radius:13px; flex:none; }
+  .ps-role{ font-weight:600; font-size:15.5px; }
+  .ps-sub{ font-size:12.5px; color:var(--ink-faint); margin-top:1px; }
+  .wk-who{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 12px; }
+  .ps-tabs{ margin:0; }
+  .ps-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .ps-tile{ background:var(--card); border:1px solid var(--border); border-radius:13px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .ps-v{ font-size:21px; font-weight:600; letter-spacing:-.02em; white-space:nowrap; }
+  .ps-v small{ font-size:12px; font-weight:500; color:var(--ink-faint); margin-inline-start:2px; font-family:var(--font-body); }
+  .ps-l{ font-size:12.5px; color:var(--ink-soft); }
+  .ps-bar{ display:grid; grid-template-columns:70px 1fr 60px; align-items:center; gap:8px; font-size:12.5px; margin-bottom:6px; }
+  .ps-bar-l{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ps-track{ height:10px; border-radius:5px; background:var(--mist); overflow:hidden; display:block; }
+  .ps-fill{ display:block; height:100%; border-radius:5px; }
+  .ps-fill.me{ background:var(--indigo); } .ps-fill.ph{ background:#B9B6D3; }
+  .ps-bar-v{ text-align:end; font-size:12px; }
+  .ps-note{ font-size:12.5px; color:var(--ink-faint); margin-top:2px; }
+  .ps-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+  .ps-chip{ font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; background:var(--mist); color:var(--ink-soft); }
+  .ps-chip.ok{ background:var(--palm-tint); color:var(--palm); } .ps-chip.warn{ background:var(--amber-tint); color:#7A4E10; } .ps-chip.bad{ background:var(--clay-tint); color:var(--clay); }
+  .ps-att .at-strip{ margin-bottom:0; }
+  .ps-att .att-list{ margin-top:10px; border:none; box-shadow:none; }
+  .ps-att .att-row{ padding-inline:0; }
+  .ps-sh > summary{ list-style:none; }
+  .ps-sh > summary::-webkit-details-marker{ display:none; }
+  .ps-sh-row{ display:grid; grid-template-columns:46px 1fr auto; gap:10px; align-items:center; padding:9px 13px; cursor:pointer; }
+  .ps-sh + .ps-sh{ border-top:1px solid var(--border); }
+  .ps-sh-d b{ display:block; font-size:12.5px; font-weight:600; }
+  .ps-sh-d span{ display:block; font-size:11px; color:var(--ink-faint); }
+  .ps-sh-t{ min-width:0; font-size:13px; }
+  .ps-sh-t .sh-chip{ margin-inline-start:6px; font-size:10.5px; padding:1px 7px; vertical-align:1px; }
+  .ps-sh-n{ display:block; font-size:11.5px; color:var(--ink-faint); margin-top:1px; }
+  .ps-sh-a{ font-size:13px; text-align:end; white-space:nowrap; }
+  .ps-sh .sh-detail{ padding:0 13px 10px; }
+  .ps-all{ display:block; width:100%; text-align:center; padding:8px; font-weight:600; }
+  .ps-grant{ align-items:center; gap:10px; padding:10px 13px; }
+  .ps-grant .row-title{ font-size:14px; }
+  .ps-from{ display:inline-block; margin-inline-start:7px; font-size:10.5px; font-weight:600; color:var(--indigo); background:var(--indigo-tint); border-radius:6px; padding:1px 6px; vertical-align:1px; }
+  .ps-grant .tip > p{ inset-inline-end:-40px; }
+  .p7-card .tip{ flex:none; }
+  .td-staff{ grid-template-columns:repeat(3, 1fr); }
+  .nav-count.today{ background:var(--amber); color:#2A1C05; }
+  .side-nav-count.today{ background:var(--amber); color:#2A1C05; }
+  .ex-rules{ margin-top:2px; }
   .tm-invite > summary, .tm-roles > summary{ list-style:none; cursor:pointer; font-weight:600; font-size:15px; display:flex; align-items:center; }
   .tm-invite > summary::-webkit-details-marker, .tm-roles > summary::-webkit-details-marker{ display:none; }
   .tm-invite:not([open]), .tm-roles:not([open]){ padding:0; }
@@ -1330,6 +1389,13 @@
   .sh-approve{ margin:8px 0; flex-wrap:wrap; }
   .pf-bar{ display:flex; flex-direction:column; gap:10px; }
   .pf-bar .segmented{ margin-bottom:0; }
+  /* v0.0019.2: one compact line — the period kind and the period. */
+  .pf-bar{ flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; }
+  .pf-bar .segmented{ flex:0 1 auto; padding:3px; }
+  .pf-bar .segmented button{ padding:6px 11px; font-size:12.5px; min-height:0; }
+  .pf-bar .tl-days{ gap:4px; }
+  .pf-bar .tl-days .btn-secondary{ width:34px; height:34px; border-radius:10px; }
+  .pf-bar .tl-day{ font-size:13px; min-width:0; }
   .pf-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
   .pf-tile{ background:var(--mist); border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; min-width:0; }
   .pf-v{ font-size:19px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -1695,7 +1761,7 @@ const LISTINGS = [
     posted:'2026-09-17' },
   /* v0.0011 — the platform's own announcement, in the same slot a paid
      placement would use. No sponsor: nobody paid for it. */
-  { id:'A1', kind:'announcement', company:null, state:'live', surface:'home', go:'till',
+  { id:'A1', kind:'announcement', company:null, state:'live', surface:'home', go:'till', audience:'sellers',
     title:{ ar:'نقطة البيع وصلت', en:'Point of sale is here' },
     body:{ ar:'بِع من صيدليتك بأسعارك، ومساعد الوصفات يفحص السلّة كاملة وأنت تمسح.',
            en:'Sell at your own prices, with the Dispensing Helper checking the whole basket as you scan.' },
@@ -1766,7 +1832,7 @@ function bannerFor(surface) {
      there from day one. A partner's PAID placement needs partners switched on
      (the ecosystem step). Either way the slot stays off every clinical surface,
      because those surfaces never call this. */
-  const b = LISTINGS.find(x => x.state === 'live' && x.surface === surface &&
+  const b = LISTINGS.find(x => x.state === 'live' && x.surface === surface && annFor(x) &&
     (x.kind === 'announcement' || (x.kind === 'banner' && FLAGS.partners)));
   if (!b) return '';
   countImpression(b.id);
@@ -2258,7 +2324,7 @@ Object.assign(STRINGS.ar, {
   /* v0.0018 — the near-expiry exchange */
   'ex.title':'تبادل الأدوية قريبة الانتهاء',
   'ch.exchange':'تبادل أيّ صيدلية؟',
-  'ex.rules':'اعرض مخزوناً قريب الانتهاء على الصيدليات ضمن {km} كم، وابحث عما تعرضه. لا يُذكر اسم صيدليتك إلا لصيدلية تطلب. لا تُعرض المواد الخاضعة للرقابة ولا السلائف. صيدلي+ لا يستلم أي دفعة: التسوية بينكما.',
+  'ex.short':'ضمن {km} كم · لا دفع عبر صيدلي+', 'ex.rules':'اعرض مخزوناً قريب الانتهاء على الصيدليات ضمن {km} كم، وابحث عما تعرضه. لا يُذكر اسم صيدليتك إلا لصيدلية تطلب. لا تُعرض المواد الخاضعة للرقابة ولا السلائف. صيدلي+ لا يستلم أي دفعة: التسوية بينكما.',
   'ex.incomingT':'طلبات على ما عرضته',
   'ex.outgoingT':'ما طلبته',
   'ex.fromWho':'{ph} · {km} كم',
@@ -2618,7 +2684,7 @@ Object.assign(STRINGS.en, {
   /* v0.0018 — the near-expiry exchange */
   'ex.title':'Near-expiry exchange',
   'ch.exchange':'Which pharmacy’s exchange?',
-  'ex.rules':'Offer stock close to its expiry to pharmacies within {km} km, and find theirs. Your pharmacy is named only to a pharmacy that asks. Controlled substances and precursors cannot be listed. Saydali+ takes no payment: you settle between you.',
+  'ex.short':'Within {km} km · no payment through Saydali+', 'ex.rules':'Offer stock close to its expiry to pharmacies within {km} km, and find theirs. Your pharmacy is named only to a pharmacy that asks. Controlled substances and precursors cannot be listed. Saydali+ takes no payment: you settle between you.',
   'ex.incomingT':'Asked for your listings',
   'ex.outgoingT':'What you asked for',
   'ex.fromWho':'{ph} · {km} km',
@@ -11334,7 +11400,7 @@ const SKILL_PRESETS = {
 };
 const SKILL_GROUPS = ['medical', 'nonMedical'];
 
-const VERSION = 'App_v0.0019.1';
+const VERSION = 'App_v0.0019.2';
 
 /* ==========================================================================
    SWITCHES (v0.0009)
@@ -11419,8 +11485,10 @@ function screenAllowed(screen, role) {
   if (screen === 'activity') return role === 'pharmacist' || (role === 'owner' && role === S.role && workPharmacies().length > 0);
   /* v0.0019: tasks for anyone at a pharmacy; incidents inside a pharmacy
      while the marketplace is off. */
-  if (screen === 'tasks') return role === 'pharmacist' || role === 'owner';
-  if (screen === 'incidents' && !FLAGS.marketplace) return role === 'owner' || role === 'pharmacist';
+  /* v0.0019.2: My work starts with a team — no empty doors before it. */
+  const onTeam = role !== S.role || workPharmacies().length > 0;
+  if (screen === 'tasks') return role === 'owner' || (role === 'pharmacist' && onTeam);
+  if (screen === 'incidents' && !FLAGS.marketplace) return role === 'owner' || (role === 'pharmacist' && onTeam);
   if (MARKET_SCREENS.includes(screen)) return FLAGS.marketplace;
   /* Browse and a listing are the shift board for a pharmacist and the
      placement board for a student — same screens, different switches. */
@@ -11576,6 +11644,8 @@ const S = {
   tasks: [], taskDone: [], incidents: [], leave: [], attExcused: {}, awaySince: {},
   /* v0.0019.1 */
   annState: {}, calmOpen: false, attView: 'week', attAnchor: null,
+  /* v0.0019.2 */
+  personTab: null, personFor: null, shiftsAll: false, replySeen: {},
   taskErr: null, taskFormOpen: false, taskFormErr: false, taskRepeat: 'daily', taskReading: false, incErr: false,
   shifts: [], pastSales: [], rota: {}, reportsShared: {}, perf: { kind:'week', anchor:null }, rotaEdit: null, claimErr: null, openShift: null,
   customRoles: [], roleDraft: null,
@@ -13335,7 +13405,7 @@ function homeAll(lead) {
   const yesterday = { total:sum(p => salesHistory(p.id)[5].total) };
   const row = p => {
     const tdy = salesToday(p.id), y = salesHistory(p.id)[5];
-    const needs = needsYou(p).length;
+    const needs = needsAll(p).filter(x => x.lv !== 'calm').length;
     const cant = !p.responsible || p.verification !== 'verified';
     const badge = !p.responsible ? '<span class="hm-badge bad">' + esc(t('g.noResponsible')) + '</span>'
       : needs ? '<span class="hm-badge">' + esc(t('hm.needsN', { n:needs })) + '</span>'
@@ -13344,16 +13414,15 @@ function homeAll(lead) {
     return '<button class="hm-ph branch-row" onclick="setPharmacy(' + attr(p.id) + ')"><span class="hm-ph-t">' + esc(L(p.name)) +
       '<span>' + (p.responsible ? esc(L(p.responsible)) + ' · ' : '') + badge + '</span></span>' +
       '<span class="hm-ph-fig">' + (cant ? '—<span class="hm-cant">' + esc(t('hm.cantSell')) + '</span>'
-        : '<b class="figure">' + fmt(tdy.total) + '</b>' + (pct == null ? '<span class="hm-cant">' + esc(t('hm.noSalesShort')) + '</span>'
+        : '<b class="figure">' + esc(iqdShort(tdy.total)) + '</b>' + (pct == null ? '<span class="hm-cant">' + esc(t('hm.noSalesShort')) + '</span>'
           : '<span class="' + (pct >= 0 ? 'hm-up' : 'hm-down') + '">' + (pct >= 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '%</span>')) + '</span>' +
       icon('chevron', 'more-chevron') + '</button>';
   };
   return '<div class="screen-body">' + (lead || '') + '<div class="constrain stack home2">' +
     heroCard(t('hm.salesTodayAll', { n:mine.length }), today, yesterday, null) +
-    '<p class="hm-needs-t">' + esc(t('hm.yourPharmacies')) + '</p>' +
-    '<div class="card">' + pharmacyBoard().map(row).join('') + '</div>' +
-    '<p class="inline-note">' + esc(t('g.licenceNote')) + '</p>' +
     annLine() +
+    '<div class="ps-h hm-needs-t"><span>' + esc(t('hm.yourPharmacies')) + '</span>' + tip('g.licenceNote') + '</div>' +
+    '<div class="card">' + pharmacyBoard().map(row).join('') + '</div>' +
     '</div></div>';
 }
 
@@ -13432,6 +13501,8 @@ function workCard() {
 /* The home of someone on a team — a pharmacist's, or an owner's at a
    pharmacy they work at. */
 function staffHome(tabs) {
+  /* v0.0019.2: the same parts as the owner's home. */
+  if (!FLAGS.marketplace) return staffHomeV192(tabs);
   return '<div class="screen-body">' + (tabs || '') + '<div class="constrain stack">' +
     workCard() +
     /* v0.0017: check-in — on top for someone on a team; for anyone else,
@@ -13454,7 +13525,7 @@ function screenCheckin() {
   /* v0.0013.5 (U5): with the Helper and the products inside Pharmacy, the
      home keeps the announcement, one job — check a prescription — and
      check-in. v0.0016: where you work, first. */
-  if (helperInTill()) return staffHome('');
+  if (helperInTill()) return staffHome(pharmacyTabs());
   return '<div class="screen-body"><div class="constrain stack">' +
     bannerFor('home') +
     soonCard('clock', 'soon.checkinT', 'soon.checkinS') +
@@ -15685,6 +15756,7 @@ function personSections(phId, mail) {
 }
 /* The owner's own page, from the top of their Team. */
 function ownerSelfPage(ph) {
+  if (!FLAGS.marketplace) return selfPage(ph);
   return '<div class="screen-body"><div class="constrain stack">' +
     '<div class="card card-pad tm-person tm-self"><p class="urgent-t">' + esc(personName(S.email)) + '</p>' +
       '<p class="urgent-s">' + esc(t('tm.ownerSelf')) + '</p></div>' +
@@ -15707,7 +15779,7 @@ function openShiftOf(mail, shiftId) {
   if (!rec) return;
   const sh = (S.shifts || []).find(x => x.id === shiftId);
   if (sh) S.perf = { kind:'week', anchor:dayOf(sh.in) };
-  S.openStaff = rec.id; S.openShift = shiftId; goto('team');
+  S.openStaff = rec.id; S.openShift = shiftId; S.personTab = 'shifts'; S.personFor = 'S:' + rec.id; goto('team');
 }
 
 /* ---------- The owner's Reports ---------- */
@@ -15767,7 +15839,7 @@ function screenReports() {
     }).join('') + '</div>' +
     '<p class="inline-note">' + esc(t('rpt.p7')) + '</p>') +
     '<label class="card card-pad row rpt-share"><span class="row-body"><span class="row-title" style="display:block;">' + esc(t('rpt.shareT')) + '</span>' +
-      '<span class="row-sub" style="display:block;">' + esc(t(shared ? 'rpt.shareOn' : 'rpt.shareOff')) + '</span></span>' +
+      '<span class="row-sub" style="display:block;">' + esc(t(shared ? 'rpt.shareShortOn' : 'rpt.shareShortOff')) + '</span></span>' + tip(shared ? 'rpt.shareOn' : 'rpt.shareOff') +
       '<input type="checkbox" class="bc-toggle rpt-share-t" ' + (shared ? 'checked ' : '') + 'onchange="setReportsShared(' + attr(ph.id) + ', this.checked)"></label>' +
     '</div></div>';
 }
@@ -15946,7 +16018,7 @@ function screenExchange() {
   const row = (title, sub, right) => '<div class="row ex-row"><span class="row-body"><span class="row-title" style="display:block;">' + title + '</span>' +
     '<span class="row-sub" style="display:block;">' + sub + '</span></span>' + (right || '') + '</div>';
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
-    '<div class="banner banner-indigo ex-rules">' + icon('clipboard') + '<p>' + esc(t('ex.rules', { km:EXCHANGE_KM })) + '</p></div>' +
+    '<div class="ps-h ex-rules"><span class="section-eyebrow">' + esc(t('ex.short', { km:EXCHANGE_KM })) + '</span>' + tip('ex.rules', { km:EXCHANGE_KM }) + '</div>' +
 
     (incoming.length ? '<p class="section-eyebrow">' + esc(t('ex.incomingT')) + '</p><div class="card ex-incoming">' + incoming.map(r => {
       const l = exListing(r.listing), who = PHARMACIES[r.from];
@@ -16184,17 +16256,18 @@ function screenTasks() {
     return '<div class="screen-body"><div class="constrain stack">' +
       '<div class="card card-pad sh-noteam"><p class="sh-state">' + esc(t('nav.tasks')) + '</p><p class="sh-sub">' + esc(t('tk2.noTeam')) + '</p></div></div></div>';
   }
-  const tabs = S.role === 'owner' ? pharmacyTabs() : '';
+  const tabs = pharmacyTabs();
   const all = todaysTasks(ph.id), mineOnly = !mayAssign(ph.id);
   const list = mineOnly ? all.filter(it => taskMine(it.task)) : all;
   const g = S.taskFormOpen && mayAssign(ph.id);
   const people = [...new Set(staffOf(ph.id).filter(x => x.state === 'active' && x.email).map(x => x.email)).values()];
   const order = [6, 0, 1, 2, 3, 4, 5];
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
-    '<p class="section-eyebrow">' + esc(t('tk2.todayT', { n:list.length })) + '</p>' +
+    /* v0.0019.2: why a tick never counts is behind the ⓘ. */
+    '<div class="ps-h"><span class="section-eyebrow">' + esc(t('tk2.todayT', { n:list.length })) + '</span>' + tip('tk2.soft') + '</div>' +
     (list.length ? '<div class="card tk-list">' + list.map(it => taskRow(it, taskMine(it.task))).join('') + '</div>'
       : '<div class="card card-pad till-empty">' + esc(t('tk2.none')) + '</div>') +
-    '<p class="inline-note">' + esc(t('tk2.soft')) + '</p>' +
+
     (mayAssign(ph.id) ? '<p class="section-eyebrow">' + esc(t('tk2.defsT')) + '</p>' +
       (g ? '<div class="card card-pad tk-form">' +
           '<input id="tk-title" placeholder="' + esc(t('tk2.titlePh')) + '">' +
@@ -16267,9 +16340,9 @@ function screenIncidentsDark() {
   const owner = S.role === 'owner' && ownsPharmacy(ph.id), list = incidentsSeen(ph.id).slice().sort((a, b) => a.at < b.at ? 1 : -1);
   const colleagues = staffOf(ph.id).filter(x => x.state === 'active' && x.email && x.email !== S.email && !ownsPharmacy(ph.id, x.email));
   const sales = S.sales.filter(s => s.pharmacy === ph.id).slice(0, 12);
-  const tabs = S.role === 'owner' ? pharmacyTabs() : '';
+  const tabs = pharmacyTabs();
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
-    '<div class="banner banner-indigo">' + icon('clipboard') + '<p>' + esc(t(owner ? 'in.ownerRules' : 'in.rules')) + '</p></div>' +
+
     (!owner && mayReport(ph.id) ? '<div class="card card-pad in-form"><p class="urgent-t">' + esc(t('in.new')) + '</p>' +
       '<div class="own-grid"><label>' + esc(t('in.kind')) + '<select id="in-kind">' + INCIDENT_KINDS.map(k => '<option value="' + k + '">' + esc(t('in.k.' + k)) + '</option>').join('') + '</select></label>' +
       '<label>' + esc(t('in.about')) + '<select id="in-about"><option value="">' + esc(t('in.aboutNone')) + '</option>' +
@@ -16280,7 +16353,7 @@ function screenIncidentsDark() {
       (S.incErr ? '<p class="auth-error">' + esc(t('in.bad')) + '</p>' : '') +
       '<button class="btn-primary in-send" onclick="reportForm()">' + esc(t('in.send')) + '</button>' +
       '<p class="inline-note">' + esc(t('in.note')) + '</p></div>' : '') +
-    '<p class="section-eyebrow">' + esc(t(owner ? 'in.allT' : 'in.mineT')) + '</p>' +
+    '<div class="ps-h"><span class="section-eyebrow">' + esc(t(owner ? 'in.allT' : 'in.mineT')) + '</span>' + tip(owner ? 'in.ownerRules' : 'in.rules') + '</div>' +
     (list.length ? '<div class="card in-list">' + list.map(x => {
       const head = '<span class="row-body"><span class="row-title" style="display:block;">' + esc(t('in.k.' + x.kind)) + (owner && x.about ? ' · ' + esc(t('in.aboutWho', { who:personName(x.about) })) : '') + '</span>' +
         '<span class="row-sub" style="display:block;">' + esc((owner ? personName(x.by) + ' · ' : '') + dayLabel(x.at) + ' ' + hm(x.at)) + '</span></span>' + incStateChip(x.state);
@@ -16445,7 +16518,7 @@ function openAtt(mail) {
 }
 /* A person's late and absent days in the period, with a way to excuse them. */
 function attendanceHtml(phId, mail) {
-  const list = attendanceIn(phId, mail, perfPeriod()).filter(a => a.state !== 'ok' && a.state !== 'due');
+  const list = attendanceIn(phId, mail, perfPeriod()).filter(a => a.state !== 'ok' && a.state !== 'due' && a.state !== 'leave');
   if (!list.length) return '';
   const mayExcuse = S.role === 'owner' && ownsPharmacy(phId) && mail !== S.email;
   return '<div class="card att-list">' + list.sort((a, b) => a.day < b.day ? 1 : -1).map(a =>
@@ -16532,16 +16605,19 @@ const TEAM_TABS = [['team','users','tm.people'],['tasks','check','nav.tasks'],['
 const REPORT_TABS = [['reports','chart','rp.sales'],['attendance','calendar','rp.att'],['rpeople','users','rp.people']];
 const ownerModules = () => S.role === 'owner' && !FLAGS.marketplace;
 function moduleOf(screen) {
+  /* v0.0019.2: My work, for the staff side. */
+  if (!FLAGS.marketplace && staffSide()) return WORK_TABS.some(x => x[0] === screen) ? 'work' : null;
   if (!ownerModules()) return null;
   if (TEAM_TABS.some(x => x[0] === screen)) return 'team';
   if (REPORT_TABS.some(x => x[0] === screen)) return 'reports';
   return null;
 }
-const moduleTabsOf = m => (m === 'team' ? TEAM_TABS : REPORT_TABS).filter(x => screenAllowed(x[0]));
+const moduleTabsOf = m => (m === 'team' ? TEAM_TABS : m === 'work' ? WORK_TABS : REPORT_TABS).filter(x => screenAllowed(x[0]));
 /* A count on a tab only when something there needs the owner — in the same
    two colours as the home's groups. */
 function tabCount(id) {
   const ph = currentPharmacy();
+  if (ph && staffSide() && id === 'tasks') { const n = todaysTasks(ph.id).filter(it => it.state === 'missed' && taskMine(it.task)).length; return n ? { n, lv:'today' } : null; }
   if (!ph || !(S.role === 'owner' && ownsPharmacy(ph.id))) return null;
   if (id === 'tasks') { const n = todaysTasks(ph.id).filter(it => it.state === 'missed').length; return n ? { n, lv:'today' } : null; }
   if (id === 'incidents') { const n = incidentsAt(ph.id).filter(x => x.state === 'open').length; return n ? { n, lv:'now' } : null; }
@@ -16559,6 +16635,14 @@ function moduleTabsHtml(m) {
 /* What the bar and the sidebar count: on Home, what needs you now or today;
    on Team, the reports still open. */
 function navCount(id) {
+  /* v0.0019.2: the staff side counts too — what needs them, and their missed tasks. */
+  if (staffSide()) {
+    const ph = currentPharmacy() || workPharmacies()[0];
+    if (!ph || !worksAt(ph.id)) return null;
+    const n = id === 'tasks' ? todaysTasks(ph.id).filter(it => it.state === 'missed' && taskMine(it.task)).length
+      : id === 'checkin' || id === 'dashboard' ? staffNeeds(ph).filter(x => x.lv !== 'calm' && !x.task).length : 0;
+    return n ? { n, lv:id === 'tasks' ? 'today' : (staffNeeds(ph).some(x => x.lv === 'now') ? 'now' : 'today') } : null;
+  }
   if (!ownerModules()) return null;
   const ph = currentPharmacy();
   if (!ph || !ownsPharmacy(ph.id)) return null;
@@ -16654,7 +16738,7 @@ function annOpen(id) {
 }
 function annClose(id) { if (annState(id) === 'new') S.annState[annKey(id)] = 'slim'; render(); }
 function homeBanner() {
-  const b = LISTINGS.find(x => x.state === 'live' && x.surface === 'home' && annState(x.id) !== 'opened' &&
+  const b = LISTINGS.find(x => x.state === 'live' && x.surface === 'home' && annState(x.id) !== 'opened' && annFor(x) &&
     (x.kind === 'announcement' || (x.kind === 'banner' && FLAGS.partners)));
   if (!b) return '';
   countImpression(b.id);
@@ -16694,11 +16778,12 @@ function screenTeamLog() {
   if (!ph) return stockChooser(tabs, 'team');
   const day = S.teamDay || todayKey(), list = staffOf(ph.id);
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' +
+    '<div class="ps-h"><span></span>' + tip('tm.privacy') + '</div>' +
     '<div class="tl-bar">' + dayPicker(day, 'setTeamDay') +
       '<select class="tl-person" onchange="setTeamPerson(this.value)"><option value="">' + esc(t('tm.everyone')) + '</option>' +
         [...new Set([S.email].concat(list.filter(x => x.email).map(x => x.email)))].map(m => '<option value="' + esc(m) + '"' + (S.teamPerson === m ? ' selected' : '') + '>' + esc(personName(m)) + '</option>').join('') + '</select></div>' +
     timelineHtml(ph.id, S.teamPerson, day) +
-    '<p class="inline-note">' + esc(t('tm.privacy')) + '</p>' +
+
     '</div></div>';
 }
 
@@ -16710,6 +16795,7 @@ function screenReportPeople() {
   sweepShifts();
   const p = perfPeriod();
   return '<div class="screen-body">' + tabs + '<div class="constrain stack">' + periodBar() +
+    '<div class="ps-h"><span class="section-eyebrow">' + esc(t('rp.byName')) + '</span>' + tip('rpt.p7') + '</div>' +
     '<div class="card rpt-people">' + reportPeople(ph.id).map(x => {
       const f = perfFigures(ph.id, x.mail, p), a = autoIn30(ph.id, x.mail);
       return '<button class="row rpt-person" data-mail="' + esc(x.mail) + '" style="width:100%;text-align:start;" onclick="openPersonFromReports(' + attr(x.mail) + ')">' +
@@ -16717,7 +16803,7 @@ function screenReportPeople() {
         '<span class="row-sub" style="display:block;">' + esc(t('rpt.personLine', { n:fmt(f.shifts), h:hoursFmt(f.hours) })) + '</span></span>' +
         (a >= REPEAT_AUTO ? '<span class="badge badge-alert">' + esc(t('sh.repeatAuto', { n:a })) + '</span>' : '') + icon('chevron', 'more-chevron') + '</button>';
     }).join('') + '</div>' +
-    '<p class="inline-note">' + esc(t('rpt.p7')) + '</p>' +
+
     '</div></div>';
 }
 
@@ -16747,7 +16833,7 @@ function attMove(k) {
 function attView(v) { S.attView = v; S.attAnchor = todayKey(); render(); }
 function attOpen(mail, day) {
   const ph = currentPharmacy(); if (!ph) return;
-  S.perf = { kind:'week', anchor:day };
+  S.perf = { kind:'week', anchor:day }; S.personFor = null;
   if (mail === S.email) { S.openStaff = 'OWNER'; goto('team'); return; }
   const rec = staffOf(ph.id).find(x => x.email === mail && x.state === 'active');
   if (rec) { S.openStaff = rec.id; goto('team'); }
@@ -16860,6 +16946,295 @@ Object.assign(STRINGS.ar, {
   'at.cnt.ok':'في الموعد', 'at.cnt.late':'تأخير', 'at.cnt.absent':'غياب', 'at.cnt.excused':'معذور', 'at.cnt.leave':'إجازة',
   'at.daysHours':'{d} يوماً · {h} س', 'at.noneDue':'ليس على الجدول هذا الشهر', 'at.nobody':'لا أحد لديه جدول هنا بعد.',
   'at.decideT':'بانتظار قرارك', 'at.decide.absent':'{who} غائب، {day}', 'at.decide.late':'{who} متأخر {m} دقيقة، {day}'
+});
+
+/* ==========================================================================
+   v0.0019.2 — FEWER WORDS, AND THE STAFF SIDE IN LINE (reported 3 Oct 2026)
+
+   "Too many words", most of all on a team member's figures (620 words, 382
+   of them explanation). Decided 3 Oct 2026:
+   - A person's page is three tabs — Overview, Shifts, Permissions — and My
+     activity is the same page with one's own numbers.
+   - Numbers and chips, not sentences; explanations behind an ⓘ, one tap
+     away and never deleted; long lists folded; said once.
+   - Money is short where space is tight or the number is a headline (4.7M,
+     271K) and full wherever it is checked against cash or paper (Reports >
+     Sales, the drawer, prices, the till, receipts).
+   And the staff side, which was still the old design, in line with the
+   owner's: Home · Pharmacy · My work · More; the same home; the pharmacy in
+   the header; the same row of chips for a pharmacy switch.
+   ========================================================================== */
+
+/* ---------- Short money ---------- */
+
+/* 4,698,250 → 4.7M; 271,000 → 271K; 99,500 → 99.5K. Western numerals in
+   both languages; the unit is a word in Arabic. */
+function shortNum(n) {
+  n = Math.round(n || 0);
+  const a = Math.abs(n), trim = x => x.replace(/\.0$/, '');
+  if (a >= 1e6) return { v:trim((n / 1e6).toFixed(a >= 1e8 ? 0 : 1)), u:lang === 'ar' ? ' مليون' : 'M' };
+  if (a >= 1e3) return { v:trim((n / 1e3).toFixed(a >= 1e5 ? 0 : 1)), u:lang === 'ar' ? ' ألف' : 'K' };
+  return { v:String(n), u:'' };
+}
+const iqdShort = n => { const s = shortNum(n); return s.v + s.u; };
+
+/* ---------- ⓘ: the explanation, one tap away ---------- */
+
+function tip(key, vars) {
+  return '<details class="tip" data-tip="' + esc(key) + '"><summary aria-label="' + esc(t('tip.more')) + '">i</summary><p>' + esc(t(key, vars)) + '</p></details>';
+}
+
+/* ---------- A person: Overview, Shifts, Permissions ---------- */
+
+/* Which tab a person's page is on — Overview on arriving; Shifts when a
+   shift was asked for (openShiftOf sets it). */
+function personTab(key, tabs) {
+  if (S.personFor !== key) { S.personFor = key; S.personTab = 'overview'; S.shiftsAll = false; }
+  if (!tabs.includes(S.personTab)) S.personTab = tabs[0];
+  return S.personTab;
+}
+function personTabsHtml(tabs, on) {
+  return '<div class="segmented ps-tabs" role="tablist">' + tabs.map(k =>
+    '<button class="' + (k === on ? 'active' : '') + '" role="tab" aria-selected="' + (k === on) + '" data-ptab="' + k + '" onclick="S.personTab=' + attr(k) + ';render()">' + esc(t('ps.' + k)) + '</button>').join('') + '</div>';
+}
+/* Who they are, in one line: role, since when, and where they are today. */
+function identLine(phId, mail, rec) {
+  const since = rec && rec.start ? new Date(rec.start + 'T12:00:00') : null;
+  const mon = since ? (lang === 'ar' ? MONTHS_AR : MONTHS_EN)[since.getMonth()] + ' ' + since.getFullYear() : '';
+  const sub = since ? t('ps.since', { d:mon }) : '';
+  return '<div class="ps-ident"><span class="avatar tm-av">' + esc(initialsOf(personName(mail))) + '</span><div style="flex:1;min-width:0;">' +
+    '<p class="ps-role">' + esc(rec ? roleLabel(rec) : t('ps.owner')) + (rec && mail === S.email ? ' ' + tip('ps.mayTip', { list:effectiveGrants(rec).map(x => t('pm.' + x)).join(' · ') }) : '') + '</p>' +
+      (sub ? '<p class="ps-sub">' + esc(sub) + '</p>' : '') + '</div>' +
+    (mail !== S.email || rec ? todayChip(phId, mail) : '') + '</div>';
+}
+
+/* Overview: four numbers, a shift beside the pharmacy's, the period's
+   attendance, and the P7 question in a line. */
+function personOverview(phId, mail) {
+  const p = perfPeriod(), f = perfFigures(phId, mail, p);
+  const base = mail !== S.email && S.role === 'owner' && ownsPharmacy(phId) ? perfFigures(phId, null, p) : null;
+  const tile = (v, l, cls) => '<div class="ps-tile' + (cls ? ' ' + cls : '') + '"><span class="ps-v figure">' + v + '</span><span class="ps-l">' + esc(l) + '</span></div>';
+  const s = shortNum(f.total);
+  let html = periodBar();
+  if (!f.shifts && !f.n) html += '<div class="card card-pad till-empty pf-empty">' + esc(t('pf.nothing')) + '</div>';
+  else {
+    html += '<div class="ps-tiles">' + tile(fmt(f.shifts), t('pf.shifts')) + tile(hoursFmt(f.hours) + '<small>' + esc(t('ps.h')) + '</small>', t('pf.hours')) +
+      tile(esc(s.v) + '<small>' + esc(s.u) + '</small>', t('ps.salesIqd'), 'ps-money') + tile(fmt(f.n), t('ps.salesN')) + '</div>';
+    /* A shift, on average — beside the pharmacy's when the owner is looking. */
+    const a = f.perShift.avgTotal, b = base ? base.perShift.avgTotal : 0, max = Math.max(a, b, 1);
+    const bar = (who, v, cls) => '<div class="ps-bar"><span class="ps-bar-l">' + esc(who) + '</span><span class="ps-track"><span class="ps-fill ' + cls + '" style="width:' + Math.round(v / max * 100) + '%"></span></span><span class="ps-bar-v figure">' + esc(iqdShort(v)) + '</span></div>';
+    const pct = base && b ? Math.round((a - b) / b * 100) : null;
+    html += '<div class="card card-pad ps-avg"><div class="ps-h"><span>' + esc(t('ps.avgT')) + '</span>' + tip(base ? 'ps.avgTip' : 'ps.avgTipOwn') + '</div>' +
+      bar(firstName(personName(mail)), a, 'me') + (base ? bar(t('ps.pharmacy'), b, 'ph') : '') +
+      '<p class="ps-note">' + esc(base ? t(pct === 0 ? 'ps.same' : pct > 0 ? 'ps.above' : 'ps.below', { n:Math.abs(pct) }) + ' · ' + t('ps.nVs', { a:fmt(f.perShift.avgN), b:fmt(base.perShift.avgN) })
+        : t('ps.nOwn', { a:fmt(f.perShift.avgN) })) + '</p>' +
+      (f.auto ? '<p class="ps-chips"><span class="ps-chip warn">' + esc(t('ps.auto', { n:f.auto })) + '</span></p>' : '') + '</div>';
+  }
+  html += personAttendance(phId, mail, p) + personP7(phId, mail) + rotaCard(phId, mail);
+  return html;
+}
+/* The period's days as a strip, the counts as chips, and — for the owner —
+   each late or absent day with Excuse. */
+function personAttendance(phId, mail, p) {
+  if (!rotaOf(phId, mail) && !shiftsAt(phId, mail).length) return '';
+  const days = [];
+  for (let d = dayOf(p.from); d < dayOf(p.to); d = shiftDay(d, 1)) days.push(d);
+  const list = attendanceIn(phId, mail, p), by = {};
+  list.forEach(a => { by[a.day] = a.state; });
+  const n = k => list.filter(a => a.state === k).length;
+  const chips = [['ok', 'ok'], ['late', 'warn'], ['absent', 'bad'], ['excused', ''], ['leave', '']].filter(([k]) => n(k))
+    .map(([k, c]) => '<span class="ps-chip ' + c + '" data-k="' + k + '">' + esc(n(k) + ' ' + t('at.cnt.' + k)) + '</span>').join('');
+  const rows = attendanceHtml(phId, mail);
+  return '<div class="card card-pad ps-att"><div class="ps-h"><span>' + esc(t('at.title')) + '</span>' +
+      (S.role === 'owner' && ownsPharmacy(phId) ? '<button class="link-btn ps-open" onclick="goto(\'attendance\')">' + esc(t('ps.openAtt')) + '</button>' : '') + '</div>' +
+    (days.length > 1 ? '<span class="at-strip" style="grid-template-columns:repeat(' + days.length + ',1fr)">' + days.map(d => '<i class="' + (by[d] || 'none') + '" title="' + esc(d) + '"></i>').join('') + '</span>' : '') +
+    (chips ? '<p class="ps-chips">' + chips + '</p>' : '<p class="ps-note">' + esc(t('ps.noAtt')) + '</p>') +
+    rows + '</div>';
+}
+function personP7(phId, mail) {
+  if (!(S.role === 'owner' && ownsPharmacy(phId)) || mail === S.email) return '';
+  const f = p7Flags(phId, mail, perfPeriod()).filter(x => x.flag);
+  if (!f.length) return '';
+  const pc = x => Math.round(x * 100) + '%';
+  return f.map(x => '<div class="ny-item today p7-card" data-lv="today"><span class="ny-ic">' + icon('alert') + '</span>' +
+    '<span class="ny-t"><b class="p7-q" data-class="' + x.k + '">' + esc(t('p7.line.' + x.k, { me:pc(x.me) })) + '</b>' +
+    '<span>' + esc(t('p7.lineS', { ph:pc(x.ph) })) + '</span></span>' + tip('p7.note') + '</div>').join('');
+}
+/* Shifts: a line each, the latest eight, then Show all. */
+function personShifts(phId, mail) {
+  const p = perfPeriod();
+  const list = shiftsAt(phId, mail).filter(sh => sh.in >= p.from && sh.in < p.to).sort((a, b) => a.in < b.in ? 1 : -1);
+  const want = S.openShift && list.findIndex(sh => sh.id === S.openShift);
+  const all = S.shiftsAll || (want != null && want >= 8);
+  const mayApprove = S.role === 'owner' && ownsPharmacy(phId) && mail !== S.email;
+  const shown = all ? list : list.slice(0, 8);
+  return periodBar() + (list.length
+    ? '<div class="card sh-list ps-shifts">' + shown.map(sh => shiftRowShort(sh, mayApprove)).join('') + '</div>' +
+      (list.length > shown.length ? '<button class="link-btn ps-all" onclick="S.shiftsAll=true;render()">' + esc(t('ps.showAll', { n:list.length })) + '</button>' : '')
+    : '<div class="card card-pad till-empty sh-empty">' + esc(t('sh.none')) + '</div>');
+}
+/* One line: the day, in–out with anything to notice as a chip, the amount.
+   Open it for what happened on it — and, for the owner, to decide a claim. */
+function shiftRowShort(sh, mayApprove) {
+  const ss = shiftSales(sh), total = ss.reduce((a, s) => a + s.total, 0), end = shiftEnd(sh);
+  const full = shiftRow(sh, mayApprove), detail = full.slice(full.indexOf('<div class="sh-detail">'));
+  const d = new Date(sh.in), late = attendanceOn(sh.pharmacy, sh.email, dayOf(sh.in));
+  const lateChip = late && late.state === 'late' && late.shift && late.shift.id === sh.id ? '<span class="badge badge-pending sh-chip">' + esc(t('ps.late', { m:late.minutes })) + '</span>' : '';
+  return '<details class="sh-row-d ps-sh" data-shift="' + sh.id + '" data-state="' + sh.state + '"' + (S.openShift === sh.id ? ' open' : '') + '><summary class="ps-sh-row sh-item">' +
+    '<span class="ps-sh-d"><b>' + esc(WEEKDAYS[lang][d.getDay()]) + '</b><span>' + d.getDate() + ' ' + esc((lang === 'ar' ? MONTHS_AR : MONTHS_EN)[d.getMonth()].slice(0, lang === 'ar' ? 20 : 3)) + '</span></span>' +
+    '<span class="ps-sh-t"><bdi class="figure">' + esc(hm(sh.in) + '–' + (end ? hm(end) : '…')) + '</bdi>' + shiftStateChip(sh) + lateChip +
+      '<span class="ps-sh-n">' + esc(t('ps.nSales', { n:fmt(ss.length) })) + '</span></span>' +
+    '<span class="ps-sh-a figure">' + esc(iqdShort(total)) + '</span></summary>' + detail;
+}
+/* Permissions: the role, then a line and a switch each; what each does is
+   behind its ⓘ. */
+function personPerms(ph, x) {
+  return '<div class="card card-pad tm-rolepick"><label class="field-label" for="tm-role">' + esc(t('role.label')) + '</label>' +
+      '<select id="tm-role" ' + (x.state === 'ended' ? 'disabled ' : '') + 'onchange="setRole(' + attr(x.id) + ', this.value)">' +
+        rolesFor(S.email).map(r => '<option value="' + esc(r.id) + '"' + (x.role === r.id ? ' selected' : '') + '>' + esc(roleName(r)) + '</option>').join('') + '</select></div>' +
+    '<div class="card tm-grantlist ps-grants">' + PERMS.map(pm => {
+      const role = roleById(x.role, x.pharmacy), fromRole = !!role && role.grants.includes(pm);
+      const later = PERM_LATER[pm], on = fromRole || x.grants.includes(pm), off = x.state === 'ended' || !!later || fromRole;
+      return '<label class="row tm-grant ps-grant" data-perm="' + pm + '"' + (fromRole ? ' data-role="1"' : '') + '><span class="row-body"><span class="row-title">' + esc(t('pm.' + pm)) + '</span>' +
+        (fromRole ? '<span class="ps-from" title="' + esc(t('role.fromRole', { role:roleName(role) })) + '">' + esc(t('ps.fromRole')) + '</span>' : '') + '</span>' +
+        tip(later ? 'pm.later' : 'pm.' + pm + 'S', { v:later }) +
+        '<input type="checkbox" class="bc-toggle" ' + (on ? 'checked ' : '') + (off ? 'disabled ' : '') + 'onchange="setGrant(' + attr(x.id) + ',' + attr(pm) + ',this.checked)"></label>';
+    }).join('') + '</div>' +
+    (x.state !== 'ended' ? '<button class="btn-secondary tm-end" onclick="endEmployment(' + attr(x.id) + ')">' + esc(t(x.state === 'invited' ? 'tm.withdraw' : 'tm.end')) + '</button>' : '');
+}
+/* The owner's view of someone on the team. */
+function personPage(ph, x) {
+  const tabs = x.email && x.state !== 'invited' ? ['overview', 'shifts', 'perms'] : ['perms'];
+  const on = personTab('S:' + x.id, tabs);
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="tm-person">' + identLine(ph.id, x.email, x) + '</div>' +
+    (x.state === 'invited' ? inviteCard(x) : '') +
+    (tabs.length > 1 ? personTabsHtml(tabs, on) : '') +
+    (on === 'overview' ? personOverview(ph.id, x.email) : on === 'shifts' ? personShifts(ph.id, x.email) : personPerms(ph, x)) +
+    '</div></div>';
+}
+/* The owner's own page: Overview and Shifts. */
+function selfPage(ph) {
+  const tabs = ['overview', 'shifts'], on = personTab('O:' + ph.id, tabs);
+  return '<div class="screen-body"><div class="constrain stack">' +
+    '<div class="tm-person tm-self">' + identLine(ph.id, S.email, null) + '</div>' + personTabsHtml(tabs, on) +
+    (on === 'overview' ? personOverview(ph.id, S.email) : personShifts(ph.id, S.email)) +
+    '<button class="btn-ghost" onclick="S.openStaff=null;render()">' + esc(t('common.back')) + '</button>' +
+    '</div></div>';
+}
+/* My activity: the same page, one's own numbers, and the day's record. */
+function myActivity() {
+  const w = workPharmacies(), ph = currentPharmacy() || w[0], rec = ph ? staffRecord(ph.id) : null;
+  if (!rec) return '<div class="screen-body"><div class="constrain stack"><div class="card card-pad till-empty">' + esc(t('tm.notEmployed')) + '</div></div></div>';
+  const tabs = ['overview', 'shifts', 'day'], on = personTab('A:' + ph.id, tabs), day = S.teamDay || todayKey();
+  return '<div class="screen-body">' + pharmacyTabs() + '<div class="constrain stack">' +
+    identLine(ph.id, S.email, rec) + personTabsHtml(tabs, on) +
+    (on === 'overview' ? personOverview(ph.id, S.email)
+      : on === 'shifts' ? personShifts(ph.id, S.email)
+      : '<div class="ps-h"><span>' + esc(t('tm.myDay')) + '</span>' + tip('tm.ownOnly') + '</div>' + dayPicker(day, 'setTeamDay') + timelineHtml(ph.id, S.email, day)) +
+    '</div></div>';
+}
+
+/* ---------- The staff side, in line with the owner's ---------- */
+
+const WORK_TABS = [['tasks','check','nav.tasks'],['incidents','alert','i.title'],['activity','clock','nav.activity']];
+/* Someone who works at a pharmacy rather than owning it — a pharmacist on a
+   team, or an owner at a pharmacy they work at. */
+const staffSide = () => !FLAGS.marketplace && (S.role === 'pharmacist' || (S.role === 'owner' && atWorkplace()));
+/* What needs someone on a team, in the owner's three groups. */
+function staffNeeds(ph) {
+  const out = [], add = (lv, ic, title, sub, go) => out.push({ lv, ic, title, sub:sub || '', go });
+  const sh = openShift(ph.id);
+  if (sh) shiftReminders(sh).filter(r => r.k === 'closing').forEach(r => add('now', 'clock', r.text, '', "goto('checkin')"));
+  myClaimsDue(ph.id).forEach(x => add('today', 'clock', t('ny.claimMine', { day:dayLabel(x.in) }), t('ny.claimMineS'), "document.querySelector('.sh-claim') && document.querySelector('.sh-claim').scrollIntoView({block:'center'})"));
+  todaysTasks(ph.id).filter(it => it.state === 'missed' && taskMine(it.task)).forEach(it => { add('today', 'check', t('ny.missed', { title:it.task.title }), t('tk2.dueAt', { t:it.task.due }) + ' · ' + taskWho(it.task), "goto('tasks')"); out[out.length - 1].task = true; });
+  if (sh) shiftReminders(sh).filter(r => r.k === 'ended').forEach(r => add('today', 'clock', r.text, '', "goto('checkin')"));
+  incidentsSeen(ph.id).filter(x => x.reply && x.by === S.email && !(S.replySeen || {})[x.id]).forEach(x => add('calm', 'alert', t('ny.reply'), t('in.k.' + x.kind), "S.replySeen[" + attr(x.id) + "]=true;goto('incidents')"));
+  const rank = { now:0, today:1, calm:2 };
+  return out.map((x, i) => Object.assign(x, { i })).sort((p, q) => rank[p.lv] - rank[q.lv] || p.i - q.i);
+}
+function staffNeedsHtml(ph) {
+  const items = staffNeeds(ph);
+  const item = x => '<button class="ny-item ' + x.lv + '" data-lv="' + x.lv + '" onclick="' + x.go + '"><span class="ny-ic">' + icon(x.ic) + '</span>' +
+    '<span class="ny-t"><b>' + esc(x.title) + '</b>' + (x.sub ? '<span>' + esc(x.sub) + '</span>' : '') + '</span>' + icon('chevron', 'more-chevron') + '</button>';
+  const grp = lv => { const l = items.filter(x => x.lv === lv); return l.length ? '<p class="ny-grp ' + lv + '"><i></i>' + esc(t('ny.' + lv)) + '</p>' + l.map(item).join('') : ''; };
+  return '<section class="ny ny-staff" aria-label="' + esc(t('ny.title')) + '"><div class="ny-head"><h2 class="ny-title">' + esc(t('ny.title')) + (items.length ? ' <em>' + items.length + '</em>' : '') + '</h2></div>' +
+    (items.length ? grp('now') + grp('today') + grp('calm') : '<p class="ny-none">' + esc(t('hm.needsNone')) + '</p>') + '</section>';
+}
+/* Their day at a glance: their tasks, the drawer, and their own sales today. */
+function staffStrip(ph) {
+  const tasks = todaysTasks(ph.id).filter(it => taskMine(it.task));
+  const done = tasks.filter(it => it.state === 'done' || it.state === 'late').length, missed = tasks.filter(it => it.state === 'missed').length;
+  const d = openDrawer(ph.id), sod = startOfDay(todayKey()).toISOString();
+  const mine = allSales().filter(s => s.pharmacy === ph.id && s.by === S.email && s.at >= sod && saleCounts(s));
+  const cell = (fig, label, sub, cls) => '<div class="td-cell"><span class="td-fig figure">' + fig + '</span><span class="td-l">' + esc(label) + '</span>' +
+    '<span class="td-s' + (cls ? ' ' + cls : '') + '">' + esc(sub) + '</span></div>';
+  return '<div class="card td-strip td-staff">' +
+    cell(tasks.length ? done + '/' + tasks.length : '—', t('td.myTasks'), tasks.length ? (missed ? t('td.missed', { n:missed }) : t('td.noneMissed')) : t('td.noTasks'), missed ? 'bad' : '') +
+    (can('sell') ? cell(esc(d ? t('td.open') : t('td.closed')), t('td.drawer'), d ? t('td.openSince', { t:hm(d.openedAt) }) : '', d ? 'ok' : '') : '') +
+    cell(esc(iqdShort(mine.reduce((a, s) => a + s.total, 0))), t('td.mySales'), mine.length ? t('td.n', { n:mine.length }) : '', '') +
+  '</div>';
+}
+/* The home of someone on a team: their shift, their day, the till, the
+   compact Saydali+ card, and one list of what needs them. */
+function staffHomeV192(tabs) {
+  const ph = currentPharmacy() || workPharmacies()[0];
+  if (!ph || !worksAt(ph.id)) {
+    return '<div class="screen-body">' + (tabs || '') + '<div class="constrain stack home2 home3">' +
+      myInvitesCard() + annLine() +
+      '<button class="btn-primary hm-till-one" onclick="goto(\'till\')">' + icon('till') + esc(t('hm.checkRx')) + '</button>' +
+      '<div class="card card-pad sh-noteam"><div class="sh-row"><span class="soon-ico">' + icon('clock') + '</span><div style="flex:1;min-width:0;">' +
+        '<p class="sh-state">' + esc(t('sh.checkIn')) + '</p><p class="sh-sub">' + esc(t('ps.noTeam')) + '</p></div>' + tip('sh.noTeam') + '</div></div>' +
+      '</div></div>';
+  }
+  const rec = staffRecord(ph.id);
+  return '<div class="screen-body">' + (tabs || '') + '<div class="constrain stack home2 home3">' +
+    (rec ? '<button class="ps-ident wk-who" onclick="goto(\'activity\')"><span class="soon-ico">' + icon('store') + '</span><div style="flex:1;min-width:0;text-align:start;">' +
+      '<p class="ps-role">' + esc(L(ph.name)) + '</p><p class="ps-sub">' + esc(roleLabel(rec)) + '</p></div>' + icon('chevron', 'more-chevron') + '</button>' : '') +
+    shiftCard(ph, true) + staffStrip(ph) +
+    '<button class="btn-primary hm-till-one" onclick="goto(\'till\')">' + icon('till') + esc(t(can('sell') ? 'hm.openTill' : 'hm.checkRx')) + '</button>' +
+    annLine() + myInvitesCard() + staffNeedsHtml(ph) +
+    '</div></div>';
+}
+
+/* An announcement reaches only the people it is for: "Point of sale is
+   here" is for someone who can sell — not a student, not a pharmacist on no
+   team yet, not the reviewer. */
+const annFor = b => b.audience !== 'sellers' || (S.role === 'owner' && !atWorkplace() && myPharmacies().length > 0) || (staffSide() && can('sell'));
+
+/* ---------- Strings ---------- */
+
+Object.assign(STRINGS.en, {
+  'tip.more':'More about this',
+  'ps.overview':'Overview', 'ps.shifts':'Shifts', 'ps.perms':'Permissions', 'ps.day':'My day',
+  'ps.since':'Since {d}', 'ps.owner':'Owner', 'ps.h':'h', 'ps.salesIqd':'Sales, IQD', 'ps.salesN':'Sales',
+  'ps.avgT':'A shift, on average', 'ps.pharmacy':'Pharmacy',
+  'ps.avgTip':'Average sales per shift over the period, beside the pharmacy’s own average. Never ranked against anyone. A shift still open is counted when it ends.',
+  'ps.avgTipOwn':'Your average sales per shift over the period. A shift still open is counted when it ends.',
+  'ps.above':'{n}% above', 'ps.below':'{n}% below', 'ps.same':'The same', 'ps.nVs':'{a} sales a shift, pharmacy {b}', 'ps.nOwn':'{a} sales a shift',
+  'ps.auto':'{n} closed themselves', 'ps.openAtt':'Open', 'ps.noAtt':'Nothing to show in this period.',
+  'ps.showAll':'Show all {n} shifts', 'ps.nSales':'{n} sales', 'ps.late':'{m} min late', 'ps.fromRole':'role', 'ps.mayTip':'You may: {list}',
+  'ps.noTeam':'Starts when you join a pharmacy’s team.',
+  'p7.line.abx':'Antibiotics: {me} of their sales', 'p7.line.ctl':'Controlled: {me} of their sales', 'p7.lineS':'Pharmacy: {ph} · worth asking why?',
+  'nav.work':'My work',
+  'ny.claimMine':'When did you leave on {day}?', 'ny.claimMineS':'Your shift closed itself — give the time', 'ny.reply':'The owner wrote back',
+  'td.myTasks':'My tasks', 'td.drawer':'Drawer', 'td.open':'Open', 'td.closed':'Closed', 'td.mySales':'My sales today', 'td.openSince':'since {t}', 'grp.work':'At work', 'rp.byName':'By name', 'rpt.shareShortOn':'On', 'rpt.shareShortOff':'Off'
+});
+Object.assign(STRINGS.ar, {
+  'tip.more':'المزيد عن هذا',
+  'ps.overview':'نظرة عامة', 'ps.shifts':'الدوامات', 'ps.perms':'الصلاحيات', 'ps.day':'يومي',
+  'ps.since':'منذ {d}', 'ps.owner':'المالك', 'ps.h':'س', 'ps.salesIqd':'المبيعات، د.ع', 'ps.salesN':'عمليات البيع',
+  'ps.avgT':'الدوام في المتوسط', 'ps.pharmacy':'الصيدلية',
+  'ps.avgTip':'متوسط المبيعات لكل دوام خلال الفترة، بجانب متوسط الصيدلية نفسها. دون ترتيب مقابل أحد. الدوام المفتوح يُحسب حين ينتهي.',
+  'ps.avgTipOwn':'متوسط مبيعاتك لكل دوام خلال الفترة. الدوام المفتوح يُحسب حين ينتهي.',
+  'ps.above':'أعلى بـ {n}%', 'ps.below':'أقل بـ {n}%', 'ps.same':'مماثل', 'ps.nVs':'{a} عملية بيع للدوام، الصيدلية {b}', 'ps.nOwn':'{a} عملية بيع للدوام',
+  'ps.auto':'{n} أُغلقت تلقائياً', 'ps.openAtt':'فتح', 'ps.noAtt':'لا شيء في هذه الفترة.',
+  'ps.showAll':'عرض الدوامات كلها ({n})', 'ps.nSales':'{n} عملية بيع', 'ps.late':'متأخر {m} دقيقة', 'ps.fromRole':'الدور', 'ps.mayTip':'يمكنك: {list}',
+  'ps.noTeam':'يبدأ حين تنضم إلى فريق صيدلية.',
+  'p7.line.abx':'المضادات الحيوية: {me} من مبيعاته', 'p7.line.ctl':'المواد الخاضعة للرقابة: {me} من مبيعاته', 'p7.lineS':'الصيدلية: {ph} · هل يستحق السؤال؟',
+  'nav.work':'عملي',
+  'ny.claimMine':'متى غادرت يوم {day}؟', 'ny.claimMineS':'أُغلق دوامك تلقائياً — اذكر الوقت', 'ny.reply':'ردّ المالك',
+  'td.myTasks':'مهامي', 'td.drawer':'الصندوق', 'td.open':'مفتوح', 'td.closed':'مغلق', 'td.mySales':'مبيعاتي اليوم', 'td.openSince':'منذ {t}', 'grp.work':'في العمل', 'rp.byName':'حسب الاسم', 'rpt.shareShortOn':'مفعّلة', 'rpt.shareShortOff':'متوقفة'
 });
 
 function seedStock() {
@@ -18977,7 +19352,7 @@ function screenTeam() {
         [...new Set([S.email].concat(list.filter(x => x.email).map(x => x.email)))].map(m => '<option value="' + esc(m) + '"' + (S.teamPerson === m ? ' selected' : '') + '>' + esc(personName(m)) + '</option>').join('') + '</select></div>' +
     timelineHtml(ph.id, S.teamPerson, day) +
     (ended.length ? '<p class="section-eyebrow">' + esc(t('tm.endedT')) + '</p><div class="card">' + ended.map(row).join('') + '</div>' : '')) +
-    '<p class="inline-note">' + esc(t('tm.privacy')) + '</p>' +
+    (v191 ? '' : '<p class="inline-note">' + esc(t('tm.privacy')) + '</p>') +
     '</div></div>';
 }
 function inviteCard(x) {
@@ -18992,6 +19367,8 @@ function inviteCard(x) {
 }
 function staffPage(ph, x) {
   if (!x) { S.openStaff = null; return screenTeam(); }
+  /* v0.0019.2: Overview, Shifts, Permissions. */
+  if (!FLAGS.marketplace) return personPage(ph, x);
   const day = S.teamDay || todayKey();
   return '<div class="screen-body"><div class="constrain stack">' +
     '<div class="card card-pad tm-person"><p class="urgent-t">' + esc(staffName(x)) + '</p>' +
@@ -19022,6 +19399,8 @@ function staffPage(ph, x) {
 /* ---------- An employee's own day ---------- */
 
 function screenActivity() {
+  /* v0.0019.2: the person's page, with one's own numbers. */
+  if (!FLAGS.marketplace) return myActivity();
   const w = workPharmacies();
   const ph = currentPharmacy() || w[0];
   const day = S.teamDay || todayKey();
@@ -20525,8 +20904,9 @@ const NAV_OWNER_BOTH =
 const NAV_DARK = {
   /* v0.0013.1: the Helper lives in the till, so the till takes the CV's slot;
      the CV is one tap away on Profile. */
-  pharmacist: [['checkin','clock','nav.checkin'],['tasks','check','nav.tasks'],['till','till','nav.till'],
-               ['drugs','pill','nav.drugs'],['profile','user','nav.profile']],
+  /* v0.0019.2: Home · Pharmacy · My work · More, as the owner's. */
+  pharmacist: [['checkin','home','nav.home'],['till','till','nav.till'],['drugs','pill','nav.drugs'],
+               ['tasks','check','nav.work'],['more','grid','nav.more']],
   /* The till takes the trainee's slot on the bar: it is used every few
      minutes, the trainee once a month, and the dashboard links there. */
   /* v0.0013: Stock takes the catalogue's slot. The catalogue and its prices
@@ -20542,6 +20922,9 @@ function navFor(role) {
   if (!FLAGS.marketplace && NAV_DARK[role]) nav = NAV_DARK[role];
   else if (role !== 'owner') nav = NAV[role] || NAV.pharmacist;
   else nav = S.takesShifts ? NAV_OWNER_BOTH : NAV_OWNER_PHARMACY_ONLY;
+  /* v0.0019.2: an owner at a pharmacy they work at has the staff bar there. */
+  if (role === 'owner' && role === S.role && !FLAGS.marketplace && atWorkplace())
+    nav = [['dashboard','home','nav.home'],['till','till','nav.till'],['stock','barcode','nav.stock'],['drugs','pill','nav.drugs'],['tasks','check','nav.work'],['more','grid','nav.more']];
   if (pharmacyModule(role)) nav = collapsePharmacy([nav], role)[0];
   return nav.filter(x => x[0] === 'more' || x[0] === 'pharmacy' || screenAllowed(x[0], role));
 }
@@ -20591,6 +20974,8 @@ const homeScreen = () => (navFor(S.role)[0] || ['profile'])[0];
 
 /* Which roles get a grouped sidebar rather than a flat list. */
 function sidebarGroups() {
+  /* v0.0019.2: the staff side is grouped as the owner's: the bar's places, then More, then You. */
+  if (staffSide()) return [{ key:'grp.work', items:navFor(S.role).filter(x => x[0] !== 'more') }].concat(moreGroups());
   const g = S.role === 'owner' ? ownerGroups() : null;
   if (!g) return null;
   /* In the module the catalogue is inside Stock, so it leaves the sidebar
@@ -20655,6 +21040,9 @@ function moreGroups() {
     return [{ key:'grp.account', items:[['notifications','bell','nav.notifications'],
                                         ['profile','user','nav.profile']] }];
   }
+  /* v0.0019.2: My work holds Tasks, Incidents and My activity. */
+  if (!FLAGS.marketplace) return [{ key:'grp.more', items:[['products','barcode','nav.products'],['addPharmacy','plus','ap.addFirst']].filter(x => screenAllowed(x[0])) },
+    { key:'grp.you', items:[['cv','clipboard','nav.cv'],['notifications','bell','nav.notifications'],['profile','user','nav.profile']] }].filter(g => g.items.length);
   return [{ key:'grp.account', items:[['cv','clipboard','nav.cv'],
                                       ['notifications','bell','nav.notifications'],
                                       ['incidents','alert','nav.incidents'],
@@ -20666,6 +21054,8 @@ function moreGroups() {
    phone bar holds. */
 function profileLinks() {
   if (S.role === 'owner' || S.role === 'admin') return [];
+  /* v0.0019.2: with More on the bar, Profile does not repeat it. */
+  if (navFor(S.role).some(x => x[0] === 'more')) return [];
   if (S.role === 'student') return [['notifications','bell','nav.notifications']];
   /* Anything already on the bar is not repeated here, and anything switched
      off is not offered. */
@@ -20766,16 +21156,17 @@ function render() {
     /* With the market on, the pharmacist's catalogue link waits for the till. */
     .filter(x => x[0] !== 'products' || !FLAGS.marketplace);
 
-  const lit = id => S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) || (!!moduleOf(S.screen) && moduleOf(S.screen) === id);
+  const modNav = { team:'team', reports:'reports', work:'tasks' };
+  const lit = id => S.screen === id || (id === 'pharmacy' && inPharmacy(S.screen)) || (!!moduleOf(S.screen) && modNav[moduleOf(S.screen)] === id);
   document.getElementById('bottom-nav').innerHTML = nav.map(([id, ic, key]) =>
     '<button class="nav-item' + (lit(id) ? ' active' : '') + '" data-nav="' + id + '" onclick="goto(\'' + id + '\')">' +
-    icon(ic) + '<span>' + esc(t(key)) + '</span>' + (navCount(id) ? '<b class="nav-count">' + navCount(id).n + '</b>' : '') + '</button>').join('');
+    icon(ic) + '<span>' + esc(t(key)) + '</span>' + (navCount(id) ? '<b class="nav-count ' + navCount(id).lv + '">' + navCount(id).n + '</b>' : '') + '</button>').join('');
 
   const sideItem = ([id, ic, key]) =>
     '<button class="side-nav-item' + (lit(id) ? ' active' : '') + '" data-nav="' + id + '" onclick="goto(\'' + id + '\')">' +
     icon(ic) + '<span>' + esc(t(key)) + '</span>' +
     (id === 'notifications' && unread ? '<span class="side-nav-count">' + unread + '</span>' : '') +
-    (navCount(id) ? '<span class="side-nav-count now">' + navCount(id).n + '</span>' : '') +
+    (navCount(id) ? '<span class="side-nav-count ' + navCount(id).lv + '">' + navCount(id).n + '</span>' : '') +
     '</button>';
 
   /* The owner's sidebar is grouped under headings. Two jobs in one flat list is

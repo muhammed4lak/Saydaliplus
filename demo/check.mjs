@@ -1332,11 +1332,11 @@ await dk.evaluate(() => setLang('en'));
 await dk.waitForTimeout(200);
 /* v0.0013.1: the Helper lives in the till, which takes the CV's slot. */
 /* v0.0013.4: point of sale and the reference are tabs of one Pharmacy module. */
-ok('a pharmacist’s bar is check-in, tasks, the pharmacy (point of sale to check, and the reference) and their profile',
-   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,tasks,pharmacy,profile' &&
+ok('a pharmacist’s bar is Home, Pharmacy (point of sale to check, and the reference) and More — My work joins it with a team (v0.0019.2)',
+   await dk.evaluate(() => navFor('pharmacist').map(x => x[0]).join() === 'checkin,pharmacy,more' &&
      pharmacyTabsFor('pharmacist').map(x => x[0]).join() === 'till,drugs'));
-ok('and the CV is one tap away on Profile',
-   await dk.evaluate(() => profileLinks().some(x => x[0] === 'cv')));
+ok('and the CV is one tap away in More',
+   await dk.evaluate(() => moreGroups().some(g => g.items.some(x => x[0] === 'cv'))));
 ok('and they land on check-in', await dk.evaluate(() => S.screen === 'checkin'));
 ok('every marketplace screen is unreachable, not merely unlinked',
    /* v0.0019: incidents are inside a pharmacy now, not the market's (A3). */
@@ -1362,10 +1362,9 @@ ok('check-in, for a pharmacist on no team, says it starts when they join one',
 ok('the Helper is still one tap from the pharmacist’s home — “Check a prescription”, into Point of sale',
    await dk.evaluate(() => { const c = [...document.querySelectorAll('#app-body [onclick]')].find(b => /Check a prescription/.test(b.innerText));
      return !!c && /goto\('till'\)/.test(c.getAttribute('onclick')) && !document.querySelector('.check-card'); }));
-await go(dk, 'tasks');
-/* v0.0019: tasks are real; off a team they say when they start. */
-ok('tasks, for a pharmacist on no team, say they start when they join one',
-   /Tasks start when you join a pharmacy’s team/.test(await dk.locator('#app-body').innerText()));
+/* v0.0019.2: My work waits for a team — no empty doors before it. */
+ok('My work, for a pharmacist on no team, is not offered until they join one',
+   await dk.evaluate(() => { const off = !screenAllowed('tasks') && !screenAllowed('incidents'); goto('tasks'); return off && S.screen === 'checkin'; }));
 ok('the relief shift a pharmacist recorded dispensing against is gone with the market',
    await dk.evaluate(() => dispensePharmacy() === null));
 
@@ -1459,13 +1458,14 @@ ok('with partners off no paid placement shows anywhere, even with the marketplac
    }));
 {
   const homes = [];
-  for (const [mail, sc] of [['ahmed@example.com', 'checkin'], ['rahma@example.com', 'dashboard'],
-                            ['layla@example.com', 'dashboard'], ['zainab@uobaghdad.edu.iq', 'browse']]) {
+  /* v0.0019.2: "Point of sale is here" is for whoever can sell — not a student, not a pharmacist on no team yet. */
+  for (const [mail, sc, want] of [['ahmed@example.com', 'checkin', 0], ['zainab@uobaghdad.edu.iq', 'browse', 0], ['rahma@example.com', 'dashboard', 1],
+                                  ['layla@example.com', 'dashboard', 1], ['hassan@example.com', 'checkin', 1]]) {
     const n = await dk.evaluate(([m, x]) => { signOut(); signInAs(m); setLang('en'); goto(x);
       return document.querySelectorAll('.banner-slot.announce').length; }, [mail, sc]);
-    if (n !== 1) homes.push(mail);
+    if (n !== want) homes.push(mail + ' ' + n);
   }
-  ok(`the platform’s announcements are there from the start, on every home${homes.length ? ' (missing for ' + homes.join(', ') + ')' : ''}`,
+  ok(`the platform’s announcements are on the home of everyone they are for, and only theirs${homes.length ? ' (wrong for ' + homes.join(', ') + ')' : ''}`,
      homes.length === 0);
 }
 ok('an announcement says it is from the platform, not that someone paid',
@@ -1540,7 +1540,7 @@ ok('refused there, it leaves the tabs but stays on the profile, marked',
 ok('a pharmacist who owns a pharmacy adds it the same way, and becomes an owner',
    await dk.evaluate(() => {
      signOut(); signInAs('ahmed@example.com');
-     const offered = profileLinks().some(x => x[0] === 'addPharmacy');
+     const offered = moreGroups().some(g => g.items.some(x => x[0] === 'addPharmacy'));
      goto('addPharmacy');
      setAddPh('nameEn', 'Al-Kawthar Pharmacy'); setAddPh('licence', 'IQ-PHM-000888');
      setAddPh('district', 'Adhamiya'); setAddPh('doc', 'licence.pdf');
@@ -2809,11 +2809,11 @@ console.log('\nthe UI review (v0.0013.5)');
        return a && b && c && noPill && d && none; }));
   ok('…pointing the other way in Arabic',
      await dk.evaluate(() => { setLang('ar'); openDrug('Warfarin'); const r = getComputedStyle(document.querySelector('.header-back svg')).transform !== 'none'; setLang('en'); return r; }));
-  ok('U5 — a pharmacist’s home: the announcement on top, then “Check a prescription”, then check-in',
+  ok('U5 — a pharmacist’s home off a team: “Check a prescription”, then check-in — and no announcement of a till they cannot sell at (v0.0019.2)',
      await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('checkin');
        const kids = [...document.querySelector('#app-body .constrain').children].filter(k => !k.classList.contains('tm-join'));
-       return kids.length === 3 && kids[0].classList.contains('banner-slot') && /Check a prescription/.test(kids[1].innerText) &&
-         /Check in/.test(kids[2].innerText) && !/Look up a product/.test(document.getElementById('app-body').innerText); }));
+       return kids.length === 2 && kids[0].classList.contains('hm-till-one') && /Check a prescription/.test(kids[0].innerText) &&
+         /Check in/.test(kids[1].innerText) && !document.querySelector('.banner-slot') && !/Look up a product/.test(document.getElementById('app-body').innerText); }));
   ok('U7 — counting says “1 drug · 1 box” and “Confirm the count — 1 drug”',
      await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('count'); startCount('Shelf 135'); countAdd('5000000001002');
        return document.querySelector('.ct-progress').innerText === '1 drug · 1 box' && /Confirm the count — 1 drug$/.test(document.querySelector('.ct-confirm').innerText.trim()); }));
@@ -3068,7 +3068,7 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        tillQuery(''); tillAdd('5000000001002'); openPay(); const m = document.getElementById('modal-root').innerText; closeModal();
        return noOffer && !/Discount/.test(m) && !document.querySelector('.mod-tab[data-tab="stock"]'); }));
   ok('the owner grants voids and refunds — the grant is on the record — and the refund now goes through',
-     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); tap('.tm-row');
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); tap('.tm-row'); tap('[data-ptab="perms"]');
        const page = !!document.querySelector('.tm-grantlist'); setGrant(S.staff[0].id, 'voids', true);
        const logged = S.tillLog.some(e => e.kind === 'grant' && e.perm === 'voids' && e.by === 'rahma@example.com');
        signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('till'); S.till = tillReset(); render();
@@ -3087,12 +3087,12 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        S.drawerStep = { drawer:d.id, kind:'close', counted:drawerExpected(d) + 9000 }; render();
        const noSign = !document.getElementById('dr-sign'); setv('dr-note', 'extra note found'); finishCount();
        return noSign && d.state === 'waiting' && d.closedBy === 'ahmed@example.com'; }));
-  ok('an employee sees their own day — and nobody else’s',
-     await dk.evaluate(() => { goto('profile'); const link = [...document.querySelectorAll('#app-body [onclick]')].some(b => /goto\(['"]activity['"]\)/.test(b.getAttribute('onclick')));
-       goto('activity'); const evs = [...document.querySelectorAll('.tl-ev')];
+  ok('an employee sees their own day under My work > My activity — and nobody else’s',
+     await dk.evaluate(() => { goto('tasks'); const link = !!document.querySelector('.mod-tab[data-tab="activity"]');
+       goto('activity'); tap('[data-ptab="day"]'); const evs = [...document.querySelectorAll('.tl-ev')];
        const own = evs.length > 0 && evs.every(e => { const k = e.dataset.kind; return true; }) &&
          timelineEvents('P1', 'ahmed@example.com', todayKey()).length === evs.length && !/Granted Ahmed/.test(document.getElementById('app-body').innerText);
-       return link && own && /You may/.test(document.getElementById('app-body').innerText) && /Voids and refunds/.test(document.getElementById('app-body').innerText); }));
+       return link && own && /You may/.test(document.getElementById('app-body').textContent) && /Voids and refunds/.test(document.getElementById('app-body').textContent); }));
   ok('the owner reads everyone’s day in Team > Log (v0.0019.1), with who did each thing — and can narrow it to one person',
      await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); S.openStaff = null; goto('teamlog');
        const all = [...document.querySelectorAll('.tl-ev')].map(e => e.innerText).join('\n');
@@ -3117,7 +3117,7 @@ console.log('\npermissions, the staff list, and the timeline (v0.0015)');
        return box && bad && pending && x.state === 'active' && x.email === 'noor@example.com' && x.position === 'pharmacist' && x.role === 'cashier' && effectiveGrants(x).join() === 'sell'; }));
   /* v0.0018: the exchange exists, so the owner can grant it — and take it back. */
   ok('the near-expiry exchange can be granted now that it exists (v0.0018), and taken back',
-     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render();
+     await dk.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render(); tap('[data-ptab="perms"]');
        const box = document.querySelector('.tm-grant[data-perm="exchange"] input'); setGrant(S.staff[0].id, 'exchange', true);
        const on = !!box && !box.disabled && S.staff[0].grants.includes('exchange'); setGrant(S.staff[0].id, 'exchange', false);
        return on && !S.staff[0].grants.includes('exchange'); }));
@@ -3166,11 +3166,11 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
        const x = S.staff[0]; S.teamNote = null; render(); return x.role === 'cashier' && !x.grants.length &&
          /Cashier/.test(document.querySelector('.tm-row .tm-grants').textContent); }));
   await dk.evaluate(() => { const code = S.staff[0].code; signOut(); signInAs('ahmed@example.com'); setLang('en'); acceptInvite(code);
-    signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render(); });
-  ok('on the person’s page: a role picker, and what the role gives is ticked, locked, and says it comes from the role',
+    signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); S.openStaff = S.staff[0].id; render(); tap('[data-ptab="perms"]'); });
+  ok('on the person’s page (Permissions, v0.0019.2): a role picker, and what the role gives is ticked, locked, and says it comes from the role',
      await dk.evaluate(() => { const sel = document.getElementById('tm-role'), sell = document.querySelector('.tm-grant[data-perm="sell"]');
        const box = sell && sell.querySelector('input'); return !!sel && sel.value === 'cashier' && !!box && box.checked && box.disabled &&
-         /From the role: Cashier/.test(sell.innerText) && !document.querySelector('.tm-grant[data-perm="voids"] input').disabled; }));
+         /From the role: Cashier/.test(sell.querySelector('.ps-from').title) && !document.querySelector('.tm-grant[data-perm="voids"] input').disabled; }));
   ok('giving them the Pharmacist role gives voids, discounts, own items and patient history — they can void now — and it is on the record',
      await dk.evaluate(() => { const x = S.staff[0]; setRole(x.id, 'pharmacist');
        const g = effectiveGrants(x).join();
@@ -3214,7 +3214,7 @@ console.log('\nroles, the controlled list, and the drug lists (v0.0015.1)');
        signOut(); signInAs('rahma@example.com'); setLang('en'); return r; }));
   ok('My activity shows the role and what it gives',
      await dk.evaluate(() => { signOut(); signInAs('ahmed@example.com'); setLang('en'); goto('activity');
-       const txt = document.getElementById('app-body').innerText; signOut(); signInAs('rahma@example.com'); setLang('en');
+       const txt = document.getElementById('app-body').textContent; signOut(); signInAs('rahma@example.com'); setLang('en');
        return /Cashier/.test(txt) && /Selling/.test(txt); }));
 
   /* The controlled list. */
@@ -3338,7 +3338,7 @@ console.log('\nthe seeded teams, and the view of someone on a team (v0.0015.2)')
        return !navFor(S.role).some(x => x[0] === 'team') && currentPharmacy().id === 'P1' && tillMode() === 'sell' &&
          /Al-Rahma Pharmacy/.test(document.querySelector('.header-title').innerText) && can('prices') && !can('stock') && !document.querySelector('.work-tabs'); }));
   ok('…his activity: Pharmacist + Prices, his own record and nobody else’s',
-     await tp.evaluate(() => { goto('activity'); const txt = document.getElementById('app-body').innerText;
+     await tp.evaluate(() => { goto('activity'); tap('[data-ptab="day"]'); const txt = document.getElementById('app-body').innerText;
        return /Pharmacist \+ Prices/.test(txt) && /Change for the pharmacy next door/.test(txt) && !/Refused: Discounts/.test(txt); }));
   ok('Maryam works at two: a switch between them, starting on the first, no “All”',
      await tp.evaluate(() => { signOut(); signInAs('maryam@example.com'); setLang('en'); goto('pharmacy');
@@ -3350,9 +3350,9 @@ console.log('\nthe seeded teams, and the view of someone on a team (v0.0015.2)')
        return hayat && (currentPharmacy() || {}).id === 'P7' && can('stock') && can('cashVariance') && S.screen === scr &&
          /Al-Shifa/.test(document.querySelector('.header-title').innerText); }));
   ok('…and her activity is for the pharmacy on screen, and stays open when she switches',
-     await tp.evaluate(() => { goto('activity'); const txt = document.getElementById('app-body').innerText;
-       setPharmacy('P8'); const back = S.screen === 'activity' && /Al-Hayat Pharmacy/.test(document.getElementById('app-body').innerText);
-       return /Al-Shifa Pharmacy/.test(txt) && /Manager/.test(txt) && back; }));
+     await tp.evaluate(() => { goto('activity'); const txt = document.getElementById('app-body').innerText, head = document.getElementById('app-header').innerText;
+       setPharmacy('P8'); const back = S.screen === 'activity' && /Al-Hayat Pharmacy/i.test(document.getElementById('app-header').innerText);
+       return /Al-Shifa Pharmacy/i.test(head) && /Manager/.test(txt) && back; }));
   ok('the seeded people’s names are in Arabic when the app is',
      await tp.evaluate(() => { setLang('ar'); const r = personName('hassan@example.com') === 'حسن الدليمي' && personName('zahraa@example.com') === 'زهراء علي'; setLang('en'); return r; }));
   await tp.close();
@@ -3394,7 +3394,7 @@ console.log('\nclinical governance, patients, teams and barcode links (v0.0016)'
        const tabs = [...document.querySelectorAll('.ptab:not(.ptab-add)')].map(b => b.innerText);
        return tabs.join('|') === 'Al-Rahma|Al-Hayat · works here'; }));
   ok('at Al-Hayat she is staff: a staff home with where she works, no Team, and what her role gives — not everything',
-     await gp.evaluate(() => { setPharmacy('P8'); const card = document.querySelector('.wk-card');
+     await gp.evaluate(() => { setPharmacy('P8'); const card = document.querySelector('.wk-who');
        return atWorkplace() && !!card && /Al-Hayat Pharmacy/.test(card.innerText) && /Pharmacist/.test(card.innerText) &&
          !navFor().some(x => x[0] === 'team') && can('sell') && can('voids') && !can('stock') && !can('prices') && !screenAllowed('stock'); }));
   ok('…she cannot set Al-Hayat’s sign-off amount, invite, or see its drawer settings',
@@ -3404,22 +3404,24 @@ console.log('\nclinical governance, patients, teams and barcode links (v0.0016)'
   ok('…and back at Al-Rahma she owns everything again, with her Team',
      await gp.evaluate(() => { setPharmacy('P1'); return !atWorkplace() && can('stock') && can('prices') && navFor().some(x => x[0] === 'team'); }));
   ok('her own record at Al-Hayat is under My activity, which an owner who works somewhere can open',
-     await gp.evaluate(() => { setPharmacy('P8'); goto('activity'); return S.screen === 'activity' && /Al-Hayat Pharmacy/.test(document.getElementById('app-body').innerText); }));
+     await gp.evaluate(() => { setPharmacy('P8'); goto('activity'); return S.screen === 'activity' && /Al-Hayat Pharmacy/i.test(document.getElementById('app-header').innerText) &&
+       document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'tasks'; }));
 
   /* The staff home. */
-  ok('Hassan’s home opens on where he works: Al-Rahma, since July 2025, Pharmacist + Prices, the drawer and the Point of sale',
-     await gp.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); goto('checkin'); const c = document.querySelector('.wk-card');
-       return !!c && /Al-Rahma Pharmacy/.test(c.innerText) && /since July 2025/.test(c.innerText) && /Pharmacist \+ Prices/.test(c.innerText) &&
-         /The drawer is closed/.test(c.innerText) && !!c.querySelector('.wk-pos') && c === document.querySelector('.stack').firstElementChild; }));
-  ok('…tapping the role opens what he may do',
-     await gp.evaluate(() => { tap('.wk-role'); return S.screen === 'activity'; }));
-  ok('Maryam’s card carries the switch between her two pharmacies, and follows it',
+  ok('Hassan’s home opens on where he works: Al-Rahma, Pharmacist + Prices, the drawer and the Point of sale (v0.0019.2)',
+     await gp.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); goto('checkin'); const c = document.querySelector('.wk-who');
+       const strip = document.querySelector('.td-staff');
+       return !!c && /Al-Rahma Pharmacy/.test(c.innerText) && /Pharmacist \+ Prices/.test(c.innerText) && !!strip && /Drawer/.test(strip.innerText) && /Closed/.test(strip.innerText) &&
+         /Open point of sale/.test(document.querySelector('.hm-till-one').innerText) && c === document.querySelector('.stack').firstElementChild; }));
+  ok('…tapping where he works opens his activity — and what he may do',
+     await gp.evaluate(() => { tap('.wk-who'); return S.screen === 'activity' && /Voids and refunds/.test(document.getElementById('app-body').textContent); }));
+  ok('Maryam switches between her two pharmacies with the same row of chips as an owner, and her home follows it',
      await gp.evaluate(() => { signOut(); signInAs('maryam@example.com'); setLang('en'); goto('checkin');
-       const segs = [...document.querySelectorAll('.wk-seg')].map(b => b.innerText); const first = /Pharmacist/.test(document.querySelector('.wk-role-v').innerText);
-       tap('.wk-seg:not(.on)'); const c = document.querySelector('.wk-card');
-       return segs.join() === 'Al-Hayat,Al-Shifa' && first && /Al-Shifa Pharmacy/.test(c.innerText) && /Manager/.test(c.innerText) && S.screen === 'checkin'; }));
+       const segs = [...document.querySelectorAll('.work-tabs .ptab')].map(b => b.innerText); const first = /Pharmacist/.test(document.querySelector('.wk-who').innerText);
+       tap('.work-tabs .ptab:not(.on)'); const c = document.querySelector('.wk-who');
+       return segs.join() === 'Al-Hayat,Al-Shifa' && first && /Al-Shifa Pharmacy/.test(c.innerText) && /Manager/.test(c.innerText) && S.screen === 'checkin' && !document.querySelector('.wk-seg'); }));
   ok('…in Arabic too',
-     await gp.evaluate(() => { setLang('ar'); render(); const r = /مكان عملك/.test(document.querySelector('.wk-card').innerText); setLang('en'); return r; }));
+     await gp.evaluate(() => { setLang('ar'); render(); const r = /الشفاء/.test(document.querySelector('.wk-who').innerText) && document.documentElement.dir === 'rtl'; setLang('en'); return r; }));
 
   /* Barcode links. */
   const code = await gp.evaluate(() => [...Array(10).keys()].map(d => '625123400005' + d).find(ean13Valid));
@@ -3631,7 +3633,7 @@ console.log('\nan owner of several stays in the module they chose a pharmacy fro
        setPharmacy(null); goto('dashboard'); setPharmacy('P8'); return a && S.screen === 'dashboard'; }));
   ok('an owner on Team who switches to where she only works lands on her staff home there, not a Team she cannot open',
      await np.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); goto('team'); const ownT = S.screen === 'team';
-       setPharmacy('P8'); return ownT && S.screen !== 'team' && !!document.querySelector('.wk-card'); }));
+       setPharmacy('P8'); return ownT && S.screen !== 'team' && !!document.querySelector('.wk-who'); }));
   await np.close();
 }
 
@@ -3786,7 +3788,7 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
        setv('ro-start', '07:30'); setv('ro-end', '15:30'); tap('.ro-save');
        const r = rotaOf('P1', 'hassan@example.com'), e = S.tillLog.filter(x => x.kind === 'rotaSet').pop();
        const owner = timelineEvents('P1', 'rahma@example.com', todayKey()).includes(e), his = timelineEvents('P1', 'hassan@example.com', todayKey()).includes(e);
-       signOut(); signInAs('hassan@example.com'); setLang('en'); goto('activity'); const seen = /Changed Hassan Al-Dulaimi’s schedule from/.test(document.getElementById('app-body').innerText);
+       signOut(); signInAs('hassan@example.com'); setLang('en'); goto('activity'); tap('[data-ptab="day"]'); const seen = /Changed Hassan Al-Dulaimi’s schedule from/.test(document.getElementById('app-body').innerText);
        return r.start === '07:30' && r.end === '15:30' && r.days.join() === '0,1,6' && e.subject === 'hassan@example.com' && e.by === 'rahma@example.com' &&
          !!e.from && owner && his && seen && /Sat · Sun · Mon — 07:30–15:30/.test(timelineText(e)); }));
   ok('…nobody but the owner changes a schedule',
@@ -3809,24 +3811,30 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
        const today = todayKey(); S.perf = { kind:'week', anchor:null }; stepPerf(1); const noFuture = !S.perf.anchor || S.perf.anchor <= today;
        stepPerf(-1); const back = S.perf.anchor < today;
        return new Date(w.from).getDay() === 6 && dayOf(w.from) === '2026-09-26' && dayOf(m.from) === '2026-09-01' && dayOf(m.to) === '2026-10-01' && noFuture && back; }));
-  ok('the owner opens a team member: their schedule, then their shifts one by one, then their figures beside the pharmacy\'s average, then their permissions',
+  ok('the owner opens a team member in three tabs (v0.0019.2): Overview — four numbers, a shift beside the pharmacy\'s, attendance, the schedule; Shifts one by one; Permissions',
      await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) };
        S.openStaff = S.staff.find(x => x.email === 'zahraa@example.com').id; goto('team');
-       const q = sel => document.querySelector(sel); const order = ['.ro-card', '.sh-list', '.pf-card', '.tm-grantlist'].map(q);
+       const q = sel => document.querySelector(sel), tabs = [...document.querySelectorAll('.ps-tabs [data-ptab]')].map(b => b.dataset.ptab).join();
+       const order = ['.ps-tiles', '.ps-avg', '.ps-att', '.ro-card'].map(q);
        const inOrder = order.every(Boolean) && order.every((el, i) => !i || (order[i - 1].compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING));
-       const auto = [...document.querySelectorAll('.sh-row-d[data-state="auto"]')];
-       return inOrder && !!q('.pf-base') && auto.length >= 2 && /Did not check out|waiting|Accepted/.test(auto.map(a => a.innerText).join()); }));
-  ok('the owner\'s own page: their schedule, shifts and figures',
+       const overview = inOrder && !!q('.ps-fill.ph') && !q('.sh-list') && !q('.tm-grantlist');
+       tap('[data-ptab="shifts"]'); const auto = [...document.querySelectorAll('.sh-row-d[data-state="auto"]')];
+       const shifts = auto.length >= 2 && /Did not check out|waiting|Accepted/.test(auto.map(a => a.innerText).join()) && !q('.ps-tiles');
+       tap('[data-ptab="perms"]'); const perms = !!q('.tm-grantlist') && !q('.sh-list');
+       return tabs === 'overview,shifts,perms' && overview && shifts && perms; }));
+  ok('the owner\'s own page: Overview with the schedule and figures, then Shifts — no permissions',
      await ap.evaluate(() => { S.openStaff = null; goto('team'); tap('.tm-self-row');
-       return S.openStaff === 'OWNER' && !!document.querySelector('.tm-self') && !!document.querySelector('.ro-card') && !!document.querySelector('.sh-list') && !!document.querySelector('.pf-card'); }));
+       const o = S.openStaff === 'OWNER' && !!document.querySelector('.tm-self') && !!document.querySelector('.ro-card') && !!document.querySelector('.ps-tiles') && !document.querySelector('[data-ptab="perms"]');
+       tap('[data-ptab="shifts"]'); return o && !!document.querySelector('.sh-list'); }));
 
   /* Who sees what (P7). */
   ok('a team member sees their own figures and shifts in My activity — not the pharmacy\'s average, nobody else\'s, and no Team or Reports',
-     await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); S.perf = { kind:'month', anchor:null }; goto('activity');
-       const b = document.getElementById('app-body').innerText, card = document.querySelector('.pf-card');
+     await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('en'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; goto('activity'); tap('[data-ptab="overview"]');
+       const b = document.getElementById('app-body').innerText, tiles = document.querySelector('.ps-tiles');
        const f = perfFigures('P1', 'hassan@example.com', perfPeriod());
-       const own = !!card && card.querySelector('.pf-grid').innerText.includes(fmt(f.total)) && !card.querySelector('.pf-base');
-       const nobody = [...document.querySelectorAll('.sh-row-d')].every(d => S.shifts.find(x => x.id === d.dataset.shift).email === 'hassan@example.com');
+       const own = !!tiles && tiles.innerText.replace(/\s+/g, '').includes(iqdShort(f.total)) && !document.querySelector('.ps-fill.ph');
+       tap('[data-ptab="shifts"]');
+       const nobody = [...document.querySelectorAll('.sh-row-d')].length > 0 && [...document.querySelectorAll('.sh-row-d')].every(d => S.shifts.find(x => x.id === d.dataset.shift).email === 'hassan@example.com');
        return own && nobody && !/Zahraa|Omar/.test(b) && !screenAllowed('reports') && !screenAllowed('team'); }));
   ok('the Reports are the owner\'s alone: not a Manager\'s (Maryam at Al-Shifa), not an owner\'s where she only works (Rahma at Al-Hayat)',
      await ap.evaluate(() => { signOut(); signInAs('maryam@example.com'); setPharmacy('P7'); const mgr = screenAllowed('reports');
@@ -3836,7 +3844,7 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
      await ap.evaluate(() => { signOut(); signInAs('rahma@example.com'); setLang('en'); setPharmacy('P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; goto('rpeople');
        const rows = [...document.querySelectorAll('.rpt-person')], names = rows.map(r => r.querySelector('.row-title').innerText.trim());
        const sorted = names.slice().sort((a, b) => a.localeCompare(b, 'en'));
-       const r = rows.length >= 4 && names.join('|') === sorted.join('|') && rows.every(r => !/IQD|\d{1,3},\d{3}/.test(r.innerText)) && /never in a league table/.test(document.getElementById('app-body').innerText);
+       const r = rows.length >= 4 && names.join('|') === sorted.join('|') && rows.every(r => !/IQD|\d{1,3},\d{3}/.test(r.innerText)) && /never in a league table/.test(document.getElementById('app-body').textContent);
        goto('reports'); return r && !document.querySelector('.rpt-person'); }));
   ok('the pharmacy\'s figures: sales, their number, shifts and hours, and per shift the average and the median — with shifts that closed themselves counted apart',
      await ap.evaluate(() => { const card = document.querySelector('.pf-card'), f = perfFigures('P1', null, perfPeriod());
@@ -3862,7 +3870,7 @@ console.log('\nattendance, the rota, performance and the Reports (v0.0017)');
   await ap.setViewportSize({ width:1440, height:900 });
   ok(`the new screens do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
   ok('in Arabic the section headings are not spaced letter by letter',
-     await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('ar'); goto('activity'); const e = document.querySelector('.section-eyebrow');
+     await ap.evaluate(() => { signOut(); signInAs('hassan@example.com'); setLang('ar'); goto('tasks'); const e = document.querySelector('.section-eyebrow');
        const r = !!e && getComputedStyle(e).letterSpacing === 'normal' || getComputedStyle(e).letterSpacing === '0px'; setLang('en'); return r; }));
   await ap.close();
 }
@@ -3924,7 +3932,7 @@ console.log('\nthe near-expiry exchange (v0.0018)');
          b.expiry === l.expiry && stockOf('P1', l.code).available === before + 3; }));
   ok('NO MONEY PASSES THROUGH SAYDALI+: nothing records a payment, and the screen says to settle between you',
      await xp.evaluate(() => { const keys = JSON.stringify(S.exchange); return !/paid|payment|wallet|commission|fee/i.test(keys) &&
-       /Saydali\+ takes no payment/.test(document.getElementById('app-body').innerText); }));
+       /Saydali\+ takes no payment/.test(document.getElementById('app-body').textContent) && !!document.querySelector('.ex-rules .tip'); }));
   ok('every step is on each pharmacy\'s own timeline',
      await xp.evaluate(() => { const k = ph => S.tillLog.filter(e => e.pharmacy === ph && /^ex/.test(e.kind)).map(e => e.kind);
        return ['exListed', 'exAsked', 'exReceived'].every(x => k('P1').includes(x)) && ['exAgreed', 'exHanded'].every(x => k('P7').includes(x)); }));
@@ -4086,16 +4094,19 @@ console.log('\ntasks, incidents, late and absent, P7, the away card, reminders a
        return !h && r && a.state === 'excused' && a.was === 'absent' && S.tillLog.some(e => e.kind === 'attExcused' && e.subject === 'omar@example.com' && e.day === y); }));
   ok('the person\'s page lists the late and absent days, each with Excuse, for the owner',
      await tp.evaluate(() => { S.perf = { kind:'week', anchor:todayKey() }; const rec = S.staff.find(x => x.email === 'omar@example.com' && x.pharmacy === 'P1' && x.state === 'active');
-       S.openStaff = rec.id; goto('team'); const rows = [...document.querySelectorAll('.att-row')];
-       return rows.some(r => r.dataset.att === 'late' && r.querySelector('.att-excuse')) && rows.some(r => r.dataset.att === 'excused' && !r.querySelector('.att-excuse')); }));
+       const lateDay = attendanceIn('P1', 'omar@example.com', { from:startOfDay(shiftDay(todayKey(), -21)).toISOString(), to:startOfDay(todayKey()).toISOString() }).filter(a => a.state === 'late').pop().day;
+       S.perf = { kind:'week', anchor:window.__absent }; S.openStaff = rec.id; S.personFor = null; goto('team');
+       const excused = [...document.querySelectorAll('.att-row')].some(r => r.dataset.att === 'excused' && !r.querySelector('.att-excuse'));
+       S.perf = { kind:'week', anchor:lateDay }; render();
+       return excused && [...document.querySelectorAll('.att-row')].some(r => r.dataset.att === 'late' && r.querySelector('.att-excuse')); }));
 
   /* P7. */
   ok('P7 — A QUESTION, NEVER A RANKING: Zahraa\'s share of sales with an antibiotic is well above the pharmacy\'s, and Rahma is asked about it on Zahraa\'s page',
      await tp.evaluate(() => { as('rahma@example.com', 'P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; const p = perfPeriod();
        const z = p7Flags('P1', 'zahraa@example.com', p).find(x => x.k === 'abx'), h = p7Flags('P1', 'hassan@example.com', p).find(x => x.k === 'abx');
        const rec = S.staff.find(x => x.email === 'zahraa@example.com' && x.pharmacy === 'P1' && x.state === 'active'); S.openStaff = rec.id; goto('team');
-       const q = document.querySelector('.p7-q[data-class="abx"]');
-       return z.flag && !h.flag && z.n >= 30 && !!q && /\?/.test(q.textContent) && !/rank|top|best|worst|#\d/i.test(document.querySelector('.p7-card').textContent); }));
+       const q = document.querySelector('.p7-q[data-class="abx"]'), card = q && q.closest('.p7-card');
+       return z.flag && !h.flag && z.n >= 30 && !!q && /\?/.test(card.textContent) && !/rank|top|best|worst|#\d/i.test(card.textContent); }));
   ok('…only the owner sees it, and not below 30 sales',
      await tp.evaluate(() => { const p = perfPeriod(); as('hassan@example.com', 'P1');
        const hidden = p7Html('P1', 'zahraa@example.com') === '';
@@ -4302,20 +4313,24 @@ console.log('\na simpler app for the owner: five places, tabs inside, one list, 
   /* Reports > Attendance (A1). */
   await fresh();
   ok('ATTENDANCE, THE WEEK: a row a person, a cell a day — on time, minutes late, absent, leave, or the start still to come',
-     await sp.evaluate(() => { as('rahma@example.com', 'P1'); goto('attendance');
+     await sp.evaluate(() => { as('rahma@example.com', 'P1'); goto('attendance'); const tdy = !!document.querySelector('.at-week th.tdy');
+       const back = attendanceIn('P1', 'omar@example.com', { from:startOfDay(shiftDay(todayKey(), -21)).toISOString(), to:startOfDay(todayKey()).toISOString() });
+       window.__omarAbs = back.filter(a => a.state === 'absent').pop().day; window.__omarLate = back.filter(a => a.state === 'late').pop().day;
+       S.attAnchor = window.__omarAbs; render();
        const p = attPeriod(), cells = [...document.querySelectorAll('.at-week tbody tr')].flatMap(tr => [...tr.querySelectorAll('td .at-c')].map(c => [tr.dataset.mail, c]));
        const days = [...document.querySelectorAll('.at-week thead th')].length - 1;
        const match = cells.every(([m, c]) => { const d = c.dataset.day; if (!d) return c.dataset.att === 'none';
          const a = attendanceOn('P1', m, d); return !!a && a.state === c.dataset.att && (a.state !== 'late' || c.innerText === a.minutes + 'm'); });
        const omar = cells.filter(([m]) => m === 'omar@example.com').map(([, c]) => c.dataset.att);
-       return days === 7 && match && omar.includes('late') && omar.includes('absent') && document.querySelectorAll('.at-week tbody tr').length === attPeople('P1').length &&
-         !!document.querySelector('.at-week th.tdy'); }));
+       S.attAnchor = window.__omarLate; render(); const lateCell = document.querySelector('.at-week tr[data-mail="omar@example.com"] .at-c[data-day="' + window.__omarLate + '"]');
+       const late = !!lateCell && lateCell.dataset.att === 'late' && lateCell.innerText === attendanceOn('P1', 'omar@example.com', window.__omarLate).minutes + 'm';
+       return tdy && days === 7 && match && omar.includes('absent') && late && document.querySelectorAll('.at-week tbody tr').length === attPeople('P1').length; }));
   ok('…the colours are never alone: a legend, minutes written in the cell, and each cell says what it is to a screen reader',
      await sp.evaluate(() => { const lg = document.querySelector('.at-legend').innerText; const late = document.querySelector('.at-c.late');
        return ['On time', 'Late', 'Absent', 'Excused', 'Leave', 'To come'].every(x => lg.includes(x)) && !!late && /\d+m/.test(late.innerText) &&
          /late/i.test(late.getAttribute('aria-label')); }));
   ok('…the counts for the week are written above it',
-     await sp.evaluate(() => { const p = attPeriod(), all = attPeople('P1').flatMap(m => attendanceIn('P1', m, p));
+     await sp.evaluate(() => { S.attAnchor = window.__omarAbs; render(); const p = attPeriod(), all = attPeople('P1').flatMap(m => attendanceIn('P1', m, p));
        const n = k => all.filter(a => a.state === k).length, s = k => document.querySelector('.at-sum [data-k="' + k + '"]').innerText;
        return s('absent') === n('absent') + ' absent' && s('late') === n('late') + ' late' && s('leave') === n('leave') + ' on leave'; }));
   ok('AN ABSENCE OR A LATE DAY IS DECIDED FROM HERE: Excuse, on the record, and the cell says Excused',
@@ -4359,6 +4374,156 @@ console.log('\na simpler app for the owner: five places, tabs inside, one list, 
   await sp.setViewportSize({ width:1440, height:900 });
   ok(`the home, the tabs and Attendance (week and month) do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
   await sp.close();
+}
+
+console.log('\nfewer words, and the staff side in line (v0.0019.2)');
+{
+  const wp = await dk.context().newPage();
+  wp.on('pageerror', e => errs.push('pageerror (v0.0019.2): ' + e.message));
+  const fresh = async () => {
+    await wp.goto(darkUrl); await wp.waitForTimeout(500);
+    await wp.evaluate(() => { window.tap = sel => { const e = document.querySelector(sel); if (e) e.click(); };
+      window.clockAt = hhmm => { S.clockShift = 0; S.clockShift = atOn(todayKey(), hhmm).getTime() - Date.now(); };
+      window.as = (mail, ph) => { signOut(); signInAs(mail); setLang('en'); S.openStaff = null; if (ph) setPharmacy(ph); };
+      window.words = () => document.getElementById('app-body').innerText.split(/\s+/).filter(Boolean).length;
+      window.zahraa = () => { S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; S.openStaff = S.staff.find(x => x.email === 'zahraa@example.com' && x.state === 'active').id; goto('team'); }; });
+  };
+  await fresh();
+
+  /* Short money, and where it is full. */
+  ok('MONEY IS SHORT WHERE IT IS A HEADLINE: 4,698,250 → 4.7M, 271,000 → 271K, 99,500 → 99.5K — and in Arabic, the unit in words',
+     await wp.evaluate(() => { setLang('en'); const en = [4698250, 271000, 99500, 2500, 0].map(iqdShort).join('|'); setLang('ar'); const ar = iqdShort(4698250) + '|' + iqdShort(271000); setLang('en');
+       return en === '4.7M|271K|99.5K|2.5K|0' && ar === '4.7 مليون|271 ألف'; }));
+  ok('…full wherever it is checked against cash or paper: Reports > Sales, the drawer, the till',
+     await wp.evaluate(() => { as('rahma@example.com', 'P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; goto('reports');
+       const f = perfFigures('P1', null, perfPeriod()), grid = document.querySelector('.pf-grid').innerText; const full = grid.includes(fmt(f.total)) && !/\d(\.\d)?[MK]\b/.test(grid);
+       goto('till'); S.till = tillReset(); tillScan('4000000001065'); const till = /\d{1,3},\d{3}|\d+ IQD/.test(document.getElementById('app-body').innerText); S.till = tillReset();
+       return full && till; }));
+
+  /* A person: three tabs. */
+  ok('A TEAM MEMBER\'S PAGE IS THREE TABS — Overview, Shifts, Permissions — and opens on Overview, in a fraction of the words (620 before)',
+     await wp.evaluate(() => { as('rahma@example.com', 'P1'); zahraa();
+       const tabs = [...document.querySelectorAll('.ps-tabs [data-ptab]')].map(b => b.dataset.ptab).join(), on = document.querySelector('.ps-tabs .active').dataset.ptab;
+       return tabs === 'overview,shifts,perms' && on === 'overview' && words() < 150; }));
+  ok('Overview: four numbers with the sales short, a shift beside the pharmacy\'s as two bars, attendance as a strip with counts, the P7 question in a line',
+     await wp.evaluate(() => { const p = perfPeriod(), f = perfFigures('P1', 'zahraa@example.com', p), b = perfFigures('P1', null, p);
+       const tiles = [...document.querySelectorAll('.ps-tile .ps-v')].map(x => x.innerText.replace(/\s+/g, ''));
+       const bars = [...document.querySelectorAll('.ps-avg .ps-bar')], fills = [...document.querySelectorAll('.ps-avg .ps-fill')].map(x => parseFloat(x.style.width));
+       const want = f.perShift.avgTotal < b.perShift.avgTotal;
+       const strip = document.querySelector('.ps-att .at-strip'), days = Math.round((new Date(p.to) - new Date(p.from)) / 864e5);
+       const p7 = document.querySelector('.p7-card');
+       return tiles.length === 4 && tiles[0] === String(f.shifts) && tiles[2] === iqdShort(f.total) && bars.length === 2 && (want ? fills[0] < fills[1] : fills[0] >= fills[1]) &&
+         /\d+% (below|above)/.test(document.querySelector('.ps-avg .ps-note').innerText) && !!strip && strip.children.length === days &&
+         /on time/.test(document.querySelector('.ps-att').innerText) && !!p7 && /Antibiotics: \d+% of their sales/.test(p7.innerText) && /\?/.test(p7.innerText); }));
+  ok('…the explanations are one tap away, not on the page: the comparison and the P7 note open from their ⓘ',
+     await wp.evaluate(() => { const body = document.getElementById('app-body').innerText;
+       const tips = [...document.querySelectorAll('.tip')], p7 = document.querySelector('.p7-card .tip');
+       const hidden = !/never ranked against anyone/i.test(body) && !/a winter week/.test(body);
+       p7.open = true; const shown = /a winter week/.test(document.getElementById('app-body').innerText); p7.open = false;
+       return tips.length >= 2 && hidden && shown; }));
+  ok('Shifts: a line each — day, in–out, sales, the amount short, anything to notice as a chip — the latest eight, then Show all',
+     await wp.evaluate(() => { tap('[data-ptab="shifts"]'); const p = perfPeriod();
+       const list = shiftsAt('P1', 'zahraa@example.com').filter(sh => sh.in >= p.from && sh.in < p.to);
+       const rows = [...document.querySelectorAll('.ps-sh')], first = rows[0];
+       const amt = first.querySelector('.ps-sh-a').innerText, sh = S.shifts.find(x => x.id === first.dataset.shift);
+       const shortOk = amt === iqdShort(shiftSales(sh).reduce((a, s) => a + s.total, 0));
+       const chips = rows.some(r => r.querySelector('.sh-chip'));
+       const more = document.querySelector('.ps-all'); const n8 = rows.length === Math.min(8, list.length);
+       if (more) more.click();
+       return shortOk && chips && n8 && (!more || document.querySelectorAll('.ps-sh').length === list.length); }));
+  ok('…a check-out time to approve opens on Shifts, at that shift, even when it is older than the latest eight',
+     await wp.evaluate(() => { const p = perfPeriod(), old = shiftsAt('P1', 'zahraa@example.com').filter(sh => sh.in >= p.from && sh.in < p.to).sort((a, b) => a.in < b.in ? 1 : -1)[12];
+       S.openStaff = null; goto('team'); openShiftOf('zahraa@example.com', old.id);
+       const row = document.querySelector('.ps-sh[data-shift="' + old.id + '"]');
+       return S.personTab === 'shifts' && !!row && row.open; }));
+  ok('Permissions: the role, then one line and a switch each; what each does is behind its ⓘ; the role\'s own say "role"',
+     await wp.evaluate(() => { tap('[data-ptab="perms"]'); const rows = [...document.querySelectorAll('.ps-grant')];
+       const voids = document.querySelector('.ps-grant[data-perm="voids"]'), sell = document.querySelector('.ps-grant[data-perm="sell"]');
+       const oneLine = rows.every(r => !r.querySelector('.row-sub')); const tipOk = /Remove a line from a sale/.test(voids.querySelector('.tip').textContent) && !/Remove a line from a sale/.test(document.getElementById('app-body').innerText);
+       return rows.length === PERMS.length && oneLine && tipOk && !!sell.querySelector('.ps-from') && !!document.getElementById('tm-role') && !!document.querySelector('.tm-end'); }));
+  ok('the owner\'s own page and My activity have no pharmacy bar: a person sees their own numbers, never the pharmacy\'s average (P7)',
+     await wp.evaluate(() => { S.openStaff = 'OWNER'; render(); const own = !!document.querySelector('.ps-tiles') && !document.querySelector('.ps-fill.ph');
+       as('hassan@example.com', 'P1'); S.perf = { kind:'month', anchor:shiftDay(todayKey(), -7) }; goto('activity'); tap('[data-ptab="overview"]');
+       return own && !!document.querySelector('.ps-tiles') && !document.querySelector('.ps-fill.ph') && words() < 120; }));
+
+  /* ⓘ everywhere else. */
+  ok('EXPLANATIONS ARE BEHIND AN ⓘ, NEVER DELETED: Tasks, Incidents, the Log, Reports > People and the sharing switch, the Exchange, Layla\'s All',
+     await wp.evaluate(() => { const has = (scr, ph, key, who) => { as(who || 'rahma@example.com', ph); goto(scr); const t = document.querySelector('.tip[data-tip="' + key + '"]');
+         return !!t && !document.getElementById('app-body').innerText.includes(window.t(key).slice(0, 30)) && document.getElementById('app-body').textContent.includes(window.t(key).slice(0, 30)); };
+       window.t = k => t(k, { km:EXCHANGE_KM });
+       return has('tasks', 'P1', 'tk2.soft') && has('incidents', 'P1', 'in.ownerRules') && has('incidents', 'P1', 'in.rules', 'hassan@example.com') && has('teamlog', 'P1', 'tm.privacy') &&
+         has('rpeople', 'P1', 'rpt.p7') && has('reports', 'P1', 'rpt.shareOn') && has('exchange', 'P1', 'ex.rules') && has('dashboard', null, 'g.licenceNote', 'layla@example.com'); }));
+  ok('…and an ⓘ opens in place, over the page, and closes again',
+     await wp.evaluate(() => { as('rahma@example.com', 'P1'); goto('tasks'); const tp = document.querySelector('.tip'); tp.querySelector('summary').click();
+       const open = tp.open && getComputedStyle(tp.querySelector('p')).position === 'absolute' && tp.querySelector('p').offsetHeight > 0;
+       tp.querySelector('summary').click(); return open && !tp.open; }));
+
+  /* The staff side. */
+  await fresh();
+  ok('THE STAFF BAR IS THE OWNER\'S SHAPE: Home · Pharmacy · My work · More — and My work joins it with a team',
+     await wp.evaluate(() => { as('hassan@example.com', 'P1'); const h = [...document.querySelectorAll('#bottom-nav .nav-item')].map(b => b.querySelector('span').innerText).join(' · ');
+       as('ahmed@example.com'); const a = navFor(S.role).map(x => x[0]).join();
+       return h === 'Home · Pharmacy · My work · More' && a === 'checkin,pharmacy,more'; }));
+  ok('MY WORK IS TABS — Tasks, Incidents, My activity — under the pharmacy\'s name, with My work lit on each',
+     await wp.evaluate(() => { as('hassan@example.com', 'P1');
+       return ['tasks', 'incidents', 'activity'].every(s => { goto(s); return [...document.querySelectorAll('.mod-tab')].map(b => b.dataset.tab).join() === 'tasks,incidents,activity' &&
+         /Al-Rahma Pharmacy/i.test(document.querySelector('#app-header').innerText) && document.querySelector('.header-title').innerText === 'My work' &&
+         document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'tasks'; }); }));
+  ok('…My work counts his missed tasks in amber; Home does not count them twice',
+     await wp.evaluate(() => { clockAt('13:00'); S.taskDone = S.taskDone.filter(d => d.day !== todayKey()); goto('checkin');
+       const n = todaysTasks('P1').filter(i => i.state === 'missed' && taskMine(i.task)).length, c = document.querySelector('#bottom-nav [data-nav="tasks"] .nav-count');
+       return n > 0 && !!c && c.innerText === String(n) && c.classList.contains('today') && !document.querySelector('#bottom-nav [data-nav="checkin"] .nav-count'); }));
+  ok('THE STAFF HOME IS THE OWNER\'S SHAPE: where they work, their shift, their day at a glance, the till, the Saydali+ card, then one Needs you list',
+     await wp.evaluate(() => { const order = ['.wk-who', '.sh-card.compact', '.td-staff', '.hm-till-one', '.home-ann', '.ny'].map(s => document.querySelector('#app-body ' + s));
+       const inOrder = order.every(Boolean) && order.every((el, i) => !i || (order[i - 1].compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING));
+       const missed = [...document.querySelectorAll('.ny-item[data-lv="today"]')].filter(i => /Missed:/.test(i.innerText)).length;
+       return inOrder && missed === todaysTasks('P1').filter(i => i.state === 'missed' && taskMine(i.task)).length &&
+         !/Report something|Check a prescription/.test(document.getElementById('app-body').innerText) && !document.querySelector('.wk-card') && words() < 120; }));
+  ok('…a check-out time to give is on it, and a shift about to close itself is Act now',
+     await wp.evaluate(() => { as('omar@example.com', 'P1'); const o = openShift('P1'); if (o) checkOut('P1');
+       const sh = checkIn('P1'); S.clockShift += schedEnd(sh).getTime() + (SHIFT_GRACE_MIN - 10) * 6e4 - nowMs(); goto('checkin');
+       const now = [...document.querySelectorAll('.ny-item[data-lv="now"]')].some(i => /closes itself/.test(i.innerText));
+       S.clockShift += 20 * 6e4; render(); S.clockShift += 10 * 36e5; checkIn('P1'); goto('checkin');
+       const claim = [...document.querySelectorAll('.ny-item[data-lv="today"]')].some(i => /When did you leave/.test(i.innerText));
+       S.clockShift = 0; return now && claim; }));
+  ok('MARYAM SWITCHES WITH THE SAME CHIPS EVERYWHERE — home, Tasks, Incidents, My activity — and Tasks says which pharmacy a new task is for',
+     await wp.evaluate(() => { as('maryam@example.com'); const ok = ['checkin', 'tasks', 'incidents', 'activity'].every(s => { goto(s);
+         return [...document.querySelectorAll('.work-tabs .ptab')].map(b => b.innerText).join() === 'Al-Hayat,Al-Shifa'; });
+       setPharmacy('P7'); goto('tasks'); const on = document.querySelector('.work-tabs .ptab.on').innerText === 'Al-Shifa' && /Al-Shifa/i.test(document.querySelector('#app-header').innerText) && mayAssign('P7');
+       return ok && on; }));
+  ok('AN OWNER WHERE SHE ONLY WORKS has the staff bar there: Home · Pharmacy · My work · More, with My work lit',
+     await wp.evaluate(() => { as('rahma@example.com', 'P8'); const bar = navFor(S.role).map(x => x[0]).join(); goto('tasks');
+       const lit = document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'tasks' && [...document.querySelectorAll('.mod-tab')].map(b => b.dataset.tab).join() === 'tasks,incidents,activity';
+       setPharmacy('P1'); return bar === 'dashboard,pharmacy,tasks,more' && lit && navFor(S.role).map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,more'; }));
+  ok('More, for the staff side: what is not on the bar, and Profile does not repeat it',
+     await wp.evaluate(() => { as('hassan@example.com', 'P1'); goto('more'); const rows = [...document.querySelectorAll('#app-body .row')].map(r => r.getAttribute('onclick'));
+       goto('profile'); const dup = profileLinks().length;
+       return ['products', 'addPharmacy', 'cv', 'notifications', 'profile'].every(x => rows.some(r => r.includes(x))) && !rows.some(r => /tasks|incidents|activity/.test(r)) && dup === 0; }));
+  ok('THE SAYDALI+ CARD REACHES WHO IT IS FOR: someone who can sell sees "Point of sale is here"; a student, a pharmacist on no team and the reviewer do not',
+     await wp.evaluate(() => { const sees = (m, scr, ph) => { as(m, ph); goto(scr); return !!document.querySelector('.banner-slot.announce'); };
+       return sees('hassan@example.com', 'checkin', 'P1') && sees('rahma@example.com', 'dashboard', 'P1') && !sees('ahmed@example.com', 'checkin') &&
+         !sees('zainab@uobaghdad.edu.iq', 'browse') && !sees('admin@saydali.example', 'queue'); }));
+  ok('LAYLA ON ALL: each pharmacy counts what needs her the way its own home does; the card sits under the totals; the money is short',
+     await wp.evaluate(() => { as('layla@example.com'); setPharmacy(null); goto('dashboard');
+       const rows = [...document.querySelectorAll('.hm-ph')], counts = rows.map(r => { const m = r.innerText.match(/(\d+) need you/); return m ? Number(m[1]) : 0; });
+       const want = pharmacyBoard().map(p => p.responsible ? needsAll(p).filter(x => x.lv !== 'calm').length : 0);
+       const hero = document.querySelector('.hm-hero'), ann = document.querySelector('.hm-ann');
+       return rows.length === 3 && counts.join() === want.join() && !!ann && hero.nextElementSibling === ann; }));
+
+  /* Narrow, both directions. */
+  const wide = [];
+  await wp.setViewportSize({ width:320, height:700 });
+  const views = [['rahma@example.com', 'P1', "zahraa()"], ['rahma@example.com', 'P1', "zahraa();S.personTab='shifts';render()"], ['rahma@example.com', 'P1', "zahraa();S.personTab='perms';render();document.querySelector('.ps-grant .tip').open=true"],
+    ['hassan@example.com', 'P1', "goto('checkin')"], ['hassan@example.com', 'P1', "goto('activity');S.personTab='overview';render()"], ['hassan@example.com', 'P1', "goto('activity');S.personTab='shifts';render()"],
+    ['maryam@example.com', null, "goto('tasks')"], ['hassan@example.com', 'P1', "goto('more')"], ['layla@example.com', null, "setPharmacy(null);goto('dashboard')"], ['ahmed@example.com', null, "goto('checkin')"]];
+  for (const dir of ['ar', 'en']) for (const [who, ph, code] of views) {
+    await wp.evaluate(([w, p, c, d]) => { as(w, p); setLang(d); eval(c); }, [who, ph, code, dir]);
+    await wp.waitForTimeout(40);
+    if (await wp.evaluate(() => document.body.scrollWidth) > 320) wide.push(dir + ' ' + who.split('@')[0] + ' ' + code.slice(0, 30));
+  }
+  await wp.setViewportSize({ width:1440, height:900 });
+  ok(`a person's tabs, My activity, the staff home, More and an open ⓘ do not scroll sideways at 320px, in either direction${wide.length ? ' (' + wide.join(', ') + ')' : ''}`, !wide.length);
+  await wp.close();
 }
 
 console.log('\nlayout');
