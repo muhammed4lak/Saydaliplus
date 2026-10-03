@@ -2532,6 +2532,42 @@ was no longer at the very top** once someone was absent (v0.0014, D5). It is
 first again, and a check now proves it with an absence on the list. All 17
 are caught.
 
+### v0.0019.2 — reported 3 Oct 2026: too many words
+
+**Not built — mock-ups first.** The prototype reads as too much text,
+especially the figures for team members. Measured on 3 Oct 2026, a team
+member's page (Zahraa, September) is **620 words, 382 of them explanation**,
+in one scroll about 3,500 px tall:
+- details and schedule;
+- 22 shifts of two lines each;
+- the late and absent days again;
+- a table of average, median and the pharmacy's average, with two notes;
+- the P7 question as a paragraph;
+- 14 permissions, each with its own sentence.
+
+The worst after it are Tasks (82 words of notes), Hassan's own Activity
+(48) and Stock (42).
+
+**Mock-ups shown 3 Oct 2026:** a team member's page in **three tabs**:
+- **Overview** (about 70 words): four numbers (shifts, hours, sales in IQD,
+  number of sales); *a shift, on average* as two bars, theirs and the
+  pharmacy's, with one line beneath; the month's attendance as the strip from
+  Reports, with its counts as chips; the P7 question in one line.
+- **Shifts:** one line a shift (day, in–out, sales, amount). Late, no
+  check-out and accepted are chips. The latest eight, then *Show all*.
+- **Permissions:** the role, then one line and a switch each. What a
+  permission does is behind its ⓘ.
+
+**The rules proposed for the whole app:**
+1. Numbers and chips, not sentences.
+2. Explanations behind an ⓘ: one tap away, never deleted.
+3. Long lists folded, with *Show all*.
+4. Say it once.
+5. Bars where the point is a comparison.
+
+They apply to staff's own Activity, Reports > Sales, and the standing notes
+on Tasks, Incidents, Team and Stock.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
