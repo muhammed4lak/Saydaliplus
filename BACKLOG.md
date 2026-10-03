@@ -2691,7 +2691,9 @@ Overview:
 Checks: app 861 (22 new; about 40 older ones updated for the tabs, the staff
 bar, the staff home and the ⓘ, and the attendance ones anchored to the actual
 late and absent days, now that a new week has begun). CRM 308. Unit 164.
-Typecheck clean. Mutation-tested on a copy: MUT192.
+Typecheck clean. Mutation-tested on a copy: 17 planted faults, all caught on
+the first run. Two were caught only by a crash (a missing chip, a missing lit
+button); those checks now fail cleanly instead.
 
 ## Unused concepts
 

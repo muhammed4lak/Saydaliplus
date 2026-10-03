@@ -3405,7 +3405,7 @@ console.log('\nclinical governance, patients, teams and barcode links (v0.0016)'
      await gp.evaluate(() => { setPharmacy('P1'); return !atWorkplace() && can('stock') && can('prices') && navFor().some(x => x[0] === 'team'); }));
   ok('her own record at Al-Hayat is under My activity, which an owner who works somewhere can open',
      await gp.evaluate(() => { setPharmacy('P8'); goto('activity'); return S.screen === 'activity' && /Al-Hayat Pharmacy/i.test(document.getElementById('app-header').innerText) &&
-       document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'tasks'; }));
+       (document.querySelector('#bottom-nav .nav-item.active') || { dataset:{} }).dataset.nav === 'tasks'; }));
 
   /* The staff home. */
   ok('Hassan’s home opens on where he works: Al-Rahma, Pharmacist + Prices, the drawer and the Point of sale (v0.0019.2)',
@@ -4489,11 +4489,11 @@ console.log('\nfewer words, and the staff side in line (v0.0019.2)');
   ok('MARYAM SWITCHES WITH THE SAME CHIPS EVERYWHERE — home, Tasks, Incidents, My activity — and Tasks says which pharmacy a new task is for',
      await wp.evaluate(() => { as('maryam@example.com'); const ok = ['checkin', 'tasks', 'incidents', 'activity'].every(s => { goto(s);
          return [...document.querySelectorAll('.work-tabs .ptab')].map(b => b.innerText).join() === 'Al-Hayat,Al-Shifa'; });
-       setPharmacy('P7'); goto('tasks'); const on = document.querySelector('.work-tabs .ptab.on').innerText === 'Al-Shifa' && /Al-Shifa/i.test(document.querySelector('#app-header').innerText) && mayAssign('P7');
+       setPharmacy('P7'); goto('tasks'); const chip = document.querySelector('.work-tabs .ptab.on'); const on = !!chip && chip.innerText === 'Al-Shifa' && /Al-Shifa/i.test(document.querySelector('#app-header').innerText) && mayAssign('P7');
        return ok && on; }));
   ok('AN OWNER WHERE SHE ONLY WORKS has the staff bar there: Home · Pharmacy · My work · More, with My work lit',
      await wp.evaluate(() => { as('rahma@example.com', 'P8'); const bar = navFor(S.role).map(x => x[0]).join(); goto('tasks');
-       const lit = document.querySelector('#bottom-nav .nav-item.active').dataset.nav === 'tasks' && [...document.querySelectorAll('.mod-tab')].map(b => b.dataset.tab).join() === 'tasks,incidents,activity';
+       const act = document.querySelector('#bottom-nav .nav-item.active'), lit = !!act && act.dataset.nav === 'tasks' && [...document.querySelectorAll('.mod-tab')].map(b => b.dataset.tab).join() === 'tasks,incidents,activity';
        setPharmacy('P1'); return bar === 'dashboard,pharmacy,tasks,more' && lit && navFor(S.role).map(x => x[0]).join() === 'dashboard,pharmacy,team,reports,more'; }));
   ok('More, for the staff side: what is not on the bar, and Profile does not repeat it',
      await wp.evaluate(() => { as('hassan@example.com', 'P1'); goto('more'); const rows = [...document.querySelectorAll('#app-body .row')].map(r => r.getAttribute('onclick'));
