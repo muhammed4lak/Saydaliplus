@@ -2568,6 +2568,19 @@ The worst after it are Tasks (82 words of notes), Hassan's own Activity
 They apply to staff's own Activity, Reports > Sales, and the standing notes
 on Tasks, Incidents, Team and Stock.
 
+**Answered 3 Oct 2026:**
+1. **A team member's page in three tabs:** yes, for now.
+2. **Explanations behind an ⓘ, across the app:** yes.
+3. **Money is short where space is tight or the number is a headline,** and
+   full where a report is read in detail; the choice of where is mine.
+   Proposed:
+   - **Short** (4.7M, 271K; Arabic 4.7 مليون, 271 ألف): the home strip, a
+     person's tiles and bars, shift rows, Layla's pharmacy rows.
+   - **Full** (4,698,250): Reports > Sales, the by-day rows, the drawer and
+     its count, prices, the till and receipts — anything that is checked
+     against cash or paper.
+4. **The same rules on the other screens:** yes.
+
 **Every view, every user — audited 3 Oct 2026** (98 views across ten people,
 each with its word count; the contact sheets were shown). What is out of line
 with v0.0019.1:
