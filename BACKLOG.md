@@ -2568,6 +2568,40 @@ The worst after it are Tasks (82 words of notes), Hassan's own Activity
 They apply to staff's own Activity, Reports > Sales, and the standing notes
 on Tasks, Incidents, Team and Stock.
 
+**Every view, every user — audited 3 Oct 2026** (98 views across ten people,
+each with its word count; the contact sheets were shown). What is out of line
+with v0.0019.1:
+
+*The staff side is still the old design* (Hassan, Zahraa, Omar, Maryam):
+- **The bar:** Check-in · Tasks · Pharmacy · Profile. Home is called
+  "Check-in", there is no More, and Incidents is behind Profile while Tasks
+  is on the bar.
+- **No counts on the bar.** Hassan has two tasks missed and nothing says so
+  outside Tasks.
+- **No *Needs you* list and no Act now / Today colours on the home.**
+  "Tasks · 3 still to do today" hides that 2 are missed.
+- **The Saydali+ card is the old full-size one,** with no ×.
+- **Headers name the person** ("HASSAN AL-DULAIMI · Tasks"); the owner's name
+  the pharmacy.
+- **My activity is the long page:** 368 words for Zahraa's month.
+
+*Gaps:*
+- **Maryam works at two pharmacies.** Her home switches between them with tabs
+  inside a card, where the owner's switch is a row of chips. **Her Tasks has
+  no pharmacy switch at all,** so as a Manager she can give a task without
+  the screen saying which pharmacy it is for.
+- **Ahmed and Noor, on no team yet:** Tasks stays on the bar ("Tasks start when
+  you join a pharmacy's team"), and Incidents behind Profile. The Saydali+
+  card announces the Point of sale to someone who can only check with it.
+- **Rahma at Al-Hayat, where she only works:** she gets the staff home, her
+  bar is Home · Pharmacy · More, and Tasks and Incidents open under a "Team"
+  header that nothing on the bar lights.
+- **Layla on All:** each pharmacy's "need you" count is still the old one
+  (stock and drawers only); the pharmacy's own home counts missed tasks,
+  absences and readings too. The Saydali+ card sits at the bottom there.
+- **Zainab, a student,** is shown "Point of sale is here", an announcement
+  for pharmacies.
+
 ## Unused concepts
 
 Ideas that were considered and set aside — kept, with why, so they are not
